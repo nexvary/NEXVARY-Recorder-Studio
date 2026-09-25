@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.concurrent.thread
+import com.nexvary.recorder.ui.ThemeManager
 
 class AudioReplaceActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReplaceAudioBinding
