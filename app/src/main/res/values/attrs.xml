@@ -1,0 +1,8 @@
+<resources>
+    <attr name="nexvaryBackground" format="color" />
+    <attr name="nexvarySurface" format="color" />
+    <attr name="nexvarySurfaceStrong" format="color" />
+    <attr name="nexvaryAccent" format="color" />
+    <attr name="nexvaryText" format="color" />
+    <attr name="nexvaryMuted" format="color" />
+</resources>

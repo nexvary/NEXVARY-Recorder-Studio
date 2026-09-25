@@ -1,11 +1,67 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.NexvaryRecorder" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/electric_blue</item>
-        <item name="colorSecondary">@color/green</item>
+<resources>
+    <style name="Theme.NexvaryRecorder.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:navigationBarColor">@color/navy</item>
-        <item name="android:statusBarColor">@color/navy</item>
-        <item name="android:windowBackground">@color/navy</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
     </style>
+
+    <style name="Theme.NexvaryRecorder.Blue" parent="Theme.NexvaryRecorder.Base">
+        <item name="colorPrimary">#38BDF8</item>
+        <item name="colorSecondary">#22C55E</item>
+        <item name="android:statusBarColor">#06101B</item>
+        <item name="android:navigationBarColor">#06101B</item>
+        <item name="android:windowBackground">#07111D</item>
+        <item name="nexvaryBackground">#07111D</item>
+        <item name="nexvarySurface">#0D2134</item>
+        <item name="nexvarySurfaceStrong">#12314E</item>
+        <item name="nexvaryAccent">#38BDF8</item>
+        <item name="nexvaryText">#F8FAFC</item>
+        <item name="nexvaryMuted">#AFC1D4</item>
+    </style>
+
+    <style name="Theme.NexvaryRecorder.Emerald" parent="Theme.NexvaryRecorder.Base">
+        <item name="colorPrimary">#34D399</item>
+        <item name="colorSecondary">#60A5FA</item>
+        <item name="android:statusBarColor">#06130F</item>
+        <item name="android:navigationBarColor">#06130F</item>
+        <item name="android:windowBackground">#071612</item>
+        <item name="nexvaryBackground">#071612</item>
+        <item name="nexvarySurface">#0D2B22</item>
+        <item name="nexvarySurfaceStrong">#123D30</item>
+        <item name="nexvaryAccent">#34D399</item>
+        <item name="nexvaryText">#F4FFF9</item>
+        <item name="nexvaryMuted">#AACFC1</item>
+    </style>
+
+    <style name="Theme.NexvaryRecorder.Purple" parent="Theme.NexvaryRecorder.Base">
+        <item name="colorPrimary">#A78BFA</item>
+        <item name="colorSecondary">#38BDF8</item>
+        <item name="android:statusBarColor">#0E0718</item>
+        <item name="android:navigationBarColor">#0E0718</item>
+        <item name="android:windowBackground">#12091F</item>
+        <item name="nexvaryBackground">#12091F</item>
+        <item name="nexvarySurface">#25123A</item>
+        <item name="nexvarySurfaceStrong">#351A53</item>
+        <item name="nexvaryAccent">#A78BFA</item>
+        <item name="nexvaryText">#FBF8FF</item>
+        <item name="nexvaryMuted">#C6B8D8</item>
+    </style>
+
+    <style name="Theme.NexvaryRecorder.Amber" parent="Theme.NexvaryRecorder.Base">
+        <item name="colorPrimary">#FBBF24</item>
+        <item name="colorSecondary">#38BDF8</item>
+        <item name="android:statusBarColor">#130D04</item>
+        <item name="android:navigationBarColor">#130D04</item>
+        <item name="android:windowBackground">#1B1306</item>
+        <item name="nexvaryBackground">#1B1306</item>
+        <item name="nexvarySurface">#31240D</item>
+        <item name="nexvarySurfaceStrong">#453214</item>
+        <item name="nexvaryAccent">#FBBF24</item>
+        <item name="nexvaryText">#FFF9E8</item>
+        <item name="nexvaryMuted">#D8C797</item>
+    </style>
+
+    <style name="Theme.NexvaryRecorder" parent="Theme.NexvaryRecorder.Blue" />
 </resources>

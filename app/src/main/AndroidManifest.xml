@@ -10,9 +10,11 @@
 
     <application
         android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="NEXVARY Recorder Studio"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NexvaryRecorder">
+        android:theme="@style/Theme.NexvaryRecorder.Blue">
 
         <activity android:name=".live.LiveBroadcastActivity" android:exported="false" />
         <activity android:name=".media.AudioReplaceActivity" android:exported="false" />
