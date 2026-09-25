@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="20dp" android:background="@color/navy" android:layoutDirection="rtl">
+    <Button android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="رجوع" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
+        android:text="تسجيل الشاشة" android:textColor="@color/white" android:textStyle="bold" android:textSize="24sp" android:gravity="end" />
+    <TextView android:id="@+id/txtStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp"
+        android:text="جاهز" android:textColor="@color/silver" android:gravity="end" />
+    <CheckBox android:id="@+id/checkMic" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp"
+        android:checked="true" android:text="تسجيل صوت الميكروفون" android:textColor="@color/white" android:gravity="end" />
+    <Button android:id="@+id/btnStart" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="20dp" android:text="ابدأ التسجيل" />
+    <Button android:id="@+id/btnStop" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="12dp" android:text="إيقاف وحفظ" android:enabled="false" />
+    <TextView android:id="@+id/txtOutput" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp"
+        android:textColor="@color/green" android:gravity="end" />
+</LinearLayout>
