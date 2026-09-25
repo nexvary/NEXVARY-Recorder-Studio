@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/navy">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp" android:layoutDirection="rtl">
+    <Button android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="رجوع" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="بث فيديو محفوظ إلى Facebook Live" android:textColor="@color/white" android:textSize="24sp" android:textStyle="bold" android:gravity="end" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="اختر ملف MP4 ثم أدخل Server URL وStream Key من Facebook Live Producer. يتم الإرسال عبر RTMPS." android:textColor="@color/silver" android:gravity="end" />
+    <Button android:id="@+id/btnVideo" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:text="اختر الفيديو" />
+    <TextView android:id="@+id/txtVideo" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/silver" android:gravity="end" />
+    <EditText android:id="@+id/editServer" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:hint="RTMPS Server URL" android:textColor="@color/white" android:textColorHint="#8294A6" android:inputType="textUri" android:gravity="end" />
+    <EditText android:id="@+id/editKey" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:hint="Stream Key" android:textColor="@color/white" android:textColorHint="#8294A6" android:inputType="textPassword" android:gravity="end" />
+    <CheckBox android:id="@+id/checkLoop" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="إعادة الفيديو تلقائيًا عند انتهائه" android:textColor="@color/white" android:gravity="end" />
+    <Button android:id="@+id/btnStart" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="18dp" android:text="ابدأ البث" />
+    <Button android:id="@+id/btnStop" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="12dp" android:text="إيقاف البث" android:enabled="false" />
+    <TextView android:id="@+id/txtStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="غير متصل" android:textColor="@color/green" android:gravity="end" />
+</LinearLayout>
+</ScrollView>
