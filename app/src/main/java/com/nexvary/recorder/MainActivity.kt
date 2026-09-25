@@ -10,6 +10,7 @@ import com.nexvary.recorder.live.LiveBroadcastActivity
 import com.nexvary.recorder.media.AudioReplaceActivity
 import com.nexvary.recorder.screen.ScreenRecorderActivity
 import com.nexvary.recorder.ui.ThemeManager
+import com.nexvary.recorder.ui.UiInsets
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -20,8 +21,10 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        UiInsets.apply(binding.root)
 
         binding.txtThemeName.text = "الثيم الحالي: ${ThemeManager.currentName(this)}"
+        binding.txtVersion.text = "v${BuildConfig.VERSION_NAME}"
 
         binding.themeHeader.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
