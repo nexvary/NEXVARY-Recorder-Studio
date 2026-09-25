@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical" android:padding="20dp" android:background="?attr/nexvaryBackground" android:layoutDirection="rtl">
-    <Button android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="رجوع" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
-        android:text="استوديو الصوت الاحترافي" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="24sp" android:gravity="end" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
-        android:text="48 kHz PCM مع Noise Suppression وAGC وEcho Cancellation عند دعم الهاتف، ثم تحسين/تطبيع للصوت." android:textColor="?attr/nexvaryMuted" android:gravity="end" />
-    <TextView android:id="@+id/txtStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="جاهز" android:textColor="?attr/nexvaryMuted" android:gravity="end" />
-    <Button android:id="@+id/btnRecord" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="20dp" android:text="ابدأ تسجيل الصوت" />
-    <Button android:id="@+id/btnStop" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="12dp" android:text="إيقاف + تحسين" android:enabled="false" />
-    <TextView android:id="@+id/txtOutput" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:textColor="?attr/nexvaryAccent" android:gravity="end" />
-</LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="?attr/nexvaryBackground">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+        <Button android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/back" />
+        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" app:cardBackgroundColor="?attr/nexvarySurfaceStrong" app:cardCornerRadius="22dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/voice_page_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="23sp" android:gravity="start" android:textDirection="locale" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/voice_page_desc" android:textColor="?attr/nexvaryMuted" android:textSize="13sp" android:gravity="start" android:textDirection="locale" />
+                <TextView android:id="@+id/txtStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/ready" android:textColor="?attr/nexvaryAccent" android:gravity="start" android:textDirection="locale" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <Button android:id="@+id/btnRecord" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="16dp" android:text="@string/start_voice" />
+        <Button android:id="@+id/btnStop" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="10dp" android:text="@string/stop_enhance" android:enabled="false" />
+        <TextView android:id="@+id/txtOutput" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:layout_marginBottom="18dp" android:textColor="?attr/nexvaryAccent" android:gravity="start" android:textDirection="locale" />
+    </LinearLayout>
+</ScrollView>
