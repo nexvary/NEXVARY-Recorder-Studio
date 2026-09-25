@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "com.nexvary.recorder"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.nexvary.recorder"
