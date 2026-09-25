@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.nexvary.recorder.databinding.ActivityLiveBroadcastBinding
+import com.nexvary.recorder.ui.ThemeManager
 
 class LiveBroadcastActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLiveBroadcastBinding
