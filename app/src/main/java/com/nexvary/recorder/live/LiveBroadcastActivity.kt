@@ -28,6 +28,7 @@ class LiveBroadcastActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         binding = ActivityLiveBroadcastBinding.inflate(layoutInflater)
         setContentView(binding.root)
