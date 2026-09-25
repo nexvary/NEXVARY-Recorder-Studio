@@ -314,7 +314,7 @@ class ScreenRecordService : Service() {
                 }
                 .any { codec ->
                     val caps = codec.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_AVC)
-                    caps.videoCapabilities.areSizeSupported(width, height)
+                    caps.videoCapabilities.isSizeSupported(width, height)
                 }
         }.getOrDefault(false)
     }
