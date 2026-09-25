@@ -2,6 +2,7 @@ package com.nexvary.recorder.ui
 
 import android.app.Activity
 import android.content.Context
+import androidx.annotation.StringRes
 import com.nexvary.recorder.R
 
 object ThemeManager {
@@ -29,12 +30,13 @@ object ThemeManager {
         return next
     }
 
-    fun currentName(context: Context): String {
+    @StringRes
+    fun currentNameRes(context: Context): Int {
         return when (context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getInt(KEY_THEME, 0)) {
-            1 -> "Emerald"
-            2 -> "Purple"
-            3 -> "Amber"
-            else -> "Electric Blue"
+            1 -> R.string.theme_emerald
+            2 -> R.string.theme_purple
+            3 -> R.string.theme_amber
+            else -> R.string.theme_electric_blue
         }
     }
 }
