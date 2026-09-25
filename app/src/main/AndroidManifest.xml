@@ -10,7 +10,9 @@
 
     <application
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"\n        android:roundIcon="@mipmap/ic_launcher_round"\n        android:label="NEXVARY Recorder Studio"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="NEXVARY Recorder Studio"
         android:supportsRtl="true"
         android:theme="@style/Theme.NexvaryRecorder.Blue">
 
