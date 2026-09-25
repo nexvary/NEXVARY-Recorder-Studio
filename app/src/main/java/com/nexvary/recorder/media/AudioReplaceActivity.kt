@@ -13,6 +13,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.concurrent.thread
 import com.nexvary.recorder.ui.ThemeManager
+import com.nexvary.recorder.ui.UiInsets
 
 class AudioReplaceActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReplaceAudioBinding
@@ -37,6 +38,7 @@ class AudioReplaceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityReplaceAudioBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        UiInsets.apply(binding.root)
         binding.btnBack.setOnClickListener { finish() }
         binding.btnVideo.setOnClickListener { videoPicker.launch(arrayOf("video/*")) }
         binding.btnAudio.setOnClickListener { audioPicker.launch(arrayOf("audio/*")) }
