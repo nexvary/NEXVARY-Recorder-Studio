@@ -19,7 +19,6 @@ import com.nexvary.recorder.ui.UiInsets
 class LiveBroadcastActivity : AppCompatActivity() {
     companion object {
         private const val FACEBOOK_LIVE_PRODUCER = "https://www.facebook.com/live/producer"
-        private const val DEFAULT_FACEBOOK_SERVER = "rtmps://live-api-s.facebook.com:443/rtmp/"
     }
 
     private lateinit var binding: ActivityLiveBroadcastBinding
@@ -46,7 +45,7 @@ class LiveBroadcastActivity : AppCompatActivity() {
         setContentView(binding.root)
         UiInsets.apply(binding.root)
 
-        if (binding.editServer.text.isNullOrBlank()) binding.editServer.setText(DEFAULT_FACEBOOK_SERVER)
+        if (binding.editServer.text.isNullOrBlank()) binding.editServer.setText(getString(R.string.facebook_server_default))
 
         binding.btnBack.setOnClickListener { finish() }
         binding.btnOpenProducer.setOnClickListener {
