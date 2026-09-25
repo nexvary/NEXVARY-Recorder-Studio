@@ -1,5 +1,16 @@
 # NEXVARY Recorder Studio
 
+## v0.2.0 Android 15 recorder rebuild
+
+- Requests full-display capture on Android 14+ using `MediaProjectionConfig.createConfigForDefaultDisplay()` to avoid accidental single-app sharing mode where supported.
+- Starts MediaProjection only after the foreground service is active and user consent was granted.
+- Chooses an H.264-compatible capture size instead of blindly forcing the physical display resolution.
+- Reports real recorder start/failure state to the UI and only minimizes the app after `MediaRecorder.start()` succeeds.
+- Adds a 3-second countdown and persistent stop/save notification.
+- Adds NEXVARY adaptive launcher icon.
+- Replaces the original basic home screen with card-based RTL UI.
+- Tap the top identity card to cycle Electric Blue, Emerald, Purple and Amber full-app palettes.
+
 Android application prototype focused on four workflows:
 
 1. **Screen Recorder** — MediaProjection + H.264 MP4, optional microphone audio.
