@@ -1,52 +1,334 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/navy"
+    android:background="?attr/nexvaryBackground"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp"
+        android:padding="18dp"
         android:layoutDirection="rtl">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/themeHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
+            app:cardCornerRadius="26dp"
+            app:cardElevation="8dp"
+            app:strokeColor="?attr/nexvaryAccent"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="18dp">
+
+                <ImageView
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
+                    android:src="@mipmap/ic_launcher"
+                    android:contentDescription="NEXVARY Recorder Studio" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingStart="14dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NEXVARY Recorder Studio"
+                        android:textColor="?attr/nexvaryText"
+                        android:textSize="23sp"
+                        android:textStyle="bold"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Screen • Voice • Dub • Live"
+                        android:textColor="?attr/nexvaryMuted"
+                        android:textSize="13sp"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:id="@+id/txtThemeName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="اضغط أعلى الشاشة لتغيير اللون"
+                        android:textColor="?attr/nexvaryAccent"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="NEXVARY Recorder Studio"
-            android:textColor="@color/white"
-            android:textSize="26sp"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="10dp"
+            android:text="أدوات الاستوديو"
+            android:textColor="?attr/nexvaryText"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:gravity="end" />
 
-        <TextView
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardScreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="تسجيل شاشة وصوت احترافي + استبدال الصوت + بث ملف فيديو عبر RTMPS"
-            android:textColor="@color/silver"
-            android:textSize="15sp"
-            android:gravity="end" />
+            android:layout_marginBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="?attr/nexvarySurface"
+            app:cardCornerRadius="20dp"
+            app:strokeColor="?attr/nexvaryAccent"
+            app:strokeWidth="1dp">
 
-        <Button android:id="@+id/btnScreen" style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="28dp"
-            android:text="تسجيل الشاشة" />
-        <Button android:id="@+id/btnVoice" style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="12dp"
-            android:text="استوديو الصوت المحسن" />
-        <Button android:id="@+id/btnReplace" style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="12dp"
-            android:text="إضافة / استبدال الصوت في فيديو" />
-        <Button android:id="@+id/btnLive" style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent" android:layout_height="64dp" android:layout_marginTop="12dp"
-            android:text="بث فيديو مسجل مسبقًا كـ Live" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="18dp">
 
-        <TextView
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:text="كل المعالجة محلية على الهاتف. لا يتم رفع ملفاتك إلى خادم NEXVARY."
-            android:textColor="@color/green" android:gravity="end" android:textSize="13sp" />
+                <TextView
+                    android:layout_width="58dp"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:text="REC"
+                    android:textColor="?attr/nexvaryAccent"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="تسجيل الشاشة"
+                        android:textColor="?attr/nexvaryText"
+                        android:textStyle="bold"
+                        android:textSize="19sp"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="تسجيل H.264 مع اختيار دقة متوافقة وإيقاف من الإشعار"
+                        android:textColor="?attr/nexvaryMuted"
+                        android:textSize="13sp"
+                        android:gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardVoice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="?attr/nexvarySurface"
+            app:cardCornerRadius="20dp"
+            app:strokeColor="?attr/nexvaryAccent"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="58dp"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:text="48K"
+                    android:textColor="?attr/nexvaryAccent"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="استوديو الصوت"
+                        android:textColor="?attr/nexvaryText"
+                        android:textStyle="bold"
+                        android:textSize="19sp"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="48 kHz • تقليل ضوضاء • ضغط وتحسين • WAV"
+                        android:textColor="?attr/nexvaryMuted"
+                        android:textSize="13sp"
+                        android:gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardReplace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="?attr/nexvarySurface"
+            app:cardCornerRadius="20dp"
+            app:strokeColor="?attr/nexvaryAccent"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="58dp"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:text="DUB"
+                    android:textColor="?attr/nexvaryAccent"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="إضافة صوت إلى الفيديو"
+                        android:textColor="?attr/nexvaryText"
+                        android:textStyle="bold"
+                        android:textSize="19sp"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="استبدال الصوت الرديء بتسجيل محسن محليًا"
+                        android:textColor="?attr/nexvaryMuted"
+                        android:textSize="13sp"
+                        android:gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardLive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="?attr/nexvarySurface"
+            app:cardCornerRadius="20dp"
+            app:strokeColor="?attr/nexvaryAccent"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="18dp">
+
+                <TextView
+                    android:layout_width="58dp"
+                    android:layout_height="42dp"
+                    android:gravity="center"
+                    android:text="LIVE"
+                    android:textColor="#EF4444"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="بث فيديو مسجل مسبقًا"
+                        android:textColor="?attr/nexvaryText"
+                        android:textStyle="bold"
+                        android:textSize="19sp"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="RTMP / RTMPS • Facebook Live • تشغيل من ملف"
+                        android:textColor="?attr/nexvaryMuted"
+                        android:textSize="13sp"
+                        android:gravity="end" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
+            app:cardCornerRadius="18dp"
+            app:strokeWidth="0dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="بدون إعلانات  •  المعالجة محليًا  •  Android 10+"
+                android:textColor="?attr/nexvaryMuted"
+                android:textSize="12sp"
+                android:gravity="center" />
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 </ScrollView>
