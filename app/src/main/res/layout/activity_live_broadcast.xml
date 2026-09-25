@@ -1,232 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/nexvaryBackground"
-    android:fillViewport="true">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="18dp"
-        android:layoutDirection="rtl">
-
-        <Button
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="رجوع" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
-            app:cardCornerRadius="24dp"
-            app:strokeColor="?attr/nexvaryAccent"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="بث فيديو محفوظ إلى Facebook Live"
-                    android:textColor="?attr/nexvaryText"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:gravity="end"
-                    android:textDirection="locale" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="1. افتح Live Producer واختر Streaming software.&#10;2. انسخ Stream Key.&#10;3. اختر الفيديو هنا ثم ابدأ البث.&#10;4. بعد ظهور المعاينة في Facebook اضغط Go Live."
-                    android:textColor="?attr/nexvaryMuted"
-                    android:textSize="13sp"
-                    android:lineSpacingExtra="4dp"
-                    android:gravity="end"
-                    android:textDirection="locale" />
-
-                <Button
-                    android:id="@+id/btnOpenProducer"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="14dp"
-                    android:text="فتح Facebook Live Producer" />
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="?attr/nexvaryBackground" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+        <Button android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/back" />
+        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" app:cardBackgroundColor="?attr/nexvarySurfaceStrong" app:cardCornerRadius="22dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/live_page_title" android:textColor="?attr/nexvaryText" android:textSize="22sp" android:textStyle="bold" android:gravity="start" android:textDirection="locale" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/live_steps" android:textColor="?attr/nexvaryMuted" android:textSize="13sp" android:lineSpacingExtra="4dp" android:gravity="start" android:textDirection="locale" />
+                <Button android:id="@+id/btnOpenProducer" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="12dp" android:text="@string/open_live_producer" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="20dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="الفيديو"
-                    android:textColor="?attr/nexvaryText"
-                    android:textStyle="bold"
-                    android:gravity="end" />
-
-                <Button
-                    android:id="@+id/btnVideo"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="8dp"
-                    android:text="اختر ملف MP4" />
-
-                <TextView
-                    android:id="@+id/txtVideo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="لم يتم اختيار فيديو"
-                    android:textColor="?attr/nexvaryMuted"
-                    android:textSize="12sp"
-                    android:gravity="end" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="20dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="بيانات الاتصال"
-                    android:textColor="?attr/nexvaryText"
-                    android:textStyle="bold"
-                    android:gravity="end" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="عنوان الخادم الافتراضي مملوء تلقائيًا. إذا عرض Facebook عنوانًا مختلفًا، استخدم العنوان الذي يعرضه Facebook."
-                    android:textColor="?attr/nexvaryMuted"
-                    android:textSize="12sp"
-                    android:gravity="end"
-                    android:textDirection="locale" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layoutDirection="ltr"
-                    android:hint="RTMPS Server URL"
-                    app:boxBackgroundMode="outline">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editServer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textUri"
-                        android:singleLine="true"
-                        android:text="rtmps://live-api-s.facebook.com:443/rtmp/"
-                        android:textColor="?attr/nexvaryText"
-                        android:textDirection="ltr"
-                        android:gravity="start" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layoutDirection="ltr"
-                    android:hint="Stream Key"
-                    app:boxBackgroundMode="outline"
-                    app:endIconMode="password_toggle">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editKey"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:singleLine="true"
-                        android:textColor="?attr/nexvaryText"
-                        android:textDirection="ltr"
-                        android:gravity="start" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <Button
-                    android:id="@+id/btnPasteKey"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="10dp"
-                    android:text="لصق Stream Key من الحافظة" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="تنبيه: Stream Key مفتاح سري. لا ترسله لأحد ولا تضعه في صورة أو رسالة عامة."
-                    android:textColor="#FBBF24"
-                    android:textSize="12sp"
-                    android:gravity="end"
-                    android:textDirection="locale" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <CheckBox
-            android:id="@+id/checkLoop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="إعادة الفيديو تلقائيًا عند انتهائه"
-            android:textColor="?attr/nexvaryText"
-            android:gravity="end" />
-
-        <Button
-            android:id="@+id/btnStart"
-            android:layout_width="match_parent"
-            android:layout_height="62dp"
-            android:layout_marginTop="14dp"
-            android:text="ابدأ إرسال الفيديو إلى Facebook" />
-
-        <Button
-            android:id="@+id/btnStop"
-            android:layout_width="match_parent"
-            android:layout_height="62dp"
-            android:layout_marginTop="10dp"
-            android:text="إيقاف البث"
-            android:enabled="false" />
-
-        <TextView
-            android:id="@+id/txtStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="12dp"
-            android:text="غير متصل"
-            android:textColor="?attr/nexvaryAccent"
-            android:textStyle="bold"
-            android:gravity="end" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/video_section" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:gravity="start" android:textDirection="locale" />
+        <Button android:id="@+id/btnVideo" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="8dp" android:text="@string/choose_mp4" />
+        <TextView android:id="@+id/txtVideo" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="@string/no_video_selected" android:textColor="?attr/nexvaryMuted" android:gravity="start" android:textDirection="locale" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/connection_data" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:gravity="start" android:textDirection="locale" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="@string/server_help" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:layoutDirection="ltr" android:hint="@string/server_url_hint" app:boxBackgroundMode="outline">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/editServer" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textUri" android:singleLine="true" android:text="rtmps://live-api-s.facebook.com:443/rtmp/" android:textColor="?attr/nexvaryText" android:textDirection="ltr" android:gravity="start" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:layoutDirection="ltr" android:hint="@string/stream_key_hint" app:boxBackgroundMode="outline" app:endIconMode="password_toggle">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/editKey" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textPassword" android:singleLine="true" android:textColor="?attr/nexvaryText" android:textDirection="ltr" android:gravity="start" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <Button android:id="@+id/btnPasteKey" android:layout_width="match_parent" android:layout_height="54dp" android:layout_marginTop="10dp" android:text="@string/paste_stream_key" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="7dp" android:text="@string/key_warning" android:textColor="#FBBF24" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
+        <CheckBox android:id="@+id/checkLoop" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="@string/loop_video" android:textColor="?attr/nexvaryText" android:gravity="start" android:textDirection="locale" />
+        <Button android:id="@+id/btnStart" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="12dp" android:text="@string/start_live" />
+        <Button android:id="@+id/btnStop" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="10dp" android:text="@string/stop_live" android:enabled="false" />
+        <TextView android:id="@+id/txtStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:layout_marginBottom="18dp" android:text="@string/disconnected" android:textColor="?attr/nexvaryAccent" android:textStyle="bold" android:gravity="start" android:textDirection="locale" />
     </LinearLayout>
 </ScrollView>
