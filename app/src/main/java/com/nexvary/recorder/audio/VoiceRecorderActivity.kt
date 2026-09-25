@@ -16,6 +16,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.concurrent.thread
 import com.nexvary.recorder.ui.ThemeManager
+import com.nexvary.recorder.ui.UiInsets
 
 class VoiceRecorderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVoiceRecorderBinding
@@ -30,6 +31,7 @@ class VoiceRecorderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityVoiceRecorderBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        UiInsets.apply(binding.root)
         binding.btnBack.setOnClickListener { finish() }
         binding.btnRecord.setOnClickListener {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) begin()
