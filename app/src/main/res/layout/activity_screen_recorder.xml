@@ -1,16 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical" android:padding="20dp" android:background="@color/navy" android:layoutDirection="rtl">
-    <Button android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="رجوع" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp"
-        android:text="تسجيل الشاشة" android:textColor="@color/white" android:textStyle="bold" android:textSize="24sp" android:gravity="end" />
-    <TextView android:id="@+id/txtStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp"
-        android:text="جاهز" android:textColor="@color/silver" android:gravity="end" />
-    <CheckBox android:id="@+id/checkMic" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp"
-        android:checked="true" android:text="تسجيل صوت الميكروفون" android:textColor="@color/white" android:gravity="end" />
-    <Button android:id="@+id/btnStart" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="20dp" android:text="ابدأ التسجيل" />
-    <Button android:id="@+id/btnStop" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginTop="12dp" android:text="إيقاف وحفظ" android:enabled="false" />
-    <TextView android:id="@+id/txtOutput" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp"
-        android:textColor="@color/green" android:gravity="end" />
-</LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/nexvaryBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp"
+        android:layoutDirection="rtl">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="رجوع" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
+            app:cardCornerRadius="24dp"
+            app:strokeColor="?attr/nexvaryAccent"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <View
+                        android:id="@+id/recordingIndicator"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:background="@drawable/record_dot"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="تسجيل الشاشة"
+                        android:textColor="?attr/nexvaryText"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:gravity="end" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:text="سيتم تسجيل الشاشة الكاملة على Android 14/15 لتجنب وضع مشاركة تطبيق واحد."
+                    android:textColor="?attr/nexvaryMuted"
+                    android:textSize="13sp"
+                    android:gravity="end" />
+
+                <TextView
+                    android:id="@+id/txtStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="جاهز"
+                    android:textColor="?attr/nexvaryAccent"
+                    android:textStyle="bold"
+                    android:gravity="end" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="?attr/nexvarySurface"
+            app:cardCornerRadius="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <CheckBox
+                    android:id="@+id/checkMic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="تسجيل صوت الميكروفون"
+                    android:textColor="?attr/nexvaryText"
+                    android:gravity="end" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="الدقة يتم اختيارها تلقائيًا بما يناسب H.264 encoder في هاتفك."
+                    android:textColor="?attr/nexvaryMuted"
+                    android:textSize="12sp"
+                    android:gravity="end" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="18dp"
+            android:text="ابدأ تسجيل الشاشة" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginTop="12dp"
+            android:text="إيقاف وحفظ"
+            android:enabled="false" />
+
+        <TextView
+            android:id="@+id/txtOutput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="?attr/nexvaryMuted"
+            android:gravity="end" />
+    </LinearLayout>
+</ScrollView>
