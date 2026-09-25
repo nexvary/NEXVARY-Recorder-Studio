@@ -32,6 +32,7 @@ class AudioReplaceActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         binding = ActivityReplaceAudioBinding.inflate(layoutInflater)
         setContentView(binding.root)
