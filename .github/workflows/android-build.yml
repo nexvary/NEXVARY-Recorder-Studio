@@ -34,7 +34,16 @@ jobs:
           gradle-version: '9.7.1'
 
       - name: Android lint
-        run: gradle --no-daemon :app:lintDebug
+        shell: bash
+        run: |
+          set +e
+          gradle --no-daemon :app:lintDebug
+          status=$?
+          if [ $status -ne 0 ]; then
+            echo "----- FULL LINT REPORT -----"
+            cat app/build/intermediates/lint_intermediate_text_report/debug/lintReportDebug/lint-results-debug.txt || true
+            exit $status
+          fi
 
       - name: Unit tests
         run: gradle --no-daemon :app:testDebugUnitTest
