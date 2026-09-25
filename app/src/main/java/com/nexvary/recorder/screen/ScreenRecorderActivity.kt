@@ -109,12 +109,12 @@ class ScreenRecorderActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val filter = IntentFilter(ScreenRecordService.ACTION_STATUS)
-        if (Build.VERSION.SDK_INT >= 33) {
-            registerReceiver(statusReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            @Suppress("DEPRECATION")
-            registerReceiver(statusReceiver, filter)
-        }
+        ContextCompat.registerReceiver(
+            this,
+            statusReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
 
     override fun onStop() {
