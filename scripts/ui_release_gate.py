@@ -82,8 +82,7 @@ for path in layout_files:
                         continue
                     errors.append(f"{path.name}: hard-coded visible {attr}: {value[:60]}")
 
-all_source = "
-".join(p.read_text(encoding="utf-8") for p in SRC.rglob("*.kt"))
+all_source = "\\n".join(p.read_text(encoding="utf-8") for p in SRC.rglob("*.kt"))
 action_ids = set()
 for path in layout_files:
     text = path.read_text(encoding="utf-8")
