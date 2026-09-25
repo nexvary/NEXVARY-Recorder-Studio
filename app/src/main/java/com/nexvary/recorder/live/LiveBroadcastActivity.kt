@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.nexvary.recorder.databinding.ActivityLiveBroadcastBinding
 import com.nexvary.recorder.ui.ThemeManager
+import com.nexvary.recorder.ui.UiInsets
 
 class LiveBroadcastActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLiveBroadcastBinding
@@ -33,6 +34,7 @@ class LiveBroadcastActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLiveBroadcastBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        UiInsets.apply(binding.root)
         binding.btnBack.setOnClickListener { finish() }
         binding.btnVideo.setOnClickListener { picker.launch(arrayOf("video/mp4", "video/*")) }
         binding.btnStart.setOnClickListener { startBroadcast() }
