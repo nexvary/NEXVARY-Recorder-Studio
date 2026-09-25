@@ -24,7 +24,11 @@ class MainActivity : AppCompatActivity() {
         UiInsets.apply(binding.root)
 
         binding.txtThemeName.text = "الثيم الحالي: ${ThemeManager.currentName(this)}"
-        binding.txtVersion.text = "v${BuildConfig.VERSION_NAME}"
+        val versionName = packageManager
+            .getPackageInfo(packageName, 0)
+            .versionName
+            .orEmpty()
+        binding.txtVersion.text = "v$versionName"
 
         binding.themeHeader.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
