@@ -9,21 +9,22 @@ import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.nexvary.recorder.R
 import com.nexvary.recorder.databinding.ActivityVoiceRecorderBinding
+import com.nexvary.recorder.ui.ThemeManager
+import com.nexvary.recorder.ui.UiInsets
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.concurrent.thread
-import com.nexvary.recorder.ui.ThemeManager
-import com.nexvary.recorder.ui.UiInsets
 
 class VoiceRecorderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVoiceRecorderBinding
     private var recorder: ProfessionalAudioRecorder? = null
 
     private val permission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
-        if (ok) begin() else binding.txtStatus.text = "يلزم إذن الميكروفون"
+        if (ok) begin() else binding.txtStatus.text = getString(R.string.permission_mic_required)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +33,7 @@ class VoiceRecorderActivity : AppCompatActivity() {
         binding = ActivityVoiceRecorderBinding.inflate(layoutInflater)
         setContentView(binding.root)
         UiInsets.apply(binding.root)
+
         binding.btnBack.setOnClickListener { finish() }
         binding.btnRecord.setOnClickListener {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) begin()
@@ -45,15 +47,15 @@ class VoiceRecorderActivity : AppCompatActivity() {
             recorder = ProfessionalAudioRecorder(this).also { it.start() }
             binding.btnRecord.isEnabled = false
             binding.btnStop.isEnabled = true
-            binding.txtStatus.text = "جارٍ تسجيل صوت 48 kHz…"
+            binding.txtStatus.text = getString(R.string.voice_recording)
         } catch (e: Exception) {
-            binding.txtStatus.text = "تعذر بدء التسجيل: ${e.message}"
+            binding.txtStatus.text = getString(R.string.voice_start_failed_format, e.message.orEmpty())
         }
     }
 
     private fun finishRecording() {
         binding.btnStop.isEnabled = false
-        binding.txtStatus.text = "جارٍ تحسين الصوت…"
+        binding.txtStatus.text = getString(R.string.voice_enhancing)
         val worker = recorder ?: return
         thread {
             try {
@@ -73,21 +75,17 @@ class VoiceRecorderActivity : AppCompatActivity() {
                 temp.delete()
                 runOnUiThread {
                     binding.btnRecord.isEnabled = true
-                    binding.txtStatus.text = "اكتمل التسجيل والتحسين"
-                    binding.txtOutput.text = "تم الحفظ في Music/NEXVARY Recorder\n$name"
+                    binding.txtStatus.text = getString(R.string.voice_complete)
+                    binding.txtOutput.text = getString(R.string.voice_saved_format, name)
                 }
             } catch (e: Exception) {
                 runOnUiThread {
                     binding.btnRecord.isEnabled = true
-                    binding.txtStatus.text = "فشل تحسين/حفظ الصوت: ${e.message}"
+                    binding.txtStatus.text = getString(R.string.voice_save_failed_format, e.message.orEmpty())
                 }
             } finally {
                 recorder = null
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }
