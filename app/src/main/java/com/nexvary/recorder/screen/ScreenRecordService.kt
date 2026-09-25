@@ -1,5 +1,6 @@
 package com.nexvary.recorder.screen
 
+import android.Manifest
 import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
@@ -9,6 +10,7 @@ import android.app.Service
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
@@ -27,6 +29,7 @@ import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.nexvary.recorder.MainActivity
 import com.nexvary.recorder.R
 import java.text.SimpleDateFormat
@@ -92,7 +95,12 @@ class ScreenRecordService : Service() {
             return
         }
 
-        val useMic = intent.getBooleanExtra(EXTRA_MIC, true)
+        val micRequested = intent.getBooleanExtra(EXTRA_MIC, true)
+        val useMic = micRequested &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED
         val resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, Activity.RESULT_CANCELED)
         val resultData: Intent = if (Build.VERSION.SDK_INT >= 33) {
             intent.getParcelableExtra(EXTRA_RESULT_DATA, Intent::class.java)
