@@ -1,6 +1,7 @@
 package com.nexvary.recorder.live
 
 import android.content.*
+import android.content.ClipboardManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,7 +26,10 @@ class LiveBroadcastActivity : AppCompatActivity() {
     private val statusReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             binding.txtStatus.text = intent?.getStringExtra(LiveBroadcastService.EXTRA_STATUS).orEmpty()
-            updateButtons()
+            if (binding.editServer.text.isNullOrBlank()) {
+            binding.editServer.setText("rtmps://live-api-s.facebook.com:443/rtmp/")
+        }
+        updateButtons()
         }
     }
 
@@ -36,6 +40,37 @@ class LiveBroadcastActivity : AppCompatActivity() {
         setContentView(binding.root)
         UiInsets.apply(binding.root)
         binding.btnBack.setOnClickListener { finish() }
+
+        binding.btnOpenProducer.setOnClickListener {
+            runCatching {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://www.facebook.com/live/producer")
+                    )
+                )
+            }.onFailure {
+                setStatus("تعذر فتح Facebook Live Producer")
+            }
+        }
+
+        binding.btnPasteKey.setOnClickListener {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val text = clipboard.primaryClip
+                ?.getItemAt(0)
+                ?.coerceToText(this)
+                ?.toString()
+                ?.trim()
+                .orEmpty()
+
+            if (text.isBlank()) {
+                setStatus("الحافظة فارغة. انسخ Stream Key من Facebook أولاً")
+            } else {
+                binding.editKey.setText(text)
+                setStatus("تم لصق Stream Key")
+            }
+        }
+
         binding.btnVideo.setOnClickListener { picker.launch(arrayOf("video/mp4", "video/*")) }
         binding.btnStart.setOnClickListener { startBroadcast() }
         binding.btnStop.setOnClickListener {
