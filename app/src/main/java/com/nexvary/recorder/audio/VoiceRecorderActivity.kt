@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.concurrent.thread
+import com.nexvary.recorder.ui.ThemeManager
 
 class VoiceRecorderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVoiceRecorderBinding
