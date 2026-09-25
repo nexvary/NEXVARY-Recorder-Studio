@@ -25,6 +25,7 @@ class VoiceRecorderActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         binding = ActivityVoiceRecorderBinding.inflate(layoutInflater)
         setContentView(binding.root)
