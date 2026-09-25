@@ -114,16 +114,23 @@ class ScreenRecordService : Service() {
         }
 
         try {
-            val foregroundType = if (useMic) {
+            val foregroundType = if (Build.VERSION.SDK_INT >= 30 && useMic) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION or
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
             } else {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
             }
             if (Build.VERSION.SDK_INT >= 29) {
-                startForeground(NOTIFICATION_ID, notification(getString(R.string.notification_recording_preparing)), foregroundType)
+                startForeground(
+                    NOTIFICATION_ID,
+                    notification(getString(R.string.notification_recording_preparing)),
+                    foregroundType
+                )
             } else {
-                startForeground(NOTIFICATION_ID, notification(getString(R.string.notification_recording_preparing)))
+                startForeground(
+                    NOTIFICATION_ID,
+                    notification(getString(R.string.notification_recording_preparing))
+                )
             }
             sendStatus(STATE_STARTING, getString(R.string.screen_preparing))
 
