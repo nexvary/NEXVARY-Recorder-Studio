@@ -2,76 +2,211 @@ package com.nexvary.recorder.screen
 
 import android.Manifest
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.media.projection.MediaProjectionConfig
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.nexvary.recorder.databinding.ActivityScreenRecorderBinding
+import com.nexvary.recorder.ui.ThemeManager
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ScreenRecorderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScreenRecorderBinding
     private lateinit var projectionManager: MediaProjectionManager
+    private var pendingResultCode: Int? = null
+    private var pendingResultData: Intent? = null
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { grants ->
         val audioOk = grants[Manifest.permission.RECORD_AUDIO] != false
-        if (audioOk) requestProjection() else binding.txtStatus.text = "يلزم إذن الميكروفون عند تفعيل تسجيل الصوت"
+        if (audioOk) requestProjection()
+        else showError("يلزم إذن الميكروفون عند تفعيل تسجيل الصوت")
     }
 
     private val projectionLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            val service = Intent(this, ScreenRecordService::class.java).apply {
-                action = ScreenRecordService.ACTION_START
-                putExtra(ScreenRecordService.EXTRA_RESULT_CODE, result.resultCode)
-                putExtra(ScreenRecordService.EXTRA_RESULT_DATA, result.data)
-                putExtra(ScreenRecordService.EXTRA_MIC, binding.checkMic.isChecked)
-            }
-            ContextCompat.startForegroundService(this, service)
-            binding.btnStart.isEnabled = false
-            binding.btnStop.isEnabled = true
-            binding.txtStatus.text = "جارٍ التسجيل…"
+            pendingResultCode = result.resultCode
+            pendingResultData = result.data
+            beginCountdown()
         } else {
-            binding.txtStatus.text = "تم إلغاء إذن تسجيل الشاشة"
+            showError("تم إلغاء إذن تسجيل الشاشة")
+        }
+    }
+
+    private val statusReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.getStringExtra(ScreenRecordService.EXTRA_STATE)) {
+                ScreenRecordService.STATE_STARTING -> {
+                    binding.txtStatus.text = intent.getStringExtra(ScreenRecordService.EXTRA_MESSAGE)
+                }
+                ScreenRecordService.STATE_STARTED -> {
+                    binding.txtStatus.text =
+                        intent.getStringExtra(ScreenRecordService.EXTRA_MESSAGE) ?: "بدأ التسجيل"
+                    binding.btnStart.isEnabled = false
+                    binding.btnStop.isEnabled = true
+                    binding.recordingIndicator.visibility = android.view.View.VISIBLE
+                    lifecycleScope.launch {
+                        delay(450)
+                        moveTaskToBack(true)
+                    }
+                }
+                ScreenRecordService.STATE_STOPPED -> {
+                    binding.txtStatus.text =
+                        intent.getStringExtra(ScreenRecordService.EXTRA_MESSAGE) ?: "تم إيقاف التسجيل"
+                    binding.txtOutput.text = "افتح المعرض أو Movies/NEXVARY Recorder للوصول إلى الملف."
+                    setIdleUi()
+                }
+                ScreenRecordService.STATE_ERROR -> {
+                    showError(
+                        intent.getStringExtra(ScreenRecordService.EXTRA_MESSAGE)
+                            ?: "تعذر بدء تسجيل الشاشة"
+                    )
+                    setIdleUi()
+                }
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         binding = ActivityScreenRecorderBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        projectionManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+
+        projectionManager =
+            getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
         binding.btnBack.setOnClickListener { finish() }
         binding.btnStart.setOnClickListener { startFlow() }
         binding.btnStop.setOnClickListener {
-            startService(Intent(this, ScreenRecordService::class.java).apply { action = ScreenRecordService.ACTION_STOP })
-            binding.btnStart.isEnabled = true
-            binding.btnStop.isEnabled = false
-            binding.txtStatus.text = "تم إيقاف التسجيل وحفظه في Movies/NEXVARY Recorder"
-            binding.txtOutput.text = "افتح المعرض أو مدير الملفات للوصول إلى التسجيل."
+            startService(
+                Intent(this, ScreenRecordService::class.java).apply {
+                    action = ScreenRecordService.ACTION_STOP
+                }
+            )
+            binding.txtStatus.text = "جارٍ إيقاف التسجيل وحفظ الملف…"
         }
+
+        if (ScreenRecordService.isRecording) {
+            binding.btnStart.isEnabled = false
+            binding.btnStop.isEnabled = true
+            binding.recordingIndicator.visibility = android.view.View.VISIBLE
+            binding.txtStatus.text = "التسجيل يعمل الآن"
+        } else {
+            setIdleUi()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val filter = IntentFilter(ScreenRecordService.ACTION_STATUS)
+        if (Build.VERSION.SDK_INT >= 33) {
+            registerReceiver(statusReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("DEPRECATION")
+            registerReceiver(statusReceiver, filter)
+        }
+    }
+
+    override fun onStop() {
+        runCatching { unregisterReceiver(statusReceiver) }
+        super.onStop()
     }
 
     private fun startFlow() {
         val permissions = mutableListOf<String>()
-        if (binding.checkMic.isChecked && ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (
+            binding.checkMic.isChecked &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             permissions += Manifest.permission.RECORD_AUDIO
         }
-        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (
+            Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             permissions += Manifest.permission.POST_NOTIFICATIONS
         }
-        if (permissions.isNotEmpty()) permissionLauncher.launch(permissions.toTypedArray()) else requestProjection()
+
+        if (permissions.isNotEmpty()) {
+            permissionLauncher.launch(permissions.toTypedArray())
+        } else {
+            requestProjection()
+        }
     }
 
     private fun requestProjection() {
-        projectionLauncher.launch(projectionManager.createScreenCaptureIntent())
+        binding.txtStatus.text = "اختر بدء مشاركة الشاشة الكاملة"
+        val captureIntent = if (Build.VERSION.SDK_INT >= 34) {
+            projectionManager.createScreenCaptureIntent(
+                MediaProjectionConfig.createConfigForDefaultDisplay()
+            )
+        } else {
+            projectionManager.createScreenCaptureIntent()
+        }
+        projectionLauncher.launch(captureIntent)
+    }
+
+    private fun beginCountdown() {
+        binding.btnStart.isEnabled = false
+        binding.btnStop.isEnabled = false
+
+        lifecycleScope.launch {
+            for (i in 3 downTo 1) {
+                binding.txtStatus.text = "سيبدأ تسجيل الشاشة خلال $i…"
+                delay(650)
+            }
+            startRecordingService()
+        }
+    }
+
+    private fun startRecordingService() {
+        val resultCode = pendingResultCode ?: return showError("فقدت موافقة تسجيل الشاشة")
+        val resultData = pendingResultData ?: return showError("فقدت بيانات موافقة تسجيل الشاشة")
+
+        ContextCompat.startForegroundService(
+            this,
+            Intent(this, ScreenRecordService::class.java).apply {
+                action = ScreenRecordService.ACTION_START
+                putExtra(ScreenRecordService.EXTRA_RESULT_CODE, resultCode)
+                putExtra(ScreenRecordService.EXTRA_RESULT_DATA, resultData as Parcelable)
+                putExtra(ScreenRecordService.EXTRA_MIC, binding.checkMic.isChecked)
+            }
+        )
+        pendingResultCode = null
+        pendingResultData = null
+        binding.txtStatus.text = "جارٍ التحقق من المسجل وبدء التسجيل…"
+    }
+
+    private fun setIdleUi() {
+        binding.btnStart.isEnabled = true
+        binding.btnStop.isEnabled = false
+        binding.recordingIndicator.visibility = android.view.View.GONE
+    }
+
+    private fun showError(message: String) {
+        binding.txtStatus.text = message
+        binding.txtOutput.text =
+            "لم يبدأ التسجيل. أعد المحاولة واختر مشاركة الشاشة عندما تظهر نافذة النظام."
     }
 }
