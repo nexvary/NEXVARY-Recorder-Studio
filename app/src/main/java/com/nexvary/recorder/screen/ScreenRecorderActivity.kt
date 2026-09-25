@@ -20,6 +20,7 @@ import com.nexvary.recorder.databinding.ActivityScreenRecorderBinding
 import com.nexvary.recorder.ui.ThemeManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.nexvary.recorder.ui.UiInsets
 
 class ScreenRecorderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScreenRecorderBinding
@@ -86,6 +87,7 @@ class ScreenRecorderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityScreenRecorderBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        UiInsets.apply(binding.root)
 
         projectionManager =
             getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
