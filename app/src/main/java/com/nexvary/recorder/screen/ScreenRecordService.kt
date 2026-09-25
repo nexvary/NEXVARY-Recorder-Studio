@@ -28,6 +28,7 @@ import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import com.nexvary.recorder.MainActivity
+import com.nexvary.recorder.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -87,7 +88,7 @@ class ScreenRecordService : Service() {
 
     private fun startRecording(intent: Intent) {
         if (isRecording || recorder != null) {
-            sendStatus(STATE_ERROR, "يوجد تسجيل شاشة يعمل بالفعل")
+            sendStatus(STATE_ERROR, getString(R.string.screen_already_running))
             return
         }
 
@@ -99,7 +100,7 @@ class ScreenRecordService : Service() {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(EXTRA_RESULT_DATA)
         } ?: run {
-            sendStatus(STATE_ERROR, "لم تصل موافقة مشاركة الشاشة")
+            sendStatus(STATE_ERROR, getString(R.string.screen_permission_data_missing))
             stopSelf()
             return
         }
@@ -112,11 +113,11 @@ class ScreenRecordService : Service() {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
             }
             if (Build.VERSION.SDK_INT >= 29) {
-                startForeground(NOTIFICATION_ID, notification("جارٍ تجهيز التسجيل…"), foregroundType)
+                startForeground(NOTIFICATION_ID, notification(getString(R.string.notification_recording_preparing)), foregroundType)
             } else {
-                startForeground(NOTIFICATION_ID, notification("جارٍ تجهيز التسجيل…"))
+                startForeground(NOTIFICATION_ID, notification(getString(R.string.notification_recording_preparing)))
             }
-            sendStatus(STATE_STARTING, "جارٍ تجهيز مسجل الشاشة…")
+            sendStatus(STATE_STARTING, getString(R.string.screen_preparing))
 
             val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val metrics = DisplayMetrics()
@@ -129,7 +130,7 @@ class ScreenRecordService : Service() {
                 .toInt()
 
             createOutput()
-            val fd = outputPfd?.fileDescriptor ?: error("تعذر إنشاء ملف MP4")
+            val fd = outputPfd?.fileDescriptor ?: error(getString(R.string.screen_file_create_fail))
 
             recorder = createRecorder().apply {
                 if (useMic) setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -152,7 +153,7 @@ class ScreenRecordService : Service() {
                 getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
             projection = projectionManager.getMediaProjection(resultCode, resultData)
-                ?: error("تعذر إنشاء جلسة MediaProjection")
+                ?: error(getString(R.string.screen_projection_create_fail))
 
             projection!!.registerCallback(projectionCallback, Handler(Looper.getMainLooper()))
 
@@ -165,17 +166,17 @@ class ScreenRecordService : Service() {
                 recorder!!.surface,
                 null,
                 Handler(Looper.getMainLooper())
-            ) ?: error("تعذر إنشاء شاشة التسجيل الافتراضية")
+            ) ?: error(getString(R.string.screen_virtual_display_fail))
 
             recorder!!.start()
             recorderStarted = true
             isRecording = true
 
             val sizeLabel = "${width}×${height}"
-            updateNotification("يسجل الشاشة الآن • $sizeLabel")
-            sendStatus(STATE_STARTED, "بدأ التسجيل بنجاح • $sizeLabel")
+            updateNotification(getString(R.string.notification_recording_size_format, sizeLabel))
+            sendStatus(STATE_STARTED, getString(R.string.screen_started_size_format, sizeLabel))
         } catch (e: Exception) {
-            abortRecording("فشل بدء التسجيل: ${e.message ?: e.javaClass.simpleName}")
+            abortRecording(getString(R.string.recording_failed))
         }
     }
 
@@ -191,9 +192,9 @@ class ScreenRecordService : Service() {
             put(MediaStore.Video.Media.IS_PENDING, 1)
         }
         outputUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
-            ?: error("تعذر حجز ملف الفيديو")
+            ?: error(getString(R.string.screen_file_create_fail))
         outputPfd = contentResolver.openFileDescriptor(outputUri!!, "w")
-            ?: error("تعذر فتح ملف الفيديو")
+            ?: error(getString(R.string.screen_file_open_fail))
     }
 
     private fun finishRecording(fromProjectionCallback: Boolean, userInitiated: Boolean) {
@@ -248,11 +249,11 @@ class ScreenRecordService : Service() {
             sendStatus(
                 STATE_STOPPED,
                 if (userInitiated && hadStarted) {
-                    "تم حفظ التسجيل في Movies/NEXVARY Recorder"
+                    getString(R.string.screen_stopped_saved)
                 } else if (hadStarted) {
-                    "انتهت جلسة مشاركة الشاشة وتم حفظ التسجيل"
+                    getString(R.string.screen_session_ended_saved)
                 } else {
-                    "توقفت جلسة التسجيل"
+                    getString(R.string.screen_session_stopped)
                 }
             )
             stopping = false
@@ -340,12 +341,12 @@ class ScreenRecordService : Service() {
         )
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.presence_video_online)
-            .setContentTitle("NEXVARY Recorder Studio")
+            .setContentTitle(getString(R.string.app_name))
             .setContentText(text)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setContentIntent(openPending)
-            .addAction(android.R.drawable.ic_media_pause, "إيقاف وحفظ", stopPending)
+            .addAction(android.R.drawable.ic_media_pause, getString(R.string.notification_stop_save), stopPending)
             .build()
     }
 
@@ -359,7 +360,7 @@ class ScreenRecordService : Service() {
             getSystemService(NotificationManager::class.java).createNotificationChannel(
                 NotificationChannel(
                     CHANNEL_ID,
-                    "Screen recording",
+                    getString(R.string.screen_record_title),
                     NotificationManager.IMPORTANCE_LOW
                 )
             )
