@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -36,8 +35,4 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.3")
     implementation("com.github.pedroSG94.RootEncoder:library:2.8.1")
-}
-
-kotlin {
-    jvmToolchain(17)
 }
