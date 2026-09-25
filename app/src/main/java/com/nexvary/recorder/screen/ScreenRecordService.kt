@@ -261,6 +261,8 @@ class ScreenRecordService : Service() {
     }
 
     private fun abortRecording(message: String) {
+        if (stopping) return
+        stopping = true
         val uri = outputUri
         recorderStarted = false
         isRecording = false
