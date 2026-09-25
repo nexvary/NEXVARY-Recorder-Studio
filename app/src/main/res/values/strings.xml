@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NEXVARY Recorder Studio</string>
+    <string name="screen_record">تسجيل الشاشة</string>
+    <string name="voice_studio">استوديو الصوت</string>
+    <string name="replace_audio">استبدال/إضافة الصوت للفيديو</string>
+    <string name="facebook_live">بث فيديو محفوظ كـ Live</string>
+</resources>
