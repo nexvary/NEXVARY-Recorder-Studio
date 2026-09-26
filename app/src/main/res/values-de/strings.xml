@@ -139,4 +139,6 @@
     <string name="theme_emerald">Smaragd</string>
     <string name="theme_purple">Violett</string>
     <string name="theme_amber">Bernstein</string>
+    <string name="choose_theme">Theme auswählen</string>
+    <string name="cancel">Abbrechen</string>
 </resources>
