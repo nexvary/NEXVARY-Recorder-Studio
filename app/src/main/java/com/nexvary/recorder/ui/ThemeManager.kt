@@ -16,27 +16,39 @@ object ThemeManager {
         R.style.Theme_NexvaryRecorder_Amber
     )
 
+    private val themeNames = intArrayOf(
+        R.string.theme_electric_blue,
+        R.string.theme_emerald,
+        R.string.theme_purple,
+        R.string.theme_amber
+    )
+
     fun apply(activity: Activity) {
-        val index = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        activity.setTheme(themes[currentIndex(activity)])
+    }
+
+    fun currentIndex(context: Context): Int {
+        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .getInt(KEY_THEME, 0)
             .coerceIn(themes.indices)
-        activity.setTheme(themes[index])
+    }
+
+    fun select(context: Context, index: Int) {
+        val safeIndex = index.coerceIn(themes.indices)
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit()
+            .putInt(KEY_THEME, safeIndex)
+            .apply()
     }
 
     fun cycle(context: Context): Int {
-        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val next = (prefs.getInt(KEY_THEME, 0) + 1) % themes.size
-        prefs.edit().putInt(KEY_THEME, next).apply()
+        val next = (currentIndex(context) + 1) % themes.size
+        select(context, next)
         return next
     }
 
+    fun themeNameResIds(): IntArray = themeNames.copyOf()
+
     @StringRes
-    fun currentNameRes(context: Context): Int {
-        return when (context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getInt(KEY_THEME, 0)) {
-            1 -> R.string.theme_emerald
-            2 -> R.string.theme_purple
-            3 -> R.string.theme_amber
-            else -> R.string.theme_electric_blue
-        }
-    }
+    fun currentNameRes(context: Context): Int = themeNames[currentIndex(context)]
 }
