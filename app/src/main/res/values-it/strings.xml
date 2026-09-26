@@ -139,4 +139,6 @@
     <string name="theme_emerald">Smeraldo</string>
     <string name="theme_purple">Viola</string>
     <string name="theme_amber">Ambra</string>
+    <string name="choose_theme">Scegli tema</string>
+    <string name="cancel">Annulla</string>
 </resources>
