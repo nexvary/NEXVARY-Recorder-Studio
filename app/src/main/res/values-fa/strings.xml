@@ -139,4 +139,6 @@
     <string name="theme_emerald">زمردی</string>
     <string name="theme_purple">بنفش</string>
     <string name="theme_amber">کهربایی</string>
+    <string name="choose_theme">انتخاب پوسته</string>
+    <string name="cancel">لغو</string>
 </resources>
