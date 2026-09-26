@@ -1,6 +1,9 @@
 package com.nexvary.recorder.audio
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import android.media.*
 import android.media.audiofx.AcousticEchoCanceler
 import android.media.audiofx.AutomaticGainControl
@@ -26,6 +29,13 @@ class ProfessionalAudioRecorder(private val context: Context) {
 
     fun start(): File {
         if (running.get()) error("Already recording")
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            throw SecurityException("RECORD_AUDIO permission is required")
+        }
         val min = AudioRecord.getMinBufferSize(
             SAMPLE_RATE,
             AudioFormat.CHANNEL_IN_MONO,

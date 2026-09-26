@@ -23,12 +23,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         UiInsets.apply(binding.root)
 
-        binding.txtThemeName.text = "الثيم الحالي: ${ThemeManager.currentName(this)}"
-        val versionName = packageManager
-            .getPackageInfo(packageName, 0)
-            .versionName
-            .orEmpty()
-        binding.txtVersion.text = "v$versionName"
+        val versionName = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
+        binding.txtVersion.text = getString(R.string.version_format, versionName)
+        binding.txtThemeName.text = getString(
+            R.string.theme_current_format,
+            getString(ThemeManager.currentNameRes(this))
+        )
 
         binding.themeHeader.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
@@ -47,6 +47,12 @@ class MainActivity : AppCompatActivity() {
         }
         binding.cardLive.setOnClickListener {
             startActivity(Intent(this, LiveBroadcastActivity::class.java))
+        }
+        binding.cardLanguage.setOnClickListener {
+            startActivity(Intent(this, LanguageActivity::class.java))
+        }
+        binding.cardAbout.setOnClickListener {
+            startActivity(Intent(this, AboutActivity::class.java))
         }
     }
 }

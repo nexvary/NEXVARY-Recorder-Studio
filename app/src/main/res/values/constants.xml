@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="facebook_server_default" translatable="false">rtmps://live-api-s.facebook.com:443/rtmp/</string>
+</resources>

@@ -12,14 +12,26 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="NEXVARY Recorder Studio"
+        android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.NexvaryRecorder.Blue">
 
+        <activity android:name=".AboutActivity" android:exported="false" />
+        <activity android:name=".LanguageActivity" android:exported="false" />
         <activity android:name=".live.LiveBroadcastActivity" android:exported="false" />
         <activity android:name=".media.AudioReplaceActivity" android:exported="false" />
         <activity android:name=".audio.VoiceRecorderActivity" android:exported="false" />
         <activity android:name=".screen.ScreenRecorderActivity" android:exported="false" />
+
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
 
         <service
             android:name=".live.LiveBroadcastService"

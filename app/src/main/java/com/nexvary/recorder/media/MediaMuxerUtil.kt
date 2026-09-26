@@ -84,7 +84,18 @@ object MediaMuxerUtil {
             if (size < 0) break
             val pts = extractor.sampleTime
             if (pts < 0 || pts > maxPtsUs) break
-            info.set(0, size, pts, extractor.sampleFlags)
+            val extractorFlags = extractor.sampleFlags
+            var codecFlags = 0
+            if ((extractorFlags and MediaExtractor.SAMPLE_FLAG_SYNC) != 0) {
+                codecFlags = codecFlags or MediaCodec.BUFFER_FLAG_KEY_FRAME
+            }
+            if (
+                android.os.Build.VERSION.SDK_INT >= 26 &&
+                (extractorFlags and MediaExtractor.SAMPLE_FLAG_PARTIAL_FRAME) != 0
+            ) {
+                codecFlags = codecFlags or MediaCodec.BUFFER_FLAG_PARTIAL_FRAME
+            }
+            info.set(0, size, pts, codecFlags)
             muxer.writeSampleData(outTrack, buffer, info)
             extractor.advance()
         }

@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="18dp"
-        android:layoutDirection="rtl">
+        android:padding="16dp">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/themeHeader"
@@ -21,8 +20,8 @@
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
-            app:cardCornerRadius="26dp"
-            app:cardElevation="8dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="6dp"
             app:strokeColor="?attr/nexvaryAccent"
             app:strokeWidth="1dp">
 
@@ -31,59 +30,53 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="18dp">
+                android:padding="16dp">
 
                 <ImageView
-                    android:layout_width="74dp"
-                    android:layout_height="74dp"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
                     android:src="@mipmap/ic_launcher"
-                    android:contentDescription="NEXVARY Recorder Studio" />
+                    android:contentDescription="@string/app_name" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingStart="14dp">
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="NEXVARY Recorder Studio"
+                        android:text="@string/app_name"
                         android:textColor="?attr/nexvaryText"
-                        android:textSize="23sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"
-                        android:gravity="end" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Screen • Voice • Dub • Live"
-                        android:textColor="?attr/nexvaryMuted"
-                        android:textSize="13sp"
-                        android:gravity="end" />
+                        android:gravity="start"
+                        android:textDirection="locale" />
 
                     <TextView
                         android:id="@+id/txtVersion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="v0.2.1"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/version_format"
                         android:textColor="?attr/nexvaryMuted"
                         android:textSize="11sp"
-                        android:gravity="end" />
+                        android:gravity="start"
+                        android:textDirection="locale" />
 
                     <TextView
                         android:id="@+id/txtThemeName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="اضغط أعلى الشاشة لتغيير اللون"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/theme_hint"
                         android:textColor="?attr/nexvaryAccent"
                         android:textSize="12sp"
                         android:textStyle="bold"
-                        android:gravity="end" />
+                        android:gravity="start"
+                        android:textDirection="locale" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -91,66 +84,42 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="18dp"
+            android:text="@string/home_subtitle"
+            android:textColor="?attr/nexvaryMuted"
+            android:textSize="14sp"
+            android:gravity="start"
+            android:textDirection="locale" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
             android:layout_marginBottom="10dp"
-            android:text="أدوات الاستوديو"
+            android:text="@string/studio_tools"
             android:textColor="?attr/nexvaryText"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:gravity="end" />
+            android:gravity="start"
+            android:textDirection="locale" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardScreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="10dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="18dp"
             app:strokeColor="?attr/nexvaryAccent"
             app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="58dp"
-                    android:layout_height="42dp"
-                    android:gravity="center"
-                    android:text="REC"
-                    android:textColor="?attr/nexvaryAccent"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="تسجيل الشاشة"
-                        android:textColor="?attr/nexvaryText"
-                        android:textStyle="bold"
-                        android:textSize="19sp"
-                        android:gravity="end" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="تسجيل H.264 مع اختيار دقة متوافقة وإيقاف من الإشعار"
-                        android:textColor="?attr/nexvaryMuted"
-                        android:textSize="13sp"
-                        android:gravity="end" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_screen" android:contentDescription="@string/screen_record_title" />
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/screen_record_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/screen_record_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -159,54 +128,19 @@
             android:id="@+id/cardVoice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="10dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="18dp"
             app:strokeColor="?attr/nexvaryAccent"
             app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="58dp"
-                    android:layout_height="42dp"
-                    android:gravity="center"
-                    android:text="48K"
-                    android:textColor="?attr/nexvaryAccent"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="استوديو الصوت"
-                        android:textColor="?attr/nexvaryText"
-                        android:textStyle="bold"
-                        android:textSize="19sp"
-                        android:gravity="end" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="48 kHz • تقليل ضوضاء • ضغط وتحسين • WAV"
-                        android:textColor="?attr/nexvaryMuted"
-                        android:textSize="13sp"
-                        android:gravity="end" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_mic" android:contentDescription="@string/voice_studio_title" />
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/voice_studio_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/voice_studio_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -215,54 +149,19 @@
             android:id="@+id/cardReplace"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="10dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="18dp"
             app:strokeColor="?attr/nexvaryAccent"
             app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="58dp"
-                    android:layout_height="42dp"
-                    android:gravity="center"
-                    android:text="DUB"
-                    android:textColor="?attr/nexvaryAccent"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="إضافة صوت إلى الفيديو"
-                        android:textColor="?attr/nexvaryText"
-                        android:textStyle="bold"
-                        android:textSize="19sp"
-                        android:gravity="end" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="استبدال الصوت الرديء بتسجيل محسن محليًا"
-                        android:textColor="?attr/nexvaryMuted"
-                        android:textSize="13sp"
-                        android:gravity="end" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_audio" android:contentDescription="@string/replace_audio_title" />
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/replace_audio_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/replace_audio_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -271,74 +170,69 @@
             android:id="@+id/cardLive"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="18dp"
             app:strokeColor="?attr/nexvaryAccent"
             app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="18dp">
-
-                <TextView
-                    android:layout_width="58dp"
-                    android:layout_height="42dp"
-                    android:gravity="center"
-                    android:text="LIVE"
-                    android:textColor="#EF4444"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="بث فيديو مسجل مسبقًا"
-                        android:textColor="?attr/nexvaryText"
-                        android:textStyle="bold"
-                        android:textSize="19sp"
-                        android:gravity="end" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="RTMP / RTMPS • Facebook Live • تشغيل من ملف"
-                        android:textColor="?attr/nexvaryMuted"
-                        android:textSize="13sp"
-                        android:gravity="end" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_live" android:contentDescription="@string/live_title" />
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/live_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/live_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardLanguage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
-            app:cardCornerRadius="18dp"
-            app:strokeWidth="0dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="بدون إعلانات  •  المعالجة محليًا  •  Android 10+"
-                android:textColor="?attr/nexvaryMuted"
-                android:textSize="12sp"
-                android:gravity="center" />
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="?attr/nexvarySurface"
+            app:cardCornerRadius="18dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_language" android:contentDescription="@string/language_title" />
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/language_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/language_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
+                </LinearLayout>
+            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardAbout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="?attr/nexvarySurface"
+            app:cardCornerRadius="18dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_info" android:contentDescription="@string/about_title" />
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/about_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/about_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:text="@string/privacy_footer"
+            android:textColor="?attr/nexvaryMuted"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:textDirection="locale" />
     </LinearLayout>
 </ScrollView>
