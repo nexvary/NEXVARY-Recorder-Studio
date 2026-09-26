@@ -26,6 +26,15 @@ class NavigationSmokeTest {
     }
 
     @Test
+    fun themePickerOpens() {
+        ActivityScenario.launch(MainActivity::class.java).use {
+            onView(withId(R.id.btnThemePicker)).check(matches(isDisplayed())).perform(click())
+            onView(androidx.test.espresso.matcher.ViewMatchers.withText(R.string.choose_theme))
+                .check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
     fun aboutAndLanguageControlsAreConnected() {
         ActivityScenario.launch(AboutActivity::class.java).use {
             onView(withId(R.id.btnBack)).check(matches(isDisplayed()))
