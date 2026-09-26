@@ -139,4 +139,6 @@
     <string name="theme_emerald">Изумрудный</string>
     <string name="theme_purple">Фиолетовый</string>
     <string name="theme_amber">Янтарный</string>
+    <string name="choose_theme">Выбрать тему</string>
+    <string name="cancel">Отмена</string>
 </resources>
