@@ -3,6 +3,7 @@ package com.nexvary.recorder
 import android.content.Intent
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import com.nexvary.recorder.audio.VoiceRecorderActivity
 import com.nexvary.recorder.databinding.ActivityMainBinding
@@ -32,8 +33,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.themeHeader.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
-            ThemeManager.cycle(this)
-            recreate()
+            showThemePicker()
+        }
+
+        binding.btnThemePicker.setOnClickListener { view ->
+            view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
+            showThemePicker()
         }
 
         binding.cardScreen.setOnClickListener {
@@ -54,5 +59,27 @@ class MainActivity : AppCompatActivity() {
         binding.cardAbout.setOnClickListener {
             startActivity(Intent(this, AboutActivity::class.java))
         }
+    }
+
+    private fun showThemePicker() {
+        val nameResIds = ThemeManager.themeNameResIds()
+        val labels = nameResIds.map { getString(it) }.toTypedArray()
+        val current = ThemeManager.currentIndex(this)
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.choose_theme)
+            .setSingleChoiceItems(labels, current) { activeDialog, which ->
+                if (which != current) {
+                    ThemeManager.select(this, which)
+                    activeDialog.dismiss()
+                    recreate()
+                } else {
+                    activeDialog.dismiss()
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .create()
+
+        dialog.show()
     }
 }
