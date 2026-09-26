@@ -139,4 +139,6 @@
     <string name="theme_emerald">Zümrüt</string>
     <string name="theme_purple">Mor</string>
     <string name="theme_amber">Kehribar</string>
+    <string name="choose_theme">Tema seç</string>
+    <string name="cancel">İptal</string>
 </resources>
