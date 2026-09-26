@@ -72,11 +72,34 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/theme_hint"
-                        android:textColor="?attr/nexvaryAccent"
+                        android:textColor="?attr/nexvaryMuted"
                         android:textSize="12sp"
-                        android:textStyle="bold"
                         android:gravity="start"
                         android:textDirection="locale" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnThemePicker"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_gravity="start"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:text="@string/choose_theme"
+                        android:textAllCaps="false"
+                        android:textSize="12sp"
+                        android:textColor="?attr/nexvaryAccent"
+                        app:icon="@drawable/ic_palette"
+                        app:iconGravity="textStart"
+                        app:iconPadding="6dp"
+                        app:iconSize="18dp"
+                        app:iconTint="?attr/nexvaryAccent"
+                        app:strokeColor="?attr/nexvaryAccent"
+                        app:strokeWidth="1dp"
+                        app:cornerRadius="20dp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
