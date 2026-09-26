@@ -139,4 +139,6 @@
     <string name="theme_emerald">زمردي</string>
     <string name="theme_purple">بنفسجي</string>
     <string name="theme_amber">كهرماني</string>
+    <string name="choose_theme">اختار الثيم</string>
+    <string name="cancel">إلغاء</string>
 </resources>
