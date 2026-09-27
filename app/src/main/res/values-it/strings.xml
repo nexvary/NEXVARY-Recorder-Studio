@@ -178,7 +178,4 @@
     <string name="screen_projection_stopped_immediately">Android ha interrotto subito la condivisione. Scegli Schermo intero ed evita finestre protette.</string>
     <string name="save_folder_help">Puoi scegliere qualsiasi cartella scrivibile; sarà ricordata per le registrazioni future.</string>
     <string name="quick_record_tile">Registratore schermo</string>
-    <string name="record_fg_link">Registra FG Link</string>
-    <string name="record_fg_link_help">Avvia la registrazione e apre FG Machines Link automaticamente. Seleziona FG Link nella finestra Android.</string>
-    <string name="fg_link_not_installed">FG Link non è installato su questo dispositivo.</string>
 </resources>
