@@ -141,4 +141,18 @@
     <string name="theme_amber">Bernstein</string>
     <string name="choose_theme">Theme auswählen</string>
     <string name="cancel">Abbrechen</string>
+    <string name="theme_cyan">Cyan</string>
+    <string name="theme_teal">Türkis</string>
+    <string name="theme_lime">Limette</string>
+    <string name="theme_rose">Rosa</string>
+    <string name="theme_crimson">Karmesin</string>
+    <string name="theme_orange">Orange</string>
+    <string name="theme_indigo">Indigo</string>
+    <string name="theme_silver">Silber</string>
+    <string name="nav_home">Start</string>
+    <string name="nav_screen">Bildschirm</string>
+    <string name="nav_voice">Stimme</string>
+    <string name="nav_live">Live</string>
+    <string name="nav_more">Mehr</string>
+    <string name="main_menu_title">Hauptmenü</string>
 </resources>
