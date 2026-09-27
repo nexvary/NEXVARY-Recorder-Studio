@@ -141,4 +141,18 @@
     <string name="theme_amber">Янтарный</string>
     <string name="choose_theme">Выбрать тему</string>
     <string name="cancel">Отмена</string>
+    <string name="theme_cyan">Циан</string>
+    <string name="theme_teal">Бирюзовый</string>
+    <string name="theme_lime">Лайм</string>
+    <string name="theme_rose">Розовый</string>
+    <string name="theme_crimson">Малиновый</string>
+    <string name="theme_orange">Оранжевый</string>
+    <string name="theme_indigo">Индиго</string>
+    <string name="theme_silver">Серебряный</string>
+    <string name="nav_home">Главная</string>
+    <string name="nav_screen">Экран</string>
+    <string name="nav_voice">Голос</string>
+    <string name="nav_live">Эфир</string>
+    <string name="nav_more">Ещё</string>
+    <string name="main_menu_title">Главное меню</string>
 </resources>
