@@ -173,7 +173,7 @@ if audio_converter.exists():
 
 if video_tools.exists():
     text_video = video_tools.read_text(encoding="utf-8")
-    for symbol in ["Container.MP4", "Container.THREE_GPP", "Container.WEBM", "fun trim("]:
+    for symbol in ["MP4(", "THREE_GPP(", "WEBM(", "fun trim("]:
         if symbol not in text_video:
             errors.append(f"Video tools feature missing: {symbol}")
 
