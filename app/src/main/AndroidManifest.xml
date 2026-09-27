@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <queries>
-        <package android:name="com.fgmachines.rck" />
-    </queries>
-    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+<uses-feature android:name="android.hardware.camera.any" android:required="false" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -28,6 +25,7 @@
         <activity android:name=".AboutActivity" android:exported="false" />
         <activity android:name=".LanguageActivity" android:exported="false" />
         <activity android:name=".live.LiveBroadcastActivity" android:exported="false" />
+        <activity android:name=".media.MediaToolsActivity" android:exported="false" />
         <activity android:name=".media.AudioReplaceActivity" android:exported="false" />
         <activity android:name=".audio.VoiceRecorderActivity" android:exported="false" />
         <activity android:name=".screen.ScreenRecorderActivity" android:exported="false" />

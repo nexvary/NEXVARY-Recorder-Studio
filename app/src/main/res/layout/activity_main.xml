@@ -278,13 +278,13 @@
                             android:layout_height="46dp"
                             android:padding="7dp"
                             android:src="@drawable/ic_feature_audio"
-                            android:contentDescription="@string/replace_audio_title" />
+                            android:contentDescription="@string/media_tools_title" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:text="@string/replace_audio_title"
+                            android:text="@string/media_tools_title"
                             android:textColor="?attr/nexvaryText"
                             android:textSize="16sp"
                             android:textStyle="bold"
@@ -297,7 +297,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="@string/replace_audio_desc"
+                            android:text="@string/media_tools_desc"
                             android:textColor="?attr/nexvaryMuted"
                             android:textSize="10sp"
                             android:maxLines="2"

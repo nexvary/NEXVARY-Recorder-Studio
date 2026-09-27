@@ -48,7 +48,7 @@ class NavigationSmokeTest {
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
             onView(withId(R.id.navMore)).perform(click())
-            onView(withText(R.string.replace_audio_title)).check(matches(isDisplayed())).perform(click())
+            onView(withText(R.string.media_tools_title)).check(matches(isDisplayed())).perform(click())
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
         }
     }
@@ -75,13 +75,33 @@ class NavigationSmokeTest {
             onView(withId(R.id.groupCountdown)).check(matches(isDisplayed()))
             onView(withId(R.id.btnStorage))
                 .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-            onView(withId(R.id.btnRecordFgLink))
-                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
             onView(withId(R.id.btnStart))
                 .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
             onView(withId(R.id.btnPauseResume))
                 .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
             onView(withId(R.id.btnStop))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        }
+    }
+
+    @Test
+    fun mediaToolsControlsAreConnected() {
+        ActivityScenario.launch(
+            com.nexvary.recorder.media.MediaToolsActivity::class.java
+        ).use {
+            onView(withId(R.id.btnBack))
+                .check(matches(isDisplayed()))
+            onView(withId(R.id.btnReplaceAudio))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnChooseAudio))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnConvertAudio))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnChooseVideo))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnTrimVideo))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnConvertVideo))
                 .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
         }
     }

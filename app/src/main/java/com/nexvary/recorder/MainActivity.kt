@@ -8,7 +8,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.nexvary.recorder.audio.VoiceRecorderActivity
 import com.nexvary.recorder.databinding.ActivityMainBinding
 import com.nexvary.recorder.live.LiveBroadcastActivity
-import com.nexvary.recorder.media.AudioReplaceActivity
+import com.nexvary.recorder.media.MediaToolsActivity
 import com.nexvary.recorder.screen.ScreenRecorderActivity
 import com.nexvary.recorder.ui.ThemeManager
 import com.nexvary.recorder.ui.UiInsets
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.cardScreen.setOnClickListener { openScreenRecorder() }
         binding.cardVoice.setOnClickListener { openVoiceStudio() }
-        binding.cardReplace.setOnClickListener { openAudioReplace() }
+        binding.cardReplace.setOnClickListener { openMediaTools() }
         binding.cardLive.setOnClickListener { openLiveBroadcast() }
 
         binding.bottomNav.selectedItemId = R.id.navHome
@@ -79,8 +79,8 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, VoiceRecorderActivity::class.java))
     }
 
-    private fun openAudioReplace() {
-        startActivity(Intent(this, AudioReplaceActivity::class.java))
+    private fun openMediaTools() {
+        startActivity(Intent(this, MediaToolsActivity::class.java))
     }
 
     private fun openLiveBroadcast() {
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showMoreMenu() {
         val labels = arrayOf(
-            getString(R.string.replace_audio_title),
+            getString(R.string.media_tools_title),
             getString(R.string.language_title),
             getString(R.string.about_title),
             getString(R.string.choose_theme)
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle(R.string.nav_more)
             .setItems(labels) { _, which ->
                 when (which) {
-                    0 -> openAudioReplace()
+                    0 -> openMediaTools()
                     1 -> startActivity(Intent(this, LanguageActivity::class.java))
                     2 -> startActivity(Intent(this, AboutActivity::class.java))
                     3 -> showThemePicker()
