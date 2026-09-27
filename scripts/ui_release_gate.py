@@ -116,8 +116,8 @@ if theme_manager.count("R.style.Theme_NexvaryRecorder_") < 12:
 # v0.5.0 recorder-core invariants.
 screen_activity = (SRC / "com" / "nexvary" / "recorder" / "screen" / "ScreenRecorderActivity.kt").read_text(encoding="utf-8")
 screen_service = (SRC / "com" / "nexvary" / "recorder" / "screen" / "ScreenRecordService.kt").read_text(encoding="utf-8")
-screen_layout = (LAYOUT / "activity_screen_recorder.xml").read_text(encoding="utf-8")
-manifest_text = (APP / "src" / "main" / "AndroidManifest.xml").read_text(encoding="utf-8")
+screen_layout = (layout_dir / "activity_screen_recorder.xml").read_text(encoding="utf-8")
+manifest_text = MANIFEST.read_text(encoding="utf-8")
 
 if "moveTaskToBack(" in screen_activity:
     errors.append("Screen recorder must not auto-minimize after projection starts")
