@@ -177,4 +177,5 @@
     <string name="recorder_options">کنترل‌های ضبط</string>
     <string name="screen_projection_stopped_immediately">اندروید اشتراک صفحه را فوراً متوقف کرد. صفحه کامل را انتخاب کنید و از پنجره‌های محافظت‌شده دوری کنید.</string>
     <string name="save_folder_help">می‌توانید هر پوشه قابل‌نوشتن را انتخاب کنید؛ برای ضبط‌های بعدی ذخیره می‌شود.</string>
+    <string name="quick_record_tile">ضبط صفحه</string>
 </resources>
