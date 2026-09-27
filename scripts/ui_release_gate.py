@@ -98,6 +98,20 @@ for ident in sorted(action_ids):
     if f"binding.{ident}.setOnClickListener" not in all_source:
         errors.append(f"Dead-action risk: {ident} has no binding listener")
 
+
+# v0.4.0: all 12 runtime palettes must remain registered.
+theme_manager = (SRC / "ui" / "ThemeManager.kt").read_text(encoding="utf-8")
+required_theme_names = [
+    "theme_electric_blue", "theme_emerald", "theme_purple", "theme_amber",
+    "theme_cyan", "theme_teal", "theme_lime", "theme_rose",
+    "theme_crimson", "theme_orange", "theme_indigo", "theme_silver",
+]
+for theme_name in required_theme_names:
+    if f"R.string.{theme_name}" not in theme_manager:
+        errors.append(f"Missing registered runtime theme: {theme_name}")
+if theme_manager.count("R.style.Theme_NexvaryRecorder_") < 12:
+    errors.append("ThemeManager must register at least 12 runtime theme styles")
+
 expected_activities = [
     ".MainActivity",
     ".AboutActivity",
