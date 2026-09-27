@@ -141,4 +141,18 @@
     <string name="theme_amber">Ámbar</string>
     <string name="choose_theme">Elegir tema</string>
     <string name="cancel">Cancelar</string>
+    <string name="theme_cyan">Cian</string>
+    <string name="theme_teal">Verde azulado</string>
+    <string name="theme_lime">Lima</string>
+    <string name="theme_rose">Rosa</string>
+    <string name="theme_crimson">Carmesí</string>
+    <string name="theme_orange">Naranja</string>
+    <string name="theme_indigo">Índigo</string>
+    <string name="theme_silver">Plata</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_screen">Pantalla</string>
+    <string name="nav_voice">Voz</string>
+    <string name="nav_live">En vivo</string>
+    <string name="nav_more">Más</string>
+    <string name="main_menu_title">Menú principal</string>
 </resources>
