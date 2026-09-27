@@ -259,13 +259,23 @@ class ScreenRecordService : Service() {
             }
 
             if (floatingRequested) {
-                floatingOverlay = FloatingRecorderOverlay(this) {
-                    startService(
-                        Intent(this, ScreenRecordService::class.java).apply {
-                            action = ACTION_STOP
-                        }
-                    )
-                }.also { it.show() }
+                floatingOverlay = FloatingRecorderOverlay(
+                    this,
+                    onPauseResumeRequested = {
+                        startService(
+                            Intent(this, ScreenRecordService::class.java).apply {
+                                action = if (isPaused) ACTION_RESUME else ACTION_PAUSE
+                            }
+                        )
+                    },
+                    onStopRequested = {
+                        startService(
+                            Intent(this, ScreenRecordService::class.java).apply {
+                                action = ACTION_STOP
+                            }
+                        )
+                    }
+                ).also { it.show() }
             }
 
             if (useCamera && Settings.canDrawOverlays(this)) {
@@ -457,6 +467,7 @@ class ScreenRecordService : Service() {
         runCatching { recorder?.pause() }
             .onSuccess {
                 isPaused = true
+                floatingOverlay?.updatePaused(true)
                 updateNotification(getString(R.string.recording_paused))
                 sendStatus(STATE_PAUSED, getString(R.string.recording_paused))
             }
@@ -471,6 +482,7 @@ class ScreenRecordService : Service() {
         runCatching { recorder?.resume() }
             .onSuccess {
                 isPaused = false
+                floatingOverlay?.updatePaused(false)
                 updateNotification(getString(R.string.recording_resumed))
                 sendStatus(STATE_RESUMED, getString(R.string.recording_resumed))
             }
