@@ -180,4 +180,5 @@
     <string name="quick_record_tile">اسکرین ریکارڈر</string>
     <string name="record_fg_link">FG Link ریکارڈ کریں</string>
     <string name="record_fg_link_help">اسکرین ریکارڈنگ شروع کرتا ہے اور FG Machines Link خود کھولتا ہے۔ اینڈرائیڈ شیئرنگ میں FG Link منتخب کریں۔</string>
+    <string name="fg_link_not_installed">FG Link اس ڈیوائس پر انسٹال نہیں ہے۔</string>
 </resources>
