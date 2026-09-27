@@ -25,6 +25,7 @@
         <activity android:name=".AboutActivity" android:exported="false" />
         <activity android:name=".LanguageActivity" android:exported="false" />
         <activity android:name=".live.LiveBroadcastActivity" android:exported="false" />
+        <activity android:name=".media.MediaToolsActivity" android:exported="false" />
         <activity android:name=".media.AudioReplaceActivity" android:exported="false" />
         <activity android:name=".audio.VoiceRecorderActivity" android:exported="false" />
         <activity android:name=".screen.ScreenRecorderActivity" android:exported="false" />
