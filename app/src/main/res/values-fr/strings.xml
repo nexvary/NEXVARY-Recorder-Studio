@@ -178,4 +178,6 @@
     <string name="screen_projection_stopped_immediately">Android a arrêté immédiatement le partage. Choisissez Écran entier et évitez les fenêtres protégées.</string>
     <string name="save_folder_help">Vous pouvez choisir tout dossier accessible en écriture; il sera mémorisé.</string>
     <string name="quick_record_tile">Enregistreur d’écran</string>
+    <string name="record_fg_link">Enregistrer FG Link</string>
+    <string name="record_fg_link_help">Démarre la capture et ouvre FG Machines Link automatiquement. Choisissez FG Link dans la fenêtre Android.</string>
 </resources>
