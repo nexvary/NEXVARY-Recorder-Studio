@@ -177,4 +177,5 @@
     <string name="recorder_options">Commandes d’enregistrement</string>
     <string name="screen_projection_stopped_immediately">Android a arrêté immédiatement le partage. Choisissez Écran entier et évitez les fenêtres protégées.</string>
     <string name="save_folder_help">Vous pouvez choisir tout dossier accessible en écriture; il sera mémorisé.</string>
+    <string name="quick_record_tile">Enregistreur d’écran</string>
 </resources>
