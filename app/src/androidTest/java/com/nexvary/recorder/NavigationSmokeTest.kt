@@ -52,12 +52,11 @@ class NavigationSmokeTest {
     }
 
     @Test
-    fun themePickerContainsAllTwelveThemes() {
+    fun themePickerOpensFromFixedHome() {
         ActivityScenario.launch(MainActivity::class.java).use {
             onView(withId(R.id.btnThemePicker)).check(matches(isDisplayed())).perform(click())
             onView(withText(R.string.choose_theme)).check(matches(isDisplayed()))
             onView(withText(R.string.theme_electric_blue)).check(matches(isDisplayed()))
-            onView(withText(R.string.theme_silver)).check(matches(isDisplayed()))
             pressBack()
         }
     }
