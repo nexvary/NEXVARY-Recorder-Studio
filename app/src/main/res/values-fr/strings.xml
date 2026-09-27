@@ -180,4 +180,5 @@
     <string name="quick_record_tile">Enregistreur d’écran</string>
     <string name="record_fg_link">Enregistrer FG Link</string>
     <string name="record_fg_link_help">Démarre la capture et ouvre FG Machines Link automatiquement. Choisissez FG Link dans la fenêtre Android.</string>
+    <string name="fg_link_not_installed">FG Link n’est pas installé sur cet appareil.</string>
 </resources>
