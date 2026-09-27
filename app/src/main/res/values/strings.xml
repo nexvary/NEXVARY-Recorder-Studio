@@ -178,7 +178,4 @@
     <string name="screen_projection_stopped_immediately">Android stopped screen sharing immediately. Do not choose a protected/sensitive window; try Entire screen in the system sharing dialog.</string>
     <string name="save_folder_help">You can choose any writable folder. The choice is remembered for future recordings.</string>
     <string name="quick_record_tile">Screen recorder</string>
-    <string name="record_fg_link">Record FG Link</string>
-    <string name="record_fg_link_help">Starts screen capture and opens FG Machines Link automatically. Choose FG Link in the Android sharing dialog.</string>
-    <string name="fg_link_not_installed">FG Link is not installed on this device.</string>
 </resources>
