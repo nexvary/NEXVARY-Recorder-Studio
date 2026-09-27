@@ -180,4 +180,5 @@
     <string name="quick_record_tile">Screen recorder</string>
     <string name="record_fg_link">Record FG Link</string>
     <string name="record_fg_link_help">Starts screen capture and opens FG Machines Link automatically. Choose FG Link in Android's sharing dialog.</string>
+    <string name="fg_link_not_installed">FG Link is not installed on this device.</string>
 </resources>
