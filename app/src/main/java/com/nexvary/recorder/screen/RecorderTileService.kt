@@ -1,5 +1,6 @@
 package com.nexvary.recorder.screen
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.service.quicksettings.Tile
@@ -15,6 +16,7 @@ class RecorderTileService : TileService() {
         qsTile?.updateTile()
     }
 
+    @SuppressLint("StartActivityAndCollapseDeprecated")
     override fun onClick() {
         super.onClick()
 
