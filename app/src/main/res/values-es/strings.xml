@@ -178,7 +178,4 @@
     <string name="screen_projection_stopped_immediately">Android detuvo la pantalla compartida inmediatamente. Elige Toda la pantalla y evita ventanas protegidas.</string>
     <string name="save_folder_help">Puedes elegir cualquier carpeta con escritura; se recordará para futuras grabaciones.</string>
     <string name="quick_record_tile">Grabador de pantalla</string>
-    <string name="record_fg_link">Grabar FG Link</string>
-    <string name="record_fg_link_help">Inicia la captura y abre FG Machines Link automáticamente. Elige FG Link en el diálogo de Android.</string>
-    <string name="fg_link_not_installed">FG Link no está instalado en este dispositivo.</string>
 </resources>
