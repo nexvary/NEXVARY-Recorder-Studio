@@ -180,4 +180,5 @@
     <string name="quick_record_tile">Bildschirmaufnahme</string>
     <string name="record_fg_link">FG Link aufnehmen</string>
     <string name="record_fg_link_help">Startet die Bildschirmaufnahme und öffnet FG Machines Link automatisch. Wähle FG Link im Android-Dialog.</string>
+    <string name="fg_link_not_installed">FG Link ist auf diesem Gerät nicht installiert.</string>
 </resources>
