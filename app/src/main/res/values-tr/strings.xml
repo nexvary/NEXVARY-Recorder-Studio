@@ -155,4 +155,26 @@
     <string name="nav_live">Canlı</string>
     <string name="nav_more">Daha fazla</string>
     <string name="main_menu_title">Ana menü</string>
+    <string name="floating_control">Yüzen kontrol</string>
+    <string name="floating_control_desc">Yüzen ekran kaydedici kontrolü</string>
+    <string name="show_touches">Kayıt sırasında dokunuşları göster</string>
+    <string name="camera_overlay">Yüzen ön kamera</string>
+    <string name="choose_save_folder">Kayıt klasörünü seç</string>
+    <string name="default_save_folder">Varsayılan: Movies/NEXVARY Recorder</string>
+    <string name="custom_save_folder_format">Kayıt klasörü: %1$s</string>
+    <string name="countdown_title">Geri sayım</string>
+    <string name="countdown_0">Kapalı</string>
+    <string name="countdown_3">3 sn</string>
+    <string name="countdown_5">5 sn</string>
+    <string name="countdown_10">10 sn</string>
+    <string name="pause_recording">Duraklat</string>
+    <string name="resume_recording">Devam et</string>
+    <string name="recording_paused">Kayıt duraklatıldı</string>
+    <string name="recording_resumed">Kayıt devam ediyor</string>
+    <string name="overlay_permission_required">Yüzen kontroller için diğer uygulamaların üzerinde gösterme izni verin.</string>
+    <string name="write_settings_permission_required">Dokunma göstergeleri için sistem ayarlarını değiştirme izni verin.</string>
+    <string name="camera_permission_required">Yüzen kamera için kamera izni gerekir.</string>
+    <string name="recorder_options">Kayıt kontrolleri</string>
+    <string name="screen_projection_stopped_immediately">Android ekran paylaşımını hemen durdurdu. Sistem paylaşım penceresinde Tüm ekranı seçin ve korumalı pencerelerden kaçının.</string>
+    <string name="save_folder_help">Yazılabilir herhangi bir klasör seçebilirsiniz; sonraki kayıtlar için hatırlanır.</string>
 </resources>
