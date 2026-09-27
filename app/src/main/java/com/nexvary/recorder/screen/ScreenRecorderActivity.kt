@@ -27,6 +27,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ScreenRecorderActivity : AppCompatActivity() {
+    companion object {
+        private const val FG_LINK_PACKAGE = "com.fgmachines.rck"
+    }
+
     private lateinit var binding: ActivityScreenRecorderBinding
     private lateinit var projectionManager: MediaProjectionManager
 
