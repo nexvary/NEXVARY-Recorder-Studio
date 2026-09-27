@@ -178,7 +178,4 @@
     <string name="screen_projection_stopped_immediately">Android hat die Bildschirmfreigabe sofort beendet. Wähle Gesamter Bildschirm und vermeide geschützte Fenster.</string>
     <string name="save_folder_help">Du kannst jeden beschreibbaren Ordner wählen; er wird für weitere Aufnahmen gespeichert.</string>
     <string name="quick_record_tile">Bildschirmaufnahme</string>
-    <string name="record_fg_link">FG Link aufnehmen</string>
-    <string name="record_fg_link_help">Startet die Bildschirmaufnahme und öffnet FG Machines Link automatisch. Wähle FG Link im Android-Dialog.</string>
-    <string name="fg_link_not_installed">FG Link ist auf diesem Gerät nicht installiert.</string>
 </resources>
