@@ -62,6 +62,23 @@ class NavigationSmokeTest {
     }
 
     @Test
+    fun screenRecorderProfessionalControlsExist() {
+        ActivityScenario.launch(
+            com.nexvary.recorder.screen.ScreenRecorderActivity::class.java
+        ).use {
+            onView(withId(R.id.switchMic)).check(matches(isDisplayed()))
+            onView(withId(R.id.switchFloating)).check(matches(isDisplayed()))
+            onView(withId(R.id.switchTouches)).check(matches(isDisplayed()))
+            onView(withId(R.id.switchCamera)).check(matches(isDisplayed()))
+            onView(withId(R.id.groupCountdown)).check(matches(isDisplayed()))
+            onView(withId(R.id.btnStorage)).check(matches(isDisplayed()))
+            onView(withId(R.id.btnStart)).check(matches(isDisplayed()))
+            onView(withId(R.id.btnPauseResume)).check(matches(isDisplayed()))
+            onView(withId(R.id.btnStop)).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
     fun aboutAndLanguageControlsAreConnected() {
         ActivityScenario.launch(AboutActivity::class.java).use {
             onView(withId(R.id.btnBack)).check(matches(isDisplayed()))
