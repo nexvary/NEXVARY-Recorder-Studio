@@ -1,40 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/nexvaryBackground"
-    android:fillViewport="true">
+    android:orientation="vertical"
+    android:background="?attr/nexvaryBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="14dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="10dp">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/themeHeader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
+            android:layout_height="92dp"
             app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="6dp"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="5dp"
             app:strokeColor="?attr/nexvaryAccent"
             app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="16dp">
+                android:padding="12dp">
 
                 <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
                     android:src="@mipmap/ic_launcher"
                     android:contentDescription="@string/app_name" />
 
@@ -42,7 +43,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="14dp"
+                    android:layout_marginStart="12dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -50,8 +51,10 @@
                         android:layout_height="wrap_content"
                         android:text="@string/app_name"
                         android:textColor="?attr/nexvaryText"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:gravity="start"
                         android:textDirection="locale" />
 
@@ -59,10 +62,10 @@
                         android:id="@+id/txtVersion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="3dp"
                         android:text="@string/version_format"
                         android:textColor="?attr/nexvaryMuted"
-                        android:textSize="11sp"
+                        android:textSize="10sp"
                         android:gravity="start"
                         android:textDirection="locale" />
 
@@ -70,192 +73,310 @@
                         android:id="@+id/txtThemeName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="3dp"
                         android:text="@string/theme_hint"
-                        android:textColor="?attr/nexvaryMuted"
-                        android:textSize="12sp"
+                        android:textColor="?attr/nexvaryAccent"
+                        android:textSize="11sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:gravity="start"
                         android:textDirection="locale" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnThemePicker"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_gravity="start"
-                        android:minWidth="0dp"
-                        android:minHeight="0dp"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="@string/choose_theme"
-                        android:textAllCaps="false"
-                        android:textSize="12sp"
-                        android:textColor="?attr/nexvaryAccent"
-                        app:icon="@drawable/ic_palette"
-                        app:iconGravity="textStart"
-                        app:iconPadding="6dp"
-                        app:iconSize="18dp"
-                        app:iconTint="?attr/nexvaryAccent"
-                        app:strokeColor="?attr/nexvaryAccent"
-                        app:strokeWidth="1dp"
-                        app:cornerRadius="20dp" />
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnThemePicker"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/choose_theme"
+                    android:textAllCaps="false"
+                    android:textSize="11sp"
+                    android:textColor="?attr/nexvaryAccent"
+                    app:icon="@drawable/ic_palette"
+                    app:iconGravity="textStart"
+                    app:iconPadding="5dp"
+                    app:iconSize="17dp"
+                    app:iconTint="?attr/nexvaryAccent"
+                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="20dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="@string/home_subtitle"
-            android:textColor="?attr/nexvaryMuted"
-            android:textSize="14sp"
-            android:gravity="start"
-            android:textDirection="locale" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/studio_tools"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/main_menu_title"
             android:textColor="?attr/nexvaryText"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="start"
             android:textDirection="locale" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardScreen"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="18dp"
-            app:strokeColor="?attr/nexvaryAccent"
-            app:strokeWidth="1dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
-                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_screen" android:contentDescription="@string/screen_record_title" />
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/screen_record_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/screen_record_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardVoice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="18dp"
-            app:strokeColor="?attr/nexvaryAccent"
-            app:strokeWidth="1dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
-                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_mic" android:contentDescription="@string/voice_studio_title" />
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/voice_studio_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/voice_studio_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardReplace"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="18dp"
-            app:strokeColor="?attr/nexvaryAccent"
-            app:strokeWidth="1dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
-                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_audio" android:contentDescription="@string/replace_audio_title" />
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/replace_audio_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/replace_audio_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardScreen"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardCornerRadius="18dp"
+                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeWidth="1dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardLive"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="18dp"
-            app:strokeColor="?attr/nexvaryAccent"
-            app:strokeWidth="1dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
-                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_live" android:contentDescription="@string/live_title" />
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/live_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/live_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="18dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
-                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_language" android:contentDescription="@string/language_title" />
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/language_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/language_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                        <ImageView
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_feature_screen"
+                            android:contentDescription="@string/screen_record_title" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardAbout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="?attr/nexvarySurface"
-            app:cardCornerRadius="18dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
-                <ImageView android:layout_width="48dp" android:layout_height="48dp" android:padding="8dp" android:src="@drawable/ic_feature_info" android:contentDescription="@string/about_title" />
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/about_title" android:textColor="?attr/nexvaryText" android:textStyle="bold" android:textSize="18sp" android:gravity="start" android:textDirection="locale" />
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="@string/about_desc" android:textColor="?attr/nexvaryMuted" android:textSize="12sp" android:gravity="start" android:textDirection="locale" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:text="@string/screen_record_title"
+                            android:textColor="?attr/nexvaryText"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:textDirection="locale" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="14dp"
-            android:text="@string/privacy_footer"
-            android:textColor="?attr/nexvaryMuted"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:textDirection="locale" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/screen_record_desc"
+                            android:textColor="?attr/nexvaryMuted"
+                            android:textSize="10sp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:textDirection="locale" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardVoice"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardCornerRadius="18dp"
+                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_feature_mic"
+                            android:contentDescription="@string/voice_studio_title" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:text="@string/voice_studio_title"
+                            android:textColor="?attr/nexvaryText"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:textDirection="locale" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/voice_studio_desc"
+                            android:textColor="?attr/nexvaryMuted"
+                            android:textSize="10sp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:textDirection="locale" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardReplace"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="5dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardCornerRadius="18dp"
+                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_feature_audio"
+                            android:contentDescription="@string/replace_audio_title" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:text="@string/replace_audio_title"
+                            android:textColor="?attr/nexvaryText"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:textDirection="locale" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/replace_audio_desc"
+                            android:textColor="?attr/nexvaryMuted"
+                            android:textSize="10sp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:textDirection="locale" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardLive"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardCornerRadius="18dp"
+                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+
+                        <ImageView
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_feature_live"
+                            android:contentDescription="@string/live_title" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:text="@string/live_title"
+                            android:textColor="?attr/nexvaryText"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:textDirection="locale" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/live_desc"
+                            android:textColor="?attr/nexvaryMuted"
+                            android:textSize="10sp"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:textDirection="locale" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-</ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:background="?attr/nexvarySurfaceStrong"
+        app:itemIconSize="25dp"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:itemTextAppearanceActive="@style/TextAppearance.MaterialComponents.Caption"
+        app:itemTextAppearanceInactive="@style/TextAppearance.MaterialComponents.Caption"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/main_bottom_nav" />
+</LinearLayout>
