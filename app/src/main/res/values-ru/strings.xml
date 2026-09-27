@@ -177,4 +177,5 @@
     <string name="recorder_options">Управление записью</string>
     <string name="screen_projection_stopped_immediately">Android сразу остановил демонстрацию экрана. Выберите Весь экран и избегайте защищённых окон.</string>
     <string name="save_folder_help">Можно выбрать любую доступную для записи папку; выбор сохранится для будущих записей.</string>
+    <string name="quick_record_tile">Запись экрана</string>
 </resources>
