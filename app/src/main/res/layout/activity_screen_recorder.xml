@@ -211,39 +211,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
-            app:cardCornerRadius="18dp"
-            app:strokeColor="?attr/nexvaryAccent"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="14dp">
-
-                <Button
-                    android:id="@+id/btnRecordFgLink"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="@string/record_fg_link" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="@string/record_fg_link_help"
-                    android:textColor="?attr/nexvaryMuted"
-                    android:textSize="11sp"
-                    android:gravity="start"
-                    android:textDirection="locale" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
         <Button
             android:id="@+id/btnStart"
             android:layout_width="match_parent"

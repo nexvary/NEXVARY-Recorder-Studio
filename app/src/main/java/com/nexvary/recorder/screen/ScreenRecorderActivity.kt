@@ -27,16 +27,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ScreenRecorderActivity : AppCompatActivity() {
-    companion object {
-        private const val FG_LINK_PACKAGE = "com.fgmachines.rck"
-    }
-
     private lateinit var binding: ActivityScreenRecorderBinding
     private lateinit var projectionManager: MediaProjectionManager
 
     private var pendingResultCode: Int? = null
     private var pendingResultData: Intent? = null
-    private var pendingLaunchPackage: String? = null
 
     private val runtimePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -129,7 +124,6 @@ class ScreenRecorderActivity : AppCompatActivity() {
                     binding.txtStatus.text =
                         message ?: getString(R.string.recording_started)
                     setRecordingUi(paused = false)
-                    launchPendingTarget()
                 }
 
                 ScreenRecordService.STATE_PAUSED -> {
@@ -149,7 +143,9 @@ class ScreenRecorderActivity : AppCompatActivity() {
                         message ?: getString(R.string.recording_stopped)
 
                     val customFolder =
-                        ScreenRecorderPrefs.outputTreeName(this@ScreenRecorderActivity)
+                        ScreenRecorderPrefs.outputTreeName(
+                            this@ScreenRecorderActivity
+                        )
 
                     binding.txtOutput.text =
                         if (customFolder.isNotBlank()) {
@@ -183,13 +179,16 @@ class ScreenRecorderActivity : AppCompatActivity() {
         UiInsets.apply(binding.root)
 
         projectionManager =
-            getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+            getSystemService(
+                Context.MEDIA_PROJECTION_SERVICE
+            ) as MediaProjectionManager
 
         loadPreferences()
         wireControls()
 
         if (ScreenRecordService.isRecording) {
-            binding.txtStatus.text = getString(R.string.recording_running)
+            binding.txtStatus.text =
+                getString(R.string.recording_running)
             setRecordingUi(ScreenRecordService.isPaused)
         } else {
             setIdleUi()
@@ -216,27 +215,16 @@ class ScreenRecorderActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
 
         binding.btnStart.setOnClickListener {
-            pendingLaunchPackage = null
-            savePreferences()
-            startFlow()
-        }
-
-        binding.btnRecordFgLink.setOnClickListener {
-            val targetPackage = FG_LINK_PACKAGE
-            val launchIntent = packageManager.getLaunchIntentForPackage(targetPackage)
-            if (launchIntent == null) {
-                showError(getString(R.string.fg_link_not_installed))
-                return@setOnClickListener
-            }
-
-            pendingLaunchPackage = targetPackage
             savePreferences()
             startFlow()
         }
 
         binding.btnPauseResume.setOnClickListener {
             startService(
-                Intent(this, ScreenRecordService::class.java).apply {
+                Intent(
+                    this,
+                    ScreenRecordService::class.java
+                ).apply {
                     action =
                         if (ScreenRecordService.isPaused) {
                             ScreenRecordService.ACTION_RESUME
@@ -249,11 +237,15 @@ class ScreenRecorderActivity : AppCompatActivity() {
 
         binding.btnStop.setOnClickListener {
             startService(
-                Intent(this, ScreenRecordService::class.java).apply {
+                Intent(
+                    this,
+                    ScreenRecordService::class.java
+                ).apply {
                     action = ScreenRecordService.ACTION_STOP
                 }
             )
-            binding.txtStatus.text = getString(R.string.stopping_saving)
+            binding.txtStatus.text =
+                getString(R.string.stopping_saving)
         }
 
         binding.btnStorage.setOnClickListener {
@@ -275,7 +267,10 @@ class ScreenRecorderActivity : AppCompatActivity() {
                 R.id.radio10 -> 10
                 else -> 3
             }
-            ScreenRecorderPrefs.setCountdownSeconds(this, seconds)
+            ScreenRecorderPrefs.setCountdownSeconds(
+                this,
+                seconds
+            )
         }
     }
 
@@ -314,13 +309,19 @@ class ScreenRecorderActivity : AppCompatActivity() {
             if (name.isBlank()) {
                 getString(R.string.default_save_folder)
             } else {
-                getString(R.string.custom_save_folder_format, name)
+                getString(
+                    R.string.custom_save_folder_format,
+                    name
+                )
             }
     }
 
     private fun startFlow() {
         if (
-            (binding.switchFloating.isChecked || binding.switchCamera.isChecked) &&
+            (
+                binding.switchFloating.isChecked ||
+                    binding.switchCamera.isChecked
+            ) &&
             !Settings.canDrawOverlays(this)
         ) {
             binding.txtStatus.text =
@@ -340,7 +341,9 @@ class ScreenRecorderActivity : AppCompatActivity() {
             !Settings.System.canWrite(this)
         ) {
             binding.txtStatus.text =
-                getString(R.string.write_settings_permission_required)
+                getString(
+                    R.string.write_settings_permission_required
+                )
 
             writeSettingsPermissionLauncher.launch(
                 Intent(
@@ -384,21 +387,18 @@ class ScreenRecorderActivity : AppCompatActivity() {
         }
 
         if (permissions.isNotEmpty()) {
-            runtimePermissions.launch(permissions.toTypedArray())
+            runtimePermissions.launch(
+                permissions.toTypedArray()
+            )
         } else {
             requestProjection()
         }
     }
 
     private fun requestProjection() {
-        binding.txtStatus.text = getString(R.string.choose_fullscreen)
+        binding.txtStatus.text =
+            getString(R.string.choose_fullscreen)
 
-        /*
-         * Use Android's standard projection chooser.
-         * On Android 14/15 this lets the OEM/system present its supported
-         * Entire screen / single-app choices instead of forcing a mode that
-         * some vendor builds reject immediately.
-         */
         projectionLauncher.launch(
             projectionManager.createScreenCaptureIntent()
         )
@@ -406,11 +406,11 @@ class ScreenRecorderActivity : AppCompatActivity() {
 
     private fun beginCountdown() {
         binding.btnStart.isEnabled = false
-        binding.btnRecordFgLink.isEnabled = false
         binding.btnPauseResume.isEnabled = false
         binding.btnStop.isEnabled = false
 
-        val seconds = ScreenRecorderPrefs.countdownSeconds(this)
+        val seconds =
+            ScreenRecorderPrefs.countdownSeconds(this)
 
         if (seconds <= 0) {
             startRecordingService()
@@ -420,7 +420,10 @@ class ScreenRecorderActivity : AppCompatActivity() {
         lifecycleScope.launch {
             for (i in seconds downTo 1) {
                 binding.txtStatus.text =
-                    getString(R.string.countdown_format, i)
+                    getString(
+                        R.string.countdown_format,
+                        i
+                    )
                 delay(1_000)
             }
             startRecordingService()
@@ -442,7 +445,10 @@ class ScreenRecorderActivity : AppCompatActivity() {
 
         ContextCompat.startForegroundService(
             this,
-            Intent(this, ScreenRecordService::class.java).apply {
+            Intent(
+                this,
+                ScreenRecordService::class.java
+            ).apply {
                 action = ScreenRecordService.ACTION_START
                 putExtra(
                     ScreenRecordService.EXTRA_RESULT_CODE,
@@ -484,29 +490,12 @@ class ScreenRecorderActivity : AppCompatActivity() {
             getString(R.string.checking_recorder)
     }
 
-    private fun launchPendingTarget() {
-        val targetPackage = pendingLaunchPackage ?: return
-        pendingLaunchPackage = null
-
-        val launchIntent = packageManager.getLaunchIntentForPackage(targetPackage)
-        if (launchIntent == null) {
-            showError(getString(R.string.fg_link_not_installed))
-            return
-        }
-
-        launchIntent.addFlags(
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-                Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-        )
-        startActivity(launchIntent)
-    }
-
     private fun setRecordingUi(paused: Boolean) {
         binding.btnStart.isEnabled = false
-        binding.btnRecordFgLink.isEnabled = false
         binding.btnPauseResume.isEnabled = true
         binding.btnStop.isEnabled = true
-        binding.recordingIndicator.visibility = View.VISIBLE
+        binding.recordingIndicator.visibility =
+            View.VISIBLE
 
         binding.btnPauseResume.setText(
             if (paused) {
@@ -519,15 +508,18 @@ class ScreenRecorderActivity : AppCompatActivity() {
 
     private fun setIdleUi() {
         binding.btnStart.isEnabled = true
-        binding.btnRecordFgLink.isEnabled = true
         binding.btnPauseResume.isEnabled = false
         binding.btnStop.isEnabled = false
-        binding.recordingIndicator.visibility = View.GONE
-        binding.btnPauseResume.setText(R.string.pause_recording)
+        binding.recordingIndicator.visibility =
+            View.GONE
+        binding.btnPauseResume.setText(
+            R.string.pause_recording
+        )
     }
 
     private fun showError(message: String) {
         binding.txtStatus.text = message
-        binding.txtOutput.text = getString(R.string.start_failed_retry)
+        binding.txtOutput.text =
+            getString(R.string.start_failed_retry)
     }
 }
