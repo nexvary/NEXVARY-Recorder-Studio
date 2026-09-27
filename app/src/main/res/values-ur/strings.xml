@@ -155,4 +155,26 @@
     <string name="nav_live">لائیو</string>
     <string name="nav_more">مزید</string>
     <string name="main_menu_title">مرکزی مینو</string>
+    <string name="floating_control">فلوٹنگ کنٹرول</string>
+    <string name="floating_control_desc">اسکرین ریکارڈر کا فلوٹنگ کنٹرول</string>
+    <string name="show_touches">ریکارڈنگ کے دوران ٹچ دکھائیں</string>
+    <string name="camera_overlay">فلوٹنگ فرنٹ کیمرا</string>
+    <string name="choose_save_folder">محفوظ کرنے کا فولڈر منتخب کریں</string>
+    <string name="default_save_folder">ڈیفالٹ: Movies/NEXVARY Recorder</string>
+    <string name="custom_save_folder_format">محفوظ فولڈر: %1$s</string>
+    <string name="countdown_title">الٹی گنتی</string>
+    <string name="countdown_0">بند</string>
+    <string name="countdown_3">3 سیکنڈ</string>
+    <string name="countdown_5">5 سیکنڈ</string>
+    <string name="countdown_10">10 سیکنڈ</string>
+    <string name="pause_recording">وقفہ</string>
+    <string name="resume_recording">جاری کریں</string>
+    <string name="recording_paused">ریکارڈنگ موقوف ہے</string>
+    <string name="recording_resumed">ریکارڈنگ دوبارہ جاری ہے</string>
+    <string name="overlay_permission_required">فلوٹنگ کنٹرول کے لیے دوسری ایپس کے اوپر دکھانے کی اجازت دیں۔</string>
+    <string name="write_settings_permission_required">ٹچ دکھانے کے لیے سسٹم سیٹنگز تبدیل کرنے کی اجازت دیں۔</string>
+    <string name="camera_permission_required">فلوٹنگ کیمرے کے لیے کیمرا اجازت درکار ہے۔</string>
+    <string name="recorder_options">ریکارڈنگ کنٹرولز</string>
+    <string name="screen_projection_stopped_immediately">اینڈرائیڈ نے اسکرین شیئرنگ فوراً بند کر دی۔ پورا اسکرین منتخب کریں اور محفوظ ونڈوز سے بچیں۔</string>
+    <string name="save_folder_help">آپ کوئی بھی قابلِ تحریر فولڈر منتخب کر سکتے ہیں؛ یہ آئندہ ریکارڈنگ کے لیے محفوظ رہے گا۔</string>
 </resources>
