@@ -180,4 +180,5 @@
     <string name="quick_record_tile">مسجل الشاشة</string>
     <string name="record_fg_link">تسجيل FG Link</string>
     <string name="record_fg_link_help">يبدأ تسجيل الشاشة ثم يفتح FG Machines Link تلقائيًا. اختر FG Link من نافذة مشاركة أندرويد.</string>
+    <string name="fg_link_not_installed">تطبيق FG Link غير مثبت على هذا الهاتف.</string>
 </resources>
