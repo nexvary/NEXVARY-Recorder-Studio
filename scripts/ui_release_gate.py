@@ -100,7 +100,7 @@ for ident in sorted(action_ids):
 
 
 # v0.4.0: all 12 runtime palettes must remain registered.
-theme_manager = (SRC / "ui" / "ThemeManager.kt").read_text(encoding="utf-8")
+theme_manager = (SRC / "com" / "nexvary" / "recorder" / "ui" / "ThemeManager.kt").read_text(encoding="utf-8")
 required_theme_names = [
     "theme_electric_blue", "theme_emerald", "theme_purple", "theme_amber",
     "theme_cyan", "theme_teal", "theme_lime", "theme_rose",
