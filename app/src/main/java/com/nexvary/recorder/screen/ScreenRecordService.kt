@@ -25,11 +25,13 @@ import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.os.SystemClock
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.documentfile.provider.DocumentFile
 import com.nexvary.recorder.MainActivity
 import com.nexvary.recorder.R
 import java.text.SimpleDateFormat
@@ -44,9 +46,13 @@ class ScreenRecordService : Service() {
         const val ACTION_START = "com.nexvary.recorder.START_RECORD"
         const val ACTION_STOP = "com.nexvary.recorder.STOP_RECORD"
         const val ACTION_STATUS = "com.nexvary.recorder.RECORD_STATUS"
+
         const val EXTRA_RESULT_CODE = "result_code"
         const val EXTRA_RESULT_DATA = "result_data"
         const val EXTRA_MIC = "record_mic"
+        const val EXTRA_FLOATING = "floating_control"
+        const val EXTRA_OUTPUT_TREE_URI = "output_tree_uri"
+
         const val EXTRA_STATE = "state"
         const val EXTRA_MESSAGE = "message"
 
@@ -57,8 +63,10 @@ class ScreenRecordService : Service() {
 
         private const val CHANNEL_ID = "screen_recording"
         private const val NOTIFICATION_ID = 1201
+        private const val TOO_SOON_MS = 2_500L
 
-        @Volatile var isRecording: Boolean = false
+        @Volatile
+        var isRecording: Boolean = false
             private set
     }
 
@@ -67,12 +75,25 @@ class ScreenRecordService : Service() {
     private var virtualDisplay: VirtualDisplay? = null
     private var outputUri: Uri? = null
     private var outputPfd: android.os.ParcelFileDescriptor? = null
+    private var outputIsMediaStore = true
     private var recorderStarted = false
     private var stopping = false
+    private var startedAtElapsedMs = 0L
+    private var floatingOverlay: FloatingRecorderOverlay? = null
 
     private val projectionCallback = object : MediaProjection.Callback() {
         override fun onStop() {
-            finishRecording(fromProjectionCallback = true, userInitiated = false)
+            val duration = if (startedAtElapsedMs > 0L) {
+                SystemClock.elapsedRealtime() - startedAtElapsedMs
+            } else {
+                0L
+            }
+
+            if (recorderStarted && duration in 1 until TOO_SOON_MS) {
+                abortRecording(getString(R.string.screen_projection_stopped_immediately))
+            } else {
+                finishRecording(fromProjectionCallback = true, userInitiated = false)
+            }
         }
     }
 
@@ -101,6 +122,10 @@ class ScreenRecordService : Service() {
                 this,
                 Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED
+
+        val floatingRequested = intent.getBooleanExtra(EXTRA_FLOATING, true)
+        val outputTreeUri = intent.getStringExtra(EXTRA_OUTPUT_TREE_URI).orEmpty()
+
         val resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, Activity.RESULT_CANCELED)
         val resultData: Intent = if (Build.VERSION.SDK_INT >= 33) {
             intent.getParcelableExtra(EXTRA_RESULT_DATA, Intent::class.java)
@@ -120,6 +145,7 @@ class ScreenRecordService : Service() {
             } else {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
             }
+
             if (Build.VERSION.SDK_INT >= 29) {
                 startForeground(
                     NOTIFICATION_ID,
@@ -132,6 +158,7 @@ class ScreenRecordService : Service() {
                     notification(getString(R.string.notification_recording_preparing))
                 )
             }
+
             sendStatus(STATE_STARTING, getString(R.string.screen_preparing))
 
             val wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -139,13 +166,16 @@ class ScreenRecordService : Service() {
             @Suppress("DEPRECATION")
             wm.defaultDisplay.getRealMetrics(metrics)
 
-            val (width, height) = chooseCaptureSize(metrics.widthPixels, metrics.heightPixels)
+            val (width, height) =
+                chooseCaptureSize(metrics.widthPixels, metrics.heightPixels)
+
             val bitrate = (width.toLong() * height.toLong() * 5L)
                 .coerceIn(4_000_000L, 12_000_000L)
                 .toInt()
 
-            createOutput()
-            val fd = outputPfd?.fileDescriptor ?: error(getString(R.string.screen_file_create_fail))
+            createOutput(outputTreeUri)
+            val fd = outputPfd?.fileDescriptor
+                ?: error(getString(R.string.screen_file_create_fail))
 
             recorder = createRecorder().apply {
                 if (useMic) setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -155,11 +185,13 @@ class ScreenRecordService : Service() {
                 setVideoEncodingBitRate(bitrate)
                 setVideoFrameRate(30)
                 setVideoSize(width, height)
+
                 if (useMic) {
                     setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
                     setAudioEncodingBitRate(192_000)
                     setAudioSamplingRate(48_000)
                 }
+
                 setOutputFile(fd)
                 prepare()
             }
@@ -170,7 +202,10 @@ class ScreenRecordService : Service() {
             projection = projectionManager.getMediaProjection(resultCode, resultData)
                 ?: error(getString(R.string.screen_projection_create_fail))
 
-            projection!!.registerCallback(projectionCallback, Handler(Looper.getMainLooper()))
+            projection!!.registerCallback(
+                projectionCallback,
+                Handler(Looper.getMainLooper())
+            )
 
             virtualDisplay = projection!!.createVirtualDisplay(
                 "NEXVARYRecorder",
@@ -186,17 +221,55 @@ class ScreenRecordService : Service() {
             recorder!!.start()
             recorderStarted = true
             isRecording = true
+            startedAtElapsedMs = SystemClock.elapsedRealtime()
+
+            if (floatingRequested) {
+                floatingOverlay = FloatingRecorderOverlay(this) {
+                    startService(
+                        Intent(this, ScreenRecordService::class.java).apply {
+                            action = ACTION_STOP
+                        }
+                    )
+                }.also { it.show() }
+            }
 
             val sizeLabel = "${width}×${height}"
-            updateNotification(getString(R.string.notification_recording_size_format, sizeLabel))
-            sendStatus(STATE_STARTED, getString(R.string.screen_started_size_format, sizeLabel))
+            updateNotification(
+                getString(R.string.notification_recording_size_format, sizeLabel)
+            )
+            sendStatus(
+                STATE_STARTED,
+                getString(R.string.screen_started_size_format, sizeLabel)
+            )
         } catch (e: Exception) {
-            abortRecording(getString(R.string.recording_failed))
+            abortRecording(
+                e.message?.takeIf { it.isNotBlank() }
+                    ?: getString(R.string.recording_failed)
+            )
         }
     }
 
-    private fun createOutput() {
-        val name = "screen_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())}.mp4"
+    private fun createOutput(treeUriString: String) {
+        val name =
+            "screen_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())}.mp4"
+
+        if (treeUriString.isNotBlank()) {
+            val treeUri = Uri.parse(treeUriString)
+            val directory = DocumentFile.fromTreeUri(this, treeUri)
+
+            if (directory != null && directory.exists() && directory.canWrite()) {
+                val document = directory.createFile("video/mp4", name)
+                    ?: error(getString(R.string.screen_file_create_fail))
+
+                outputUri = document.uri
+                outputIsMediaStore = false
+                outputPfd = contentResolver.openFileDescriptor(document.uri, "w")
+                    ?: error(getString(R.string.screen_file_open_fail))
+                return
+            }
+        }
+
+        outputIsMediaStore = true
         val values = ContentValues().apply {
             put(MediaStore.Video.Media.DISPLAY_NAME, name)
             put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
@@ -206,17 +279,25 @@ class ScreenRecordService : Service() {
             )
             put(MediaStore.Video.Media.IS_PENDING, 1)
         }
-        outputUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
-            ?: error(getString(R.string.screen_file_create_fail))
-        outputPfd = contentResolver.openFileDescriptor(outputUri!!, "w")
-            ?: error(getString(R.string.screen_file_open_fail))
+
+        outputUri =
+            contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)
+                ?: error(getString(R.string.screen_file_create_fail))
+
+        outputPfd =
+            contentResolver.openFileDescriptor(outputUri!!, "w")
+                ?: error(getString(R.string.screen_file_open_fail))
     }
 
-    private fun finishRecording(fromProjectionCallback: Boolean, userInitiated: Boolean) {
+    private fun finishRecording(
+        fromProjectionCallback: Boolean,
+        userInitiated: Boolean
+    ) {
         if (stopping) return
         stopping = true
 
         val hadStarted = recorderStarted
+
         try {
             if (recorderStarted) {
                 runCatching { recorder?.stop() }
@@ -224,6 +305,9 @@ class ScreenRecordService : Service() {
         } finally {
             recorderStarted = false
             isRecording = false
+            startedAtElapsedMs = 0L
+            floatingOverlay?.hide()
+            floatingOverlay = null
 
             runCatching { recorder?.reset() }
             runCatching { recorder?.release() }
@@ -235,6 +319,7 @@ class ScreenRecordService : Service() {
             if (!fromProjectionCallback) {
                 runCatching { projection?.stop() }
             }
+
             runCatching { projection?.unregisterCallback(projectionCallback) }
             projection = null
 
@@ -243,7 +328,7 @@ class ScreenRecordService : Service() {
 
             val uri = outputUri
             if (uri != null) {
-                if (hadStarted) {
+                if (hadStarted && outputIsMediaStore) {
                     runCatching {
                         contentResolver.update(
                             uri,
@@ -254,13 +339,16 @@ class ScreenRecordService : Service() {
                             null
                         )
                     }
-                } else {
+                } else if (!hadStarted) {
                     runCatching { contentResolver.delete(uri, null, null) }
                 }
             }
+
             outputUri = null
+            outputIsMediaStore = true
 
             stopForeground(STOP_FOREGROUND_REMOVE)
+
             sendStatus(
                 STATE_STOPPED,
                 if (userInitiated && hadStarted) {
@@ -271,6 +359,7 @@ class ScreenRecordService : Service() {
                     getString(R.string.screen_session_stopped)
                 }
             )
+
             stopping = false
             stopSelf()
         }
@@ -279,43 +368,67 @@ class ScreenRecordService : Service() {
     private fun abortRecording(message: String) {
         if (stopping) return
         stopping = true
+
         val uri = outputUri
+
         recorderStarted = false
         isRecording = false
+        startedAtElapsedMs = 0L
+        floatingOverlay?.hide()
+        floatingOverlay = null
 
         runCatching { recorder?.reset() }
         runCatching { recorder?.release() }
         recorder = null
+
         runCatching { virtualDisplay?.release() }
         virtualDisplay = null
+
         runCatching { projection?.unregisterCallback(projectionCallback) }
         runCatching { projection?.stop() }
         projection = null
+
         runCatching { outputPfd?.close() }
         outputPfd = null
-        if (uri != null) runCatching { contentResolver.delete(uri, null, null) }
+
+        if (uri != null) {
+            runCatching { contentResolver.delete(uri, null, null) }
+        }
+
         outputUri = null
+        outputIsMediaStore = true
 
         sendStatus(STATE_ERROR, message)
         stopForeground(STOP_FOREGROUND_REMOVE)
+        stopping = false
         stopSelf()
     }
 
-    private fun chooseCaptureSize(sourceWidth: Int, sourceHeight: Int): Pair<Int, Int> {
+    private fun chooseCaptureSize(
+        sourceWidth: Int,
+        sourceHeight: Int
+    ): Pair<Int, Int> {
         val longSide = max(sourceWidth, sourceHeight).toFloat()
         val initialScale = min(1f, 1920f / longSide)
 
         var scale = initialScale
+
         repeat(10) {
-            val width = even((sourceWidth * scale).roundToInt()).coerceAtLeast(320)
-            val height = even((sourceHeight * scale).roundToInt()).coerceAtLeast(320)
+            val width =
+                even((sourceWidth * scale).roundToInt()).coerceAtLeast(320)
+            val height =
+                even((sourceHeight * scale).roundToInt()).coerceAtLeast(320)
+
             if (supportsH264(width, height)) return width to height
             scale *= 0.88f
         }
 
         val fallbackScale = min(1f, 1280f / longSide)
-        return even((sourceWidth * fallbackScale).roundToInt()).coerceAtLeast(320) to
-            even((sourceHeight * fallbackScale).roundToInt()).coerceAtLeast(320)
+
+        return even((sourceWidth * fallbackScale).roundToInt())
+            .coerceAtLeast(320) to
+            even((sourceHeight * fallbackScale).roundToInt())
+                .coerceAtLeast(320)
     }
 
     private fun supportsH264(width: Int, height: Int): Boolean {
@@ -325,35 +438,48 @@ class ScreenRecordService : Service() {
                 .filter { it.isEncoder }
                 .filter {
                     it.supportedTypes.any { type ->
-                        type.equals(MediaFormat.MIMETYPE_VIDEO_AVC, ignoreCase = true)
+                        type.equals(
+                            MediaFormat.MIMETYPE_VIDEO_AVC,
+                            ignoreCase = true
+                        )
                     }
                 }
                 .any { codec ->
-                    val caps = codec.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_AVC)
+                    val caps =
+                        codec.getCapabilitiesForType(
+                            MediaFormat.MIMETYPE_VIDEO_AVC
+                        )
+
                     caps.videoCapabilities?.isSizeSupported(width, height) == true
                 }
         }.getOrDefault(false)
     }
 
-    private fun even(value: Int): Int = if (value % 2 == 0) value else value - 1
+    private fun even(value: Int): Int =
+        if (value % 2 == 0) value else value - 1
 
     @Suppress("DEPRECATION")
     private fun createRecorder(): MediaRecorder =
-        if (Build.VERSION.SDK_INT >= 31) MediaRecorder(this) else MediaRecorder()
+        if (Build.VERSION.SDK_INT >= 31) MediaRecorder(this)
+        else MediaRecorder()
 
     private fun notification(text: String): Notification {
         val stopPending = PendingIntent.getService(
             this,
             2,
-            Intent(this, ScreenRecordService::class.java).apply { action = ACTION_STOP },
+            Intent(this, ScreenRecordService::class.java).apply {
+                action = ACTION_STOP
+            },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
         val openPending = PendingIntent.getActivity(
             this,
             1,
-            Intent(this, MainActivity::class.java),
+            Intent(this, ScreenRecorderActivity::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.presence_video_online)
             .setContentTitle(getString(R.string.app_name))
@@ -361,7 +487,11 @@ class ScreenRecordService : Service() {
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setContentIntent(openPending)
-            .addAction(android.R.drawable.ic_media_pause, getString(R.string.notification_stop_save), stopPending)
+            .addAction(
+                android.R.drawable.ic_media_pause,
+                getString(R.string.notification_stop_save),
+                stopPending
+            )
             .build()
     }
 
@@ -372,13 +502,14 @@ class ScreenRecordService : Service() {
 
     private fun createChannel() {
         if (Build.VERSION.SDK_INT >= 26) {
-            getSystemService(NotificationManager::class.java).createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_ID,
-                    getString(R.string.screen_record_title),
-                    NotificationManager.IMPORTANCE_LOW
+            getSystemService(NotificationManager::class.java)
+                .createNotificationChannel(
+                    NotificationChannel(
+                        CHANNEL_ID,
+                        getString(R.string.screen_record_title),
+                        NotificationManager.IMPORTANCE_LOW
+                    )
                 )
-            )
         }
     }
 
@@ -392,9 +523,16 @@ class ScreenRecordService : Service() {
     }
 
     override fun onDestroy() {
+        floatingOverlay?.hide()
+        floatingOverlay = null
+
         if (recorder != null || isRecording) {
-            finishRecording(fromProjectionCallback = false, userInitiated = false)
+            finishRecording(
+                fromProjectionCallback = false,
+                userInitiated = false
+            )
         }
+
         super.onDestroy()
     }
 
