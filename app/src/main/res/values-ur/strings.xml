@@ -178,9 +178,6 @@
     <string name="screen_projection_stopped_immediately">اینڈرائیڈ نے اسکرین شیئرنگ فوراً بند کر دی۔ پورا اسکرین منتخب کریں اور محفوظ ونڈوز سے بچیں۔</string>
     <string name="save_folder_help">آپ کوئی بھی قابلِ تحریر فولڈر منتخب کر سکتے ہیں؛ یہ آئندہ ریکارڈنگ کے لیے محفوظ رہے گا۔</string>
     <string name="quick_record_tile">اسکرین ریکارڈر</string>
-    <string name="record_fg_link">FG Link ریکارڈ کریں</string>
-    <string name="record_fg_link_help">اسکرین ریکارڈنگ شروع کرتا ہے اور FG Machines Link خود کھولتا ہے۔ اینڈرائیڈ شیئرنگ میں FG Link منتخب کریں۔</string>
-    <string name="fg_link_not_installed">FG Link اس ڈیوائس پر انسٹال نہیں ہے۔</string>
     <string name="media_tools_title">میڈیا ٹولز</string>
     <string name="media_tools_desc">آڈیو بدلیں، آڈیو تبدیل کریں، ویڈیو کاٹیں اور ویڈیو کنٹینر فارمیٹ فون پر ہی تبدیل کریں۔</string>
     <string name="audio_convert_title">آڈیو تبدیل کریں</string>
