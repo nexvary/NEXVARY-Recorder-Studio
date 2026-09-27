@@ -177,4 +177,5 @@
     <string name="recorder_options">Aufnahmesteuerung</string>
     <string name="screen_projection_stopped_immediately">Android hat die Bildschirmfreigabe sofort beendet. Wähle Gesamter Bildschirm und vermeide geschützte Fenster.</string>
     <string name="save_folder_help">Du kannst jeden beschreibbaren Ordner wählen; er wird für weitere Aufnahmen gespeichert.</string>
+    <string name="quick_record_tile">Bildschirmaufnahme</string>
 </resources>
