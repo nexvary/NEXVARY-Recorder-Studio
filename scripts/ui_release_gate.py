@@ -64,11 +64,16 @@ for path in layout_files:
         errors.append(f"{path.name}: XML parse failure: {exc}")
         continue
 
-    if root.tag != "ScrollView":
-        errors.append(f"{path.name}: root must be ScrollView for small-phone safety")
+    ids = [el.attrib.get(ANDROID+"id","") for el in root.iter()]
 
-    if path.name != "activity_main.xml":
-        ids = [el.attrib.get(ANDROID+"id","") for el in root.iter()]
+    if path.name == "activity_main.xml":
+        if root.tag == "ScrollView":
+            errors.append("activity_main.xml: main dashboard must be fixed and must not scroll")
+        if "@+id/bottomNav" not in ids:
+            errors.append("activity_main.xml: missing fixed bottomNav")
+    else:
+        if root.tag != "ScrollView":
+            errors.append(f"{path.name}: root must be ScrollView for small-phone safety")
         if "@+id/btnBack" not in ids:
             errors.append(f"{path.name}: missing btnBack")
 
@@ -93,9 +98,19 @@ for ident in sorted(action_ids):
     if f"binding.{ident}.setOnClickListener" not in all_source:
         errors.append(f"Dead-action risk: {ident} has no binding listener")
 
-for ident in ["themeHeader"]:
-    if f"binding.{ident}.setOnClickListener" not in all_source:
-        errors.append(f"Dead-action risk: {ident} has no binding listener")
+
+# v0.4.0: all 12 runtime palettes must remain registered.
+theme_manager = (SRC / "com" / "nexvary" / "recorder" / "ui" / "ThemeManager.kt").read_text(encoding="utf-8")
+required_theme_names = [
+    "theme_electric_blue", "theme_emerald", "theme_purple", "theme_amber",
+    "theme_cyan", "theme_teal", "theme_lime", "theme_rose",
+    "theme_crimson", "theme_orange", "theme_indigo", "theme_silver",
+]
+for theme_name in required_theme_names:
+    if f"R.string.{theme_name}" not in theme_manager:
+        errors.append(f"Missing registered runtime theme: {theme_name}")
+if theme_manager.count("R.style.Theme_NexvaryRecorder_") < 12:
+    errors.append("ThemeManager must register at least 12 runtime theme styles")
 
 expected_activities = [
     ".MainActivity",

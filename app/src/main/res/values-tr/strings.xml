@@ -141,4 +141,18 @@
     <string name="theme_amber">Kehribar</string>
     <string name="choose_theme">Tema seç</string>
     <string name="cancel">İptal</string>
+    <string name="theme_cyan">Camgöbeği</string>
+    <string name="theme_teal">Turkuaz</string>
+    <string name="theme_lime">Lime</string>
+    <string name="theme_rose">Gül</string>
+    <string name="theme_crimson">Kızıl</string>
+    <string name="theme_orange">Turuncu</string>
+    <string name="theme_indigo">İndigo</string>
+    <string name="theme_silver">Gümüş</string>
+    <string name="nav_home">Ana sayfa</string>
+    <string name="nav_screen">Ekran</string>
+    <string name="nav_voice">Ses</string>
+    <string name="nav_live">Canlı</string>
+    <string name="nav_more">Daha fazla</string>
+    <string name="main_menu_title">Ana menü</string>
 </resources>

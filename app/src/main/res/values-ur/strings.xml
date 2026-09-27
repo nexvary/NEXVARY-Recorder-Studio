@@ -141,4 +141,18 @@
     <string name="theme_amber">عنبر</string>
     <string name="choose_theme">تھیم منتخب کریں</string>
     <string name="cancel">منسوخ کریں</string>
+    <string name="theme_cyan">سیان</string>
+    <string name="theme_teal">سبز مائل نیلا</string>
+    <string name="theme_lime">لائم</string>
+    <string name="theme_rose">گلابی</string>
+    <string name="theme_crimson">قرمزی</string>
+    <string name="theme_orange">نارنجی</string>
+    <string name="theme_indigo">نیلگوں</string>
+    <string name="theme_silver">چاندی</string>
+    <string name="nav_home">ہوم</string>
+    <string name="nav_screen">اسکرین</string>
+    <string name="nav_voice">آواز</string>
+    <string name="nav_live">لائیو</string>
+    <string name="nav_more">مزید</string>
+    <string name="main_menu_title">مرکزی مینو</string>
 </resources>

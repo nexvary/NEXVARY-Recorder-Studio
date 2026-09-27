@@ -3,8 +3,8 @@ package com.nexvary.recorder
 import android.content.Intent
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.nexvary.recorder.audio.VoiceRecorderActivity
 import com.nexvary.recorder.databinding.ActivityMainBinding
 import com.nexvary.recorder.live.LiveBroadcastActivity
@@ -22,64 +22,116 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        UiInsets.apply(binding.root)
+        UiInsets.applyWithBottomBar(binding.root, binding.bottomNav)
 
         val versionName = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
         binding.txtVersion.text = getString(R.string.version_format, versionName)
-        binding.txtThemeName.text = getString(
-            R.string.theme_current_format,
-            getString(ThemeManager.currentNameRes(this))
-        )
-
-        binding.themeHeader.setOnClickListener { view ->
-            view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
-            showThemePicker()
-        }
+        updateThemeLabel()
 
         binding.btnThemePicker.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
             showThemePicker()
         }
 
-        binding.cardScreen.setOnClickListener {
-            startActivity(Intent(this, ScreenRecorderActivity::class.java))
-        }
-        binding.cardVoice.setOnClickListener {
-            startActivity(Intent(this, VoiceRecorderActivity::class.java))
-        }
-        binding.cardReplace.setOnClickListener {
-            startActivity(Intent(this, AudioReplaceActivity::class.java))
-        }
-        binding.cardLive.setOnClickListener {
-            startActivity(Intent(this, LiveBroadcastActivity::class.java))
-        }
-        binding.cardLanguage.setOnClickListener {
-            startActivity(Intent(this, LanguageActivity::class.java))
-        }
-        binding.cardAbout.setOnClickListener {
-            startActivity(Intent(this, AboutActivity::class.java))
+        binding.cardScreen.setOnClickListener { openScreenRecorder() }
+        binding.cardVoice.setOnClickListener { openVoiceStudio() }
+        binding.cardReplace.setOnClickListener { openAudioReplace() }
+        binding.cardLive.setOnClickListener { openLiveBroadcast() }
+
+        binding.bottomNav.selectedItemId = R.id.navHome
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navHome -> true
+                R.id.navScreen -> {
+                    openScreenRecorder()
+                    false
+                }
+                R.id.navVoice -> {
+                    openVoiceStudio()
+                    false
+                }
+                R.id.navLive -> {
+                    openLiveBroadcast()
+                    false
+                }
+                R.id.navMore -> {
+                    showMoreMenu()
+                    false
+                }
+                else -> false
+            }
         }
     }
 
-    private fun showThemePicker() {
-        val nameResIds = ThemeManager.themeNameResIds()
-        val labels = nameResIds.map { getString(it) }.toTypedArray()
-        val current = ThemeManager.currentIndex(this)
+    override fun onResume() {
+        super.onResume()
+        if (::binding.isInitialized) {
+            binding.bottomNav.menu.findItem(R.id.navHome)?.isChecked = true
+            updateThemeLabel()
+        }
+    }
 
-        val dialog = MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.choose_theme)
-            .setSingleChoiceItems(labels, current) { activeDialog, which ->
-                if (which != current) {
-                    ThemeManager.select(this, which)
-                    activeDialog.dismiss()
-                    recreate()
-                } else {
-                    activeDialog.dismiss()
+    private fun openScreenRecorder() {
+        startActivity(Intent(this, ScreenRecorderActivity::class.java))
+    }
+
+    private fun openVoiceStudio() {
+        startActivity(Intent(this, VoiceRecorderActivity::class.java))
+    }
+
+    private fun openAudioReplace() {
+        startActivity(Intent(this, AudioReplaceActivity::class.java))
+    }
+
+    private fun openLiveBroadcast() {
+        startActivity(Intent(this, LiveBroadcastActivity::class.java))
+    }
+
+    private fun showMoreMenu() {
+        val labels = arrayOf(
+            getString(R.string.replace_audio_title),
+            getString(R.string.language_title),
+            getString(R.string.about_title),
+            getString(R.string.choose_theme)
+        )
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.nav_more)
+            .setItems(labels) { _, which ->
+                when (which) {
+                    0 -> openAudioReplace()
+                    1 -> startActivity(Intent(this, LanguageActivity::class.java))
+                    2 -> startActivity(Intent(this, AboutActivity::class.java))
+                    3 -> showThemePicker()
                 }
             }
             .setNegativeButton(R.string.cancel, null)
-            .create()
+            .show()
+    }
 
-        dialog.show()
+    private fun showThemePicker() {
+        val labels = ThemeManager.themeNameResIds()
+            .map { getString(it) }
+            .toTypedArray()
+        val current = ThemeManager.currentIndex(this)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.choose_theme)
+            .setSingleChoiceItems(labels, current) { dialog, which ->
+                dialog.dismiss()
+                if (which != current) {
+                    ThemeManager.select(this, which)
+                    recreate()
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun updateThemeLabel() {
+        binding.txtThemeName.text = getString(
+            R.string.theme_current_format,
+            getString(ThemeManager.currentNameRes(this))
+        )
     }
 }

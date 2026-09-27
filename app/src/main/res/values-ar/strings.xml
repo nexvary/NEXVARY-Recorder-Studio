@@ -141,4 +141,18 @@
     <string name="theme_amber">كهرماني</string>
     <string name="choose_theme">اختار الثيم</string>
     <string name="cancel">إلغاء</string>
+    <string name="theme_cyan">سماوي</string>
+    <string name="theme_teal">بترولي</string>
+    <string name="theme_lime">ليموني</string>
+    <string name="theme_rose">وردي</string>
+    <string name="theme_crimson">قرمزي</string>
+    <string name="theme_orange">برتقالي</string>
+    <string name="theme_indigo">نيلي</string>
+    <string name="theme_silver">فضي</string>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_screen">الشاشة</string>
+    <string name="nav_voice">الصوت</string>
+    <string name="nav_live">البث</string>
+    <string name="nav_more">المزيد</string>
+    <string name="main_menu_title">القائمة الرئيسية</string>
 </resources>
