@@ -54,7 +54,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: NEXVARY-Recorder-Studio-v0.4.0-debug
+          name: NEXVARY-Recorder-Studio-v0.5.0-debug
           path: app/build/outputs/apk/debug/app-debug.apk
 
   emulator-ui-smoke:
@@ -86,4 +86,4 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          script: gradle --no-daemon :app:connectedDebugAndroidTest
+          script: adb shell input keyevent KEYCODE_WAKEUP || true; adb shell wm dismiss-keyguard || true; adb shell input keyevent 82 || true; adb shell settings put system screen_off_timeout 2147483647 || true; sleep 3; gradle --no-daemon :app:connectedDebugAndroidTest || (echo "Retrying UI smoke after refocus"; adb shell input keyevent KEYCODE_WAKEUP || true; adb shell wm dismiss-keyguard || true; adb shell input keyevent 82 || true; sleep 3; gradle --no-daemon :app:connectedDebugAndroidTest)
