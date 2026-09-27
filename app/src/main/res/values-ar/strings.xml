@@ -178,4 +178,6 @@
     <string name="screen_projection_stopped_immediately">أوقف أندرويد مشاركة الشاشة فورًا. اختر الشاشة بالكامل من نافذة المشاركة وتجنب نافذة محمية أو حساسة.</string>
     <string name="save_folder_help">يمكنك اختيار أي مجلد قابل للكتابة وسيتم تذكره للتسجيلات التالية.</string>
     <string name="quick_record_tile">مسجل الشاشة</string>
+    <string name="record_fg_link">تسجيل FG Link</string>
+    <string name="record_fg_link_help">يبدأ تسجيل الشاشة ثم يفتح FG Machines Link تلقائيًا. اختر FG Link من نافذة مشاركة أندرويد.</string>
 </resources>
