@@ -27,6 +27,7 @@ import android.os.IBinder
 import android.os.Looper
 import android.os.SystemClock
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
@@ -45,12 +46,16 @@ class ScreenRecordService : Service() {
     companion object {
         const val ACTION_START = "com.nexvary.recorder.START_RECORD"
         const val ACTION_STOP = "com.nexvary.recorder.STOP_RECORD"
+        const val ACTION_PAUSE = "com.nexvary.recorder.PAUSE_RECORD"
+        const val ACTION_RESUME = "com.nexvary.recorder.RESUME_RECORD"
         const val ACTION_STATUS = "com.nexvary.recorder.RECORD_STATUS"
 
         const val EXTRA_RESULT_CODE = "result_code"
         const val EXTRA_RESULT_DATA = "result_data"
         const val EXTRA_MIC = "record_mic"
         const val EXTRA_FLOATING = "floating_control"
+        const val EXTRA_CAMERA = "floating_camera"
+        const val EXTRA_SHOW_TOUCHES = "show_touches"
         const val EXTRA_OUTPUT_TREE_URI = "output_tree_uri"
 
         const val EXTRA_STATE = "state"
@@ -58,6 +63,8 @@ class ScreenRecordService : Service() {
 
         const val STATE_STARTING = "starting"
         const val STATE_STARTED = "started"
+        const val STATE_PAUSED = "paused"
+        const val STATE_RESUMED = "resumed"
         const val STATE_STOPPED = "stopped"
         const val STATE_ERROR = "error"
 
@@ -67,6 +74,10 @@ class ScreenRecordService : Service() {
 
         @Volatile
         var isRecording: Boolean = false
+            private set
+
+        @Volatile
+        var isPaused: Boolean = false
             private set
     }
 
@@ -80,6 +91,8 @@ class ScreenRecordService : Service() {
     private var stopping = false
     private var startedAtElapsedMs = 0L
     private var floatingOverlay: FloatingRecorderOverlay? = null
+    private var floatingCameraOverlay: FloatingCameraOverlay? = null
+    private var previousShowTouches: Int? = null
 
     private val projectionCallback = object : MediaProjection.Callback() {
         override fun onStop() {
@@ -106,6 +119,8 @@ class ScreenRecordService : Service() {
         when (intent?.action) {
             ACTION_START -> startRecording(intent)
             ACTION_STOP -> finishRecording(fromProjectionCallback = false, userInitiated = true)
+            ACTION_PAUSE -> pauseRecording()
+            ACTION_RESUME -> resumeRecording()
         }
         return START_NOT_STICKY
     }
@@ -124,6 +139,13 @@ class ScreenRecordService : Service() {
             ) == PackageManager.PERMISSION_GRANTED
 
         val floatingRequested = intent.getBooleanExtra(EXTRA_FLOATING, true)
+        val cameraRequested = intent.getBooleanExtra(EXTRA_CAMERA, false)
+        val showTouchesRequested = intent.getBooleanExtra(EXTRA_SHOW_TOUCHES, false)
+        val useCamera = cameraRequested &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
         val outputTreeUri = intent.getStringExtra(EXTRA_OUTPUT_TREE_URI).orEmpty()
 
         val resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, Activity.RESULT_CANCELED)
@@ -139,11 +161,14 @@ class ScreenRecordService : Service() {
         }
 
         try {
-            val foregroundType = if (Build.VERSION.SDK_INT >= 30 && useMic) {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION or
+            var foregroundType = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+            if (Build.VERSION.SDK_INT >= 30 && useMic) {
+                foregroundType = foregroundType or
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
-            } else {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+            }
+            if (Build.VERSION.SDK_INT >= 34 && useCamera) {
+                foregroundType = foregroundType or
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
             }
 
             if (Build.VERSION.SDK_INT >= 29) {
@@ -221,7 +246,17 @@ class ScreenRecordService : Service() {
             recorder!!.start()
             recorderStarted = true
             isRecording = true
+            isPaused = false
             startedAtElapsedMs = SystemClock.elapsedRealtime()
+
+            if (showTouchesRequested && Settings.System.canWrite(this)) {
+                previousShowTouches = runCatching {
+                    Settings.System.getInt(contentResolver, "show_touches", 0)
+                }.getOrDefault(0)
+                runCatching {
+                    Settings.System.putInt(contentResolver, "show_touches", 1)
+                }
+            }
 
             if (floatingRequested) {
                 floatingOverlay = FloatingRecorderOverlay(this) {
@@ -231,6 +266,10 @@ class ScreenRecordService : Service() {
                         }
                     )
                 }.also { it.show() }
+            }
+
+            if (useCamera && Settings.canDrawOverlays(this)) {
+                floatingCameraOverlay = FloatingCameraOverlay(this).also { it.show() }
             }
 
             val sizeLabel = "${width}×${height}"
@@ -305,9 +344,13 @@ class ScreenRecordService : Service() {
         } finally {
             recorderStarted = false
             isRecording = false
+            isPaused = false
             startedAtElapsedMs = 0L
             floatingOverlay?.hide()
             floatingOverlay = null
+            floatingCameraOverlay?.release()
+            floatingCameraOverlay = null
+            restoreShowTouches()
 
             runCatching { recorder?.reset() }
             runCatching { recorder?.release() }
@@ -373,9 +416,13 @@ class ScreenRecordService : Service() {
 
         recorderStarted = false
         isRecording = false
+        isPaused = false
         startedAtElapsedMs = 0L
         floatingOverlay?.hide()
         floatingOverlay = null
+        floatingCameraOverlay?.release()
+        floatingCameraOverlay = null
+        restoreShowTouches()
 
         runCatching { recorder?.reset() }
         runCatching { recorder?.release() }
@@ -402,6 +449,44 @@ class ScreenRecordService : Service() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopping = false
         stopSelf()
+    }
+
+    private fun pauseRecording() {
+        if (!recorderStarted || !isRecording || isPaused) return
+
+        runCatching { recorder?.pause() }
+            .onSuccess {
+                isPaused = true
+                updateNotification(getString(R.string.recording_paused))
+                sendStatus(STATE_PAUSED, getString(R.string.recording_paused))
+            }
+            .onFailure {
+                sendStatus(STATE_ERROR, it.message ?: getString(R.string.recording_failed))
+            }
+    }
+
+    private fun resumeRecording() {
+        if (!recorderStarted || !isRecording || !isPaused) return
+
+        runCatching { recorder?.resume() }
+            .onSuccess {
+                isPaused = false
+                updateNotification(getString(R.string.recording_resumed))
+                sendStatus(STATE_RESUMED, getString(R.string.recording_resumed))
+            }
+            .onFailure {
+                sendStatus(STATE_ERROR, it.message ?: getString(R.string.recording_failed))
+            }
+    }
+
+    private fun restoreShowTouches() {
+        val previous = previousShowTouches ?: return
+        previousShowTouches = null
+        if (Settings.System.canWrite(this)) {
+            runCatching {
+                Settings.System.putInt(contentResolver, "show_touches", previous)
+            }
+        }
     }
 
     private fun chooseCaptureSize(
@@ -480,6 +565,15 @@ class ScreenRecordService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val pauseResumeIntent = PendingIntent.getService(
+            this,
+            3,
+            Intent(this, ScreenRecordService::class.java).apply {
+                action = if (isPaused) ACTION_RESUME else ACTION_PAUSE
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.presence_video_online)
             .setContentTitle(getString(R.string.app_name))
@@ -488,7 +582,12 @@ class ScreenRecordService : Service() {
             .setOnlyAlertOnce(true)
             .setContentIntent(openPending)
             .addAction(
-                android.R.drawable.ic_media_pause,
+                if (isPaused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause,
+                getString(if (isPaused) R.string.resume_recording else R.string.pause_recording),
+                pauseResumeIntent
+            )
+            .addAction(
+                android.R.drawable.ic_menu_close_clear_cancel,
                 getString(R.string.notification_stop_save),
                 stopPending
             )
@@ -525,6 +624,9 @@ class ScreenRecordService : Service() {
     override fun onDestroy() {
         floatingOverlay?.hide()
         floatingOverlay = null
+        floatingCameraOverlay?.release()
+        floatingCameraOverlay = null
+        restoreShowTouches()
 
         if (recorder != null || isRecording) {
             finishRecording(
