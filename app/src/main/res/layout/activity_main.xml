@@ -17,7 +17,6 @@
         android:paddingBottom="10dp">
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/themeHeader"
             android:layout_width="match_parent"
             android:layout_height="92dp"
             app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
