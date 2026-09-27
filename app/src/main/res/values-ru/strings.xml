@@ -178,9 +178,6 @@
     <string name="screen_projection_stopped_immediately">Android сразу остановил демонстрацию экрана. Выберите Весь экран и избегайте защищённых окон.</string>
     <string name="save_folder_help">Можно выбрать любую доступную для записи папку; выбор сохранится для будущих записей.</string>
     <string name="quick_record_tile">Запись экрана</string>
-    <string name="record_fg_link">Записать FG Link</string>
-    <string name="record_fg_link_help">Запускает запись и автоматически открывает FG Machines Link. Выберите FG Link в системном окне Android.</string>
-    <string name="fg_link_not_installed">FG Link не установлен на этом устройстве.</string>
     <string name="media_tools_title">Медиаинструменты</string>
     <string name="media_tools_desc">Замена и конвертация аудио, обрезка видео и смена контейнера видео локально на телефоне.</string>
     <string name="audio_convert_title">Конвертировать аудио</string>
