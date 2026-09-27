@@ -141,4 +141,18 @@
     <string name="theme_amber">Ambra</string>
     <string name="choose_theme">Scegli tema</string>
     <string name="cancel">Annulla</string>
+    <string name="theme_cyan">Ciano</string>
+    <string name="theme_teal">Verde acqua</string>
+    <string name="theme_lime">Lime</string>
+    <string name="theme_rose">Rosa</string>
+    <string name="theme_crimson">Cremisi</string>
+    <string name="theme_orange">Arancione</string>
+    <string name="theme_indigo">Indaco</string>
+    <string name="theme_silver">Argento</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_screen">Schermo</string>
+    <string name="nav_voice">Voce</string>
+    <string name="nav_live">Live</string>
+    <string name="nav_more">Altro</string>
+    <string name="main_menu_title">Menu principale</string>
 </resources>
