@@ -180,4 +180,5 @@
     <string name="quick_record_tile">Ekran kaydedici</string>
     <string name="record_fg_link">FG Link kaydet</string>
     <string name="record_fg_link_help">Ekran kaydını başlatır ve FG Machines Link'i otomatik açar. Android paylaşım penceresinde FG Link'i seçin.</string>
+    <string name="fg_link_not_installed">FG Link bu cihazda yüklü değil.</string>
 </resources>
