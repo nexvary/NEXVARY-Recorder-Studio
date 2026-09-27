@@ -32,6 +32,7 @@ class ScreenRecorderActivity : AppCompatActivity() {
 
     private var pendingResultCode: Int? = null
     private var pendingResultData: Intent? = null
+    private var pendingLaunchPackage: String? = null
 
     private val runtimePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -124,6 +125,7 @@ class ScreenRecorderActivity : AppCompatActivity() {
                     binding.txtStatus.text =
                         message ?: getString(R.string.recording_started)
                     setRecordingUi(paused = false)
+                    launchPendingTarget()
                 }
 
                 ScreenRecordService.STATE_PAUSED -> {
@@ -210,6 +212,20 @@ class ScreenRecorderActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
 
         binding.btnStart.setOnClickListener {
+            pendingLaunchPackage = null
+            savePreferences()
+            startFlow()
+        }
+
+        binding.btnRecordFgLink.setOnClickListener {
+            val targetPackage = FG_LINK_PACKAGE
+            val launchIntent = packageManager.getLaunchIntentForPackage(targetPackage)
+            if (launchIntent == null) {
+                showError(getString(R.string.fg_link_not_installed))
+                return@setOnClickListener
+            }
+
+            pendingLaunchPackage = targetPackage
             savePreferences()
             startFlow()
         }
@@ -386,6 +402,7 @@ class ScreenRecorderActivity : AppCompatActivity() {
 
     private fun beginCountdown() {
         binding.btnStart.isEnabled = false
+        binding.btnRecordFgLink.isEnabled = false
         binding.btnPauseResume.isEnabled = false
         binding.btnStop.isEnabled = false
 
@@ -463,8 +480,26 @@ class ScreenRecorderActivity : AppCompatActivity() {
             getString(R.string.checking_recorder)
     }
 
+    private fun launchPendingTarget() {
+        val targetPackage = pendingLaunchPackage ?: return
+        pendingLaunchPackage = null
+
+        val launchIntent = packageManager.getLaunchIntentForPackage(targetPackage)
+        if (launchIntent == null) {
+            showError(getString(R.string.fg_link_not_installed))
+            return
+        }
+
+        launchIntent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        )
+        startActivity(launchIntent)
+    }
+
     private fun setRecordingUi(paused: Boolean) {
         binding.btnStart.isEnabled = false
+        binding.btnRecordFgLink.isEnabled = false
         binding.btnPauseResume.isEnabled = true
         binding.btnStop.isEnabled = true
         binding.recordingIndicator.visibility = View.VISIBLE
@@ -480,6 +515,7 @@ class ScreenRecorderActivity : AppCompatActivity() {
 
     private fun setIdleUi() {
         binding.btnStart.isEnabled = true
+        binding.btnRecordFgLink.isEnabled = true
         binding.btnPauseResume.isEnabled = false
         binding.btnStop.isEnabled = false
         binding.recordingIndicator.visibility = View.GONE
