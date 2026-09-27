@@ -141,4 +141,18 @@
     <string name="theme_amber">کهربایی</string>
     <string name="choose_theme">انتخاب پوسته</string>
     <string name="cancel">لغو</string>
+    <string name="theme_cyan">فیروزه‌ای</string>
+    <string name="theme_teal">سبزآبی</string>
+    <string name="theme_lime">لیمویی</string>
+    <string name="theme_rose">رز</string>
+    <string name="theme_crimson">زرشکی</string>
+    <string name="theme_orange">نارنجی</string>
+    <string name="theme_indigo">نیلی</string>
+    <string name="theme_silver">نقره‌ای</string>
+    <string name="nav_home">خانه</string>
+    <string name="nav_screen">صفحه</string>
+    <string name="nav_voice">صدا</string>
+    <string name="nav_live">زنده</string>
+    <string name="nav_more">بیشتر</string>
+    <string name="main_menu_title">منوی اصلی</string>
 </resources>
