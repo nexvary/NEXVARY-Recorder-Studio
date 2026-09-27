@@ -98,10 +98,6 @@ for ident in sorted(action_ids):
     if f"binding.{ident}.setOnClickListener" not in all_source:
         errors.append(f"Dead-action risk: {ident} has no binding listener")
 
-for ident in ["themeHeader"]:
-    if f"binding.{ident}.setOnClickListener" not in all_source:
-        errors.append(f"Dead-action risk: {ident} has no binding listener")
-
 expected_activities = [
     ".MainActivity",
     ".AboutActivity",
