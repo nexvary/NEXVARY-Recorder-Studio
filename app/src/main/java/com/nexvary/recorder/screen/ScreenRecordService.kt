@@ -93,6 +93,8 @@ class ScreenRecordService : Service() {
     private var floatingOverlay: FloatingRecorderOverlay? = null
     private var floatingCameraOverlay: FloatingCameraOverlay? = null
     private var previousShowTouches: Int? = null
+    private var cameraFeatureAvailable = false
+    private var touchesEnabledNow = false
 
     private val projectionCallback = object : MediaProjection.Callback() {
         override fun onStop() {
@@ -146,6 +148,7 @@ class ScreenRecordService : Service() {
                 this,
                 Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
+        cameraFeatureAvailable = useCamera
         val outputTreeUri = intent.getStringExtra(EXTRA_OUTPUT_TREE_URI).orEmpty()
 
         val resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, Activity.RESULT_CANCELED)
@@ -256,6 +259,9 @@ class ScreenRecordService : Service() {
                 runCatching {
                     Settings.System.putInt(contentResolver, "show_touches", 1)
                 }
+                touchesEnabledNow = true
+            } else {
+                touchesEnabledNow = false
             }
 
             if (floatingRequested) {
@@ -268,6 +274,23 @@ class ScreenRecordService : Service() {
                             }
                         )
                     },
+                    onCameraToggleRequested = {
+                        toggleFloatingCamera()
+                    },
+                    onTouchesToggleRequested = {
+                        toggleTouches()
+                    },
+                    onOpenRequested = {
+                        startActivity(
+                            Intent(this, ScreenRecorderActivity::class.java).apply {
+                                addFlags(
+                                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                                        Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                                        Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                )
+                            }
+                        )
+                    },
                     onStopRequested = {
                         startService(
                             Intent(this, ScreenRecordService::class.java).apply {
@@ -275,7 +298,11 @@ class ScreenRecordService : Service() {
                             }
                         )
                     }
-                ).also { it.show() }
+                ).also {
+                    it.show(startedAtElapsedMs)
+                    it.updateCameraEnabled(useCamera)
+                    it.updateTouchesEnabled(touchesEnabledNow)
+                }
             }
 
             if (useCamera && Settings.canDrawOverlays(this)) {
@@ -284,7 +311,7 @@ class ScreenRecordService : Service() {
 
             val sizeLabel = "${width}×${height}"
             updateNotification(
-                getString(R.string.notification_recording_size_format, sizeLabel)
+                getString(R.string.recording_running)
             )
             sendStatus(
                 STATE_STARTED,
@@ -491,10 +518,65 @@ class ScreenRecordService : Service() {
             }
     }
 
+    private fun toggleFloatingCamera() {
+        if (!cameraFeatureAvailable || !Settings.canDrawOverlays(this)) {
+            startActivity(
+                Intent(this, ScreenRecorderActivity::class.java).apply {
+                    addFlags(
+                        Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                            Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    )
+                }
+            )
+            return
+        }
+
+        if (floatingCameraOverlay != null) {
+            floatingCameraOverlay?.release()
+            floatingCameraOverlay = null
+            floatingOverlay?.updateCameraEnabled(false)
+        } else {
+            floatingCameraOverlay = FloatingCameraOverlay(this).also { it.show() }
+            floatingOverlay?.updateCameraEnabled(true)
+        }
+    }
+
+    private fun toggleTouches() {
+        if (!Settings.System.canWrite(this)) {
+            startActivity(
+                Intent(
+                    Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                    Uri.parse("package:$packageName")
+                ).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+            )
+            return
+        }
+
+        if (previousShowTouches == null) {
+            previousShowTouches = runCatching {
+                Settings.System.getInt(contentResolver, "show_touches", 0)
+            }.getOrDefault(0)
+        }
+
+        touchesEnabledNow = !touchesEnabledNow
+        runCatching {
+            Settings.System.putInt(
+                contentResolver,
+                "show_touches",
+                if (touchesEnabledNow) 1 else 0
+            )
+        }
+        floatingOverlay?.updateTouchesEnabled(touchesEnabledNow)
+    }
+
     private fun restoreShowTouches() {
-        val previous = previousShowTouches ?: return
+        val previous = previousShowTouches
         previousShowTouches = null
-        if (Settings.System.canWrite(this)) {
+        touchesEnabledNow = false
+        if (previous != null && Settings.System.canWrite(this)) {
             runCatching {
                 Settings.System.putInt(contentResolver, "show_touches", previous)
             }
@@ -586,12 +668,25 @@ class ScreenRecordService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val publicVersion = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.presence_video_online)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText(getString(R.string.recording_running))
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .build()
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.presence_video_online)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(text)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setPublicVersion(publicVersion)
             .setContentIntent(openPending)
             .addAction(
                 if (isPaused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause,
