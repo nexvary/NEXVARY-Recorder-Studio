@@ -146,12 +146,53 @@ for required_symbol in [
     if required_symbol not in screen_service:
         errors.append(f"Recorder core feature missing: {required_symbol}")
 
+# v0.6.0 media tools invariants.
+media_tools_activity = SRC / "com" / "nexvary" / "recorder" / "media" / "MediaToolsActivity.kt"
+audio_converter = SRC / "com" / "nexvary" / "recorder" / "media" / "AudioFormatConverter.kt"
+video_tools = SRC / "com" / "nexvary" / "recorder" / "media" / "VideoToolsEngine.kt"
+media_layout = layout_dir / "activity_media_tools.xml"
+
+for required_file in [media_tools_activity, audio_converter, video_tools, media_layout]:
+    if not required_file.exists():
+        errors.append(f"Media tools file missing: {required_file.name}")
+
+if media_layout.exists():
+    media_layout_text = media_layout.read_text(encoding="utf-8")
+    for required_id in [
+        "btnReplaceAudio", "btnChooseAudio", "btnConvertAudio",
+        "btnChooseVideo", "btnTrimVideo", "btnConvertVideo"
+    ]:
+        if f'@+id/{required_id}' not in media_layout_text:
+            errors.append(f"Media tools control missing: {required_id}")
+
+if audio_converter.exists():
+    text_audio = audio_converter.read_text(encoding="utf-8")
+    for symbol in ["Target.WAV", "Target.M4A", "Target.OGG"]:
+        if symbol not in text_audio:
+            errors.append(f"Audio conversion target missing: {symbol}")
+
+if video_tools.exists():
+    text_video = video_tools.read_text(encoding="utf-8")
+    for symbol in ["Container.MP4", "Container.THREE_GPP", "Container.WEBM", "fun trim("]:
+        if symbol not in text_video:
+            errors.append(f"Video tools feature missing: {symbol}")
+
+project_text = "\n".join(
+    p.read_text(encoding="utf-8", errors="ignore")
+    for p in (ROOT / "app" / "src" / "main").rglob("*")
+    if p.is_file() and p.suffix in {".kt", ".xml"}
+)
+for forbidden in ["FG Link", "fgmachines", "btnRecordFgLink", "FG_LINK_PACKAGE"]:
+    if forbidden in project_text:
+        errors.append(f"FG-specific recorder residue found: {forbidden}")
+
 expected_activities = [
     ".MainActivity",
     ".AboutActivity",
     ".LanguageActivity",
     ".screen.ScreenRecorderActivity",
     ".audio.VoiceRecorderActivity",
+    ".media.MediaToolsActivity",
     ".media.AudioReplaceActivity",
     ".live.LiveBroadcastActivity",
 ]
