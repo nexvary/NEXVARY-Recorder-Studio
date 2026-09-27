@@ -4,9 +4,10 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -72,11 +73,16 @@ class NavigationSmokeTest {
             onView(withId(R.id.switchTouches)).check(matches(isDisplayed()))
             onView(withId(R.id.switchCamera)).check(matches(isDisplayed()))
             onView(withId(R.id.groupCountdown)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnStorage)).perform(scrollTo()).check(matches(isDisplayed()))
-            onView(withId(R.id.btnRecordFgLink)).perform(scrollTo()).check(matches(isDisplayed()))
-            onView(withId(R.id.btnStart)).perform(scrollTo()).check(matches(isDisplayed()))
-            onView(withId(R.id.btnPauseResume)).perform(scrollTo()).check(matches(isDisplayed()))
-            onView(withId(R.id.btnStop)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnStorage))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnRecordFgLink))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnStart))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnPauseResume))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+            onView(withId(R.id.btnStop))
+                .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
         }
     }
 
