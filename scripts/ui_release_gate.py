@@ -64,11 +64,16 @@ for path in layout_files:
         errors.append(f"{path.name}: XML parse failure: {exc}")
         continue
 
-    if root.tag != "ScrollView":
-        errors.append(f"{path.name}: root must be ScrollView for small-phone safety")
+    ids = [el.attrib.get(ANDROID+"id","") for el in root.iter()]
 
-    if path.name != "activity_main.xml":
-        ids = [el.attrib.get(ANDROID+"id","") for el in root.iter()]
+    if path.name == "activity_main.xml":
+        if root.tag == "ScrollView":
+            errors.append("activity_main.xml: main dashboard must be fixed and must not scroll")
+        if "@+id/bottomNav" not in ids:
+            errors.append("activity_main.xml: missing fixed bottomNav")
+    else:
+        if root.tag != "ScrollView":
+            errors.append(f"{path.name}: root must be ScrollView for small-phone safety")
         if "@+id/btnBack" not in ids:
             errors.append(f"{path.name}: missing btnBack")
 
