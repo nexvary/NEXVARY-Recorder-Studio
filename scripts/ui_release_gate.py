@@ -112,6 +112,40 @@ for theme_name in required_theme_names:
 if theme_manager.count("R.style.Theme_NexvaryRecorder_") < 12:
     errors.append("ThemeManager must register at least 12 runtime theme styles")
 
+
+# v0.5.0 recorder-core invariants.
+screen_activity = (SRC / "com" / "nexvary" / "recorder" / "screen" / "ScreenRecorderActivity.kt").read_text(encoding="utf-8")
+screen_service = (SRC / "com" / "nexvary" / "recorder" / "screen" / "ScreenRecordService.kt").read_text(encoding="utf-8")
+screen_layout = (LAYOUT / "activity_screen_recorder.xml").read_text(encoding="utf-8")
+manifest_text = (APP / "src" / "main" / "AndroidManifest.xml").read_text(encoding="utf-8")
+
+if "moveTaskToBack(" in screen_activity:
+    errors.append("Screen recorder must not auto-minimize after projection starts")
+
+for required_id in [
+    "switchFloating", "switchTouches", "switchCamera",
+    "groupCountdown", "btnStorage", "btnPauseResume"
+]:
+    if f'@+id/{required_id}' not in screen_layout:
+        errors.append(f"Recorder control missing from UI: {required_id}")
+
+for required_permission in [
+    "android.permission.SYSTEM_ALERT_WINDOW",
+    "android.permission.WRITE_SETTINGS",
+    "android.permission.CAMERA",
+    "android.permission.FOREGROUND_SERVICE_CAMERA",
+]:
+    if required_permission not in manifest_text:
+        errors.append(f"Recorder permission missing: {required_permission}")
+
+for required_symbol in [
+    "EXTRA_OUTPUT_TREE_URI", "EXTRA_SHOW_TOUCHES", "EXTRA_CAMERA",
+    "ACTION_PAUSE", "ACTION_RESUME", "FloatingRecorderOverlay",
+    "FloatingCameraOverlay",
+]:
+    if required_symbol not in screen_service:
+        errors.append(f"Recorder core feature missing: {required_symbol}")
+
 expected_activities = [
     ".MainActivity",
     ".AboutActivity",
