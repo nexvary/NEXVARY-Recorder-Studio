@@ -155,4 +155,26 @@
     <string name="nav_live">Эфир</string>
     <string name="nav_more">Ещё</string>
     <string name="main_menu_title">Главное меню</string>
+    <string name="floating_control">Плавающее управление</string>
+    <string name="floating_control_desc">Плавающая панель записи экрана</string>
+    <string name="show_touches">Показывать касания при записи</string>
+    <string name="camera_overlay">Плавающая фронтальная камера</string>
+    <string name="choose_save_folder">Выбрать папку сохранения</string>
+    <string name="default_save_folder">По умолчанию: Movies/NEXVARY Recorder</string>
+    <string name="custom_save_folder_format">Папка сохранения: %1$s</string>
+    <string name="countdown_title">Обратный отсчёт</string>
+    <string name="countdown_0">Выкл.</string>
+    <string name="countdown_3">3 с</string>
+    <string name="countdown_5">5 с</string>
+    <string name="countdown_10">10 с</string>
+    <string name="pause_recording">Пауза</string>
+    <string name="resume_recording">Продолжить</string>
+    <string name="recording_paused">Запись приостановлена</string>
+    <string name="recording_resumed">Запись продолжена</string>
+    <string name="overlay_permission_required">Разрешите показ поверх других приложений для плавающего управления.</string>
+    <string name="write_settings_permission_required">Разрешите изменение системных настроек для отображения касаний.</string>
+    <string name="camera_permission_required">Для плавающей камеры требуется разрешение камеры.</string>
+    <string name="recorder_options">Управление записью</string>
+    <string name="screen_projection_stopped_immediately">Android сразу остановил демонстрацию экрана. Выберите Весь экран и избегайте защищённых окон.</string>
+    <string name="save_folder_help">Можно выбрать любую доступную для записи папку; выбор сохранится для будущих записей.</string>
 </resources>
