@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NEXVARY Recorder Studio</string>
+    <string name="app_name">IBM Empire Recorder Studio</string>
     <string name="home_subtitle">تسجيل شاشة وصوت احترافي واستبدال الصوت وبث فيديو مسجل مسبقًا</string>
     <string name="theme_current_format">الثيم الحالي: %1$s</string>
     <string name="theme_hint">اضغط أعلى الشاشة لتغيير اللون</string>
@@ -14,7 +14,7 @@
     <string name="live_title">بث فيديو مسجل مسبقًا</string>
     <string name="live_desc">RTMP / RTMPS • Facebook Live • ملف فيديو محلي</string>
     <string name="about_title">عنا</string>
-    <string name="about_desc">معلومات NEXVARY والروابط الرسمية</string>
+    <string name="about_desc">معلومات IBM Empire والروابط الرسمية</string>
     <string name="language_title">اللغة</string>
     <string name="language_desc">العربية والإنجليزية والتركية والإسبانية والألمانية والإيطالية والفرنسية والأردية والفارسية والروسية</string>
     <string name="privacy_footer">بدون إعلانات • المعالجة محليًا • Android 10+</string>
@@ -38,7 +38,7 @@
     <string name="lost_screen_permission">فقدت موافقة تسجيل الشاشة.</string>
     <string name="lost_screen_data">فقدت بيانات موافقة تسجيل الشاشة.</string>
     <string name="checking_recorder">جارٍ التحقق من المسجل وبدء التسجيل…</string>
-    <string name="open_gallery_hint">افتح المعرض أو Movies/NEXVARY Recorder للوصول إلى الملف.</string>
+    <string name="open_gallery_hint">افتح المعرض أو Movies/IBM Empire Recorder للوصول إلى الملف.</string>
     <string name="start_failed_retry">لم يبدأ التسجيل. أعد المحاولة واختر مشاركة الشاشة عندما تظهر نافذة النظام.</string>
     <string name="voice_page_title">استوديو الصوت الاحترافي</string>
     <string name="voice_page_desc">48 kHz PCM مع تقليل الضوضاء وAGC وإلغاء الصدى عند دعم الهاتف، ثم تحسين وتطبيع محلي للصوت.</string>
@@ -48,7 +48,7 @@
     <string name="voice_start_failed_format">تعذر بدء التسجيل: %1$s</string>
     <string name="voice_enhancing">جارٍ تحسين الصوت…</string>
     <string name="voice_complete">اكتمل التسجيل والتحسين</string>
-    <string name="voice_saved_format">تم الحفظ في Music/NEXVARY Recorder
+    <string name="voice_saved_format">تم الحفظ في Music/IBM Empire Recorder
 %1$s</string>
     <string name="voice_save_failed_format">فشل تحسين/حفظ الصوت: %1$s</string>
     <string name="replace_page_title">استبدال صوت الفيديو</string>
@@ -58,7 +58,7 @@
     <string name="choose_video_first">اختر الفيديو أولاً.</string>
     <string name="choose_audio_first">اختر ملف الصوت أولاً.</string>
     <string name="creating_video">جارٍ إنشاء الفيديو بالصوت الجديد…</string>
-    <string name="video_saved_format">تم الحفظ في Movies/NEXVARY Recorder
+    <string name="video_saved_format">تم الحفظ في Movies/IBM Empire Recorder
 %1$s</string>
     <string name="video_create_failed_format">فشل إنشاء الفيديو: %1$s</string>
     <string name="live_page_title">بث فيديو محفوظ إلى Facebook Live</string>
@@ -96,7 +96,7 @@
     <string name="live_disconnected">انقطع أو انتهى البث</string>
     <string name="live_auth_error">خطأ في Stream Key أو المصادقة</string>
     <string name="live_auth_success">تم قبول بيانات البث</string>
-    <string name="live_notification_title">NEXVARY Live Broadcaster</string>
+    <string name="live_notification_title">IBM Empire Live Broadcaster</string>
     <string name="live_notification_text">يتم بث فيديو محفوظ الآن</string>
     <string name="stop_broadcast">إيقاف البث</string>
     <string name="screen_already_running">يوجد تسجيل شاشة يعمل بالفعل.</string>
@@ -107,14 +107,14 @@
     <string name="screen_projection_create_fail">تعذر إنشاء جلسة التقاط الشاشة.</string>
     <string name="screen_virtual_display_fail">تعذر إنشاء شاشة التسجيل الافتراضية.</string>
     <string name="screen_started_size_format">بدأ التسجيل بنجاح • %1$s</string>
-    <string name="screen_stopped_saved">تم حفظ التسجيل في Movies/NEXVARY Recorder</string>
+    <string name="screen_stopped_saved">تم حفظ التسجيل في Movies/IBM Empire Recorder</string>
     <string name="screen_session_ended_saved">انتهت مشاركة الشاشة وتم حفظ التسجيل</string>
     <string name="screen_session_stopped">توقفت جلسة التسجيل</string>
     <string name="notification_recording_preparing">جارٍ تجهيز التسجيل…</string>
     <string name="notification_recording_size_format">يسجل الشاشة الآن • %1$s</string>
     <string name="notification_stop_save">إيقاف وحفظ</string>
-    <string name="about_page_title">عن NEXVARY Recorder Studio</string>
-    <string name="about_body">NEXVARY Recorder Studio تطبيق أندرويد مفتوح المصدر لتسجيل الشاشة والصوت المحسن واستبدال صوت الفيديو وبث الفيديو المسجل مسبقًا عبر RTMP/RTMPS. تتم عمليات التسجيل ومعالجة الوسائط محليًا على الهاتف.</string>
+    <string name="about_page_title">عن IBM Empire Recorder Studio</string>
+    <string name="about_body">IBM Empire Recorder Studio تطبيق أندرويد مفتوح المصدر لتسجيل الشاشة والصوت المحسن واستبدال صوت الفيديو وبث الفيديو المسجل مسبقًا عبر RTMP/RTMPS. تتم عمليات التسجيل ومعالجة الوسائط محليًا على الهاتف.</string>
     <string name="official_links">الروابط الرسمية</string>
     <string name="website">الموقع</string>
     <string name="facebook">Facebook</string>
@@ -160,7 +160,7 @@
     <string name="show_touches">إظهار اللمسات أثناء التسجيل</string>
     <string name="camera_overlay">الكاميرا الأمامية العائمة</string>
     <string name="choose_save_folder">اختيار مجلد الحفظ</string>
-    <string name="default_save_folder">الافتراضي: Movies/NEXVARY Recorder</string>
+    <string name="default_save_folder">الافتراضي: Movies/IBM Empire Recorder</string>
     <string name="custom_save_folder_format">مجلد الحفظ: %1$s</string>
     <string name="countdown_title">العد التنازلي</string>
     <string name="countdown_0">بدون</string>
@@ -187,7 +187,7 @@
     <string name="audio_format_m4a">M4A • AAC</string>
     <string name="audio_format_ogg">OGG • Opus</string>
     <string name="converting_audio">جارٍ تحويل الصوت…</string>
-    <string name="audio_saved_format">تم الحفظ في Music/NEXVARY Recorder\n%1$s</string>
+    <string name="audio_saved_format">تم الحفظ في Music/IBM Empire Recorder\n%1$s</string>
     <string name="video_tools_title">أدوات الفيديو</string>
     <string name="trim_start_seconds">البداية بالثواني</string>
     <string name="trim_end_seconds">النهاية بالثواني</string>
@@ -204,4 +204,20 @@
     <string name="converting_video">جارٍ تحويل الفيديو…</string>
     <string name="media_operation_failed_format">فشلت العملية: %1$s</string>
     <string name="video_trimmed_keyframe_format">تم حفظ %1$s • يبدأ القص من أقرب إطار مفتاح آمن قرب %2$.2f ثانية</string>
+    <string name="about_editor_title">بيانات «حول / عنا» القابلة للتحرير</string>
+    <string name="about_name_hint">الاسم الظاهر</string>
+    <string name="about_body_hint">وصف «حول / عنا»</string>
+    <string name="about_website_hint">رابط الموقع</string>
+    <string name="about_facebook_hint">رابط فيسبوك</string>
+    <string name="about_email_hint">البريد الإلكتروني</string>
+    <string name="about_youtube_hint">رابط يوتيوب</string>
+    <string name="about_x_hint">رابط X</string>
+    <string name="save_about">حفظ بيانات «حول / عنا»</string>
+    <string name="reset_about">إعادة ضبط بيانات «حول / عنا»</string>
+    <string name="about_saved">تم حفظ بيانات «حول / عنا»</string>
+    <string name="about_reset">تمت إعادة ضبط بيانات «حول / عنا»</string>
+    <string name="about_invalid_link">أدخل رابطًا صحيحًا يبدأ بـ http أو https.</string>
+    <string name="about_invalid_email">أدخل بريدًا إلكترونيًا صحيحًا.</string>
+    <string name="about_default_title">IBM Empire Recorder Studio</string>
+    <string name="about_default_body">IBM Empire Recorder Studio يسجل الشاشة والصوت، ويستبدل صوت الفيديو، ويحوّل صيغ الصوت والفيديو، ويقص الفيديو، ويبث الفيديو المسجل مسبقًا عبر RTMP/RTMPS. تتم معالجة الوسائط محليًا على الهاتف.</string>
 </resources>

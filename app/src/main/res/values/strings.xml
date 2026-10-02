@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NEXVARY Recorder Studio</string>
+    <string name="app_name">IBM Empire Recorder Studio</string>
     <string name="home_subtitle">Screen recording, professional voice, audio replacement and prerecorded live streaming</string>
     <string name="theme_current_format">Current theme: %1$s</string>
     <string name="theme_hint">Tap the header to change the color theme</string>
@@ -14,7 +14,7 @@
     <string name="live_title">Prerecorded video live stream</string>
     <string name="live_desc">RTMP / RTMPS • Facebook Live • local video file</string>
     <string name="about_title">About</string>
-    <string name="about_desc">NEXVARY information and official links</string>
+    <string name="about_desc">IBM Empire information and official links</string>
     <string name="language_title">Language</string>
     <string name="language_desc">Arabic, English, Turkish, Spanish, German, Italian, French, Urdu, Persian and Russian</string>
     <string name="privacy_footer">No ads • Local processing • Android 10+</string>
@@ -38,7 +38,7 @@
     <string name="lost_screen_permission">Screen recording permission was lost.</string>
     <string name="lost_screen_data">Screen recording authorization data was lost.</string>
     <string name="checking_recorder">Checking recorder and starting…</string>
-    <string name="open_gallery_hint">Open Gallery or Movies/NEXVARY Recorder to access the file.</string>
+    <string name="open_gallery_hint">Open Gallery or Movies/IBM Empire Recorder to access the file.</string>
     <string name="start_failed_retry">Recording did not start. Try again and choose screen sharing when Android asks.</string>
     <string name="voice_page_title">Professional voice studio</string>
     <string name="voice_page_desc">48 kHz PCM with noise suppression, AGC and echo cancellation when supported, then local normalization and enhancement.</string>
@@ -48,7 +48,7 @@
     <string name="voice_start_failed_format">Could not start recording: %1$s</string>
     <string name="voice_enhancing">Enhancing audio…</string>
     <string name="voice_complete">Recording and enhancement completed</string>
-    <string name="voice_saved_format">Saved to Music/NEXVARY Recorder
+    <string name="voice_saved_format">Saved to Music/IBM Empire Recorder
 %1$s</string>
     <string name="voice_save_failed_format">Audio enhancement/save failed: %1$s</string>
     <string name="replace_page_title">Replace video audio</string>
@@ -58,7 +58,7 @@
     <string name="choose_video_first">Choose a video first.</string>
     <string name="choose_audio_first">Choose an audio file first.</string>
     <string name="creating_video">Creating video with the new audio…</string>
-    <string name="video_saved_format">Saved to Movies/NEXVARY Recorder
+    <string name="video_saved_format">Saved to Movies/IBM Empire Recorder
 %1$s</string>
     <string name="video_create_failed_format">Video creation failed: %1$s</string>
     <string name="live_page_title">Stream a saved video to Facebook Live</string>
@@ -96,7 +96,7 @@
     <string name="live_disconnected">Broadcast disconnected or ended</string>
     <string name="live_auth_error">Stream Key or authentication error</string>
     <string name="live_auth_success">Broadcast credentials accepted</string>
-    <string name="live_notification_title">NEXVARY Live Broadcaster</string>
+    <string name="live_notification_title">IBM Empire Live Broadcaster</string>
     <string name="live_notification_text">A saved video is being streamed now</string>
     <string name="stop_broadcast">Stop broadcast</string>
     <string name="screen_already_running">A screen recording is already running.</string>
@@ -107,14 +107,14 @@
     <string name="screen_projection_create_fail">Could not create the screen capture session.</string>
     <string name="screen_virtual_display_fail">Could not create the virtual display.</string>
     <string name="screen_started_size_format">Recording started • %1$s</string>
-    <string name="screen_stopped_saved">Recording saved in Movies/NEXVARY Recorder</string>
+    <string name="screen_stopped_saved">Recording saved in Movies/IBM Empire Recorder</string>
     <string name="screen_session_ended_saved">Screen sharing ended and the recording was saved</string>
     <string name="screen_session_stopped">Recording session stopped</string>
     <string name="notification_recording_preparing">Preparing recording…</string>
     <string name="notification_recording_size_format">Recording screen now • %1$s</string>
     <string name="notification_stop_save">Stop and save</string>
-    <string name="about_page_title">About NEXVARY Recorder Studio</string>
-    <string name="about_body">NEXVARY Recorder Studio is an open-source Android tool for screen recording, enhanced voice recording, replacing video audio and streaming prerecorded video through RTMP/RTMPS. Recording and media processing are performed locally on the device.</string>
+    <string name="about_page_title">About IBM Empire Recorder Studio</string>
+    <string name="about_body">IBM Empire Recorder Studio is an open-source Android tool for screen recording, enhanced voice recording, replacing video audio and streaming prerecorded video through RTMP/RTMPS. Recording and media processing are performed locally on the device.</string>
     <string name="official_links">Official links</string>
     <string name="website">Website</string>
     <string name="facebook">Facebook</string>
@@ -160,7 +160,7 @@
     <string name="show_touches">Show touches while recording</string>
     <string name="camera_overlay">Floating front camera</string>
     <string name="choose_save_folder">Choose save folder</string>
-    <string name="default_save_folder">Default: Movies/NEXVARY Recorder</string>
+    <string name="default_save_folder">Default: Movies/IBM Empire Recorder</string>
     <string name="custom_save_folder_format">Save folder: %1$s</string>
     <string name="countdown_title">Countdown</string>
     <string name="countdown_0">Off</string>
@@ -187,7 +187,7 @@
     <string name="audio_format_m4a">M4A • AAC</string>
     <string name="audio_format_ogg">OGG • Opus</string>
     <string name="converting_audio">Converting audio…</string>
-    <string name="audio_saved_format">Saved to Music/NEXVARY Recorder\n%1$s</string>
+    <string name="audio_saved_format">Saved to Music/IBM Empire Recorder\n%1$s</string>
     <string name="video_tools_title">Video tools</string>
     <string name="trim_start_seconds">Start (seconds)</string>
     <string name="trim_end_seconds">End (seconds)</string>
@@ -204,4 +204,20 @@
     <string name="converting_video">Converting video…</string>
     <string name="media_operation_failed_format">Operation failed: %1$s</string>
     <string name="video_trimmed_keyframe_format">Saved %1$s • cut begins at the nearest safe keyframe around %2$.2f s</string>
+    <string name="about_editor_title">Editable About profile</string>
+    <string name="about_name_hint">Display name</string>
+    <string name="about_body_hint">About description</string>
+    <string name="about_website_hint">Website URL</string>
+    <string name="about_facebook_hint">Facebook URL</string>
+    <string name="about_email_hint">Email address</string>
+    <string name="about_youtube_hint">YouTube URL</string>
+    <string name="about_x_hint">X URL</string>
+    <string name="save_about">Save About profile</string>
+    <string name="reset_about">Reset About profile</string>
+    <string name="about_saved">About profile saved</string>
+    <string name="about_reset">About profile reset</string>
+    <string name="about_invalid_link">Enter a valid http or https link.</string>
+    <string name="about_invalid_email">Enter a valid email address.</string>
+    <string name="about_default_title">IBM Empire Recorder Studio</string>
+    <string name="about_default_body">IBM Empire Recorder Studio records the screen and voice, replaces video audio, converts audio and video formats, trims video, and streams prerecorded video through RTMP/RTMPS. Media processing is performed locally on the device.</string>
 </resources>
