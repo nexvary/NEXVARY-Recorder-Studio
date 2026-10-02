@@ -3,13 +3,175 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/nexvaryBackground">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
-        <Button android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/back" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/about_page_title" android:textColor="?attr/nexvaryText" android:textSize="24sp" android:textStyle="bold" android:gravity="start" android:textDirection="locale" />
-        <TextView android:id="@+id/txtVersion" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="@string/version_format" android:textColor="?attr/nexvaryAccent" android:gravity="start" android:textDirection="locale" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/about_body" android:textColor="?attr/nexvaryMuted" android:textSize="14sp" android:lineSpacingExtra="3dp" android:gravity="start" android:textDirection="locale" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" android:text="@string/official_links" android:textColor="?attr/nexvaryText" android:textSize="18sp" android:textStyle="bold" android:gravity="start" android:textDirection="locale" />
+    android:background="?attr/ibmempireBackground">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/back" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/about_page_title"
+            android:textColor="?attr/ibmempireText"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:textDirection="locale" />
+
+        <TextView
+            android:id="@+id/txtVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/version_format"
+            android:textColor="?attr/ibmempireAccent"
+            android:gravity="start"
+            android:textDirection="locale" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="?attr/ibmempireSurface"
+            app:cardCornerRadius="18dp"
+            app:strokeColor="?attr/ibmempireAccent"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_editor_title"
+                    android:textColor="?attr/ibmempireText"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:gravity="start"
+                    android:textDirection="locale" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editAboutTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="@string/about_name_hint"
+                    android:singleLine="true"
+                    android:textColor="?attr/ibmempireText"
+                    android:textColorHint="?attr/ibmempireMuted" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editAboutBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/about_body_hint"
+                    android:gravity="start|top"
+                    android:minLines="4"
+                    android:maxLines="8"
+                    android:inputType="textMultiLine"
+                    android:textColor="?attr/ibmempireText"
+                    android:textColorHint="?attr/ibmempireMuted" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editWebsite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/about_website_hint"
+                    android:inputType="textUri"
+                    android:singleLine="true"
+                    android:textDirection="ltr"
+                    android:textColor="?attr/ibmempireText"
+                    android:textColorHint="?attr/ibmempireMuted" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editFacebook"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/about_facebook_hint"
+                    android:inputType="textUri"
+                    android:singleLine="true"
+                    android:textDirection="ltr"
+                    android:textColor="?attr/ibmempireText"
+                    android:textColorHint="?attr/ibmempireMuted" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/about_email_hint"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true"
+                    android:textDirection="ltr"
+                    android:textColor="?attr/ibmempireText"
+                    android:textColorHint="?attr/ibmempireMuted" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editYoutube"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/about_youtube_hint"
+                    android:inputType="textUri"
+                    android:singleLine="true"
+                    android:textDirection="ltr"
+                    android:textColor="?attr/ibmempireText"
+                    android:textColorHint="?attr/ibmempireMuted" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editX"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/about_x_hint"
+                    android:inputType="textUri"
+                    android:singleLine="true"
+                    android:textDirection="ltr"
+                    android:textColor="?attr/ibmempireText"
+                    android:textColorHint="?attr/ibmempireMuted" />
+
+                <Button
+                    android:id="@+id/btnSaveAbout"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/save_about" />
+
+                <Button
+                    android:id="@+id/btnResetAbout"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/reset_about" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="@string/official_links"
+            android:textColor="?attr/ibmempireText"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:textDirection="locale" />
+
         <Button android:id="@+id/btnWebsite" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="10dp" android:text="@string/website" />
         <Button android:id="@+id/btnFacebook" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="8dp" android:text="@string/facebook" />
         <Button android:id="@+id/btnEmail" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="8dp" android:text="@string/email" />

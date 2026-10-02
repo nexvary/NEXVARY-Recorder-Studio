@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/nexvaryBackground">
+    android:background="?attr/ibmempireBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,9 +21,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
+            app:cardBackgroundColor="?attr/ibmempireSurfaceStrong"
             app:cardCornerRadius="22dp"
-            app:strokeColor="?attr/nexvaryAccent"
+            app:strokeColor="?attr/ibmempireAccent"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -51,7 +51,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="10dp"
                         android:text="@string/screen_record_title"
-                        android:textColor="?attr/nexvaryText"
+                        android:textColor="?attr/ibmempireText"
                         android:textSize="23sp"
                         android:textStyle="bold"
                         android:gravity="start"
@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="@string/ready"
-                    android:textColor="?attr/nexvaryAccent"
+                    android:textColor="?attr/ibmempireAccent"
                     android:textStyle="bold"
                     android:gravity="start"
                     android:textDirection="locale" />
@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textColor="?attr/nexvaryMuted"
+                    android:textColor="?attr/ibmempireMuted"
                     android:gravity="start"
                     android:textDirection="locale" />
             </LinearLayout>
@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            app:cardBackgroundColor="?attr/nexvarySurface"
+            app:cardBackgroundColor="?attr/ibmempireSurface"
             app:cardCornerRadius="18dp">
 
             <LinearLayout
@@ -97,7 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/recorder_options"
-                    android:textColor="?attr/nexvaryText"
+                    android:textColor="?attr/ibmempireText"
                     android:textSize="17sp"
                     android:textStyle="bold"
                     android:gravity="start"
@@ -110,7 +110,7 @@
                     android:layout_marginTop="8dp"
                     android:checked="true"
                     android:text="@string/record_mic"
-                    android:textColor="?attr/nexvaryText" />
+                    android:textColor="?attr/ibmempireText" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchFloating"
@@ -118,28 +118,28 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:text="@string/floating_control"
-                    android:textColor="?attr/nexvaryText" />
+                    android:textColor="?attr/ibmempireText" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchTouches"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/show_touches"
-                    android:textColor="?attr/nexvaryText" />
+                    android:textColor="?attr/ibmempireText" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchCamera"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/camera_overlay"
-                    android:textColor="?attr/nexvaryText" />
+                    android:textColor="?attr/ibmempireText" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="@string/countdown_title"
-                    android:textColor="?attr/nexvaryText"
+                    android:textColor="?attr/ibmempireText"
                     android:textStyle="bold"
                     android:gravity="start"
                     android:textDirection="locale" />
@@ -157,28 +157,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/countdown_0"
-                        android:textColor="?attr/nexvaryText" />
+                        android:textColor="?attr/ibmempireText" />
 
                     <RadioButton
                         android:id="@+id/radio3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/countdown_3"
-                        android:textColor="?attr/nexvaryText" />
+                        android:textColor="?attr/ibmempireText" />
 
                     <RadioButton
                         android:id="@+id/radio5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/countdown_5"
-                        android:textColor="?attr/nexvaryText" />
+                        android:textColor="?attr/ibmempireText" />
 
                     <RadioButton
                         android:id="@+id/radio10"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/countdown_10"
-                        android:textColor="?attr/nexvaryText" />
+                        android:textColor="?attr/ibmempireText" />
                 </RadioGroup>
 
                 <Button
@@ -194,7 +194,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="@string/default_save_folder"
-                    android:textColor="?attr/nexvaryMuted"
+                    android:textColor="?attr/ibmempireMuted"
                     android:textSize="12sp"
                     android:gravity="start"
                     android:textDirection="locale" />
@@ -204,7 +204,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/save_folder_help"
-                    android:textColor="?attr/nexvaryMuted"
+                    android:textColor="?attr/ibmempireMuted"
                     android:textSize="11sp"
                     android:gravity="start"
                     android:textDirection="locale" />
