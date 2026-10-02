@@ -1,8 +1,8 @@
 <resources>
-    <attr name="nexvaryBackground" format="color" />
-    <attr name="nexvarySurface" format="color" />
-    <attr name="nexvarySurfaceStrong" format="color" />
-    <attr name="nexvaryAccent" format="color" />
-    <attr name="nexvaryText" format="color" />
-    <attr name="nexvaryMuted" format="color" />
+    <attr name="ibmempireBackground" format="color" />
+    <attr name="ibmempireSurface" format="color" />
+    <attr name="ibmempireSurfaceStrong" format="color" />
+    <attr name="ibmempireAccent" format="color" />
+    <attr name="ibmempireText" format="color" />
+    <attr name="ibmempireMuted" format="color" />
 </resources>

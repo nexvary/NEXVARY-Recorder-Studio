@@ -13,5 +13,5 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
     }
 }
-rootProject.name = "NEXVARYRecorderStudio"
+rootProject.name = "IBMEmpireRecorderStudio"
 include(":app")

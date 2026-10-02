@@ -2,11 +2,11 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/nexvaryBackground">
+    android:background="?attr/ibmempireBackground">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
         <Button android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/back" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/language_page_title" android:textColor="?attr/nexvaryText" android:textSize="24sp" android:textStyle="bold" android:gravity="start" android:textDirection="locale" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/language_help" android:textColor="?attr/nexvaryMuted" android:textSize="14sp" android:gravity="start" android:textDirection="locale" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/language_page_title" android:textColor="?attr/ibmempireText" android:textSize="24sp" android:textStyle="bold" android:gravity="start" android:textDirection="locale" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/language_help" android:textColor="?attr/ibmempireMuted" android:textSize="14sp" android:gravity="start" android:textDirection="locale" />
         <Button android:id="@+id/btnSystem" android:layout_width="match_parent" android:layout_height="54dp" android:layout_marginTop="16dp" android:text="@string/system_default" />
         <Button android:id="@+id/btnArabic" android:layout_width="match_parent" android:layout_height="54dp" android:layout_marginTop="8dp" android:text="@string/lang_arabic" />
         <Button android:id="@+id/btnEnglish" android:layout_width="match_parent" android:layout_height="54dp" android:layout_marginTop="8dp" android:text="@string/lang_english" />

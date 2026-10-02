@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.nexvary.recorder"
+    namespace = "com.ibmempire.recorder"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.nexvary.recorder"
+        applicationId = "com.ibmempire.recorder"
         minSdk = 29
         targetSdk = 35
         versionCode = 8

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/nexvaryBackground">
+    android:background="?attr/ibmempireBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,10 +19,10 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="92dp"
-            app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
+            app:cardBackgroundColor="?attr/ibmempireSurfaceStrong"
             app:cardCornerRadius="22dp"
             app:cardElevation="5dp"
-            app:strokeColor="?attr/nexvaryAccent"
+            app:strokeColor="?attr/ibmempireAccent"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -49,7 +49,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/app_name"
-                        android:textColor="?attr/nexvaryText"
+                        android:textColor="?attr/ibmempireText"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:maxLines="1"
@@ -63,7 +63,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:text="@string/version_format"
-                        android:textColor="?attr/nexvaryMuted"
+                        android:textColor="?attr/ibmempireMuted"
                         android:textSize="10sp"
                         android:gravity="start"
                         android:textDirection="locale" />
@@ -74,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:text="@string/theme_hint"
-                        android:textColor="?attr/nexvaryAccent"
+                        android:textColor="?attr/ibmempireAccent"
                         android:textSize="11sp"
                         android:maxLines="1"
                         android:ellipsize="end"
@@ -94,13 +94,13 @@
                     android:text="@string/choose_theme"
                     android:textAllCaps="false"
                     android:textSize="11sp"
-                    android:textColor="?attr/nexvaryAccent"
+                    android:textColor="?attr/ibmempireAccent"
                     app:icon="@drawable/ic_palette"
                     app:iconGravity="textStart"
                     app:iconPadding="5dp"
                     app:iconSize="17dp"
-                    app:iconTint="?attr/nexvaryAccent"
-                    app:strokeColor="?attr/nexvaryAccent"
+                    app:iconTint="?attr/ibmempireAccent"
+                    app:strokeColor="?attr/ibmempireAccent"
                     app:strokeWidth="1dp"
                     app:cornerRadius="20dp" />
             </LinearLayout>
@@ -112,7 +112,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
             android:text="@string/main_menu_title"
-            android:textColor="?attr/nexvaryText"
+            android:textColor="?attr/ibmempireText"
             android:textSize="17sp"
             android:textStyle="bold"
             android:gravity="start"
@@ -141,9 +141,9 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardBackgroundColor="?attr/ibmempireSurface"
                     app:cardCornerRadius="18dp"
-                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeColor="?attr/ibmempireAccent"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -165,7 +165,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
                             android:text="@string/screen_record_title"
-                            android:textColor="?attr/nexvaryText"
+                            android:textColor="?attr/ibmempireText"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:maxLines="1"
@@ -178,7 +178,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="@string/screen_record_desc"
-                            android:textColor="?attr/nexvaryMuted"
+                            android:textColor="?attr/ibmempireMuted"
                             android:textSize="10sp"
                             android:maxLines="2"
                             android:ellipsize="end"
@@ -197,9 +197,9 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardBackgroundColor="?attr/ibmempireSurface"
                     app:cardCornerRadius="18dp"
-                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeColor="?attr/ibmempireAccent"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -221,7 +221,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
                             android:text="@string/voice_studio_title"
-                            android:textColor="?attr/nexvaryText"
+                            android:textColor="?attr/ibmempireText"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:maxLines="1"
@@ -234,7 +234,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="@string/voice_studio_desc"
-                            android:textColor="?attr/nexvaryMuted"
+                            android:textColor="?attr/ibmempireMuted"
                             android:textSize="10sp"
                             android:maxLines="2"
                             android:ellipsize="end"
@@ -261,9 +261,9 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardBackgroundColor="?attr/ibmempireSurface"
                     app:cardCornerRadius="18dp"
-                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeColor="?attr/ibmempireAccent"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -285,7 +285,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
                             android:text="@string/media_tools_title"
-                            android:textColor="?attr/nexvaryText"
+                            android:textColor="?attr/ibmempireText"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:maxLines="2"
@@ -298,7 +298,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="@string/media_tools_desc"
-                            android:textColor="?attr/nexvaryMuted"
+                            android:textColor="?attr/ibmempireMuted"
                             android:textSize="10sp"
                             android:maxLines="2"
                             android:ellipsize="end"
@@ -317,9 +317,9 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardBackgroundColor="?attr/ibmempireSurface"
                     app:cardCornerRadius="18dp"
-                    app:strokeColor="?attr/nexvaryAccent"
+                    app:strokeColor="?attr/ibmempireAccent"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -341,7 +341,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
                             android:text="@string/live_title"
-                            android:textColor="?attr/nexvaryText"
+                            android:textColor="?attr/ibmempireText"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:maxLines="2"
@@ -354,7 +354,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="@string/live_desc"
-                            android:textColor="?attr/nexvaryMuted"
+                            android:textColor="?attr/ibmempireMuted"
                             android:textSize="10sp"
                             android:maxLines="2"
                             android:ellipsize="end"
@@ -370,7 +370,7 @@
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:background="?attr/nexvarySurfaceStrong"
+        android:background="?attr/ibmempireSurfaceStrong"
         app:itemIconSize="25dp"
         app:itemIconTint="@color/bottom_nav_item_color"
         app:itemTextColor="@color/bottom_nav_item_color"

@@ -100,7 +100,7 @@ for ident in sorted(action_ids):
 
 
 # v0.4.0: all 12 runtime palettes must remain registered.
-theme_manager = (SRC / "com" / "nexvary" / "recorder" / "ui" / "ThemeManager.kt").read_text(encoding="utf-8")
+theme_manager = (SRC / "com" / "ibmempire" / "recorder" / "ui" / "ThemeManager.kt").read_text(encoding="utf-8")
 required_theme_names = [
     "theme_electric_blue", "theme_emerald", "theme_purple", "theme_amber",
     "theme_cyan", "theme_teal", "theme_lime", "theme_rose",
@@ -109,13 +109,13 @@ required_theme_names = [
 for theme_name in required_theme_names:
     if f"R.string.{theme_name}" not in theme_manager:
         errors.append(f"Missing registered runtime theme: {theme_name}")
-if theme_manager.count("R.style.Theme_NexvaryRecorder_") < 12:
+if theme_manager.count("R.style.Theme_IBMEmpireRecorder_") < 12:
     errors.append("ThemeManager must register at least 12 runtime theme styles")
 
 
 # v0.5.0 recorder-core invariants.
-screen_activity = (SRC / "com" / "nexvary" / "recorder" / "screen" / "ScreenRecorderActivity.kt").read_text(encoding="utf-8")
-screen_service = (SRC / "com" / "nexvary" / "recorder" / "screen" / "ScreenRecordService.kt").read_text(encoding="utf-8")
+screen_activity = (SRC / "com" / "ibmempire" / "recorder" / "screen" / "ScreenRecorderActivity.kt").read_text(encoding="utf-8")
+screen_service = (SRC / "com" / "ibmempire" / "recorder" / "screen" / "ScreenRecordService.kt").read_text(encoding="utf-8")
 screen_layout = (layout_dir / "activity_screen_recorder.xml").read_text(encoding="utf-8")
 manifest_text = MANIFEST.read_text(encoding="utf-8")
 
@@ -147,9 +147,9 @@ for required_symbol in [
         errors.append(f"Recorder core feature missing: {required_symbol}")
 
 # v0.6.0 media tools invariants.
-media_tools_activity = SRC / "com" / "nexvary" / "recorder" / "media" / "MediaToolsActivity.kt"
-audio_converter = SRC / "com" / "nexvary" / "recorder" / "media" / "AudioFormatConverter.kt"
-video_tools = SRC / "com" / "nexvary" / "recorder" / "media" / "VideoToolsEngine.kt"
+media_tools_activity = SRC / "com" / "ibmempire" / "recorder" / "media" / "MediaToolsActivity.kt"
+audio_converter = SRC / "com" / "ibmempire" / "recorder" / "media" / "AudioFormatConverter.kt"
+video_tools = SRC / "com" / "ibmempire" / "recorder" / "media" / "VideoToolsEngine.kt"
 media_layout = layout_dir / "activity_media_tools.xml"
 
 for required_file in [media_tools_activity, audio_converter, video_tools, media_layout]:
@@ -214,25 +214,30 @@ for required in [
     if not required.exists():
         errors.append(f"Missing launcher icon resource: {required}")
 
-about = ROOT / "app/src/main/java/com/nexvary/recorder/AboutActivity.kt"
+about = ROOT / "app/src/main/java/com/ibmempire/recorder/AboutActivity.kt"
 if not about.exists():
     errors.append("AboutActivity.kt missing")
 else:
     txt = about.read_text(encoding="utf-8")
-    expected_links = {
-        "https://nexvary.com/",
-        "https://www.facebook.com/share/14p9krEn5ij/",
-        "info@nexvary.com",
-        "https://www.youtube.com/@NexvaryInc",
-        "https://x.com/Nexvary",
-    }
-    for value in expected_links:
-        if value not in txt:
-            errors.append(f"About link missing: {value}")
-    for url in re.findall(r'https://[^"\s]+', txt):
-        parsed = urlparse(url)
-        if parsed.scheme != "https" or not parsed.netloc:
-            errors.append(f"Malformed HTTPS link: {url}")
+    for required_symbol in [
+        "KEY_TITLE", "KEY_BODY", "KEY_WEBSITE", "KEY_FACEBOOK",
+        "KEY_EMAIL", "KEY_YOUTUBE", "KEY_X", "btnSaveAbout", "btnResetAbout"
+    ]:
+        if required_symbol not in txt:
+            errors.append(f"Editable About profile missing: {required_symbol}")
+
+forbidden_brand = ("ne" + "xvary").lower()
+for candidate in ROOT.rglob("*"):
+    rel = candidate.relative_to(ROOT).as_posix()
+    if forbidden_brand in rel.lower():
+        errors.append(f"Forbidden legacy brand in path: {rel}")
+    if not candidate.is_file() or ".git/" in rel:
+        continue
+    if candidate.suffix.lower() not in {".kt", ".xml", ".py", ".md", ".kts", ".yml", ".yaml", ".properties", ".txt"}:
+        continue
+    content = candidate.read_text(encoding="utf-8", errors="ignore")
+    if forbidden_brand in content.lower():
+        errors.append(f"Forbidden legacy brand in file: {rel}")
 
 for path in layout_files:
     text = path.read_text(encoding="utf-8")

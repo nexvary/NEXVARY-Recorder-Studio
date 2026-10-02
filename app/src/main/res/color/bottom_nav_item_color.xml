@@ -1,4 +1,4 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true" android:color="?attr/nexvaryAccent"/>
-    <item android:color="?attr/nexvaryMuted"/>
+    <item android:state_checked="true" android:color="?attr/ibmempireAccent"/>
+    <item android:color="?attr/ibmempireMuted"/>
 </selector>

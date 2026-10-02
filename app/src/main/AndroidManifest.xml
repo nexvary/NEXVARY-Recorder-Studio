@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NexvaryRecorder.Blue">
+        android:theme="@style/Theme.IBMEmpireRecorder.Blue">
 
         <activity android:name=".AboutActivity" android:exported="false" />
         <activity android:name=".LanguageActivity" android:exported="false" />
