@@ -1,12 +1,12 @@
-package com.nexvary.recorder
+package com.ibmempire.recorder
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import com.nexvary.recorder.databinding.ActivityLanguageBinding
-import com.nexvary.recorder.ui.ThemeManager
-import com.nexvary.recorder.ui.UiInsets
+import com.ibmempire.recorder.databinding.ActivityLanguageBinding
+import com.ibmempire.recorder.ui.ThemeManager
+import com.ibmempire.recorder.ui.UiInsets
 
 class LanguageActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLanguageBinding

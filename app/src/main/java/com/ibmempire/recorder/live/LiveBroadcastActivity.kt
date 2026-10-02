@@ -1,4 +1,4 @@
-package com.nexvary.recorder.live
+package com.ibmempire.recorder.live
 
 import android.content.BroadcastReceiver
 import android.content.ClipboardManager
@@ -11,10 +11,10 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.nexvary.recorder.R
-import com.nexvary.recorder.databinding.ActivityLiveBroadcastBinding
-import com.nexvary.recorder.ui.ThemeManager
-import com.nexvary.recorder.ui.UiInsets
+import com.ibmempire.recorder.R
+import com.ibmempire.recorder.databinding.ActivityLiveBroadcastBinding
+import com.ibmempire.recorder.ui.ThemeManager
+import com.ibmempire.recorder.ui.UiInsets
 
 class LiveBroadcastActivity : AppCompatActivity() {
     companion object {

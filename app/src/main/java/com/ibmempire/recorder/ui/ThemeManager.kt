@@ -1,27 +1,27 @@
-package com.nexvary.recorder.ui
+package com.ibmempire.recorder.ui
 
 import android.app.Activity
 import android.content.Context
 import androidx.annotation.StringRes
-import com.nexvary.recorder.R
+import com.ibmempire.recorder.R
 
 object ThemeManager {
-    private const val PREFS = "nexvary_ui"
+    private const val PREFS = "ibm_empire_ui"
     private const val KEY_THEME = "theme_index"
 
     private val themes = intArrayOf(
-        R.style.Theme_NexvaryRecorder_Blue,
-        R.style.Theme_NexvaryRecorder_Emerald,
-        R.style.Theme_NexvaryRecorder_Purple,
-        R.style.Theme_NexvaryRecorder_Amber,
-        R.style.Theme_NexvaryRecorder_Cyan,
-        R.style.Theme_NexvaryRecorder_Teal,
-        R.style.Theme_NexvaryRecorder_Lime,
-        R.style.Theme_NexvaryRecorder_Rose,
-        R.style.Theme_NexvaryRecorder_Crimson,
-        R.style.Theme_NexvaryRecorder_Orange,
-        R.style.Theme_NexvaryRecorder_Indigo,
-        R.style.Theme_NexvaryRecorder_Silver
+        R.style.Theme_IBMEmpireRecorder_Blue,
+        R.style.Theme_IBMEmpireRecorder_Emerald,
+        R.style.Theme_IBMEmpireRecorder_Purple,
+        R.style.Theme_IBMEmpireRecorder_Amber,
+        R.style.Theme_IBMEmpireRecorder_Cyan,
+        R.style.Theme_IBMEmpireRecorder_Teal,
+        R.style.Theme_IBMEmpireRecorder_Lime,
+        R.style.Theme_IBMEmpireRecorder_Rose,
+        R.style.Theme_IBMEmpireRecorder_Crimson,
+        R.style.Theme_IBMEmpireRecorder_Orange,
+        R.style.Theme_IBMEmpireRecorder_Indigo,
+        R.style.Theme_IBMEmpireRecorder_Silver
     )
 
     private val themeNames = intArrayOf(

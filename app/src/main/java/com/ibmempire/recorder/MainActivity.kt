@@ -1,17 +1,17 @@
-package com.nexvary.recorder
+package com.ibmempire.recorder
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.nexvary.recorder.audio.VoiceRecorderActivity
-import com.nexvary.recorder.databinding.ActivityMainBinding
-import com.nexvary.recorder.live.LiveBroadcastActivity
-import com.nexvary.recorder.media.MediaToolsActivity
-import com.nexvary.recorder.screen.ScreenRecorderActivity
-import com.nexvary.recorder.ui.ThemeManager
-import com.nexvary.recorder.ui.UiInsets
+import com.ibmempire.recorder.audio.VoiceRecorderActivity
+import com.ibmempire.recorder.databinding.ActivityMainBinding
+import com.ibmempire.recorder.live.LiveBroadcastActivity
+import com.ibmempire.recorder.media.MediaToolsActivity
+import com.ibmempire.recorder.screen.ScreenRecorderActivity
+import com.ibmempire.recorder.ui.ThemeManager
+import com.ibmempire.recorder.ui.UiInsets
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

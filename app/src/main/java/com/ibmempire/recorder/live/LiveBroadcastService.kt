@@ -1,4 +1,4 @@
-package com.nexvary.recorder.live
+package com.ibmempire.recorder.live
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -11,8 +11,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.nexvary.recorder.MainActivity
-import com.nexvary.recorder.R
+import com.ibmempire.recorder.MainActivity
+import com.ibmempire.recorder.R
 import com.pedro.common.ConnectChecker
 import com.pedro.encoder.input.decoder.AudioDecoderInterface
 import com.pedro.encoder.input.decoder.VideoDecoderInterface
@@ -21,9 +21,9 @@ import kotlin.concurrent.thread
 
 class LiveBroadcastService : Service(), ConnectChecker, VideoDecoderInterface, AudioDecoderInterface {
     companion object {
-        const val ACTION_START = "com.nexvary.recorder.live.START"
-        const val ACTION_STOP = "com.nexvary.recorder.live.STOP"
-        const val ACTION_STATUS = "com.nexvary.recorder.live.STATUS"
+        const val ACTION_START = "com.ibmempire.recorder.live.START"
+        const val ACTION_STOP = "com.ibmempire.recorder.live.STOP"
+        const val ACTION_STATUS = "com.ibmempire.recorder.live.STATUS"
         const val EXTRA_URI = "uri"
         const val EXTRA_ENDPOINT = "endpoint"
         const val EXTRA_LOOP = "loop"
@@ -75,7 +75,7 @@ class LiveBroadcastService : Service(), ConnectChecker, VideoDecoderInterface, A
         loopEnabled = loop
         sendStatus(getString(R.string.live_preparing))
 
-        thread(name = "NexvaryLivePrepare") {
+        thread(name = "IBMEmpireLivePrepare") {
             try {
                 val rtmp = RtmpFromFile(this, this, this, this)
                 streamer = rtmp

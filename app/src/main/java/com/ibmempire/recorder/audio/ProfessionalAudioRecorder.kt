@@ -1,4 +1,4 @@
-package com.nexvary.recorder.audio
+package com.ibmempire.recorder.audio
 
 import android.Manifest
 import android.content.Context
@@ -62,7 +62,7 @@ class ProfessionalAudioRecorder(private val context: Context) {
         rawFile = File(context.cacheDir, "voice_${System.currentTimeMillis()}.pcm")
         running.set(true)
         audioRecord!!.startRecording()
-        thread = Thread({ captureLoop(bufferBytes / 2) }, "NexvaryVoiceCapture").apply { start() }
+        thread = Thread({ captureLoop(bufferBytes / 2) }, "IBMEmpireVoiceCapture").apply { start() }
         return rawFile!!
     }
 
