@@ -1,4 +1,4 @@
-package com.nexvary.recorder.media
+package com.ibmempire.recorder.media
 
 import android.content.ContentValues
 import android.content.Intent
@@ -8,10 +8,10 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.nexvary.recorder.R
-import com.nexvary.recorder.databinding.ActivityReplaceAudioBinding
-import com.nexvary.recorder.ui.ThemeManager
-import com.nexvary.recorder.ui.UiInsets
+import com.ibmempire.recorder.R
+import com.ibmempire.recorder.databinding.ActivityReplaceAudioBinding
+import com.ibmempire.recorder.ui.ThemeManager
+import com.ibmempire.recorder.ui.UiInsets
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -61,7 +61,7 @@ class AudioReplaceActivity : AppCompatActivity() {
                 val values = ContentValues().apply {
                     put(MediaStore.Video.Media.DISPLAY_NAME, name)
                     put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
-                    put(MediaStore.Video.Media.RELATIVE_PATH, Environment.DIRECTORY_MOVIES + "/NEXVARY Recorder")
+                    put(MediaStore.Video.Media.RELATIVE_PATH, Environment.DIRECTORY_MOVIES + "/IBM Empire Recorder")
                     put(MediaStore.Video.Media.IS_PENDING, 1)
                 }
                 outputUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values)

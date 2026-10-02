@@ -1,4 +1,4 @@
-package com.nexvary.recorder.media
+package com.ibmempire.recorder.media
 
 import android.content.ContentValues
 import android.content.Intent
@@ -10,10 +10,10 @@ import android.provider.MediaStore
 import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import com.nexvary.recorder.R
-import com.nexvary.recorder.databinding.ActivityMediaToolsBinding
-import com.nexvary.recorder.ui.ThemeManager
-import com.nexvary.recorder.ui.UiInsets
+import com.ibmempire.recorder.R
+import com.ibmempire.recorder.databinding.ActivityMediaToolsBinding
+import com.ibmempire.recorder.ui.ThemeManager
+import com.ibmempire.recorder.ui.UiInsets
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -366,7 +366,7 @@ class MediaToolsActivity : AppCompatActivity() {
             put(
                 MediaStore.Audio.Media.RELATIVE_PATH,
                 Environment.DIRECTORY_MUSIC +
-                    "/NEXVARY Recorder"
+                    "/IBM Empire Recorder"
             )
             put(MediaStore.Audio.Media.IS_PENDING, 1)
         }
@@ -409,7 +409,7 @@ class MediaToolsActivity : AppCompatActivity() {
             put(
                 MediaStore.Video.Media.RELATIVE_PATH,
                 Environment.DIRECTORY_MOVIES +
-                    "/NEXVARY Recorder"
+                    "/IBM Empire Recorder"
             )
             put(MediaStore.Video.Media.IS_PENDING, 1)
         }

@@ -1,4 +1,4 @@
-package com.nexvary.recorder.screen
+package com.ibmempire.recorder.screen
 
 import android.content.Context
 import android.graphics.Color
@@ -13,7 +13,7 @@ import android.view.WindowManager
 import android.widget.Chronometer
 import android.widget.ImageView
 import android.widget.LinearLayout
-import com.nexvary.recorder.R
+import com.ibmempire.recorder.R
 import kotlin.math.abs
 
 class FloatingRecorderOverlay(

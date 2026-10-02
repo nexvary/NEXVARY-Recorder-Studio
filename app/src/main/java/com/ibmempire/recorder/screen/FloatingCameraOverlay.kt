@@ -1,4 +1,4 @@
-package com.nexvary.recorder.screen
+package com.ibmempire.recorder.screen
 
 import android.Manifest
 import android.content.Context
@@ -36,7 +36,7 @@ class FloatingCameraOverlay(private val context: Context) {
     private var cameraDevice: CameraDevice? = null
     private var captureSession: CameraCaptureSession? = null
 
-    private val cameraThread = HandlerThread("NexvaryFloatingCamera").apply { start() }
+    private val cameraThread = HandlerThread("IBMEmpireFloatingCamera").apply { start() }
     private val cameraHandler = Handler(cameraThread.looper)
 
     fun show() {

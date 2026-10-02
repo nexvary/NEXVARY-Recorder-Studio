@@ -1,4 +1,4 @@
-package com.nexvary.recorder.media
+package com.ibmempire.recorder.media
 
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
