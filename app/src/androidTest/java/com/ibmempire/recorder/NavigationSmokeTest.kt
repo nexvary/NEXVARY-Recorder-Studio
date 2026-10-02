@@ -1,4 +1,4 @@
-package com.nexvary.recorder
+package com.ibmempire.recorder
 
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -66,7 +66,7 @@ class NavigationSmokeTest {
     @Test
     fun screenRecorderProfessionalControlsExist() {
         ActivityScenario.launch(
-            com.nexvary.recorder.screen.ScreenRecorderActivity::class.java
+            com.ibmempire.recorder.screen.ScreenRecorderActivity::class.java
         ).use {
             onView(withId(R.id.switchMic)).check(matches(isDisplayed()))
             onView(withId(R.id.switchFloating)).check(matches(isDisplayed()))
@@ -87,7 +87,7 @@ class NavigationSmokeTest {
     @Test
     fun mediaToolsControlsAreConnected() {
         ActivityScenario.launch(
-            com.nexvary.recorder.media.MediaToolsActivity::class.java
+            com.ibmempire.recorder.media.MediaToolsActivity::class.java
         ).use {
             onView(withId(R.id.btnBack))
                 .check(matches(isDisplayed()))

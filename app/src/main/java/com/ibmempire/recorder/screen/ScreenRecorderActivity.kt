@@ -1,4 +1,4 @@
-package com.nexvary.recorder.screen
+package com.ibmempire.recorder.screen
 
 import android.Manifest
 import android.app.Activity
@@ -19,10 +19,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
-import com.nexvary.recorder.R
-import com.nexvary.recorder.databinding.ActivityScreenRecorderBinding
-import com.nexvary.recorder.ui.ThemeManager
-import com.nexvary.recorder.ui.UiInsets
+import com.ibmempire.recorder.R
+import com.ibmempire.recorder.databinding.ActivityScreenRecorderBinding
+import com.ibmempire.recorder.ui.ThemeManager
+import com.ibmempire.recorder.ui.UiInsets
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.nexvary.recorder.screen
+package com.ibmempire.recorder.screen
 
 import android.content.Context
 

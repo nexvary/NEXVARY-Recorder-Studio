@@ -1,4 +1,4 @@
-package com.nexvary.recorder.screen
+package com.ibmempire.recorder.screen
 
 import android.Manifest
 import android.app.Activity
@@ -33,8 +33,8 @@ import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
-import com.nexvary.recorder.MainActivity
-import com.nexvary.recorder.R
+import com.ibmempire.recorder.MainActivity
+import com.ibmempire.recorder.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -44,11 +44,11 @@ import kotlin.math.roundToInt
 
 class ScreenRecordService : Service() {
     companion object {
-        const val ACTION_START = "com.nexvary.recorder.START_RECORD"
-        const val ACTION_STOP = "com.nexvary.recorder.STOP_RECORD"
-        const val ACTION_PAUSE = "com.nexvary.recorder.PAUSE_RECORD"
-        const val ACTION_RESUME = "com.nexvary.recorder.RESUME_RECORD"
-        const val ACTION_STATUS = "com.nexvary.recorder.RECORD_STATUS"
+        const val ACTION_START = "com.ibmempire.recorder.START_RECORD"
+        const val ACTION_STOP = "com.ibmempire.recorder.STOP_RECORD"
+        const val ACTION_PAUSE = "com.ibmempire.recorder.PAUSE_RECORD"
+        const val ACTION_RESUME = "com.ibmempire.recorder.RESUME_RECORD"
+        const val ACTION_STATUS = "com.ibmempire.recorder.RECORD_STATUS"
 
         const val EXTRA_RESULT_CODE = "result_code"
         const val EXTRA_RESULT_DATA = "result_data"
@@ -236,7 +236,7 @@ class ScreenRecordService : Service() {
             )
 
             virtualDisplay = projection!!.createVirtualDisplay(
-                "NEXVARYRecorder",
+                "IBMEmpireRecorder",
                 width,
                 height,
                 metrics.densityDpi,
@@ -351,7 +351,7 @@ class ScreenRecordService : Service() {
             put(MediaStore.Video.Media.MIME_TYPE, "video/mp4")
             put(
                 MediaStore.Video.Media.RELATIVE_PATH,
-                Environment.DIRECTORY_MOVIES + "/NEXVARY Recorder"
+                Environment.DIRECTORY_MOVIES + "/IBM Empire Recorder"
             )
             put(MediaStore.Video.Media.IS_PENDING, 1)
         }
