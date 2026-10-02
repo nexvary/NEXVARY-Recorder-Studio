@@ -1,4 +1,4 @@
-# NEXVARY Recorder Studio
+# IBM Empire Recorder Studio
 
 ## v0.2.0 Android 15 recorder rebuild
 
@@ -7,7 +7,7 @@
 - Chooses an H.264-compatible capture size instead of blindly forcing the physical display resolution.
 - Reports real recorder start/failure state to the UI and only minimizes the app after `MediaRecorder.start()` succeeds.
 - Adds a 3-second countdown and persistent stop/save notification.
-- Adds NEXVARY adaptive launcher icon.
+- Adds IBM Empire adaptive launcher icon.
 - Replaces the original basic home screen with card-based RTL UI.
 - Tap the top identity card to cycle Electric Blue, Emerald, Purple and Amber full-app palettes.
 
@@ -37,7 +37,7 @@ The recording, audio enhancement, WAV-to-AAC conversion and audio replacement op
 
 ## Build
 
-The project includes a GitHub Actions workflow. After pushing to GitHub, run **Android Build** and download the `NEXVARY-Recorder-Studio-debug` artifact.
+The project includes a GitHub Actions workflow. After pushing to GitHub, run **Android Build** and download the `IBM-Empire-Recorder-Studio-debug` artifact.
 
 Local build with a suitable Android SDK and Gradle 9.7.1:
 
