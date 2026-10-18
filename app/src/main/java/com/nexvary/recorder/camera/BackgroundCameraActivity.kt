@@ -16,6 +16,8 @@ class BackgroundCameraActivity : AppCompatActivity() {
     private var audio = false
     private var pendingStart = false
     override fun onCreate(savedInstanceState: Bundle?) {
+        front = savedInstanceState?.getBoolean("camera_front") ?: false
+        audio = savedInstanceState?.getBoolean("camera_audio") ?: false
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         val density = resources.displayMetrics.density
@@ -32,10 +34,12 @@ class BackgroundCameraActivity : AppCompatActivity() {
         }
         val camera = Switch(this).apply {
             text = "Use front camera"
+            isChecked = front
             setOnCheckedChangeListener { _, checked -> front = checked }
         }
         val mic = Switch(this).apply {
             text = "Record microphone"
+            isChecked = audio
             setOnCheckedChangeListener { _, checked -> audio = checked }
         }
         val start = Button(this).apply {
@@ -52,6 +56,12 @@ class BackgroundCameraActivity : AppCompatActivity() {
         listOf(title, description, camera, mic, start, stop).forEach(root::addView)
         setContentView(root)
         UiInsets.apply(root)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("camera_front", front)
+        outState.putBoolean("camera_audio", audio)
+        super.onSaveInstanceState(outState)
     }
 
     private fun requestAndStart() {
