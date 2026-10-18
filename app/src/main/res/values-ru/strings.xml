@@ -204,4 +204,5 @@
     <string name="converting_video">Конвертация видео…</string>
     <string name="media_operation_failed_format">Ошибка операции: %1$s</string>
     <string name="video_trimmed_keyframe_format">Сохранено %1$s • обрезка начинается с ближайшего безопасного ключевого кадра примерно на %2$.2f с</string>
+    <string name="theme_piano_black">Глянцевый чёрный рояль</string>
 </resources>
