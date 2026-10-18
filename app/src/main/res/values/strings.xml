@@ -204,4 +204,5 @@
     <string name="converting_video">Converting video…</string>
     <string name="media_operation_failed_format">Operation failed: %1$s</string>
     <string name="video_trimmed_keyframe_format">Saved %1$s • cut begins at the nearest safe keyframe around %2$.2f s</string>
+    <string name="theme_piano_black">Glossy Piano Black</string>
 </resources>
