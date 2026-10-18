@@ -21,6 +21,9 @@ class QuickRescueActivity : Activity() {
     private val cards = mutableListOf<JSONObject>()
     private lateinit var list: LinearLayout
     private var pendingIndex: Int? = null
+    private var editingImage: Uri? = null
+    private var selectedImage: Uri? = null
+    private var editingIndex: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +59,8 @@ class QuickRescueActivity : Activity() {
 
     private fun editCard(index: Int?) {
         val original = index?.let { cards[it] }
+        editingIndex = index
+        editingImage = original?.optString("image")?.takeIf { it.isNotBlank() }?.let(Uri::parse)
         val name = EditText(this).apply {
             hint = "اسم جهة الاتصال"; setSingleLine(true)
             setText(original?.optString("name").orEmpty())
@@ -72,9 +77,20 @@ class QuickRescueActivity : Activity() {
             text = "إرفاق موقعي الحالي"
             isChecked = original?.optBoolean("location", true) ?: true
         }
+        val imageStatus = TextView(this).apply { text = if (editingImage == null) "لا توجد صورة" else "صورة مرفقة" }
+        val imageButton = Button(this).apply {
+            text = "اختيار صورة من الهاتف"
+            setOnClickListener {
+                startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "image/*"
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                }, 602)
+            }
+        }
         val form = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            listOf(name, phone, message, includeLocation).forEach(::addView)
+            listOf(name, phone, message, includeLocation, imageStatus, imageButton).forEach(::addView)
         }
         android.app.AlertDialog.Builder(this)
             .setTitle(if (index == null) "إضافة جهة" else "تعديل جهة")
@@ -88,6 +104,7 @@ class QuickRescueActivity : Activity() {
                     val item = JSONObject().put("name", name.text.toString().trim())
                         .put("phone", number).put("message", body)
                         .put("location", includeLocation.isChecked)
+                        .put("image", editingImage?.toString().orEmpty())
                     if (index == null) cards.add(item) else cards[index] = item
                     persist(); render()
                 }
@@ -110,6 +127,7 @@ class QuickRescueActivity : Activity() {
                 text = "إرسال استغاثة"
                 setOnClickListener { requestSend(index) }
             })
+            if (card.optString("image").isNotBlank()) panel.addView(TextView(this).apply { text = "📎 صورة مرفقة" })
             panel.addView(Button(this).apply {
                 text = "تعديل"
                 setOnClickListener { editCard(index) }
@@ -158,10 +176,30 @@ class QuickRescueActivity : Activity() {
         }
         val phone = card.optString("phone")
         // Default path uses the system SMS app so delivery remains user-visible.
-        val sms = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(phone)}"))
+        val image = card.optString("image").takeIf { it.isNotBlank() }?.let(Uri::parse)
+        val sms = if (image != null) Intent(Intent.ACTION_SEND).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_STREAM, image)
+            putExtra(Intent.EXTRA_TEXT, body + "\\nTo: " + phone)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        } else Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(phone)}"))
             .putExtra("sms_body", body)
-        runCatching { startActivity(sms) }.onFailure {
+        runCatching { startActivity(if (image != null) Intent.createChooser(sms, "مشاركة الاستغاثة والصورة") else sms) }.onFailure {
             Toast.makeText(this, "لا يوجد تطبيق SMS متاح", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    @Deprecated("Uses legacy result for document picker compatibility")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 602 && resultCode == RESULT_OK) {
+            data?.data?.let { uri ->
+                runCatching {
+                    contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                editingImage = uri
+                Toast.makeText(this, "تم اختيار الصورة. اضغط حفظ لإرفاقها", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
