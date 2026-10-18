@@ -78,18 +78,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Open every internal page and test Back
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 35
-          target: google_apis
-          arch: x86_64
-          profile: pixel_6
-          disable-animations: true
-          script: adb shell input keyevent KEYCODE_WAKEUP || true; adb shell wm dismiss-keyguard || true; adb shell input keyevent 82 || true; adb shell settings put system screen_off_timeout 2147483647 || true; sleep 3; gradle --no-daemon :app:connectedDebugAndroidTest || (echo "Retrying UI smoke after refocus"; adb shell input keyevent KEYCODE_WAKEUP || true; adb shell wm dismiss-keyguard || true; adb shell input keyevent 82 || true; sleep 3; gradle --no-daemon :app:connectedDebugAndroidTest)
-
-      - name: Capture actual SOS screen on emulator
-        if: always()
+      - name: Test navigation and capture real emulator screens
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -98,18 +87,29 @@ jobs:
           profile: pixel_6
           disable-animations: true
           script: |
+            set -e
+            adb shell input keyevent KEYCODE_WAKEUP || true
+            adb shell wm dismiss-keyguard || true
+            adb shell input keyevent 82 || true
+            adb shell settings put system screen_off_timeout 2147483647 || true
+            gradle --no-daemon :app:connectedDebugAndroidTest
             gradle --no-daemon :app:assembleDebug
             adb install -r app/build/outputs/apk/debug/app-debug.apk
-            adb shell am start -n com.nexvary.recorder/.safety.SosScreenshotEntry
-            sleep 5
             mkdir -p screenshots
-            adb shell screencap -p /sdcard/sos-screen.png
-            adb pull /sdcard/sos-screen.png screenshots/sos-screen.png
+            adb shell am force-stop com.nexvary.recorder || true
+            adb shell am start -W -n com.nexvary.recorder/.MainActivity
+            sleep 3
+            adb exec-out screencap -p > screenshots/dashboard.png
+            adb shell am start -W -n com.nexvary.recorder/.safety.SosScreenshotEntry
+            sleep 3
+            adb exec-out screencap -p > screenshots/sos.png
+            test -s screenshots/dashboard.png
+            test -s screenshots/sos.png
 
-      - name: Upload SOS emulator screenshot
+      - name: Upload real emulator screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: SOS-actual-emulator-screenshot
-          path: screenshots/sos-screen.png
+          name: android-emulator-real-screenshots
+          path: screenshots/*.png
           if-no-files-found: warn
