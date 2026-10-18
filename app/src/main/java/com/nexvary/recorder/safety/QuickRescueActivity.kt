@@ -22,6 +22,7 @@ class QuickRescueActivity : Activity() {
     private lateinit var list: LinearLayout
     private var pendingIndex: Int? = null
     private var editingImage: Uri? = null
+    private var imageStatusView: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +76,7 @@ class QuickRescueActivity : Activity() {
             isChecked = original?.optBoolean("location", true) ?: true
         }
         val imageStatus = TextView(this).apply { text = if (editingImage == null) "لا توجد صورة" else "صورة مرفقة" }
+        imageStatusView = imageStatus
         val imageButton = Button(this).apply {
             text = "اختيار أو تغيير الصورة من الهاتف"
             setOnClickListener {
@@ -177,7 +179,7 @@ class QuickRescueActivity : Activity() {
         val sms = if (image != null) Intent(Intent.ACTION_SEND).apply {
             type = "image/*"
             putExtra(Intent.EXTRA_STREAM, image)
-            putExtra(Intent.EXTRA_TEXT, body + "\\nTo: " + phone)
+            putExtra(Intent.EXTRA_TEXT, body + "\\nالرقم المقصود: " + phone)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         } else Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(phone)}"))
             .putExtra("sms_body", body)
@@ -195,6 +197,7 @@ class QuickRescueActivity : Activity() {
                     contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 editingImage = uri
+                imageStatusView?.text = "تم اختيار صورة: ${uri.lastPathSegment ?: "صورة"}"
                 Toast.makeText(this, "تم اختيار الصورة. اضغط حفظ لإرفاقها", Toast.LENGTH_LONG).show()
             }
         }
