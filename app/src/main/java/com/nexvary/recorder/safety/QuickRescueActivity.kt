@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.telephony.SmsManager
 import android.widget.*
 import androidx.core.content.ContextCompat
 import org.json.JSONArray
@@ -15,7 +14,7 @@ import org.json.JSONObject
 
 /**
  * User-triggered SOS cards, stored privately in app preferences.
- * Never transmits without a deliberate tap. Location is attached only when available.
+ * SMS is composed in the default SMS app for explicit final sending. Location is attached only when available.
  */
 class QuickRescueActivity : Activity() {
     private val store by lazy { getSharedPreferences("sos_cards", MODE_PRIVATE) }
