@@ -26,6 +26,7 @@ class QuickRescueActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        pendingIndex = savedInstanceState?.getInt("pending_sos_index", -1)?.takeIf { it >= 0 }
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(24, 28, 24, 20)
@@ -43,6 +44,11 @@ class QuickRescueActivity : Activity() {
         setContentView(root)
         load()
         render()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt("pending_sos_index", pendingIndex ?: -1)
+        super.onSaveInstanceState(outState)
     }
 
     private fun load() {
@@ -208,6 +214,8 @@ class QuickRescueActivity : Activity() {
         if (requestCode == 401) {
             val index = pendingIndex
             pendingIndex = null
+            // Never silently abandon an SOS message when location permission is denied.
+            // send() explicitly marks the location unavailable in that case.
             if (index != null) send(index)
         }
     }
