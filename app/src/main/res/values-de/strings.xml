@@ -204,4 +204,5 @@
     <string name="converting_video">Video wird konvertiert…</string>
     <string name="media_operation_failed_format">Vorgang fehlgeschlagen: %1$s</string>
     <string name="video_trimmed_keyframe_format">%1$s gespeichert • Schnitt beginnt am nächsten sicheren Keyframe bei etwa %2$.2f s</string>
+    <string name="theme_piano_black">Piano Black (Glanz)</string>
 </resources>
