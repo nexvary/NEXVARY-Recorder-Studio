@@ -204,4 +204,5 @@
     <string name="converting_video">Conversione video…</string>
     <string name="media_operation_failed_format">Operazione non riuscita: %1$s</string>
     <string name="video_trimmed_keyframe_format">Salvato %1$s • il taglio inizia dal fotogramma chiave sicuro più vicino, circa %2$.2f s</string>
+    <string name="theme_piano_black">Nero pianoforte lucido</string>
 </resources>
