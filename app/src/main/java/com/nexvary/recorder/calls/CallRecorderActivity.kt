@@ -31,6 +31,7 @@ class CallRecorderActivity : AppCompatActivity() {
             textSize = 15f
         }
         val status = TextView(this).apply { textSize = 16f }
+        val preflight = TextView(this).apply { textSize = 15f }
         val open = Button(this).apply {
             text = "Open ShizuCallRecorder / فتح مسجل المكالمات"
             setOnClickListener {
@@ -47,7 +48,7 @@ class CallRecorderActivity : AppCompatActivity() {
                     Uri.parse("https://github.com/kitsumed/ShizuCallRecorder#readme")))
             }
         }
-        listOf(title, info, status, open, help).forEach(layout::addView)
+        listOf(title, info, status, preflight, open, help).forEach(layout::addView)
         setContentView(layout)
     }
 
@@ -56,6 +57,8 @@ class CallRecorderActivity : AppCompatActivity() {
         findViewById<LinearLayout>(android.R.id.content).let { content ->
             val root = content.getChildAt(0) as? LinearLayout ?: return
             val status = root.getChildAt(2) as? TextView ?: return
+            val readiness = CallCapturePreflight.inspect(this)
+            (root.getChildAt(3) as? TextView)?.text = "Shizuku installed: ${readiness.shizukuInstalled} | running: ${readiness.shizukuRunning} | authorized: ${readiness.shizukuAuthorized}"
             status.text = if (packageManager.getLaunchIntentForPackage(recorderPackage) != null)
                 "Companion installed / التطبيق المساعد مثبت"
             else "Companion not installed / التطبيق المساعد غير مثبت"
