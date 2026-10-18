@@ -8,11 +8,14 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.nexvary.recorder.R
+import com.nexvary.recorder.ui.ThemeManager
+import com.nexvary.recorder.ui.UiInsets
 
 class BackgroundCameraActivity : AppCompatActivity() {
     private var front = false
     private var audio = false
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         val density = resources.displayMetrics.density
         val root = LinearLayout(this).apply {
@@ -47,6 +50,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
         }
         listOf(title, description, camera, mic, start, stop).forEach(root::addView)
         setContentView(root)
+        UiInsets.apply(root)
     }
 
     private fun requestAndStart() {
