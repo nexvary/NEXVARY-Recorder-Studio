@@ -100,7 +100,10 @@ jobs:
           script: |
             gradle --no-daemon :app:assembleDebug
             adb install -r app/build/outputs/apk/debug/app-debug.apk
-            adb shell am start -n com.nexvary.recorder/.safety.QuickRescueActivity
+            adb shell am start -n com.nexvary.recorder/.MainActivity
+            sleep 3
+            adb shell input tap 535 225
+            sleep 2
             sleep 5
             mkdir -p screenshots
             adb shell screencap -p /sdcard/sos-screen.png
