@@ -179,7 +179,7 @@ class QuickRescueActivity : Activity() {
         val sms = if (image != null) Intent(Intent.ACTION_SEND).apply {
             type = "image/*"
             putExtra(Intent.EXTRA_STREAM, image)
-            putExtra(Intent.EXTRA_TEXT, body + "\\nالرقم المقصود: " + phone)
+            putExtra(Intent.EXTRA_TEXT, body + "\nالرقم المقصود: " + phone)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         } else Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(phone)}"))
             .putExtra("sms_body", body)
