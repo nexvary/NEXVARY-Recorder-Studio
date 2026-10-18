@@ -204,4 +204,5 @@
     <string name="converting_video">در حال تبدیل ویدیو…</string>
     <string name="media_operation_failed_format">عملیات ناموفق بود: %1$s</string>
     <string name="video_trimmed_keyframe_format">%1$s ذخیره شد • برش از نزدیک‌ترین فریم کلیدی امن در حدود %2$.2f ثانیه شروع می‌شود</string>
+    <string name="theme_piano_black">مشکی پیانویی براق</string>
 </resources>
