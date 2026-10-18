@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.HapticFeedbackConstants
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.nexvary.recorder.calls.CallRecorderActivity
 import com.nexvary.recorder.camera.BackgroundCameraActivity
 import com.nexvary.recorder.audio.VoiceRecorderActivity
 import com.nexvary.recorder.databinding.ActivityMainBinding
@@ -94,7 +95,8 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.language_title),
             getString(R.string.about_title),
             getString(R.string.choose_theme),
-            "Background camera recording"
+            "Background camera recording",
+            "Call recording / تسجيل المكالمات"
         )
 
         MaterialAlertDialogBuilder(this)
@@ -106,6 +108,7 @@ class MainActivity : AppCompatActivity() {
                     2 -> startActivity(Intent(this, AboutActivity::class.java))
                     3 -> showThemePicker()
                     4 -> startActivity(Intent(this, BackgroundCameraActivity::class.java))
+                    5 -> startActivity(Intent(this, CallRecorderActivity::class.java))
                 }
             }
             .setNegativeButton(R.string.cancel, null)
