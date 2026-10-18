@@ -14,6 +14,7 @@ import com.nexvary.recorder.ui.UiInsets
 class BackgroundCameraActivity : AppCompatActivity() {
     private var front = false
     private var audio = false
+    private var pendingStart = false
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
@@ -60,20 +61,33 @@ class BackgroundCameraActivity : AppCompatActivity() {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
         if (missing.isNotEmpty()) {
+            pendingStart = true
             requestPermissions(missing.toTypedArray(), 600)
             return
         }
-        ContextCompat.startForegroundService(this,
-            Intent(this, BackgroundCameraService::class.java)
-                .setAction(BackgroundCameraService.ACTION_START)
-                .putExtra(BackgroundCameraService.EXTRA_FRONT, front)
-                .putExtra(BackgroundCameraService.EXTRA_AUDIO, audio))
-        Toast.makeText(this, "Recording requested. Check the ongoing notification.", Toast.LENGTH_LONG).show()
+        pendingStart = false
+        runCatching {
+            ContextCompat.startForegroundService(this,
+                Intent(this, BackgroundCameraService::class.java)
+                    .setAction(BackgroundCameraService.ACTION_START)
+                    .putExtra(BackgroundCameraService.EXTRA_FRONT, front)
+                    .putExtra(BackgroundCameraService.EXTRA_AUDIO, audio))
+        }.onSuccess {
+            Toast.makeText(this, "Camera start requested. Confirm recording via the system camera indicator.", Toast.LENGTH_LONG).show()
+        }.onFailure {
+            Toast.makeText(this, "Camera could not start: ${it.localizedMessage ?: "unknown error"}", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 600 && grantResults.isNotEmpty() &&
-            grantResults.all { it == PackageManager.PERMISSION_GRANTED }) requestAndStart()
+        if (requestCode == 600 && pendingStart) {
+            pendingStart = false
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                requestAndStart()
+            } else {
+                Toast.makeText(this, "Camera or microphone permission denied. Recording was not started.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
