@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 /**
@@ -32,6 +33,13 @@ class CallRecorderActivity : AppCompatActivity() {
         }
         val status = TextView(this).apply { textSize = 16f }
         val preflight = TextView(this).apply { textSize = 15f }
+        val authorize = Button(this).apply {
+            text = "Authorize Shizuku / منح إذن Shizuku"
+            setOnClickListener {
+                val requested = CallCapturePreflight.requestAuthorization()
+                Toast.makeText(this@CallRecorderActivity, if (requested) "Check Shizuku permission dialog" else "Start Shizuku first", Toast.LENGTH_LONG).show()
+            }
+        }
         val open = Button(this).apply {
             text = "Open ShizuCallRecorder / فتح مسجل المكالمات"
             setOnClickListener {
@@ -48,7 +56,7 @@ class CallRecorderActivity : AppCompatActivity() {
                     Uri.parse("https://github.com/kitsumed/ShizuCallRecorder#readme")))
             }
         }
-        listOf(title, info, status, preflight, open, help).forEach(layout::addView)
+        listOf(title, info, status, preflight, authorize, open, help).forEach(layout::addView)
         setContentView(layout)
     }
 
