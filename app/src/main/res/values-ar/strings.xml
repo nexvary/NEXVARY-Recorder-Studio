@@ -204,4 +204,5 @@
     <string name="converting_video">جارٍ تحويل الفيديو…</string>
     <string name="media_operation_failed_format">فشلت العملية: %1$s</string>
     <string name="video_trimmed_keyframe_format">تم حفظ %1$s • يبدأ القص من أقرب إطار مفتاح آمن قرب %2$.2f ثانية</string>
+    <string name="theme_piano_black">أسود بيانو لامع</string>
 </resources>
