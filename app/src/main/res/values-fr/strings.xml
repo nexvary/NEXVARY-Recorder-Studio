@@ -204,4 +204,5 @@
     <string name="converting_video">Conversion vidéo…</string>
     <string name="media_operation_failed_format">Échec de l opération : %1$s</string>
     <string name="video_trimmed_keyframe_format">%1$s enregistré • la coupe commence au point clé sûr le plus proche vers %2$.2f s</string>
+    <string name="theme_piano_black">Noir piano brillant</string>
 </resources>
