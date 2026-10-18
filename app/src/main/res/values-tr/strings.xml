@@ -204,4 +204,5 @@
     <string name="converting_video">Video dönüştürülüyor…</string>
     <string name="media_operation_failed_format">İşlem başarısız: %1$s</string>
     <string name="video_trimmed_keyframe_format">%1$s kaydedildi • kesim en yakın güvenli ana karede yaklaşık %2$.2f sn başlar</string>
+    <string name="theme_piano_black">Parlak Piyano Siyahı</string>
 </resources>
