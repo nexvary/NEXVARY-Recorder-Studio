@@ -22,8 +22,6 @@ class QuickRescueActivity : Activity() {
     private lateinit var list: LinearLayout
     private var pendingIndex: Int? = null
     private var editingImage: Uri? = null
-    private var selectedImage: Uri? = null
-    private var editingIndex: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +57,6 @@ class QuickRescueActivity : Activity() {
 
     private fun editCard(index: Int?) {
         val original = index?.let { cards[it] }
-        editingIndex = index
         editingImage = original?.optString("image")?.takeIf { it.isNotBlank() }?.let(Uri::parse)
         val name = EditText(this).apply {
             hint = "اسم جهة الاتصال"; setSingleLine(true)
@@ -79,7 +76,7 @@ class QuickRescueActivity : Activity() {
         }
         val imageStatus = TextView(this).apply { text = if (editingImage == null) "لا توجد صورة" else "صورة مرفقة" }
         val imageButton = Button(this).apply {
-            text = "اختيار صورة من الهاتف"
+            text = "اختيار أو تغيير الصورة من الهاتف"
             setOnClickListener {
                 startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
