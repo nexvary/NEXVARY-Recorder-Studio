@@ -32,6 +32,7 @@
             android:multiprocess="false"
             android:exported="true"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+        <activity android:name=".safety.SafetyCaptureActivity" android:exported="false" />
         <activity android:name=".calls.CallRecorderActivity" android:exported="false" />
         <activity android:name=".camera.BackgroundCameraActivity" android:exported="false" />
         <service android:name=".camera.BackgroundCameraService" android:exported="false" android:foregroundServiceType="camera|microphone" />
