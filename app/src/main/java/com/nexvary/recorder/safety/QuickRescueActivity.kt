@@ -1,7 +1,12 @@
 package com.nexvary.recorder.safety
 
 import android.Manifest
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
+import com.nexvary.recorder.ui.ThemeManager
+import com.nexvary.recorder.ui.UiInsets
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
@@ -16,7 +21,7 @@ import org.json.JSONObject
  * User-triggered SOS cards, stored privately in app preferences.
  * SMS is composed in the default SMS app for explicit final sending. Location is attached only when available.
  */
-class QuickRescueActivity : Activity() {
+class QuickRescueActivity : AppCompatActivity() {
     private val store by lazy { getSharedPreferences("sos_cards", MODE_PRIVATE) }
     private val cards = mutableListOf<JSONObject>()
     private lateinit var list: LinearLayout
@@ -25,15 +30,20 @@ class QuickRescueActivity : Activity() {
     private var imageStatusView: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         pendingIndex = savedInstanceState?.getInt("pending_sos_index", -1)?.takeIf { it >= 0 }
+        val dp = resources.displayMetrics.density
+        val pad = (20 * dp).toInt()
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(24, 28, 24, 20)
+            setPadding(pad, pad, pad, pad)
+            setBackgroundColor(Color.rgb(10, 10, 10))
         }
-        root.addView(TextView(this).apply { text = "الإنقاذ السريع — NEXVARY SOS"; textSize = 23f })
+        root.addView(TextView(this).apply { text = "الإنقاذ السريع — NEXVARY SOS"; textSize = 23f; setTextColor(Color.WHITE); setTypeface(null, Typeface.BOLD) })
         root.addView(TextView(this).apply {
             text = "أضف أرقامًا ورسائل مختلفة. اضغط إرسال لكل جهة. يضاف رابط الموقع عند توفر إذن وموقع حديث. عند الخطر اتصل بالطوارئ أيضًا."
+            setTextColor(Color.rgb(198, 208, 220))
         })
         root.addView(Button(this).apply {
             text = "إضافة جهة استغاثة"
@@ -42,6 +52,7 @@ class QuickRescueActivity : Activity() {
         list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(ScrollView(this).apply { addView(list) })
         setContentView(root)
+        UiInsets.apply(root)
         load()
         render()
     }
@@ -121,18 +132,24 @@ class QuickRescueActivity : Activity() {
         cards.forEachIndexed { index, card ->
             val panel = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
-                setPadding(8, 16, 8, 16)
+                setPadding(pad, pad, pad, pad)
+                background = GradientDrawable().apply {
+                    setColor(Color.rgb(28, 31, 36))
+                    cornerRadius = 18 * dp
+                    setStroke((1 * dp).toInt().coerceAtLeast(1), Color.rgb(170, 184, 202))
+                }
             }
             panel.addView(TextView(this).apply {
                 text = "${card.optString("name")} — ${card.optString("phone")}"
                 textSize = 19f
+                setTextColor(Color.WHITE)
             })
-            panel.addView(TextView(this).apply { text = card.optString("message") })
+            panel.addView(TextView(this).apply { text = card.optString("message"); setTextColor(Color.rgb(198, 208, 220)) })
             panel.addView(Button(this).apply {
                 text = "إرسال استغاثة"
                 setOnClickListener { requestSend(index) }
             })
-            if (card.optString("image").isNotBlank()) panel.addView(TextView(this).apply { text = "📎 صورة مرفقة" })
+            if (card.optString("image").isNotBlank()) panel.addView(TextView(this).apply { text = "صورة مرفقة"; setTextColor(Color.rgb(198, 208, 220)) })
             panel.addView(Button(this).apply {
                 text = "تعديل"
                 setOnClickListener { editCard(index) }
