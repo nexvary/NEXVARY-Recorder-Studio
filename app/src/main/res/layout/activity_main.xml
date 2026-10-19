@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/nexvaryBackground">
+    android:background="@drawable/bg_piano_gloss">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,12 +18,12 @@
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="92dp"
+            android:layout_height="80dp"
             app:cardBackgroundColor="?attr/nexvarySurfaceStrong"
             app:cardCornerRadius="22dp"
             app:cardElevation="5dp"
-            app:strokeColor="?attr/nexvaryAccent"
-            app:strokeWidth="1dp">
+            app:strokeColor="#D9E7F4"
+            app:strokeWidth="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,8 +33,8 @@
                 android:padding="12dp">
 
                 <ImageView
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:src="@mipmap/ic_launcher"
                     android:contentDescription="@string/app_name" />
 
@@ -50,7 +50,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/app_name"
                         android:textColor="?attr/nexvaryText"
-                        android:textSize="20sp"
+                        android:textSize="14sp"
                         android:textStyle="bold"
                         android:maxLines="1"
                         android:ellipsize="end"
@@ -100,8 +100,8 @@
                     app:iconPadding="5dp"
                     app:iconSize="17dp"
                     app:iconTint="?attr/nexvaryAccent"
-                    app:strokeColor="?attr/nexvaryAccent"
-                    app:strokeWidth="1dp"
+                    app:strokeColor="#D9E7F4"
+                    app:strokeWidth="2dp"
                     app:cornerRadius="20dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -109,11 +109,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="@string/main_menu_title"
             android:textColor="?attr/nexvaryText"
-            android:textSize="17sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:gravity="start"
             android:textDirection="locale" />
@@ -141,10 +141,10 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardBackgroundColor="#171B21"
                     app:cardCornerRadius="18dp"
-                    app:strokeColor="?attr/nexvaryAccent"
-                    app:strokeWidth="1dp">
+                    app:strokeColor="#D9E7F4"
+                    app:strokeWidth="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -154,8 +154,8 @@
                         android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="46dp"
-                            android:layout_height="46dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:padding="7dp"
                             android:src="@drawable/ic_feature_screen"
                             android:contentDescription="@string/screen_record_title" />
@@ -166,7 +166,7 @@
                             android:layout_marginTop="7dp"
                             android:text="@string/screen_record_title"
                             android:textColor="?attr/nexvaryText"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -197,10 +197,10 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardBackgroundColor="#171B21"
                     app:cardCornerRadius="18dp"
-                    app:strokeColor="?attr/nexvaryAccent"
-                    app:strokeWidth="1dp">
+                    app:strokeColor="#D9E7F4"
+                    app:strokeWidth="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -210,8 +210,8 @@
                         android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="46dp"
-                            android:layout_height="46dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:padding="7dp"
                             android:src="@drawable/ic_feature_mic"
                             android:contentDescription="@string/voice_studio_title" />
@@ -222,7 +222,7 @@
                             android:layout_marginTop="7dp"
                             android:text="@string/voice_studio_title"
                             android:textColor="?attr/nexvaryText"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -261,10 +261,10 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardBackgroundColor="#171B21"
                     app:cardCornerRadius="18dp"
-                    app:strokeColor="?attr/nexvaryAccent"
-                    app:strokeWidth="1dp">
+                    app:strokeColor="#D9E7F4"
+                    app:strokeWidth="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -274,8 +274,8 @@
                         android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="46dp"
-                            android:layout_height="46dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:padding="7dp"
                             android:src="@drawable/ic_feature_audio"
                             android:contentDescription="@string/media_tools_title" />
@@ -286,7 +286,7 @@
                             android:layout_marginTop="7dp"
                             android:text="@string/media_tools_title"
                             android:textColor="?attr/nexvaryText"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:maxLines="2"
                             android:ellipsize="end"
@@ -317,10 +317,10 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="?attr/nexvarySurface"
+                    app:cardBackgroundColor="#171B21"
                     app:cardCornerRadius="18dp"
-                    app:strokeColor="?attr/nexvaryAccent"
-                    app:strokeWidth="1dp">
+                    app:strokeColor="#D9E7F4"
+                    app:strokeWidth="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -330,8 +330,8 @@
                         android:padding="12dp">
 
                         <ImageView
-                            android:layout_width="46dp"
-                            android:layout_height="46dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:padding="7dp"
                             android:src="@drawable/ic_feature_live"
                             android:contentDescription="@string/live_title" />
@@ -342,7 +342,7 @@
                             android:layout_marginTop="7dp"
                             android:text="@string/live_title"
                             android:textColor="?attr/nexvaryText"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:maxLines="2"
                             android:ellipsize="end"
@@ -369,7 +369,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="66dp"
         android:background="?attr/nexvarySurfaceStrong"
         app:itemIconSize="25dp"
         app:itemIconTint="@color/bottom_nav_item_color"
