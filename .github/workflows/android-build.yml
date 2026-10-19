@@ -23,6 +23,9 @@ jobs:
       - name: UI Release Gate
         run: python3 scripts/ui_release_gate.py
 
+      - name: Screen capture lifecycle static gate
+        run: python3 scripts/recorder_lifecycle_gate.py
+
       - name: Accept Android SDK licenses
         run: yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
 
