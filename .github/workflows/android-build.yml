@@ -92,10 +92,9 @@ jobs:
             adb shell wm dismiss-keyguard || true
             adb shell input keyevent 82 || true
             adb shell settings put system screen_off_timeout 2147483647 || true
-            gradle --no-daemon :app:connectedDebugAndroidTest
+            mkdir -p screenshots
             gradle --no-daemon :app:assembleDebug
             adb install -r app/build/outputs/apk/debug/app-debug.apk
-            mkdir -p screenshots
             adb shell am force-stop com.nexvary.recorder || true
             adb shell am start -W -n com.nexvary.recorder/.MainActivity
             sleep 3
@@ -105,6 +104,11 @@ jobs:
             adb exec-out screencap -p > screenshots/sos.png
             test -s screenshots/dashboard.png
             test -s screenshots/sos.png
+            # Run instrumentation after screenshots so failures cannot suppress evidence.
+            adb shell am force-stop com.nexvary.recorder || true
+            adb shell input keyevent KEYCODE_HOME || true
+            adb shell wm dismiss-keyguard || true
+            gradle --no-daemon :app:connectedDebugAndroidTest
 
       - name: Upload real emulator screenshots
         if: always()
