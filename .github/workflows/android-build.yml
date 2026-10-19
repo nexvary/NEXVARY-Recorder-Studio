@@ -91,6 +91,8 @@ jobs:
             adb shell input keyevent KEYCODE_WAKEUP || true
             adb shell wm dismiss-keyguard || true
             adb shell input keyevent 82 || true
+            adb shell settings put global stay_on_while_plugged_in 3 || true
+            adb shell settings put secure lock_screen_lock_after_timeout 0 || true
             adb shell settings put system screen_off_timeout 2147483647 || true
             mkdir -p screenshots
             gradle --no-daemon :app:assembleDebug
@@ -108,6 +110,9 @@ jobs:
             adb shell am force-stop com.nexvary.recorder || true
             adb shell input keyevent KEYCODE_HOME || true
             adb shell wm dismiss-keyguard || true
+            adb shell input keyevent KEYCODE_WAKEUP || true
+            adb shell input keyevent 82 || true
+            adb shell dumpsys window | grep -E 'mCurrentFocus|mFocusedApp' || true
             gradle --no-daemon :app:connectedDebugAndroidTest
 
       - name: Upload real emulator screenshots
