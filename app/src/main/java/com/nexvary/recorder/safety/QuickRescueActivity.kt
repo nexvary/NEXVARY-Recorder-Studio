@@ -136,6 +136,7 @@ class QuickRescueActivity : AppCompatActivity() {
         })
         editorOpen = true
         editorDialog = MaterialAlertDialogBuilder(this)
+            .setBackground(ContextCompat.getDrawable(this, R.drawable.bg_rescue_contact_card))
             .setTitle(if (index == null) R.string.rescue_add else R.string.rescue_edit)
             .setView(ScrollView(this).apply { addView(form) })
             .setPositiveButton(R.string.rescue_save, null)
@@ -181,6 +182,21 @@ class QuickRescueActivity : AppCompatActivity() {
 
     companion object { private const val NEON = 0xFF43FF88.toInt() }
 
+    private fun contactAction(label: Int, background: Int, color: Int) =
+        androidx.appcompat.widget.AppCompatButton(this).apply {
+            setText(label)
+            setTextColor(color)
+            isAllCaps = false
+            backgroundTintList = null
+            supportBackgroundTintList = null
+            setBackgroundResource(background)
+            val unit = resources.displayMetrics.density
+            minHeight = (48 * unit).toInt()
+            val pad = (12 * unit).toInt()
+            setPadding(pad, pad, pad, pad)
+            layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = (8 * unit).toInt() }
+        }
+
     private fun render() {
         binding.contactList.removeAllViews()
         if (cards.isEmpty()) binding.contactList.addView(TextView(this).apply {
@@ -191,7 +207,7 @@ class QuickRescueActivity : AppCompatActivity() {
                 orientation = LinearLayout.VERTICAL
                 val pad = (12 * resources.displayMetrics.density).toInt()
                 setPadding(pad, pad, pad, pad)
-                setBackgroundResource(R.drawable.bg_metal_card)
+                setBackgroundResource(R.drawable.bg_rescue_contact_card)
                 layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = pad }
             }
             panel.addView(TextView(this).apply {
@@ -206,10 +222,9 @@ class QuickRescueActivity : AppCompatActivity() {
             if (card.optString("image").isNotBlank()) panel.addView(TextView(this).apply {
                 setText(R.string.rescue_image_attached); setTextColor(0xFFD3DCE5.toInt())
             })
-            panel.addView(Button(this).apply { setText(R.string.rescue_prepare); setOnClickListener { requestSend(index) } })
-            panel.addView(Button(this).apply { setText(R.string.rescue_edit); setOnClickListener { editCard(index) } })
-            panel.addView(Button(this).apply {
-                setText(R.string.rescue_delete)
+            panel.addView(contactAction(R.string.rescue_prepare, R.drawable.bg_sos_button, 0xFFFFFFFF.toInt()).apply { setOnClickListener { requestSend(index) } })
+            panel.addView(contactAction(R.string.rescue_edit, R.drawable.bg_rescue_contact_card, NEON).apply { setOnClickListener { editCard(index) } })
+            panel.addView(contactAction(R.string.rescue_delete, R.drawable.bg_sos_card, 0xFFFF7A85.toInt()).apply {
                 setOnClickListener {
                     MaterialAlertDialogBuilder(this@QuickRescueActivity).setMessage(R.string.rescue_delete_confirm)
                         .setPositiveButton(R.string.rescue_delete) { _, _ -> cards.removeAt(index); persist(); render() }

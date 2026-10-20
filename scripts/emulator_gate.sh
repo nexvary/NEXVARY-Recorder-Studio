@@ -25,7 +25,7 @@ if [ "$status" -ne 0 ]; then
   rm -f screenshots/*.png
   exit "$status"
 fi
-for screen in dashboard-ar dashboard-purple-ar sos-ar sos-editor-ar camera-ar settings-ar library-ar; do
+for screen in dashboard-ar dashboard-purple-ar sos-ar sos-editor-ar sos-contact-ar camera-ar settings-ar library-ar; do
   test -s "screenshots/$screen.png"
 done
 if grep -E 'ANR in com.nexvary.recorder|ANR in com.google.android.apps.nexuslauncher|ANR in com.android.launcher3|FATAL EXCEPTION:' diagnostics/logcat.txt; then

@@ -55,7 +55,17 @@ class VisualEvidenceTest {
 
             }
         }
-        } finally { sample.delete(); com.nexvary.recorder.ui.ThemeManager.select(context, 0) }
+        // A synthetic contact is shown for border review; no send or location action runs.
+        val contact = org.json.JSONObject().put("name", "جهة اختبار")
+            .put("phone", "+201000000000").put("message", "رسالة تجريبية للمراجعة فقط")
+            .put("location", false).put("image", "")
+        context.getSharedPreferences("sos_cards", 0).edit()
+            .putString("cards", org.json.JSONArray().put(contact).toString()).commit()
+        ActivityScenario.launch(com.nexvary.recorder.safety.QuickRescueActivity::class.java).use {
+            onView(withText(R.string.rescue_delete)).perform(reveal()).check(matches(isDisplayed()))
+            capture(it, "sos-contact-ar")
+        }
+        } finally { context.getSharedPreferences("sos_cards", 0).edit().clear().commit(); sample.delete(); com.nexvary.recorder.ui.ThemeManager.select(context, 0) }
     }
 
     private fun capture(scenario: ActivityScenario<out android.app.Activity>, name: String) {
