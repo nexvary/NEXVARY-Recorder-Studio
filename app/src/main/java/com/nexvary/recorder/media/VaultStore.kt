@@ -24,7 +24,7 @@ import javax.crypto.spec.SecretKeySpec
  * The authenticated terminal record detects truncation; sequence AAD detects reordering.
  */
 class VaultStore(context: Context) {
-    private val dir = File(context.noBackupFilesDir, "recording_vault").apply { check(isDirectory || mkdirs()) }
+    private val dir = File(context.noBackupFilesDir, "recording_vault").apply { check(isDirectory || mkdirs() || isDirectory) }
     private val config = File(dir, "access.properties")
     class Session internal constructor(internal val key: SecretKey)
     data class Entry(val id: String, val name: String, val mime: String)

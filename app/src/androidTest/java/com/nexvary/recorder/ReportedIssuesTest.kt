@@ -92,8 +92,9 @@ class ReportedIssuesTest {
             val pool = java.util.concurrent.Executors.newFixedThreadPool(2)
             try {
                 val start = java.util.concurrent.CountDownLatch(1)
-                val attempts = (1..2).map {
-                    pool.submit<Boolean> { start.await(); runCatching { VaultStore(racingContext).create("638291".toCharArray()) }.isSuccess }
+                val stores = (1..2).map { VaultStore(racingContext) }
+                val attempts = stores.map { racingStore ->
+                    pool.submit<Boolean> { start.await(); runCatching { racingStore.create("638291".toCharArray()) }.isSuccess }
                 }
                 start.countDown()
                 assertEquals(1, attempts.count { it.get(10, java.util.concurrent.TimeUnit.SECONDS) })
