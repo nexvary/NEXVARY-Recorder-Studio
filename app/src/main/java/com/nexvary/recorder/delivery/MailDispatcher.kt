@@ -29,10 +29,11 @@ class MailDispatcher(private val queue: MailQueue, private val sender: Recording
             when {
                 e is MessageTooLarge -> MailQueue.State.LIMIT
                 causes(e).any { it is AuthenticationFailedException } -> MailQueue.State.AUTH
-                causes(e).any { it is SSLException } -> MailQueue.State.TLS
                 e is SMTPSendFailedException && e.returnCode >= 400 -> MailQueue.State.FAILED
-                e is SendFailedException -> MailQueue.State.FAILED
+                causes(e).any { it is org.eclipse.angus.mail.smtp.SMTPAddressFailedException && it.returnCode >= 400 } -> MailQueue.State.FAILED
                 dataStarted -> MailQueue.State.UNCERTAIN
+                causes(e).any { it is SSLException } -> MailQueue.State.TLS
+                e is SendFailedException -> MailQueue.State.FAILED
                 e is IllegalStateException -> MailQueue.State.MISSING
                 job.attempts < 3 -> MailQueue.State.RETRY
                 else -> MailQueue.State.FAILED

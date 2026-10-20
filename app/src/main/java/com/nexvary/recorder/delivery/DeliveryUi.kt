@@ -23,6 +23,9 @@ object DeliveryUi {
             textCursorDrawable?.setTint(0xFF43FF88.toInt())
             setTag(R.id.studioStyled, true)
             textDirection = View.TEXT_DIRECTION_LTR
+            if (type and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_NUMBER) {
+                keyListener = android.text.method.DigitsKeyListener.getInstance("0123456789٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹")
+            }
             setSingleLine(); root.addView(this, LinearLayout.LayoutParams(-1, -2))
         }
     }

@@ -36,6 +36,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    sourceSets {
+        getByName("test").java.srcDir("src/testSupport/java")
+        getByName("androidTest").java.srcDir("src/testSupport/java")
+    }
+
     testOptions {
         animationsDisabled = true
     }

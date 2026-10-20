@@ -45,7 +45,12 @@ class MailQueue(private val context: Context) {
     private fun prepare(job: Job, limit: Int): Job {
         val destination = attachment(job.id)
         if (destination.isFile && job.digest.isNotBlank()) {
-            return job.copy(state = if (DeliveryPolicy.fits(destination.length(), limit)) State.QUEUED else State.LIMIT)
+            val digest = MessageDigest.getInstance("SHA-256")
+            destination.inputStream().use { input -> val bytes = ByteArray(64 * 1024); while (true) { val n = input.read(bytes); if (n < 0) break; digest.update(bytes, 0, n) } }
+            if (digest.digest().joinToString("") { "%02x".format(it) } == job.digest) {
+                return job.copy(state = if (DeliveryPolicy.fits(destination.length(), limit)) State.QUEUED else State.LIMIT)
+            }
+            check(destination.delete())
         }
         val source = File(job.original)
         val movies = context.getExternalFilesDir(android.os.Environment.DIRECTORY_MOVIES)?.canonicalFile

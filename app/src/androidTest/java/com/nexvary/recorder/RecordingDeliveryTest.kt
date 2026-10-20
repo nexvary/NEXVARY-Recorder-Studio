@@ -40,6 +40,25 @@ class RecordingDeliveryTest {
         }
         try { block(wrapper, movies) } finally { root.deleteRecursively() }
     }
+    @Test fun androidRuntimeSendsBinaryAttachmentThroughRealTlsAndStartTlsOnLoopback() {
+        val assets = instrumentation.context.assets
+        val key = assets.open("smtp-test-key.b64").use { it.readBytes() }
+        val certificate = assets.open("smtp-test-cert.b64").use { it.readBytes() }
+        for (direct in listOf(true, false)) LocalSmtpFixture(key, certificate, direct).use { server ->
+            isolated { app, movies ->
+                val source = File(movies, "fixture.mp4").apply { writeBytes(ByteArray(40_001) { (it % 251).toByte() }) }
+                val queue = MailQueue(app)
+                val job = queue.enqueue(source, "recipient@example.invalid", 25)
+                val sender = SmtpSender("Local fixture", "No external email", server.factory)
+                assertEquals(MailQueue.State.SENT, MailDispatcher(queue, sender).deliver(job.id,
+                    SmtpProfile("localhost", server.port, direct, "fixture-user", "fixture-password", "sender@example.invalid", 25)))
+                assertTrue(source.isFile); assertFalse(queue.attachment(job.id).exists())
+                val mime = jakarta.mail.internet.MimeMessage(jakarta.mail.Session.getInstance(java.util.Properties()), java.io.ByteArrayInputStream(server.received))
+                val multipart = mime.content as jakarta.mail.internet.MimeMultipart
+                assertArrayEquals(source.readBytes(), multipart.getBodyPart(1).inputStream.readBytes())
+            }
+        }
+    }
     @Test fun smtpCredentialsAreEncryptedAndRemovable() = isolated { app, _ ->
         val settings = SmtpSettings(app); settings.save(profile)
         assertEquals(profile, SmtpSettings(app).load())
@@ -82,6 +101,25 @@ class RecordingDeliveryTest {
         assertEquals(MailQueue.State.UNCERTAIN, dispatcher.deliver(job.id, profile))
         assertTrue(queue.attachment(job.id).exists()); assertTrue(original.isFile)
         assertTrue(queue.cancel(job.id)); assertFalse(queue.attachment(job.id).exists()); assertTrue(original.isFile)
+    }
+    @Test fun negativeSmtpCompletionCodeIsUncertainAndCorruptCopyCanBeRebuiltFromOriginal() = isolated { app, movies ->
+        val queue = MailQueue(app)
+        val source = File(movies, "repair.mp4").apply { writeBytes(ByteArray(4096) { (it % 239).toByte() }) }
+        val job = queue.enqueue(source, "recipient@example.invalid", 25)
+        queue.attachment(job.id).writeBytes(ByteArray(4096))
+        var called = false
+        val fake = object : RecordingMailTransport {
+            override fun send(profile: SmtpProfile, job: MailQueue.Job, file: File, beforeData: () -> Unit) {
+                called = true; beforeData()
+                throw org.eclipse.angus.mail.smtp.SMTPSendFailedException(".", -1, "Local interruption", null, null, null, null)
+            }
+            override fun close() { }
+        }
+        val dispatcher = MailDispatcher(queue, fake)
+        assertEquals(MailQueue.State.MISSING, dispatcher.deliver(job.id, profile)); assertFalse(called)
+        assertEquals(MailQueue.State.QUEUED, queue.retry(job.id, 25)?.state)
+        assertArrayEquals(source.readBytes(), queue.attachment(job.id).readBytes())
+        assertEquals(MailQueue.State.UNCERTAIN, dispatcher.deliver(job.id, profile)); assertTrue(source.exists())
     }
     @Test fun sizeLimitAndInterruptedWorkerDoNotDeleteOrAutomaticallyResend() = isolated { app, movies ->
         val queue = MailQueue(app); val source = File(movies, "large.mp4")
