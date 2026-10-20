@@ -17,10 +17,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Stable public preview signing identity
-        run: |
-          mkdir -p ~/.android
-          base64 --decode .github/preview-debug-key.b64 > ~/.android/debug.keystore
       - name: UI Release Gate
         run: python3 scripts/ui_release_gate.py
       - name: Install Android SDK
@@ -31,6 +27,12 @@ jobs:
           cache-read-only: false
       - name: Lint, unit tests, build and compile instrumentation
         run: gradle --no-daemon :app:lintDebug :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+      - name: Verify APK and pinned preview certificate
+        run: |
+          signer="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          "$signer" verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk | tee app/build/reports/apk-signature.txt
+          expected=$(keytool -exportcert -keystore .github/preview-debug.keystore -storepass android -alias androiddebugkey | sha256sum | cut -d ' ' -f 1)
+          grep -F "Signer #1 certificate SHA-256 digest: $expected" app/build/reports/apk-signature.txt
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -56,10 +58,6 @@ jobs:
         with:
           gradle-version: '9.7.1'
           cache-read-only: false
-      - name: Stable public preview signing identity
-        run: |
-          mkdir -p ~/.android
-          base64 --decode .github/preview-debug-key.b64 > ~/.android/debug.keystore
       - name: Install compile SDK
         run: /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
       - name: Enable KVM

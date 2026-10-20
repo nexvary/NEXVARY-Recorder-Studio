@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
 }
@@ -13,6 +15,16 @@ android {
         versionCode = 10
         versionName = "0.7.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // PUBLIC development key only. Pin the path explicitly: CI/Gradle user homes differ.
+    val previewKey = rootProject.file(".github/preview-debug.keystore")
+    previewKey.writeBytes(Base64.getMimeDecoder().decode(rootProject.file(".github/preview-debug-key.b64").readText()))
+    signingConfigs.getByName("debug") {
+        storeFile = previewKey
+        storePassword = "android"
+        keyAlias = "androiddebugkey"
+        keyPassword = "android"
     }
 
     buildFeatures {
