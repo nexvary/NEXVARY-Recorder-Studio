@@ -22,7 +22,7 @@ data class SmtpProfile(val host: String, val port: Int, val directTls: Boolean,
     val username: String, val password: String, val from: String, val limitMiB: Int) {
     fun valid() = host.length in 1..253 && host.none { it.isWhitespace() || it in "/\\\r\n" } &&
         port in 1..65535 && username.isNotBlank() && username.length <= 320 &&
-        username.none { it == '\r' || it == '\n' } && password.isNotEmpty() &&
+        username.none { it == '\r' || it == '\n' } && password.length in 1..4096 &&
         DeliveryPolicy.email(from) && limitMiB in 1..500
     override fun toString() = "SmtpProfile(redacted)"
 }

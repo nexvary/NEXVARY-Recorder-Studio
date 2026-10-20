@@ -37,8 +37,8 @@ android {
     }
 
     sourceSets {
-        getByName("test").java.srcDir("src/testSupport/java")
-        getByName("androidTest").java.srcDir("src/testSupport/java")
+        getByName("test").kotlin.srcDir("src/testSupport/java")
+        getByName("androidTest").kotlin.srcDir("src/testSupport/java")
     }
 
     testOptions {

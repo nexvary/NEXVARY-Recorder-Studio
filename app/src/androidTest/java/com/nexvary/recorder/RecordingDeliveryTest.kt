@@ -171,6 +171,7 @@ class RecordingDeliveryTest {
         val queuedBefore = MailQueue(context).jobs().size
         try {
             ActivityScenario.launch(BackgroundCameraActivity::class.java).use { scenario ->
+                awaitUi(withId(R.id.cameraTimer))
                 scenario.onActivity { activity ->
                     ContextCompat.startForegroundService(activity, Intent(activity, BackgroundCameraService::class.java)
                         .setAction(BackgroundCameraService.ACTION_START).putExtra(BackgroundCameraService.EXTRA_DURATION, 5_000L))
@@ -178,6 +179,10 @@ class RecordingDeliveryTest {
                 awaitCapture { it.stage == BackgroundCameraService.Companion.Stage.RECORDING }
                 scenario.moveToState(Lifecycle.State.CREATED)
                 instrumentation.uiAutomation.executeShellCommand("input keyevent KEYCODE_SLEEP").close()
+                val power = context.getSystemService(android.os.PowerManager::class.java)
+                val sleepDeadline = SystemClock.uptimeMillis() + 2_000
+                while (power.isInteractive && SystemClock.uptimeMillis() < sleepDeadline) SystemClock.sleep(50)
+                assertFalse("Screen must actually be off during the timer test", power.isInteractive)
                 val saved = awaitCapture { it.stage == BackgroundCameraService.Companion.Stage.SAVED || it.stage == BackgroundCameraService.Companion.Stage.ERROR }
                 assertEquals(BackgroundCameraService.Companion.Stage.SAVED, saved.stage)
                 assertFalse(saved.mailQueued)
@@ -202,6 +207,7 @@ class RecordingDeliveryTest {
         val outputs = mutableListOf<File>()
         try {
             ActivityScenario.launch(BackgroundCameraActivity::class.java).use { scenario ->
+                awaitUi(withId(R.id.cameraTimer))
                 repeat(2) {
                     scenario.onActivity { activity -> ContextCompat.startForegroundService(activity,
                         Intent(activity, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_START)) }

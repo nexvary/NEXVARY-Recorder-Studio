@@ -3,6 +3,10 @@ package com.nexvary.recorder
 import android.content.Intent
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.nexvary.recorder.safety.QuickRescueActivity
@@ -34,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         val versionName = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
         binding.txtVersion.text = getString(R.string.version_format, versionName)
         updateThemeLabel()
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) { runCatching { com.nexvary.recorder.delivery.MailWorker.reconcile(this@MainActivity) } }
+        }
 
         binding.btnThemePicker.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
