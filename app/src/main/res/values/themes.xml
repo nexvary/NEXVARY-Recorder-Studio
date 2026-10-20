@@ -99,6 +99,7 @@
     </style>
 
     <style name="Theme.NexvaryRecorder.PianoBlack" parent="Theme.NexvaryRecorder.Base">
+        <item name="colorOnPrimary">#080A0C</item>
         <item name="colorPrimary">#C8D4E8</item>
         <item name="colorSecondary">#4285FF</item>
         <item name="android:statusBarColor">#0A0A0A</item>
