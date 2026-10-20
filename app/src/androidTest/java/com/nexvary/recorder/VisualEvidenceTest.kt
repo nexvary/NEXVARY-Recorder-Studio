@@ -31,13 +31,40 @@ class VisualEvidenceTest {
             Triple(SettingsActivity::class.java, R.id.btnBack, "settings-ar"),
             Triple(com.nexvary.recorder.media.RecordingsLibraryActivity::class.java, R.id.btnBack, "library-ar")
         )
+        com.nexvary.recorder.ui.ThemeManager.select(context, 0)
+        val sample = java.io.File(context.getExternalFilesDir(android.os.Environment.DIRECTORY_MOVIES), "QA-sample.mp4")
+        instrumentation.context.assets.open("qa-sample.mp4").use { input -> sample.outputStream().use { input.copyTo(it) } }
+        try {
         for ((page, visibleId, name) in pages) {
             ActivityScenario.launch(page).use {
                 onView(withId(visibleId)).check(matches(isDisplayed()))
+                capture(it, name)
+                if (page == MainActivity::class.java) {
+                    com.nexvary.recorder.ui.ThemeManager.select(context, 3)
+                    it.recreate()
+                    onView(withId(R.id.cardScreen)).check(matches(isDisplayed()))
+                    capture(it, "dashboard-purple-ar")
+                    com.nexvary.recorder.ui.ThemeManager.select(context, 0)
+                }
+                if (page == com.nexvary.recorder.safety.QuickRescueActivity::class.java) {
+                    onView(withId(R.id.btnAddContact)).perform(reveal(), androidx.test.espresso.action.ViewActions.click())
+                    onView(withId(R.id.rescueMessage)).check(matches(isDisplayed()))
+                    capture(it, "sos-editor-ar")
+                    onView(withId(android.R.id.button2)).perform(androidx.test.espresso.action.ViewActions.click())
+                }
+
+            }
+        }
+        } finally { sample.delete(); com.nexvary.recorder.ui.ThemeManager.select(context, 0) }
+    }
+
+    private fun capture(scenario: ActivityScenario<out android.app.Activity>, name: String) {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val context = instrumentation.targetContext
                 instrumentation.waitForIdleSync()
                 // Espresso visibility can precede the SurfaceFlinger first presented frame.
                 val frameCommitted = java.util.concurrent.CountDownLatch(1)
-                it.onActivity { activity ->
+                scenario.onActivity { activity ->
                     val decor = activity.window.decorView
                     decor.viewTreeObserver.registerFrameCommitCallback { frameCommitted.countDown() }
                     decor.invalidate()
@@ -80,7 +107,5 @@ class VisualEvidenceTest {
                     put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
                 }, null, null)
                 screenshot.recycle()
-            }
-        }
     }
 }

@@ -24,6 +24,8 @@ class BackgroundCameraService : Service() {
         const val ACTION_STOP = "com.nexvary.recorder.camera.STOP"
         const val EXTRA_FRONT = "front"
         const val EXTRA_AUDIO = "audio"
+        @Volatile var activeOutputPath: String? = null
+            private set
         private const val CHANNEL = "nexvary_camera_recording"
         private const val NOTIFICATION_ID = 2406
     }
@@ -100,6 +102,7 @@ class BackgroundCameraService : Service() {
             val file = File(getExternalFilesDir(android.os.Environment.DIRECTORY_MOVIES),
                 "NEXVARY_${System.currentTimeMillis()}.mp4")
             output = file
+            activeOutputPath = file.absolutePath
             val media = MediaRecorder()
             recorder = media
             if (audio) media.setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -151,6 +154,7 @@ class BackgroundCameraService : Service() {
         else output?.delete()
         runCatching { recorder?.reset(); recorder?.release() }
         session = null; device = null; recorder = null
+        activeOutputPath = null
         thread.quitSafely()
         super.onDestroy()
     }

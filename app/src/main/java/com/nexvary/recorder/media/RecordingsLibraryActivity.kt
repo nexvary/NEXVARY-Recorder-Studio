@@ -93,8 +93,9 @@ class RecordingsLibraryActivity : AppCompatActivity() {
                 setOnShowListener {
                     window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
                     getButton(-1).setOnClickListener {
-                        val value = pin.text.toString()
-                        if (value.length !in 6..12 || value.any { it !in '0'..'9' } || (creating && value != confirmation?.text.toString())) {
+                        fun normalized(field: EditText) = field.text.toString().map { c -> Character.digit(c, 10).takeIf { it >= 0 }?.let { ('0'.code + it).toChar() } ?: c }.joinToString("")
+                        val value = normalized(pin)
+                        if (value.length !in 6..12 || value.any { it !in '0'..'9' } || (creating && value != confirmation?.let(::normalized))) {
                             pin.error = getString(R.string.vault_pin_invalid); return@setOnClickListener
                         }
                         val characters = value.toCharArray()
@@ -133,7 +134,7 @@ class RecordingsLibraryActivity : AppCompatActivity() {
                     setText(if (access == null) R.string.library_empty else R.string.vault_empty)
                 })
                 recordings.forEach { item ->
-                    when (item) { is Recording -> publicRow(item); is VaultStore.Entry -> privateRow(item) }
+                    when (item) { is Recording -> publicRow(item); is VaultStore.Entry -> privateRow(item); else -> Unit }
                 }
             }.onFailure { toast(R.string.library_access_error) }
             refresh.isEnabled = true
@@ -187,7 +188,10 @@ class RecordingsLibraryActivity : AppCompatActivity() {
         }
     }
     private fun deleteOriginal(r: Recording) {
-        if (r.file != null) check(r.file.delete()) else check(contentResolver.delete(r.uri, null, null) == 1)
+        if (r.file != null) {
+            check(r.file.absolutePath != com.nexvary.recorder.camera.BackgroundCameraService.activeOutputPath)
+            check(r.file.delete())
+        } else check(contentResolver.delete(r.uri, null, null) == 1)
     }
     private fun restore(access: VaultStore.Session, entry: VaultStore.Entry) {
         val video = entry.mime.startsWith("video/")
@@ -244,7 +248,7 @@ class RecordingsLibraryActivity : AppCompatActivity() {
                 while (cursor.moveToNext()) rows.add(Recording(cursor.getString(1), ContentUris.withAppendedId(collection, cursor.getLong(0)), cursor.getString(2) ?: fallback))
             }
         }
-        getExternalFilesDir(Environment.DIRECTORY_MOVIES)?.listFiles()?.filter { it.isFile && it.extension == "mp4" && it.length() > 0 }?.sortedByDescending { it.lastModified() }?.forEach {
+        getExternalFilesDir(Environment.DIRECTORY_MOVIES)?.listFiles()?.filter { it.isFile && it.extension == "mp4" && it.length() > 0 && it.absolutePath != com.nexvary.recorder.camera.BackgroundCameraService.activeOutputPath }?.sortedByDescending { it.lastModified() }?.forEach {
             rows.add(Recording(it.name, FileProvider.getUriForFile(this, "$packageName.files", it), "video/mp4", it))
         }
         return rows
