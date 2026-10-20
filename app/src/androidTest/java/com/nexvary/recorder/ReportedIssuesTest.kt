@@ -87,6 +87,18 @@ class ReportedIssuesTest {
             store.delete(entry); assertTrue(store.entries(reopened).isEmpty())
             repeat(5) { assertNull(store.unlock("000000".toCharArray())) }
             assertNull(VaultStore(isolated).unlock("638291".toCharArray()))
+            val racingDirectory = File(directory, "concurrent").apply { mkdirs() }
+            val racingContext = object : ContextWrapper(context) { override fun getNoBackupFilesDir() = racingDirectory }
+            val pool = java.util.concurrent.Executors.newFixedThreadPool(2)
+            try {
+                val start = java.util.concurrent.CountDownLatch(1)
+                val attempts = (1..2).map {
+                    pool.submit<Boolean> { start.await(); runCatching { VaultStore(racingContext).create("638291".toCharArray()) }.isSuccess }
+                }
+                start.countDown()
+                assertEquals(1, attempts.count { it.get(10, java.util.concurrent.TimeUnit.SECONDS) })
+                assertNotNull(VaultStore(racingContext).unlock("638291".toCharArray()))
+            } finally { pool.shutdownNow() }
         } finally { directory.deleteRecursively() }
     }
     @Test fun libraryHideLockWrongPinUnlockRestoreAndDelete() {

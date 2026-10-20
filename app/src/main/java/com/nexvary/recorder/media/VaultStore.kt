@@ -48,25 +48,25 @@ class VaultStore(context: Context) {
         return try { SecretKeySpec(Mac.getInstance("HmacSHA256").apply { init(pepper) }.doFinal(derived), "AES") }
         finally { derived.fill(0) }
     }
-    @Synchronized fun create(pin: CharArray): Session {
+    fun create(pin: CharArray): Session = synchronized(ACCESS_LOCK) {
         require(!configured && pin.size in 6..12 && pin.all { it in '0'..'9' })
         val salt = ByteArray(32).also(SecureRandom()::nextBytes)
         val key = key(pin, salt)
         save(Properties().apply {
             setProperty("salt", encode(salt)); setProperty("verifier", encode(MessageDigest.getInstance("SHA-256").digest(key.encoded)))
         })
-        return Session(key)
+        Session(key)
     }
-    @Synchronized fun unlock(pin: CharArray): Session? {
+    fun unlock(pin: CharArray): Session? = synchronized(ACCESS_LOCK) {
         val p = properties()
-        if (System.currentTimeMillis() < p.getProperty("blocked", "0").toLong()) return null
+        if (System.currentTimeMillis() < p.getProperty("blocked", "0").toLong()) return@synchronized null
         val key = key(pin, decode(p.getProperty("salt")))
         val ok = MessageDigest.isEqual(MessageDigest.getInstance("SHA-256").digest(key.encoded), decode(p.getProperty("verifier")))
         val failures = if (ok) 0 else p.getProperty("failures", "0").toInt() + 1
         p.setProperty("failures", failures.toString())
         p.setProperty("blocked", if (failures >= 5) (System.currentTimeMillis() + 30_000).toString() else "0")
         save(p)
-        return if (ok) Session(key) else null
+        if (ok) Session(key) else null
     }
     private fun file(id: String): File { require(runCatching { UUID.fromString(id).toString() == id }.getOrDefault(false)); return File(dir, "$id.nvx") }
     private fun aad(id: String, index: Int) = "$id:$index".toByteArray(Charsets.UTF_8)
@@ -124,5 +124,9 @@ class VaultStore(context: Context) {
         }
     }
     @Synchronized fun delete(entry: Entry) { check(file(entry.id).delete()) }
-    companion object { private const val CHUNK = 256 * 1024 }
+    companion object {
+        private const val CHUNK = 256 * 1024
+        // Serializes setup/attempt counters across old and recreated activities.
+        private val ACCESS_LOCK = Any()
+    }
 }
