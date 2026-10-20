@@ -41,9 +41,20 @@ class VisualEvidenceTest {
                 }
                 check(!focus.contains("Application Error") && !focus.contains("Application Not Responding")) { "System error covers the app" }
                 val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
-                val file = File(context.getExternalFilesDir(null), "visual-evidence/$name.png")
-                file.parentFile!!.mkdirs()
-                file.outputStream().use { output -> check(screenshot.compress(Bitmap.CompressFormat.PNG, 100, output)) }
+                val resolver = context.contentResolver
+                val uri = checkNotNull(resolver.insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    android.content.ContentValues().apply {
+                        put(android.provider.MediaStore.Images.Media.DISPLAY_NAME, "$name.png")
+                        put(android.provider.MediaStore.Images.Media.MIME_TYPE, "image/png")
+                        put(android.provider.MediaStore.Images.Media.RELATIVE_PATH, "Pictures/NEXVARYVisualEvidence")
+                        put(android.provider.MediaStore.Images.Media.IS_PENDING, 1)
+                    }))
+                checkNotNull(resolver.openOutputStream(uri)).use { output ->
+                    check(screenshot.compress(Bitmap.CompressFormat.PNG, 100, output))
+                }
+                resolver.update(uri, android.content.ContentValues().apply {
+                    put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
+                }, null, null)
                 screenshot.recycle()
             }
         }

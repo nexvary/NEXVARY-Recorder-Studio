@@ -58,7 +58,10 @@ class QuickRescueActivity : AppCompatActivity() {
         binding.btnPrepareRescue.setOnClickListener {
             if (cards.isEmpty()) editCard(null)
             else MaterialAlertDialogBuilder(this).setTitle(R.string.rescue_choose)
-                .setItems(cards.map { it.optString("name") }.toTypedArray()) { _, i -> requestSend(i) }
+                .setItems(cards.map { it.optString("name") }.toTypedArray()) { dialog, i ->
+                    dialog.dismiss()
+                    binding.root.post { requestSend(i) }
+                }
                 .setNegativeButton(R.string.cancel, null).show()
         }
         render()

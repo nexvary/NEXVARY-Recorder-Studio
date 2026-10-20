@@ -7,6 +7,7 @@ import androidx.core.view.WindowInsetsCompat
 
 object UiInsets {
     fun apply(root: View) {
+        if (root is android.widget.ScrollView) root.isSmoothScrollingEnabled = false
         val left = root.paddingLeft
         val top = root.paddingTop
         val right = root.paddingRight
@@ -66,7 +67,7 @@ object UiInsets {
     private fun systemBars(windowInsets: WindowInsetsCompat): Insets {
         return windowInsets.getInsets(
             WindowInsetsCompat.Type.systemBars() or
-                WindowInsetsCompat.Type.displayCutout()
+                WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.ime()
         )
     }
 }

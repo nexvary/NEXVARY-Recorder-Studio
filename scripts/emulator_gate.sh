@@ -18,9 +18,10 @@ adb logcat -d -v threadtime > diagnostics/logcat.txt
 adb shell dumpsys activity lastanr > diagnostics/last-anr.txt
 adb shell dumpsys activity activities > diagnostics/activities.txt
 adb shell dumpsys window windows > diagnostics/windows.txt
-adb pull /sdcard/Android/data/com.nexvary.recorder/files/visual-evidence/. screenshots/ || true
+adb pull /sdcard/Pictures/NEXVARYVisualEvidence/. screenshots/ || true
 # A screenshot is evidence only when the instrumentation gate succeeds.
 if [ "$status" -ne 0 ]; then
+  cp -r screenshots diagnostics/unapproved-screenshots
   rm -f screenshots/*.png
   exit "$status"
 fi
