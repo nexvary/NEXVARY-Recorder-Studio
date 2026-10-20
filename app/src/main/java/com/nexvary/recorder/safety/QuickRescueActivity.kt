@@ -1,239 +1,250 @@
 package com.nexvary.recorder.safety
 
 import android.Manifest
-import androidx.appcompat.app.AppCompatActivity
-import com.nexvary.recorder.ui.ThemeManager
-import com.nexvary.recorder.ui.UiInsets
-import android.graphics.Color
-import android.graphics.Typeface
-import android.graphics.drawable.GradientDrawable
+import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
+import android.text.InputType
+import android.view.View
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.nexvary.recorder.R
+import com.nexvary.recorder.databinding.ActivityQuickRescueBinding
+import com.nexvary.recorder.ui.ThemeManager
+import com.nexvary.recorder.ui.UiInsets
 import org.json.JSONArray
 import org.json.JSONObject
 
-/**
- * User-triggered SOS cards, stored privately in app preferences.
- * SMS is composed in the default SMS app for explicit final sending. Location is attached only when available.
- */
+/** No SEND_SMS permission: every message is confirmed and composed in an external app. */
 class QuickRescueActivity : AppCompatActivity() {
     private val store by lazy { getSharedPreferences("sos_cards", MODE_PRIVATE) }
     private val cards = mutableListOf<JSONObject>()
-    private lateinit var list: LinearLayout
+    private lateinit var binding: ActivityQuickRescueBinding
     private var pendingIndex: Int? = null
     private var editingImage: Uri? = null
-    private var imageStatusView: TextView? = null
+    private var imageStatus: TextView? = null
+    private var editorIndex: Int? = null
+    private var editorFields: List<EditText>? = null
+    private var editorLocation: CheckBox? = null
+    private var editorOpen = false
+    private var editorDialog: androidx.appcompat.app.AlertDialog? = null
+
+    private val imagePicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            runCatching { contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+            editingImage = uri
+            imageStatus?.setText(R.string.rescue_image_attached)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
-        pendingIndex = savedInstanceState?.getInt("pending_sos_index", -1)?.takeIf { it >= 0 }
-        val dp = resources.displayMetrics.density
-        val pad = (20 * dp).toInt()
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(pad, pad, pad, pad)
-            setBackgroundColor(Color.rgb(10, 10, 10))
+        binding = ActivityQuickRescueBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        UiInsets.apply(binding.root)
+        val saved = runCatching { JSONArray(store.getString("cards", "[]")) }.getOrDefault(JSONArray())
+        for (i in 0 until saved.length()) saved.optJSONObject(i)?.let(cards::add)
+        pendingIndex = savedInstanceState?.getInt("pending", -1)?.takeIf { it >= 0 }
+        binding.btnBack.setOnClickListener { finish() }
+        binding.btnAddContact.setOnClickListener { editCard(null) }
+        binding.btnPrepareRescue.setOnClickListener {
+            if (cards.isEmpty()) editCard(null)
+            else MaterialAlertDialogBuilder(this).setTitle(R.string.rescue_choose)
+                .setItems(cards.map { it.optString("name") }.toTypedArray()) { _, i -> requestSend(i) }
+                .setNegativeButton(R.string.cancel, null).show()
         }
-        root.addView(TextView(this).apply { text = "الإنقاذ السريع — NEXVARY SOS"; textSize = 23f; setTextColor(Color.WHITE); setTypeface(null, Typeface.BOLD) })
-        root.addView(TextView(this).apply {
-            text = "أضف أرقامًا ورسائل مختلفة. اضغط إرسال لكل جهة. يضاف رابط الموقع عند توفر إذن وموقع حديث. عند الخطر اتصل بالطوارئ أيضًا."
-            setTextColor(Color.rgb(198, 208, 220))
-        })
-        root.addView(Button(this).apply {
-            text = "إضافة جهة استغاثة"
-            setOnClickListener { editCard(null) }
-        })
-        list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
-        root.addView(ScrollView(this).apply { addView(list) })
-        setContentView(root)
-        UiInsets.apply(root)
-        load()
         render()
+        savedInstanceState?.getString("draft")?.let { draft ->
+            val index = savedInstanceState.getInt("editor_index", -1).takeIf { it >= 0 }
+            editCard(index, JSONObject(draft))
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt("pending_sos_index", pendingIndex ?: -1)
+        outState.putInt("pending", pendingIndex ?: -1)
+        if (editorOpen) {
+            outState.putString("draft", draft().toString())
+            outState.putInt("editor_index", editorIndex ?: -1)
+        }
         super.onSaveInstanceState(outState)
     }
 
-    private fun load() {
-        val saved = runCatching { JSONArray(store.getString("cards", "[]")) }.getOrDefault(JSONArray())
-        for (i in 0 until saved.length()) saved.optJSONObject(i)?.let(cards::add)
+    override fun onDestroy() {
+        editorDialog?.dismiss()
+        super.onDestroy()
     }
 
     private fun persist() {
-        val array = JSONArray()
-        cards.forEach(array::put)
-        store.edit().putString("cards", array.toString()).apply()
+        store.edit().putString("cards", JSONArray().apply { cards.forEach { put(it) } }.toString()).apply()
     }
 
-    private fun editCard(index: Int?) {
-        val original = index?.let { cards[it] }
+    private fun draft(): JSONObject {
+        val fields = editorFields.orEmpty()
+        return JSONObject().put("name", fields.getOrNull(0)?.text.toString())
+            .put("phone", fields.getOrNull(1)?.text.toString())
+            .put("message", fields.getOrNull(2)?.text.toString())
+            .put("location", editorLocation?.isChecked ?: false)
+            .put("image", editingImage?.toString().orEmpty())
+    }
+
+    private fun editCard(index: Int?, restored: JSONObject? = null) {
+        val original = restored ?: index?.let { cards.getOrNull(it) }
+        editorIndex = index
         editingImage = original?.optString("image")?.takeIf { it.isNotBlank() }?.let(Uri::parse)
-        val name = EditText(this).apply {
-            hint = "اسم جهة الاتصال"; setSingleLine(true)
-            setText(original?.optString("name").orEmpty())
-        }
-        val phone = EditText(this).apply {
-            hint = "رقم الهاتف"; inputType = android.text.InputType.TYPE_CLASS_PHONE
-            setText(original?.optString("phone").orEmpty())
-        }
-        val message = EditText(this).apply {
-            hint = "رسالة الاستغاثة"; minLines = 3
-            setText(original?.optString("message").orEmpty())
-        }
-        val includeLocation = CheckBox(this).apply {
-            text = "إرفاق موقعي الحالي"
-            isChecked = original?.optBoolean("location", true) ?: true
-        }
-        val imageStatus = TextView(this).apply { text = if (editingImage == null) "لا توجد صورة" else "صورة مرفقة" }
-        imageStatusView = imageStatus
-        val imageButton = Button(this).apply {
-            text = "اختيار أو تغيير الصورة من الهاتف"
-            setOnClickListener {
-                startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "image/*"
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-                }, 602)
-            }
-        }
         val form = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            listOf(name, phone, message, includeLocation, imageStatus, imageButton).forEach(::addView)
+            val pad = (16 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad, pad, pad)
         }
-        android.app.AlertDialog.Builder(this)
-            .setTitle(if (index == null) "إضافة جهة" else "تعديل جهة")
-            .setView(form)
-            .setPositiveButton("حفظ") { _, _ ->
-                val number = phone.text.toString().trim()
-                val body = message.text.toString().trim()
-                if (name.text.isBlank() || !number.matches(Regex("^\\+?[0-9]{7,15}$")) || body.isBlank()) {
-                    Toast.makeText(this, "تحقق من الاسم ورقم الهاتف والرسالة", Toast.LENGTH_LONG).show()
-                } else {
-                    val item = JSONObject().put("name", name.text.toString().trim())
-                        .put("phone", number).put("message", body)
-                        .put("location", includeLocation.isChecked)
-                        .put("image", editingImage?.toString().orEmpty())
-                    if (index == null) cards.add(item) else cards[index] = item
-                    persist(); render()
+        val fields = listOf(
+            EditText(this).apply { id = R.id.rescueName; setHint(R.string.rescue_name); setSingleLine(); setText(original?.optString("name").orEmpty()) },
+            EditText(this).apply { id = R.id.rescuePhone; setHint(R.string.rescue_phone); inputType = InputType.TYPE_CLASS_PHONE; setText(original?.optString("phone").orEmpty()) },
+            EditText(this).apply { id = R.id.rescueMessage; setHint(R.string.rescue_message); minLines = 3; inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE; setText(original?.optString("message").orEmpty()) }
+        )
+        editorFields = fields
+        fields.forEach(form::addView)
+        editorLocation = CheckBox(this).apply {
+            setText(R.string.rescue_location)
+            isChecked = original?.optBoolean("location", false) ?: false
+            form.addView(this)
+        }
+        imageStatus = TextView(this).apply {
+            setText(if (editingImage == null) R.string.rescue_image_none else R.string.rescue_image_attached)
+            form.addView(this)
+        }
+        form.addView(Button(this).apply {
+            setText(R.string.rescue_image)
+            setOnClickListener { imagePicker.launch(arrayOf("image/*")) }
+        })
+        form.addView(Button(this).apply {
+            setText(R.string.rescue_remove_image)
+            setOnClickListener { editingImage = null; imageStatus?.setText(R.string.rescue_image_none) }
+        })
+        editorOpen = true
+        editorDialog = MaterialAlertDialogBuilder(this)
+            .setTitle(if (index == null) R.string.rescue_add else R.string.rescue_edit)
+            .setView(ScrollView(this).apply { addView(form) })
+            .setPositiveButton(R.string.rescue_save, null)
+            .setNegativeButton(R.string.cancel, null).create().apply {
+                setOnDismissListener { editorOpen = false; editorFields = null; editorLocation = null; imageStatus = null }
+                setOnShowListener {
+                    getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                        val item = draft()
+                        val phone = RescuePolicy.normalizePhone(item.optString("phone").trim())
+                        if (item.optString("name").isBlank() || !RescuePolicy.validPhone(phone) || item.optString("message").isBlank()) {
+                            fields[1].error = getString(R.string.rescue_invalid)
+                        } else {
+                            item.put("phone", phone).put("name", item.optString("name").trim()).put("message", item.optString("message").trim())
+                            if (index == null) cards.add(item) else cards[index] = item
+                            persist(); render(); dismiss()
+                        }
+                    }
                 }
-            }.setNegativeButton("إلغاء", null).show()
+                show()
+            }
     }
 
     private fun render() {
-        list.removeAllViews()
+        binding.contactList.removeAllViews()
+        if (cards.isEmpty()) binding.contactList.addView(TextView(this).apply {
+            setText(R.string.rescue_empty); setTextColor(0xFFD3DCE5.toInt()); textSize = 16f
+        })
         cards.forEachIndexed { index, card ->
             val panel = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
+                val pad = (12 * resources.displayMetrics.density).toInt()
                 setPadding(pad, pad, pad, pad)
-                background = GradientDrawable().apply {
-                    setColor(Color.rgb(28, 31, 36))
-                    cornerRadius = 18 * dp
-                    setStroke((1 * dp).toInt().coerceAtLeast(1), Color.rgb(170, 184, 202))
-                }
+                setBackgroundResource(R.drawable.bg_metal_card)
+                layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = pad }
             }
             panel.addView(TextView(this).apply {
-                text = "${card.optString("name")} — ${card.optString("phone")}"
-                textSize = 19f
-                setTextColor(Color.WHITE)
+                text = card.optString("name"); textSize = 19f; setTextColor(0xFFFFFFFF.toInt())
             })
-            panel.addView(TextView(this).apply { text = card.optString("message"); setTextColor(Color.rgb(198, 208, 220)) })
-            panel.addView(Button(this).apply {
-                text = "إرسال استغاثة"
-                setOnClickListener { requestSend(index) }
+            panel.addView(TextView(this).apply {
+                text = card.optString("phone"); textSize = 16f; textDirection = View.TEXT_DIRECTION_LTR; setTextColor(0xFFD3DCE5.toInt())
             })
-            if (card.optString("image").isNotBlank()) panel.addView(TextView(this).apply { text = "صورة مرفقة"; setTextColor(Color.rgb(198, 208, 220)) })
-            panel.addView(Button(this).apply {
-                text = "تعديل"
-                setOnClickListener { editCard(index) }
+            panel.addView(TextView(this).apply {
+                text = card.optString("message"); setTextColor(0xFFD3DCE5.toInt())
             })
+            if (card.optString("image").isNotBlank()) panel.addView(TextView(this).apply {
+                setText(R.string.rescue_image_attached); setTextColor(0xFFD3DCE5.toInt())
+            })
+            panel.addView(Button(this).apply { setText(R.string.rescue_prepare); setOnClickListener { requestSend(index) } })
+            panel.addView(Button(this).apply { setText(R.string.rescue_edit); setOnClickListener { editCard(index) } })
             panel.addView(Button(this).apply {
-                text = "حذف"
+                setText(R.string.rescue_delete)
                 setOnClickListener {
-                    android.app.AlertDialog.Builder(this@QuickRescueActivity)
-                        .setMessage("حذف جهة الاستغاثة؟")
-                        .setPositiveButton("حذف") { _, _ ->
-                            cards.removeAt(index); persist(); render()
-                        }.setNegativeButton("إلغاء", null).show()
+                    MaterialAlertDialogBuilder(this@QuickRescueActivity).setMessage(R.string.rescue_delete_confirm)
+                        .setPositiveButton(R.string.rescue_delete) { _, _ -> cards.removeAt(index); persist(); render() }
+                        .setNegativeButton(R.string.cancel, null).show()
                 }
             })
-            list.addView(panel)
+            binding.contactList.addView(panel)
         }
     }
+
+    private fun hasLocationPermission() =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     private fun requestSend(index: Int) {
         val card = cards.getOrNull(index) ?: return
-        if (card.optBoolean("location", true) &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (card.optBoolean("location", false) && !hasLocationPermission()) {
             pendingIndex = index
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 401)
-            return
-        }
-        send(index)
+        } else review(index)
     }
 
-    private fun send(index: Int) {
+    private fun review(index: Int) {
         val card = cards.getOrNull(index) ?: return
         var body = card.optString("message")
-        if (card.optBoolean("location", true)) {
+        if (card.optBoolean("location", false)) {
             val manager = getSystemService(LOCATION_SERVICE) as LocationManager
             val location = runCatching {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) null
-                else manager.getProviders(true).mapNotNull { provider ->
-                    runCatching { manager.getLastKnownLocation(provider) }.getOrNull()
-                }.filter { System.currentTimeMillis() - it.time in 0..120000 }
-                    .maxByOrNull { it.time }
+                if (!hasLocationPermission()) null else manager.getProviders(true).mapNotNull {
+                    runCatching { manager.getLastKnownLocation(it) }.getOrNull()
+                }.filter { RescuePolicy.recentLocation(SystemClock.elapsedRealtimeNanos(), it.elapsedRealtimeNanos) }
+                    .maxByOrNull { it.elapsedRealtimeNanos }
             }.getOrNull()
-            body += if (location == null) "\nالموقع الحالي غير متاح أو غير حديث."
-            else "\nموقعي: https://maps.google.com/?q=${location.latitude},${location.longitude}"
+            body += "\n" + if (location == null) getString(R.string.rescue_location_unavailable)
+                else getString(R.string.rescue_location_format, "https://maps.google.com/?q=${location.latitude},${location.longitude}")
         }
-        val phone = card.optString("phone")
-        // Default path uses the system SMS app so delivery remains user-visible.
-        val image = card.optString("image").takeIf { it.isNotBlank() }?.let(Uri::parse)
-        val sms = if (image != null) Intent(Intent.ACTION_SEND).apply {
-            type = "image/*"
-            putExtra(Intent.EXTRA_STREAM, image)
-            putExtra(Intent.EXTRA_TEXT, body + "\nالرقم المقصود: " + phone)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        } else Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(phone)}"))
-            .putExtra("sms_body", body)
-        runCatching { startActivity(if (image != null) Intent.createChooser(sms, "مشاركة الاستغاثة والصورة") else sms) }.onFailure {
-            Toast.makeText(this, "لا يوجد تطبيق SMS متاح", Toast.LENGTH_LONG).show()
-        }
+        MaterialAlertDialogBuilder(this).setTitle(R.string.rescue_review)
+            .setMessage(getString(R.string.rescue_review_note, card.optString("phone"), body))
+            .setPositiveButton(R.string.rescue_continue) { _, _ -> compose(card, body) }
+            .setNegativeButton(R.string.cancel, null).show()
     }
 
-    @Deprecated("Uses legacy result for document picker compatibility")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 602 && resultCode == RESULT_OK) {
-            data?.data?.let { uri ->
-                runCatching {
-                    contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                }
-                editingImage = uri
-                imageStatusView?.text = "تم اختيار صورة: ${uri.lastPathSegment ?: "صورة"}"
-                Toast.makeText(this, "تم اختيار الصورة. اضغط حفظ لإرفاقها", Toast.LENGTH_LONG).show()
+    private fun compose(card: JSONObject, body: String) {
+        val image = card.optString("image").takeIf { it.isNotBlank() }?.let(Uri::parse)
+        runCatching {
+            if (image != null) contentResolver.openAssetFileDescriptor(image, "r")?.use { } ?: error("Attachment unavailable")
+            val intent = if (image == null) {
+                Intent(Intent.ACTION_SENDTO, Uri.fromParts("smsto", card.optString("phone"), null)).putExtra("sms_body", body)
+            } else Intent(Intent.ACTION_SEND).apply {
+                type = "image/*"
+                putExtra(Intent.EXTRA_STREAM, image)
+                putExtra(Intent.EXTRA_TEXT, body)
+                clipData = ClipData.newUri(contentResolver, "SOS attachment", image)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-        }
+            startActivity(if (image == null) intent else Intent.createChooser(intent, getString(R.string.rescue_review)))
+        }.onFailure { Toast.makeText(this, R.string.rescue_share_error, Toast.LENGTH_LONG).show() }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 401) {
-            val index = pendingIndex
-            pendingIndex = null
-            // Never silently abandon an SOS message when location permission is denied.
-            // send() explicitly marks the location unavailable in that case.
-            if (index != null) send(index)
+            val index = pendingIndex; pendingIndex = null
+            if (index != null) review(index)
         }
     }
 }

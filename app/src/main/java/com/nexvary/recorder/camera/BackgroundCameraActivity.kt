@@ -20,17 +20,13 @@ class BackgroundCameraActivity : AppCompatActivity() {
         audio = savedInstanceState?.getBoolean("camera_audio") ?: false
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
-        val density = resources.displayMetrics.density
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding((24*density).toInt(), (32*density).toInt(), (24*density).toInt(), 0)
-        }
+        val root = com.nexvary.recorder.ui.StudioPage.install(this, R.string.camera_title)
         val title = TextView(this).apply {
-            text = "Background Camera Recording"
+            text = getString(R.string.camera_title)
             textSize = 22f
         }
         val description = TextView(this).apply {
-            text = "Start while this screen is visible. Recording can continue when using other apps or locking the screen. Android camera privacy indicators and a Stop notification remain visible."
+            text = getString(R.string.camera_note)
         }
         val camera = Switch(this).apply {
             text = "Use front camera"
@@ -54,8 +50,6 @@ class BackgroundCameraActivity : AppCompatActivity() {
             }
         }
         listOf(title, description, camera, mic, start, stop).forEach(root::addView)
-        setContentView(root)
-        UiInsets.apply(root)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

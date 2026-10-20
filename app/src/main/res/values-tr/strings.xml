@@ -205,4 +205,57 @@
     <string name="media_operation_failed_format">İşlem başarısız: %1$s</string>
     <string name="video_trimmed_keyframe_format">%1$s kaydedildi • kesim en yakın güvenli ana karede yaklaşık %2$.2f sn başlar</string>
     <string name="theme_piano_black">Parlak Piyano Siyahı</string>
+    <string name="brand_name">NEXVARY</string>
+    <string name="studio_name">RECORDER STUDIO</string>
+    <string name="camera_title">Camera recording</string>
+    <string name="rescue_title">Quick rescue</string>
+    <string name="library_title">Recordings library</string>
+    <string name="settings_title">Settings</string>
+    <string name="home_screen_hint">Screen with audio</string>
+    <string name="home_camera_hint">Front / rear</string>
+    <string name="home_audio_hint">Professional audio</string>
+    <string name="home_tools_hint">Edit and convert</string>
+    <string name="home_live_hint">Video file to RTMP</string>
+    <string name="home_rescue_hint">Review then share</string>
+    <string name="home_library_hint">Browse app recordings</string>
+    <string name="home_settings_hint">Language and appearance</string>
+    <string name="home_about_hint">Version and support</string>
+    <string name="library_empty">No recordings found yet. Record a screen, camera or voice clip first.</string>
+    <string name="library_access_error">Unable to read recordings. Try again.</string>
+    <string name="open_media_failed">No compatible player is available.</string>
+    <string name="refresh">Refresh</string>
+    <string name="rescue_heading">SOS — Quick rescue</string>
+    <string name="rescue_hero_title">Prepare an emergency message</string>
+    <string name="rescue_hero_note">Choose a contact and review the message. Final sending happens in your messaging app. This app does not contact emergency services automatically.</string>
+    <string name="rescue_contacts">Rescue contacts</string>
+    <string name="rescue_add">Add contact</string>
+    <string name="rescue_empty">Add a trusted contact to prepare your first message.</string>
+    <string name="rescue_prepare">Prepare SOS message</string>
+    <string name="rescue_name">Contact name</string>
+    <string name="rescue_phone">Phone number</string>
+    <string name="rescue_message">Emergency message</string>
+    <string name="rescue_location">Include a recent location if available</string>
+    <string name="rescue_image">Choose image from phone</string>
+    <string name="rescue_image_none">No image attached</string>
+    <string name="rescue_image_attached">Image attached</string>
+    <string name="rescue_remove_image">Remove image</string>
+    <string name="rescue_save">Save</string>
+    <string name="rescue_edit">Edit</string>
+    <string name="rescue_delete">Delete</string>
+    <string name="rescue_delete_confirm">Delete this rescue contact?</string>
+    <string name="rescue_invalid">Enter a name, a valid phone number and a message.</string>
+    <string name="rescue_review">Review before sharing</string>
+    <string name="rescue_review_note">Recipient: %1$s
+%2$s
+
+You must confirm sending in the messaging app. With an image, choose an app and select this recipient there.</string>
+    <string name="rescue_continue">Continue to messaging app</string>
+    <string name="rescue_location_unavailable">Recent location unavailable.</string>
+    <string name="rescue_location_format">My location: %1$s</string>
+    <string name="rescue_share_error">No compatible messaging app, or attachment cannot be opened.</string>
+    <string name="rescue_choose">Choose one recipient to review</string>
+    <string name="rescue_attachments">Attachments are configured for each contact.</string>
+    <string name="camera_note">Start from this visible screen. Android shows recording indicators and a stop notification. Screen-off continuation depends on device restrictions.</string>
+    <string name="call_title">Call recording (companion)</string>
+    <string name="safety_title">Safety evidence</string>
 </resources>

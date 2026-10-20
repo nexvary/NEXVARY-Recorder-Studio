@@ -16,6 +16,7 @@ import com.nexvary.recorder.media.MediaToolsActivity
 import com.nexvary.recorder.screen.ScreenRecorderActivity
 import com.nexvary.recorder.ui.ThemeManager
 import com.nexvary.recorder.ui.UiInsets
+import com.nexvary.recorder.media.RecordingsLibraryActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -41,6 +42,12 @@ class MainActivity : AppCompatActivity() {
         binding.cardVoice.setOnClickListener { openVoiceStudio() }
         binding.cardReplace.setOnClickListener { openMediaTools() }
         binding.cardLive.setOnClickListener { openLiveBroadcast() }
+        binding.cardCamera.setOnClickListener { startActivity(Intent(this, BackgroundCameraActivity::class.java)) }
+        binding.cardRescue.setOnClickListener { startActivity(Intent(this, QuickRescueActivity::class.java)) }
+        binding.cardLibrary.setOnClickListener { startActivity(Intent(this, RecordingsLibraryActivity::class.java)) }
+        binding.cardSettings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
+        binding.cardAbout.setOnClickListener { startActivity(Intent(this, AboutActivity::class.java)) }
+        binding.bottomNav.itemIconTintList = null
 
         binding.bottomNav.selectedItemId = R.id.navHome
         binding.bottomNav.setOnItemSelectedListener { item ->
@@ -97,10 +104,10 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.language_title),
             getString(R.string.about_title),
             getString(R.string.choose_theme),
-            "Background camera recording",
-            "Call recording / تسجيل المكالمات",
-            "Safety evidence / توثيق الطوارئ",
-            "Quick rescue / الإنقاذ السريع"
+            getString(R.string.camera_title),
+            getString(R.string.call_title),
+            getString(R.string.safety_title),
+            getString(R.string.rescue_title)
         )
 
         MaterialAlertDialogBuilder(this)

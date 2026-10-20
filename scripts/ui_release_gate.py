@@ -68,7 +68,7 @@ for path in layout_files:
 
     if path.name == "activity_main.xml":
         if root.tag == "ScrollView":
-            errors.append("activity_main.xml: main dashboard must be fixed and must not scroll")
+            errors.append("activity_main.xml: main dashboard must keep bottom navigation outside its scroll area")
         if "@+id/bottomNav" not in ids:
             errors.append("activity_main.xml: missing fixed bottomNav")
     else:
@@ -209,7 +209,7 @@ if 'android:supportsRtl="true"' not in manifest_text:
 for required in [
     RES / "mipmap-anydpi-v26/ic_launcher.xml",
     RES / "mipmap-anydpi-v26/ic_launcher_round.xml",
-    RES / "drawable/ic_launcher_foreground.xml",
+    RES / "drawable-nodpi/asset_launcher.png",
 ]:
     if not required.exists():
         errors.append(f"Missing launcher icon resource: {required}")
@@ -239,6 +239,19 @@ for path in layout_files:
     for fixed in re.findall(r'android:layout_(?:width|height)="(\d+)dp"', text):
         if int(fixed) > 720:
             errors.append(f"{path.name}: suspicious fixed dimension {fixed}dp")
+
+# All nine home destinations must consume independent bundled raster assets.
+main_layout = (layout_dir / "activity_main.xml").read_text()
+for asset in ["screen", "camera", "audio", "tools", "live", "sos", "library", "settings", "info", "launcher"]:
+    path = RES / "drawable-nodpi" / f"asset_{asset}.png"
+    if not path.exists() or path.stat().st_size < 1000:
+        errors.append(f"Missing professional raster asset: {asset}")
+    if f"@drawable/asset_{asset}" not in main_layout:
+        errors.append(f"Home does not consume asset: {asset}")
+if main_layout.count('android:id="@+id/card') != 9:
+    errors.append("Home must have nine interactive cards")
+if "SEND_SMS" in manifest_text:
+    errors.append("SOS must keep final sending in the user-controlled messaging app")
 
 if errors:
     print("UI RELEASE GATE: FAILED")

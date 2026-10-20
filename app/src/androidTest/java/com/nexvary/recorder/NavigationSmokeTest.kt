@@ -4,6 +4,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
@@ -68,11 +69,11 @@ class NavigationSmokeTest {
         ActivityScenario.launch(
             com.nexvary.recorder.screen.ScreenRecorderActivity::class.java
         ).use {
-            onView(withId(R.id.switchMic)).check(matches(isDisplayed()))
-            onView(withId(R.id.switchFloating)).check(matches(isDisplayed()))
-            onView(withId(R.id.switchTouches)).check(matches(isDisplayed()))
-            onView(withId(R.id.switchCamera)).check(matches(isDisplayed()))
-            onView(withId(R.id.groupCountdown)).check(matches(isDisplayed()))
+            onView(withId(R.id.switchMic)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.switchFloating)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.switchTouches)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.switchCamera)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.groupCountdown)).perform(scrollTo()).check(matches(isDisplayed()))
             onView(withId(R.id.btnStorage))
                 .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
             onView(withId(R.id.btnStart))
@@ -110,31 +111,31 @@ class NavigationSmokeTest {
     fun aboutAndLanguageControlsAreConnected() {
         ActivityScenario.launch(AboutActivity::class.java).use {
             onView(withId(R.id.btnBack)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnWebsite)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnFacebook)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnEmail)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnYoutube)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnX)).check(matches(isDisplayed()))
+            onView(withId(R.id.btnWebsite)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnFacebook)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnEmail)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnYoutube)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnX)).perform(scrollTo()).check(matches(isDisplayed()))
         }
 
         ActivityScenario.launch(LanguageActivity::class.java).use {
             onView(withId(R.id.btnBack)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnArabic)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnEnglish)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnTurkish)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnSpanish)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnGerman)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnItalian)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnFrench)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnUrdu)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnPersian)).check(matches(isDisplayed()))
-            onView(withId(R.id.btnRussian)).check(matches(isDisplayed()))
+            onView(withId(R.id.btnArabic)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnEnglish)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnTurkish)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnSpanish)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnGerman)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnItalian)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnFrench)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnUrdu)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnPersian)).perform(scrollTo()).check(matches(isDisplayed()))
+            onView(withId(R.id.btnRussian)).perform(scrollTo()).check(matches(isDisplayed()))
         }
     }
 
     private fun openAndReturn(cardId: Int) {
-        onView(withId(cardId)).perform(click())
+        onView(withId(cardId)).perform(scrollTo(), click())
         onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
-        onView(withId(R.id.cardScreen)).check(matches(isDisplayed()))
+        onView(withId(R.id.cardScreen)).perform(scrollTo()).check(matches(isDisplayed()))
     }
 }

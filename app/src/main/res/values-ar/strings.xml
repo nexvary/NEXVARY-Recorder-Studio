@@ -205,4 +205,57 @@
     <string name="media_operation_failed_format">فشلت العملية: %1$s</string>
     <string name="video_trimmed_keyframe_format">تم حفظ %1$s • يبدأ القص من أقرب إطار مفتاح آمن قرب %2$.2f ثانية</string>
     <string name="theme_piano_black">أسود بيانو لامع</string>
+    <string name="brand_name">NEXVARY</string>
+    <string name="studio_name">RECORDER STUDIO</string>
+    <string name="camera_title">تسجيل الكاميرا</string>
+    <string name="rescue_title">الإنقاذ السريع</string>
+    <string name="library_title">مكتبة التسجيلات</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="home_screen_hint">الشاشة مع الصوت</string>
+    <string name="home_camera_hint">أمامية / خلفية</string>
+    <string name="home_audio_hint">تسجيل احترافي</string>
+    <string name="home_tools_hint">تحرير وتحويل</string>
+    <string name="home_live_hint">بث ملف إلى RTMP</string>
+    <string name="home_rescue_hint">مراجعة ثم مشاركة</string>
+    <string name="home_library_hint">عرض ملفات التطبيق</string>
+    <string name="home_settings_hint">اللغة والمظهر</string>
+    <string name="home_about_hint">الإصدار والدعم</string>
+    <string name="library_empty">لا توجد تسجيلات بعد. سجّل الشاشة أو الكاميرا أو الصوت أولًا.</string>
+    <string name="library_access_error">تعذر قراءة التسجيلات. حاول مجددًا.</string>
+    <string name="open_media_failed">لا يوجد مشغل متوافق متاح.</string>
+    <string name="refresh">تحديث</string>
+    <string name="rescue_heading">SOS — الإنقاذ السريع</string>
+    <string name="rescue_hero_title">تجهيز رسالة استغاثة</string>
+    <string name="rescue_hero_note">اختر جهة وراجع الرسالة. الإرسال النهائي يتم من تطبيق المراسلة. التطبيق لا يتصل بالطوارئ تلقائيًا.</string>
+    <string name="rescue_contacts">جهات الاستغاثة</string>
+    <string name="rescue_add">إضافة جهة</string>
+    <string name="rescue_empty">أضف جهة موثوقة لتجهيز أول رسالة.</string>
+    <string name="rescue_prepare">تجهيز رسالة استغاثة</string>
+    <string name="rescue_name">اسم جهة الاتصال</string>
+    <string name="rescue_phone">رقم الهاتف</string>
+    <string name="rescue_message">رسالة الاستغاثة</string>
+    <string name="rescue_location">إرفاق موقع حديث عند توفره</string>
+    <string name="rescue_image">اختيار صورة من الهاتف</string>
+    <string name="rescue_image_none">لا توجد صورة مرفقة</string>
+    <string name="rescue_image_attached">تم إرفاق صورة</string>
+    <string name="rescue_remove_image">إزالة الصورة</string>
+    <string name="rescue_save">حفظ</string>
+    <string name="rescue_edit">تعديل</string>
+    <string name="rescue_delete">حذف</string>
+    <string name="rescue_delete_confirm">حذف جهة الاستغاثة؟</string>
+    <string name="rescue_invalid">أدخل الاسم ورقم هاتف صحيحًا ورسالة.</string>
+    <string name="rescue_review">مراجعة قبل المشاركة</string>
+    <string name="rescue_review_note">الجهة: %1$s
+%2$s
+
+عليك تأكيد الإرسال في تطبيق المراسلة. مع الصورة، اختر التطبيق وحدد الجهة داخله.</string>
+    <string name="rescue_continue">متابعة إلى تطبيق المراسلة</string>
+    <string name="rescue_location_unavailable">الموقع الحديث غير متاح.</string>
+    <string name="rescue_location_format">موقعي: %1$s</string>
+    <string name="rescue_share_error">لا يوجد تطبيق مراسلة متوافق، أو تعذر فتح المرفق.</string>
+    <string name="rescue_choose">اختر جهة لمراجعة الرسالة</string>
+    <string name="rescue_attachments">يمكن إعداد المرفقات لكل جهة.</string>
+    <string name="camera_note">ابدأ من هذه الشاشة وهي ظاهرة. يعرض Android مؤشرات التسجيل وإشعار الإيقاف. الاستمرار بعد قفل الشاشة يعتمد على قيود الجهاز.</string>
+    <string name="call_title">تسجيل المكالمات (تطبيق مساعد)</string>
+    <string name="safety_title">توثيق الطوارئ</string>
 </resources>

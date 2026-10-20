@@ -14,15 +14,14 @@ import androidx.appcompat.app.AppCompatActivity
  * Never misrepresent an external recorder as an in-app recording engine.
  */
 class CallRecorderActivity : AppCompatActivity() {
+    private lateinit var statusText: TextView
+    private lateinit var preflightText: TextView
     private val recorderPackage = "com.kitsumed.shizucallrecorder"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        com.nexvary.recorder.ui.ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
-        val pad = (24 * resources.displayMetrics.density).toInt()
-        val layout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(pad, pad, pad, pad)
-        }
+        val layout = com.nexvary.recorder.ui.StudioPage.install(this, com.nexvary.recorder.R.string.call_title)
         val title = TextView(this).apply {
             text = "Call Recording / تسجيل المكالمات"
             textSize = 22f
@@ -31,8 +30,8 @@ class CallRecorderActivity : AppCompatActivity() {
             text = "ShizuCallRecorder companion integration. Requires separate installation, Shizuku setup and user permission. Recording both sides is device-dependent. This screen does not record calls itself. Obtain required consent before recording."
             textSize = 15f
         }
-        val status = TextView(this).apply { textSize = 16f }
-        val preflight = TextView(this).apply { textSize = 15f }
+        val status = TextView(this).apply { textSize = 16f }.also { statusText = it }
+        val preflight = TextView(this).apply { textSize = 15f }.also { preflightText = it }
         val authorize = Button(this).apply {
             text = "Authorize Shizuku / منح إذن Shizuku"
             setOnClickListener {
@@ -57,19 +56,14 @@ class CallRecorderActivity : AppCompatActivity() {
             }
         }
         listOf(title, info, status, preflight, authorize, open, help).forEach(layout::addView)
-        setContentView(layout)
     }
 
     override fun onResume() {
         super.onResume()
-        findViewById<LinearLayout>(android.R.id.content).let { content ->
-            val root = content.getChildAt(0) as? LinearLayout ?: return
-            val status = root.getChildAt(2) as? TextView ?: return
-            val readiness = CallCapturePreflight.inspect(this)
-            (root.getChildAt(3) as? TextView)?.text = "Shizuku installed: ${readiness.shizukuInstalled} | running: ${readiness.shizukuRunning} | authorized: ${readiness.shizukuAuthorized}"
-            status.text = if (packageManager.getLaunchIntentForPackage(recorderPackage) != null)
-                "Companion installed / التطبيق المساعد مثبت"
-            else "Companion not installed / التطبيق المساعد غير مثبت"
-        }
+        val readiness = CallCapturePreflight.inspect(this)
+        preflightText.text = "Shizuku installed: ${readiness.shizukuInstalled} | running: ${readiness.shizukuRunning} | authorized: ${readiness.shizukuAuthorized}"
+        statusText.text = if (packageManager.getLaunchIntentForPackage(recorderPackage) != null)
+            "Companion installed / التطبيق المساعد مثبت"
+        else "Companion not installed / التطبيق المساعد غير مثبت"
     }
 }

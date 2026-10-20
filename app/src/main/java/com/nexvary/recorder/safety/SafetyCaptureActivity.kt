@@ -16,12 +16,9 @@ import com.nexvary.recorder.live.LiveBroadcastActivity
  */
 class SafetyCaptureActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        com.nexvary.recorder.ui.ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
-        val pad = (20 * resources.displayMetrics.density).toInt()
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(pad, pad, pad, pad)
-        }
+        val root = com.nexvary.recorder.ui.StudioPage.install(this, com.nexvary.recorder.R.string.safety_title)
         val title = TextView(this).apply {
             text = "حماية وتوثيق الطوارئ / Safety Evidence"
             textSize = 23f
@@ -50,6 +47,5 @@ class SafetyCaptureActivity : AppCompatActivity() {
             textSize = 15f
         }
         listOf(title, note, local, live, stop, emergency).forEach(root::addView)
-        setContentView(root)
     }
 }

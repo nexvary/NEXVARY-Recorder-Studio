@@ -1,124 +1,86 @@
 name: Android Release Gate
-
 on:
   push:
   pull_request:
   workflow_dispatch:
-
+permissions:
+  contents: read
 concurrency:
   group: android-release-gate-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   build-and-static-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
-
       - name: UI Release Gate
         run: python3 scripts/ui_release_gate.py
-
-      - name: Accept Android SDK licenses
-        run: yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
-
       - name: Install Android SDK
-        run: /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;35.0.0"
-
+        run: /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.7.1'
-
-      - name: Android lint
-        shell: bash
-        run: |
-          set +e
-          gradle --no-daemon :app:lintDebug
-          status=$?
-          if [ $status -ne 0 ]; then
-            echo "----- FULL LINT REPORT -----"
-            cat app/build/intermediates/lint_intermediate_text_report/debug/lintReportDebug/lint-results-debug.txt || true
-            exit $status
-          fi
-
-      - name: Unit tests
-        run: gradle --no-daemon :app:testDebugUnitTest
-
-      - name: Build debug APK
-        run: gradle --no-daemon :app:assembleDebug
-
+      - name: Lint, unit tests, build and compile instrumentation
+        run: gradle --no-daemon :app:lintDebug :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: NEXVARY-Recorder-Studio-v0.6.0-debug
+          name: NEXVARY-Recorder-Studio-v0.7.0-debug
           path: app/build/outputs/apk/debug/app-debug.apk
-
+      - name: Upload quality reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-quality-reports
+          path: app/build/reports/
   emulator-ui-smoke:
     needs: build-and-static-gate
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
-
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.7.1'
-
+      - name: Install compile SDK
+        run: /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-
-      - name: Test navigation and capture real emulator screens
+      - name: Stable emulator navigation and actual Arabic screenshots
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
           target: google_apis
           arch: x86_64
-          profile: pixel_6
+          profile: Nexus 5X
+          ram-size: 2048M
+          cores: 2
           disable-animations: true
-          script: |
-            set -e
-            adb shell input keyevent KEYCODE_WAKEUP || true
-            adb shell wm dismiss-keyguard || true
-            adb shell input keyevent 82 || true
-            adb shell settings put global stay_on_while_plugged_in 3 || true
-            adb shell settings put secure lock_screen_lock_after_timeout 0 || true
-            adb shell settings put system screen_off_timeout 2147483647 || true
-            mkdir -p screenshots
-            gradle --no-daemon :app:assembleDebug
-            adb install -r app/build/outputs/apk/debug/app-debug.apk
-            adb shell am force-stop com.nexvary.recorder || true
-            adb shell am start -W -n com.nexvary.recorder/.MainActivity
-            sleep 3
-            adb exec-out screencap -p > screenshots/dashboard.png
-            adb shell am start -W -n com.nexvary.recorder/.safety.SosScreenshotEntry
-            sleep 3
-            adb exec-out screencap -p > screenshots/sos.png
-            test -s screenshots/dashboard.png
-            test -s screenshots/sos.png
-            # Run instrumentation after screenshots so failures cannot suppress evidence.
-            adb shell am force-stop com.nexvary.recorder || true
-            adb shell input keyevent KEYCODE_HOME || true
-            adb shell wm dismiss-keyguard || true
-            adb shell input keyevent KEYCODE_WAKEUP || true
-            adb shell input keyevent 82 || true
-            adb shell dumpsys window | grep -E 'mCurrentFocus|mFocusedApp' || true
-            gradle --no-daemon :app:connectedDebugAndroidTest
-
-      - name: Upload real emulator screenshots
-        if: always()
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none -camera-front none
+          script: bash scripts/emulator_gate.sh
+      - name: Upload verified real screenshots
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: android-emulator-real-screenshots
           path: screenshots/*.png
-          if-no-files-found: warn
+          if-no-files-found: error
+      - name: Upload emulator diagnostics and test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-emulator-diagnostics
+          path: |
+            diagnostics/
+            app/build/reports/androidTests/
