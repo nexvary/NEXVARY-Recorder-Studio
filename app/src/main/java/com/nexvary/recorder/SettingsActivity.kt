@@ -13,6 +13,12 @@ class SettingsActivity : AppCompatActivity() {
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         val root = StudioPage.install(this, R.string.settings_title)
+        com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.smtp_title, R.id.openSmtp) {
+            startActivity(Intent(this, com.nexvary.recorder.delivery.SmtpSettingsActivity::class.java))
+        }
+        com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.mail_outbox, R.id.mailOutbox) {
+            startActivity(Intent(this, com.nexvary.recorder.delivery.MailOutboxActivity::class.java))
+        }
         root.addView(Button(this).apply {
             setText(R.string.language_title)
             setOnClickListener { startActivity(Intent(this@SettingsActivity, LanguageActivity::class.java)) }

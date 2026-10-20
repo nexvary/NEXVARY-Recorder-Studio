@@ -29,6 +29,7 @@ class VisualEvidenceTest {
             Triple(com.nexvary.recorder.safety.QuickRescueActivity::class.java, R.id.btnAddContact, "sos-ar"),
             Triple(com.nexvary.recorder.camera.BackgroundCameraActivity::class.java, R.id.btnBack, "camera-ar"),
             Triple(SettingsActivity::class.java, R.id.btnBack, "settings-ar"),
+            Triple(com.nexvary.recorder.delivery.MailOutboxActivity::class.java, R.id.btnBack, "outbox-ar"),
             Triple(com.nexvary.recorder.media.RecordingsLibraryActivity::class.java, R.id.btnBack, "library-ar")
         )
         com.nexvary.recorder.ui.ThemeManager.select(context, 0)
@@ -39,6 +40,10 @@ class VisualEvidenceTest {
             ActivityScenario.launch(page).use {
                 onView(withId(visibleId)).check(matches(isDisplayed()))
                 capture(it, name)
+                if (page == com.nexvary.recorder.camera.BackgroundCameraActivity::class.java) {
+                    onView(withId(R.id.cameraStart)).perform(reveal()).check(matches(isDisplayed()))
+                    capture(it, "camera-delivery-ar")
+                }
                 if (page == MainActivity::class.java) {
                     com.nexvary.recorder.ui.ThemeManager.select(context, 3)
                     it.recreate()

@@ -12,8 +12,8 @@ android {
         applicationId = "com.nexvary.recorder"
         minSdk = 29
         targetSdk = 35
-        versionCode = 11
-        versionName = "0.7.2"
+        versionCode = 12
+        versionName = "0.8.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,7 +44,9 @@ android {
         resources.excludes += setOf(
             "META-INF/DEPENDENCIES",
             "META-INF/LICENSE*",
-            "META-INF/NOTICE*"
+            "META-INF/NOTICE*",
+            "META-INF/LICENSE.md",
+            "META-INF/NOTICE.md"
         )
     }
 }
@@ -59,6 +61,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.3")
     implementation("androidx.documentfile:documentfile:1.0.1")
     implementation("com.github.pedroSG94.RootEncoder:library:2.8.1")
+
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
+    implementation("org.eclipse.angus:jakarta.mail:2.0.5")
+    implementation("org.eclipse.angus:angus-activation:2.0.2")
+    implementation("jakarta.activation:jakarta.activation-api:2.1.3")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
