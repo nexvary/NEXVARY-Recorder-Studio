@@ -258,4 +258,8 @@
     <string name="camera_note">ابدأ من هذه الشاشة وهي ظاهرة. يعرض Android مؤشرات التسجيل وإشعار الإيقاف. الاستمرار بعد قفل الشاشة يعتمد على قيود الجهاز.</string>
     <string name="call_title">تسجيل المكالمات (تطبيق مساعد)</string>
     <string name="safety_title">توثيق الطوارئ</string>
+    <string name="camera_front">استخدام الكاميرا الأمامية</string>
+    <string name="camera_mic">تسجيل الميكروفون</string>
+    <string name="camera_start">بدء تسجيل الكاميرا</string>
+    <string name="camera_stop">إيقاف وحفظ</string>
 </resources>

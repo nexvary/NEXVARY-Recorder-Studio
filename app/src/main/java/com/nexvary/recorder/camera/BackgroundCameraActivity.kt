@@ -21,35 +21,31 @@ class BackgroundCameraActivity : AppCompatActivity() {
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         val root = com.nexvary.recorder.ui.StudioPage.install(this, R.string.camera_title)
-        val title = TextView(this).apply {
-            text = getString(R.string.camera_title)
-            textSize = 22f
-        }
         val description = TextView(this).apply {
             text = getString(R.string.camera_note)
         }
-        val camera = Switch(this).apply {
-            text = "Use front camera"
+        val camera = androidx.appcompat.widget.SwitchCompat(this).apply {
+            setText(R.string.camera_front)
             isChecked = front
             setOnCheckedChangeListener { _, checked -> front = checked }
         }
-        val mic = Switch(this).apply {
-            text = "Record microphone"
+        val mic = androidx.appcompat.widget.SwitchCompat(this).apply {
+            setText(R.string.camera_mic)
             isChecked = audio
             setOnCheckedChangeListener { _, checked -> audio = checked }
         }
         val start = Button(this).apply {
-            text = "Start camera recording"
+            setText(R.string.camera_start)
             setOnClickListener { requestAndStart() }
         }
         val stop = Button(this).apply {
-            text = "Stop and save"
+            setText(R.string.camera_stop)
             setOnClickListener {
                 startService(Intent(this@BackgroundCameraActivity, BackgroundCameraService::class.java)
                     .setAction(BackgroundCameraService.ACTION_STOP))
             }
         }
-        listOf(title, description, camera, mic, start, stop).forEach(root::addView)
+        listOf(description, camera, mic, start, stop).forEach(root::addView)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

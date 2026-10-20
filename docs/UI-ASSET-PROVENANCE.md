@@ -17,3 +17,5 @@ SOS: local contact CRUD, phone validation including Arabic digits and short emer
 The emulator gate runs API 35 with 2 CPU cores/2GB RAM, captures actual Arabic screens through instrumentation, retains Logcat/last ANR/memory and test reports, rejects app/launcher ANRs, and uploads screenshots only after tests pass. Physical-device background recording remains a separate requirement.
 
 Additional lifecycle fixes: cancel screen-recording countdown when leaving before capture starts; the foreground-only voice studio stops and saves on leaving instead of retaining an unmanaged microphone. Background camera recording still starts from the visible camera activity. These changes do not establish physical-device compatibility.
+
+Platform references: https://developer.android.com/media/grow/media-projection (Android 15 QPR1+ stops screen projection when locked); https://developer.android.com/develop/background-work/services/fgs/restrictions-bg-start (camera/microphone while-in-use start restrictions).

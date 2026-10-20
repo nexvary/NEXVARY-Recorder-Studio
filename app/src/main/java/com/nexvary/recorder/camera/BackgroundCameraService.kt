@@ -53,11 +53,12 @@ class BackgroundCameraService : Service() {
         val audio = intent.getBooleanExtra(EXTRA_AUDIO, false) &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
         createChannel()
-        val type = ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or
-            (if (audio) ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE else 0)
         try {
-            if (Build.VERSION.SDK_INT >= 29) startForeground(NOTIFICATION_ID, notification(), type)
-            else startForeground(NOTIFICATION_ID, notification())
+            if (Build.VERSION.SDK_INT >= 30) {
+                val type = ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or
+                    (if (audio) ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE else 0)
+                startForeground(NOTIFICATION_ID, notification(), type)
+            } else startForeground(NOTIFICATION_ID, notification())
             openCamera(intent.getBooleanExtra(EXTRA_FRONT, false), audio)
         } catch (_: Exception) {
             stopSelf()

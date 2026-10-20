@@ -258,4 +258,8 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="camera_note">Start from this visible screen. Android shows recording indicators and a stop notification. Screen-off continuation depends on device restrictions.</string>
     <string name="call_title">Call recording (companion)</string>
     <string name="safety_title">Safety evidence</string>
+    <string name="camera_front">Use front camera</string>
+    <string name="camera_mic">Record microphone</string>
+    <string name="camera_start">Start camera recording</string>
+    <string name="camera_stop">Stop and save</string>
 </resources>

@@ -86,3 +86,26 @@ jobs:
           path: |
             diagnostics/
             app/build/reports/androidTests/
+  publish-preview:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/feature/background-camera-recording'
+    needs: [build-and-static-gate, emulator-ui-smoke]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: NEXVARY-Recorder-Studio-v0.7.0-debug
+          path: preview-download/
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-emulator-real-screenshots
+          path: preview-screenshots/
+      - name: Publish quality-gated installable preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mv preview-download/app-debug.apk preview-download/NEXVARY-Recorder-Studio-v0.7.0-debug.apk
+          sha256sum preview-download/*.apk > preview-download/SHA256SUMS.txt
+          gh release create "recorder-ui-0.7.0-${GITHUB_RUN_NUMBER}" preview-download/* preview-screenshots/*.png --target "$GITHUB_SHA" --prerelease --title "NEXVARY Recorder Studio 0.7.0 — UI preview" --notes-file docs/release-notes-0.7.0.md

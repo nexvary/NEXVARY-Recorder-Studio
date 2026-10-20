@@ -210,7 +210,7 @@ class QuickRescueActivity : AppCompatActivity() {
             val manager = getSystemService(LOCATION_SERVICE) as LocationManager
             val location = runCatching {
                 if (!hasLocationPermission()) null else manager.getProviders(true).mapNotNull {
-                    runCatching { manager.getLastKnownLocation(it) }.getOrNull()
+                    try { manager.getLastKnownLocation(it) } catch (_: SecurityException) { null } catch (_: IllegalArgumentException) { null }
                 }.filter { RescuePolicy.recentLocation(SystemClock.elapsedRealtimeNanos(), it.elapsedRealtimeNanos) }
                     .maxByOrNull { it.elapsedRealtimeNanos }
             }.getOrNull()
