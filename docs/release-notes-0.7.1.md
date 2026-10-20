@@ -10,3 +10,5 @@ NEXVARY Recorder Studio 0.7.1 — reported-issue fixes
 Installation/signing: from 0.7.1, CI uses a committed PUBLIC DEVELOPMENT signing identity (.github/preview-debug-key.b64, standard android password). This is deliberately public test material, never a production signing key. It allows subsequent preview updates to retain app-private data. Earlier previews used ephemeral runner debug identities and cannot be updated with this key; export important app-private recordings before any uninstall. No automated uninstall or data migration is performed.
 
 Known scope retained: file-based RTMP streaming; call recording uses Shizuku companion; voice capture saves when leaving its screen. Device-specific background camera reliability still needs a physical-device check. Preview release only, no main merge.
+
+Test environment: the API 35 Google APIs image produced a confirmed Pixel Launcher ANR before instrumentation started. CI now uses the published API 35 AOSP default x86_64 image and compiles app/test APKs before starting the emulator to avoid boot-time CPU contention. ANR and screenshot gates remain enabled; no failed screenshots are approved.
