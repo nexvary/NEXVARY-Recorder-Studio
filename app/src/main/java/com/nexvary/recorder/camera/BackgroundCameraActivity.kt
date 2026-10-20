@@ -74,6 +74,8 @@ class BackgroundCameraActivity : AppCompatActivity() {
         val state = BackgroundCameraService.state
         val active = state.stage in listOf(BackgroundCameraService.Companion.Stage.STARTING, BackgroundCameraService.Companion.Stage.RECORDING, BackgroundCameraService.Companion.Stage.SAVING)
         start.isEnabled = !active; stop.isEnabled = active && state.stage != BackgroundCameraService.Companion.Stage.SAVING
+        start.alpha = if (start.isEnabled) 1f else 0.45f
+        stop.alpha = if (stop.isEnabled) 1f else 0.45f
         front.isEnabled = !active; audio.isEnabled = !active; timer.isEnabled = !active; email.isEnabled = !active
         minutes.isEnabled = !active && timer.isChecked; recipient.isEnabled = !active && email.isChecked
         if (active || state != lastState) status.text = when (state.stage) {
