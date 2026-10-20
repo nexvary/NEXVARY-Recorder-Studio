@@ -350,4 +350,5 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="mail_cancel">Cancel queued delivery</string>
     <string name="mail_subject">NEXVARY camera recording</string>
     <string name="mail_body">Your saved camera recording is attached. Sent by your opted-in NEXVARY Recorder Studio recording session.</string>
+    <string name="camera_saving">Saving video and preparing the opted-in send copy…</string>
 </resources>

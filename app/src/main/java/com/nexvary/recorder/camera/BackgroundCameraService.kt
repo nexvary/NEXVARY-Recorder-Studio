@@ -25,7 +25,7 @@ class BackgroundCameraService : Service() {
         const val EXTRA_RECIPIENT = "email_recipient"
         @Volatile var activeOutputPath: String? = null
             private set
-        enum class Stage { IDLE, STARTING, RECORDING, SAVED, ERROR }
+        enum class Stage { IDLE, STARTING, RECORDING, SAVING, SAVED, ERROR }
         data class CaptureState(val stage: Stage = Stage.IDLE, val deadline: Long = 0, val name: String = "", val mailQueued: Boolean = false, val mailRequested: Boolean = false)
         @Volatile var state = CaptureState()
             private set
@@ -40,6 +40,7 @@ class BackgroundCameraService : Service() {
     private var device: CameraDevice? = null
     private var session: CameraCaptureSession? = null
     private var output: File? = null
+    @Volatile private var finalState: CaptureState? = null
     private var started = false
     private var closing = false
     private var openPending = false
@@ -139,6 +140,7 @@ class BackgroundCameraService : Service() {
     private fun finishRecording() {
         if (closing) return
         closing = true
+        state = state.copy(stage = Stage.SAVING)
         runCatching { session?.stopRepeating() }
         runCatching { session?.close() }; runCatching { device?.close() }
         if (started) runCatching { recorder?.stop() }
@@ -161,11 +163,14 @@ class BackgroundCameraService : Service() {
             true
         }.getOrDefault(false)
         if (!valid) file?.delete()
-        state = if (valid && file != null) CaptureState(Stage.SAVED, name = file.name, mailQueued = queued, mailRequested = recipient.isNotBlank()) else CaptureState(Stage.ERROR)
+        val finished = if (valid && file != null) CaptureState(Stage.SAVED, name = file.name, mailQueued = queued, mailRequested = recipient.isNotBlank()) else CaptureState(Stage.ERROR)
+        finalState = finished
         activeOutputPath = null
+        if (destroyed) state = finished
         main.post { stopForeground(STOP_FOREGROUND_REMOVE); stopSelf() }
     }
     override fun onDestroy() {
+        finalState?.let { state = it }
         handler.post { destroyed = true; finishRecording(); if (openPending) handler.postDelayed({ thread.quitSafely() }, 10_000) else thread.quitSafely() }
         super.onDestroy()
     }

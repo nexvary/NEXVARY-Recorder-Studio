@@ -54,9 +54,10 @@ class MailOutboxActivity : AppCompatActivity() {
             if (job.state !in listOf(MailQueue.State.SENT, MailQueue.State.SENDING, MailQueue.State.CANCELLED)) {
                 DeliveryUi.button(panel, R.string.mail_cancel, red = true) {
                     lifecycleScope.launch {
-                        withContext(Dispatchers.IO) {
+                        val ok = withContext(Dispatchers.IO) { runCatching {
                             if (queue.cancel(job.id)) WorkManager.getInstance(this@MailOutboxActivity).cancelUniqueWork("recording-mail-${job.id}").result.get()
-                        }
+                        }.isSuccess }
+                        if (!ok) Toast.makeText(this@MailOutboxActivity, R.string.mail_failed, Toast.LENGTH_LONG).show()
                         render()
                     }
                 }
@@ -67,11 +68,12 @@ class MailOutboxActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val profile = SmtpSettings(this@MailOutboxActivity).load()
             if (profile == null) { Toast.makeText(this@MailOutboxActivity, R.string.mail_config, Toast.LENGTH_LONG).show(); return@launch }
-            withContext(Dispatchers.IO) {
+            val ok = withContext(Dispatchers.IO) { runCatching {
                 WorkManager.getInstance(this@MailOutboxActivity).cancelUniqueWork("recording-mail-$id").result.get()
                 val job = queue.retry(id, profile.limitMiB)
                 if (job?.state == MailQueue.State.QUEUED) MailWorker.schedule(this@MailOutboxActivity, id)
-            }
+            }.isSuccess }
+            if (!ok) Toast.makeText(this@MailOutboxActivity, R.string.mail_failed, Toast.LENGTH_LONG).show()
             render()
         }
     }

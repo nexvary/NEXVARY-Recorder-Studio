@@ -350,4 +350,5 @@
     <string name="mail_cancel">إلغاء الإرسال المنتظر</string>
     <string name="mail_subject">تسجيل كاميرا من NEXVARY</string>
     <string name="mail_body">مرفق تسجيل الكاميرا المحفوظ. أُرسل بناءً على خيار البريد الذي فعلته في جلسة تسجيل NEXVARY Recorder Studio.</string>
+    <string name="camera_saving">جارٍ حفظ الفيديو وتجهيز نسخة الإرسال إن كانت مفعّلة…</string>
 </resources>

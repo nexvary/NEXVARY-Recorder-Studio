@@ -197,27 +197,30 @@ class RecordingDeliveryTest {
             output?.delete()
         }
     }
-    @Test fun manualStopAlsoFinalizesAPlayableVideoWithoutEmailOptIn() {
+    @Test fun manualStopSavesPlayableVideoAndAllowsImmediateNextRecordingWithoutEmail() {
         instrumentation.uiAutomation.grantRuntimePermission(context.packageName, Manifest.permission.CAMERA)
-        var output: File? = null
+        val outputs = mutableListOf<File>()
         try {
             ActivityScenario.launch(BackgroundCameraActivity::class.java).use { scenario ->
-                scenario.onActivity { activity -> ContextCompat.startForegroundService(activity,
-                    Intent(activity, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_START)) }
-                awaitCapture { it.stage == BackgroundCameraService.Companion.Stage.RECORDING }
-                SystemClock.sleep(2_000)
-                scenario.onActivity { activity -> activity.startService(Intent(activity, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_STOP)) }
-                val saved = awaitCapture { it.stage == BackgroundCameraService.Companion.Stage.SAVED || it.stage == BackgroundCameraService.Companion.Stage.ERROR }
-                assertEquals(BackgroundCameraService.Companion.Stage.SAVED, saved.stage); assertFalse(saved.mailRequested)
-                output = File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), saved.name)
-                assertTrue(output!!.length() > 0)
-                val metadata = android.media.MediaMetadataRetriever()
-                try {
-                    metadata.setDataSource(output!!.absolutePath)
-                    assertEquals("yes", metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO))
-                    assertTrue(metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong() > 500)
-                } finally { metadata.release() }
+                repeat(2) {
+                    scenario.onActivity { activity -> ContextCompat.startForegroundService(activity,
+                        Intent(activity, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_START)) }
+                    awaitCapture { it.stage == BackgroundCameraService.Companion.Stage.RECORDING }
+                    SystemClock.sleep(2_000)
+                    scenario.onActivity { activity -> activity.startService(Intent(activity, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_STOP)) }
+                    val saved = awaitCapture { it.stage == BackgroundCameraService.Companion.Stage.SAVED || it.stage == BackgroundCameraService.Companion.Stage.ERROR }
+                    assertEquals(BackgroundCameraService.Companion.Stage.SAVED, saved.stage); assertFalse(saved.mailRequested)
+                    val output = File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), saved.name)
+                    outputs.add(output)
+                    assertTrue(output.length() > 0)
+                    val metadata = android.media.MediaMetadataRetriever()
+                    try {
+                        metadata.setDataSource(output.absolutePath)
+                        assertEquals("yes", metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO))
+                        assertTrue(metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong() > 500)
+                    } finally { metadata.release() }
+                }
             }
-        } finally { output?.delete() }
+        } finally { outputs.forEach { it.delete() } }
     }
 }

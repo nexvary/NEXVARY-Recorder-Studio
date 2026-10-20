@@ -72,13 +72,14 @@ class BackgroundCameraActivity : AppCompatActivity() {
     override fun onStop() { handler.removeCallbacks(tick); super.onStop() }
     private fun updateState() {
         val state = BackgroundCameraService.state
-        val active = state.stage in listOf(BackgroundCameraService.Companion.Stage.STARTING, BackgroundCameraService.Companion.Stage.RECORDING)
-        start.isEnabled = !active; stop.isEnabled = active
+        val active = state.stage in listOf(BackgroundCameraService.Companion.Stage.STARTING, BackgroundCameraService.Companion.Stage.RECORDING, BackgroundCameraService.Companion.Stage.SAVING)
+        start.isEnabled = !active; stop.isEnabled = active && state.stage != BackgroundCameraService.Companion.Stage.SAVING
         front.isEnabled = !active; audio.isEnabled = !active; timer.isEnabled = !active; email.isEnabled = !active
         minutes.isEnabled = !active && timer.isChecked; recipient.isEnabled = !active && email.isChecked
         if (active || state != lastState) status.text = when (state.stage) {
             BackgroundCameraService.Companion.Stage.IDLE -> getString(R.string.camera_ready)
             BackgroundCameraService.Companion.Stage.STARTING -> getString(R.string.camera_starting)
+            BackgroundCameraService.Companion.Stage.SAVING -> getString(R.string.camera_saving)
             BackgroundCameraService.Companion.Stage.ERROR -> getString(R.string.camera_failed)
             BackgroundCameraService.Companion.Stage.SAVED -> getString(if (state.mailQueued) R.string.camera_saved_mail else if (state.mailRequested) R.string.camera_saved_mail_failed else R.string.camera_saved, state.name)
             BackgroundCameraService.Companion.Stage.RECORDING -> if (state.deadline == 0L) getString(R.string.camera_recording)
