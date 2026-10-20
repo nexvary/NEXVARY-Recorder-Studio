@@ -2,9 +2,9 @@
     <style name="Theme.NexvaryRecorder.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:colorBackground">#0A0A0A</item>
-        <item name="android:textColorPrimary">#F5F7FA</item>
-        <item name="android:textColorSecondary">#C4CED9</item>
-        <item name="android:editTextColor">#F5F7FA</item>
+        <item name="android:textColorPrimary">@color/studio_text_primary</item>
+        <item name="android:textColorSecondary">@color/studio_text_secondary</item>
+        <item name="android:editTextColor">@color/studio_text_primary</item>
         <item name="colorSurface">#11151A</item>
         <item name="colorOnSurface">#F5F7FA</item>
         <item name="colorError">#FF7A85</item>
