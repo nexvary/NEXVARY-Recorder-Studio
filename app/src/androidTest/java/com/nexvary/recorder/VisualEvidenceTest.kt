@@ -11,7 +11,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
 
 /** Captures only actual windows from this installed APK. Never sends messages or starts recording. */
 @RunWith(AndroidJUnit4::class)
@@ -36,11 +35,36 @@ class VisualEvidenceTest {
             ActivityScenario.launch(page).use {
                 onView(withId(visibleId)).check(matches(isDisplayed()))
                 instrumentation.waitForIdleSync()
+                // Espresso visibility can precede the SurfaceFlinger first presented frame.
+                val frameCommitted = java.util.concurrent.CountDownLatch(1)
+                it.onActivity { activity ->
+                    val decor = activity.window.decorView
+                    decor.viewTreeObserver.registerFrameCommitCallback { frameCommitted.countDown() }
+                    decor.invalidate()
+                }
+                check(frameCommitted.await(5, java.util.concurrent.TimeUnit.SECONDS)) { "No committed app frame" }
                 val focus = instrumentation.uiAutomation.executeShellCommand("dumpsys window windows").use { fd ->
                     java.io.FileInputStream(fd.fileDescriptor).bufferedReader().readText()
                 }
                 check(!focus.contains("Application Error") && !focus.contains("Application Not Responding")) { "System error covers the app" }
-                val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
+                var captured: Bitmap? = null
+                repeat(10) {
+                    if (captured == null) {
+                        instrumentation.uiAutomation.waitForIdle(300, 5_000)
+                        val candidate = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
+                        val readable = candidate.copy(Bitmap.Config.ARGB_8888, false)
+                        var dark = 0
+                        var sampled = 0
+                        for (y in 0 until readable.height step 24) for (x in 0 until readable.width step 24) {
+                            val color = readable.getPixel(x, y)
+                            if (android.graphics.Color.red(color) + android.graphics.Color.green(color) + android.graphics.Color.blue(color) < 300) dark++
+                            sampled++
+                        }
+                        readable.recycle()
+                        if (dark > sampled / 2) captured = candidate else candidate.recycle()
+                    }
+                }
+                val screenshot = checkNotNull(captured) { "Starting window or blank frame captured for $name" }
                 val resolver = context.contentResolver
                 val uri = checkNotNull(resolver.insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     android.content.ContentValues().apply {
