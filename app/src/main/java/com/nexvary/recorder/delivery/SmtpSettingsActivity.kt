@@ -30,7 +30,8 @@ class SmtpSettingsActivity : AppCompatActivity() {
         val host = DeliveryUi.field(form, R.string.smtp_host, R.id.smtpHost, existing?.host.orEmpty(), InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
         val port = DeliveryUi.field(form, R.string.smtp_port, R.id.smtpPort, (existing?.port ?: 587).toString(), InputType.TYPE_CLASS_NUMBER)
         val tls = SwitchCompat(this).apply {
-            id = R.id.smtpTls; setText(R.string.smtp_direct_tls); isChecked = existing?.directTls ?: false
+            id = R.id.smtpTls; setText(R.string.smtp_direct_tls)
+            isChecked = DeliveryPolicy.conventionalTls(existing?.port ?: 587) ?: (existing?.directTls ?: false)
             setOnCheckedChangeListener { _, checked ->
                 if (port.text.toString() in listOf("465", "587")) port.setText(if (checked) "465" else "587")
             }
@@ -56,8 +57,10 @@ class SmtpSettingsActivity : AppCompatActivity() {
                 return null
             }
             host.error = null
-            val sameServer = existing?.let { it.host == host.text.toString().trim() && it.port == DeliveryPolicy.digits(port.text.toString()).toIntOrNull() &&
-                it.username == user.text.toString().trim() && it.directTls == tls.isChecked } ?: false
+            // Correcting the secure port/mode on the same host/account must not discard its secret.
+            // A different host or account still requires explicit password entry.
+            val sameServer = existing?.let { it.host.equals(host.text.toString().trim(), ignoreCase = true) &&
+                it.username == user.text.toString().trim() } ?: false
             val secret = password.text.toString().ifEmpty { if (sameServer) existing?.password.orEmpty() else "" }
             val value = SmtpProfile(host.text.toString().trim(), DeliveryPolicy.digits(port.text.toString()).toIntOrNull() ?: 0,
                 tls.isChecked, user.text.toString().trim(), secret, from.text.toString().trim(), DeliveryPolicy.digits(limit.text.toString()).toIntOrNull() ?: 0)

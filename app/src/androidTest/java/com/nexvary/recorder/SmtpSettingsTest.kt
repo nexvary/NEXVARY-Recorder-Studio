@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nexvary.recorder.delivery.SmtpSettings
 import com.nexvary.recorder.delivery.SmtpSettingsActivity
+import com.nexvary.recorder.delivery.SmtpProfile
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,6 +18,19 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class SmtpSettingsTest {
     private val settings get() = SmtpSettings(InstrumentationRegistry.getInstrumentation().targetContext)
+    @Test fun existing465ProfileRepairsSecurityWithoutDiscardingSameAccountPassword() {
+        settings.save(SmtpProfile("mail.example.invalid", 465, false, "fixture-user", "fixture-password", "sender@example.invalid", 25))
+        try {
+            ActivityScenario.launch(SmtpSettingsActivity::class.java).use {
+                onView(withId(R.id.smtpTls)).perform(reveal()).check(matches(isChecked()))
+                onView(withId(R.id.smtpPassword)).perform(reveal()).check(matches(withText("")))
+                onView(withId(R.id.smtpSave)).perform(reveal(), click())
+                awaitUi(withText(R.string.smtp_saved))
+                assertTrue(settings.load()!!.directTls)
+                assertEquals("fixture-password", settings.load()!!.password)
+            }
+        } finally { settings.clear() }
+    }
     @Test fun enteringConventionalPortsUpdatesTlsInBothDirectionsIncludingArabicDigits() {
         settings.clear()
         ActivityScenario.launch(SmtpSettingsActivity::class.java).use {
