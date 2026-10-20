@@ -1,1 +1,1 @@
-<resources><item type="id" name="rescueName"/><item type="id" name="rescuePhone"/><item type="id" name="rescueMessage"/><item type="id" name="studioStyled"/></resources>
+<resources><item type="id" name="rescueName"/><item type="id" name="rescuePhone"/><item type="id" name="rescueMessage"/><item type="id" name="studioStyled"/><item type="id" name="openVault"/><item type="id" name="vaultPin"/><item type="id" name="vaultConfirmPin"/></resources>

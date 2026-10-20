@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#3038BDF8">
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="?attr/nexvaryAccent">
  <item><layer-list>
   <item><shape><corners android:radius="21dp"/><gradient android:angle="315" android:startColor="#F5F7FA" android:centerColor="#535E6A" android:endColor="#DCE4EE"/></shape></item>
-  <item android:left="1.5dp" android:top="1.5dp" android:right="1.5dp" android:bottom="1.5dp"><shape><corners android:radius="19.5dp"/><gradient android:angle="315" android:startColor="#353C43" android:centerColor="#07090B" android:endColor="#101419"/></shape></item>
+  <item android:left="1.5dp" android:top="1.5dp" android:right="1.5dp" android:bottom="1.5dp"><shape><corners android:radius="19.5dp"/><gradient android:angle="315" android:startColor="?attr/nexvarySurfaceStrong" android:centerColor="?attr/nexvaryBackground" android:endColor="?attr/nexvarySurface"/></shape></item>
   <item android:left="3dp" android:top="3dp" android:right="3dp" android:bottom="3dp"><shape><corners android:radius="18dp"/><stroke android:width="0.5dp" android:color="#4096A3B2"/><gradient android:angle="270" android:startColor="#12FFFFFF" android:endColor="#00000000"/></shape></item>
  </layer-list></item>
 </ripple>

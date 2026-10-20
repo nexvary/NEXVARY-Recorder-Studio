@@ -262,4 +262,25 @@
     <string name="camera_mic">تسجيل الميكروفون</string>
     <string name="camera_start">بدء تسجيل الكاميرا</string>
     <string name="camera_stop">إيقاف وحفظ</string>
+    <string name="library_play">تشغيل</string>
+    <string name="library_delete">حذف</string>
+    <string name="library_hide">إخفاء</string>
+    <string name="library_delete_confirm">هل تريد حذف هذا التسجيل نهائيًا؟ لا يمكن التراجع عن الحذف.</string>
+    <string name="library_done">تمت العملية بنجاح.</string>
+    <string name="library_operation_failed">تعذّر إتمام العملية. حدّث المكتبة وحاول مجددًا، وتحقق من المساحة وإمكانية الوصول.</string>
+    <string name="vault_open">حافظة الفيديوهات الخاصة</string>
+    <string name="vault_lock">قفل الحافظة — العودة للمكتبة</string>
+    <string name="vault_notice">اختر رمز PIN من 6 إلى 12 رقمًا وأكّده. تُشفّر الفيديوهات داخل التطبيق وتُزال من المكتبة العادية بعد التحقق من النسخة. لا يوجد استرجاع للرمز. حذف التطبيق أو مسح بياناته يفقدك هذه الفيديوهات نهائيًا؛ أعد الفيديوهات المهمة للمكتبة قبل ذلك.</string>
+    <string name="vault_enter_note">أدخل رمز PIN. تُقفل الحافظة عند مغادرة الشاشة. بعد خمس محاولات خاطئة يلزم الانتظار 30 ثانية.</string>
+    <string name="vault_pin">رمز PIN (6–12 رقمًا)</string>
+    <string name="vault_confirm_pin">تأكيد رمز PIN</string>
+    <string name="vault_create">إنشاء الحافظة الخاصة</string>
+    <string name="vault_unlock">فتح</string>
+    <string name="vault_pin_invalid">استخدم من 6 إلى 12 رقمًا مع تطابق التأكيد.</string>
+    <string name="vault_pin_failed">الرمز غير صحيح، أو القفل مؤقت، أو الحافظة غير متاحة. انتظر 30 ثانية بعد خمس محاولات خاطئة.</string>
+    <string name="vault_empty">لا توجد فيديوهات مخفية. اقفل الحافظة ثم اختر «إخفاء» بجوار فيديو في المكتبة.</string>
+    <string name="vault_hide_confirm">هل تريد نقل الفيديو إلى الحافظة المشفرة؟ لن تُحذف النسخة العادية إلا بعد التحقق من النسخة المشفرة.</string>
+    <string name="vault_restore">إعادة إلى المكتبة</string>
+    <string name="vault_restore_confirm">هل تريد إعادة الفيديو إلى مكتبة الهاتف العادية؟ سيصبح ظاهرًا خارج الحافظة.</string>
+    <string name="vault_continue">متابعة</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
- <item><shape><solid android:color="#0A0A0A"/></shape></item>
- <item><shape><gradient android:angle="315" android:startColor="#303942" android:centerColor="#080A0C" android:endColor="#0A0A0A" android:centerX="0.14"/></shape></item>
+ <item><shape><solid android:color="?attr/nexvaryBackground"/></shape></item>
+ <item><shape><gradient android:angle="315" android:startColor="?attr/nexvarySurfaceStrong" android:centerColor="?attr/nexvaryBackground" android:endColor="?attr/nexvaryBackground" android:centerX="0.14"/></shape></item>
  <item><shape><gradient android:type="radial" android:gradientRadius="340dp" android:centerX="0.85" android:centerY="0.05" android:startColor="#163D5266" android:endColor="#000A0A0A"/></shape></item>
 </layer-list>

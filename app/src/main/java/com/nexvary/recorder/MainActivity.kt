@@ -20,8 +20,10 @@ import com.nexvary.recorder.media.RecordingsLibraryActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var appliedTheme = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        appliedTheme = ThemeManager.currentIndex(this)
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
 
@@ -76,6 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (appliedTheme != ThemeManager.currentIndex(this)) { recreate(); return }
         if (::binding.isInitialized) {
             binding.bottomNav.menu.findItem(R.id.navHome)?.isChecked = true
             updateThemeLabel()

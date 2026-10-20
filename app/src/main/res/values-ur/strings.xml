@@ -262,4 +262,25 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="camera_mic">Record microphone</string>
     <string name="camera_start">Start camera recording</string>
     <string name="camera_stop">Stop and save</string>
+    <string name="library_play">Play</string>
+    <string name="library_delete">Delete</string>
+    <string name="library_hide">Hide</string>
+    <string name="library_delete_confirm">Permanently delete this recording? This cannot be undone.</string>
+    <string name="library_done">Operation completed.</string>
+    <string name="library_operation_failed">The operation could not be completed. Refresh the library and try again; check free storage and access.</string>
+    <string name="vault_open">Private video vault</string>
+    <string name="vault_lock">Lock vault — return to library</string>
+    <string name="vault_notice">Choose and confirm a PIN of 6–12 digits. Hidden videos are encrypted inside this app and removed from the normal library after verification. There is no PIN recovery. Uninstalling or clearing app data permanently loses these videos. Restore important videos before doing either.</string>
+    <string name="vault_enter_note">Enter your PIN. The vault locks when you leave this screen. Five incorrect attempts require a 30-second wait.</string>
+    <string name="vault_pin">PIN (6–12 digits)</string>
+    <string name="vault_confirm_pin">Confirm PIN</string>
+    <string name="vault_create">Set up private vault</string>
+    <string name="vault_unlock">Unlock</string>
+    <string name="vault_pin_invalid">Use 6–12 digits and match the confirmation.</string>
+    <string name="vault_pin_failed">Incorrect PIN, temporary lock, or vault unavailable. After five failures, wait 30 seconds.</string>
+    <string name="vault_empty">No hidden videos. Lock the vault, then choose Hide beside a video in the library.</string>
+    <string name="vault_hide_confirm">Move this video into the encrypted vault? Its normal-library copy is removed only after the encrypted copy is verified.</string>
+    <string name="vault_restore">Restore to library</string>
+    <string name="vault_restore_confirm">Restore this video to the normal phone library? It will no longer be hidden.</string>
+    <string name="vault_continue">Continue</string>
 </resources>

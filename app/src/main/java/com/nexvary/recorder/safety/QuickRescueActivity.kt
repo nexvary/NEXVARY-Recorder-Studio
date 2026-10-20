@@ -1,6 +1,9 @@
 package com.nexvary.recorder.safety
 
 import android.Manifest
+import android.content.res.ColorStateList
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -139,6 +142,9 @@ class QuickRescueActivity : AppCompatActivity() {
             .setNegativeButton(R.string.cancel, null).create().apply {
                 setOnDismissListener { editorOpen = false; editorFields = null; editorLocation = null; imageStatus = null }
                 setOnShowListener {
+                    styleEditor(form)
+                    getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(NEON)
+                    getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(NEON)
                     getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                         val item = draft()
                         val phone = RescuePolicy.normalizePhone(item.optString("phone").trim())
@@ -154,6 +160,26 @@ class QuickRescueActivity : AppCompatActivity() {
                 show()
             }
     }
+
+
+    // Native widgets created with the activity context can inherit OEM light defaults.
+    // Explicit state lists keep every editor field legible, including on OPPO builds.
+    private fun styleEditor(view: View) {
+        when (view) {
+            is EditText -> {
+                view.setTextColor(NEON); view.setHintTextColor(0xFF9BF6B8.toInt())
+                view.backgroundTintList = ColorStateList.valueOf(NEON)
+                view.highlightColor = 0x6643FF88
+                view.textCursorDrawable?.setTint(NEON)
+            }
+            is CheckBox -> { view.setTextColor(NEON); view.buttonTintList = ColorStateList.valueOf(NEON) }
+            is Button -> { view.setTextColor(0xFF06150C.toInt()); view.backgroundTintList = ColorStateList.valueOf(NEON); view.isAllCaps = false }
+            is TextView -> view.setTextColor(NEON)
+        }
+        if (view is ViewGroup) for (i in 0 until view.childCount) styleEditor(view.getChildAt(i))
+    }
+
+    companion object { private const val NEON = 0xFF43FF88.toInt() }
 
     private fun render() {
         binding.contactList.removeAllViews()
