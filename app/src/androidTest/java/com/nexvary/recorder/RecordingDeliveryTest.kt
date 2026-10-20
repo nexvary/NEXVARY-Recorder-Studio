@@ -156,7 +156,7 @@ class RecordingDeliveryTest {
             onView(withId(R.id.cameraStatus)).perform(reveal()).check(matches(withText(R.string.mail_config)))
             onView(withId(R.id.openSmtp)).perform(reveal(), click()); awaitUi(withId(R.id.smtpHost))
             onView(withId(R.id.smtpSave)).perform(reveal(), click())
-            onView(withId(R.id.smtpStatus)).perform(reveal()).check(matches(withText(R.string.smtp_invalid)))
+            onView(withId(R.id.smtpStatus)).perform(reveal()).check(matches(withText(R.string.smtp_host_invalid)))
             onView(withId(R.id.btnBack)).perform(reveal(), click())
         }
         assertFalse(BackgroundCameraService.state.stage == BackgroundCameraService.Companion.Stage.RECORDING)

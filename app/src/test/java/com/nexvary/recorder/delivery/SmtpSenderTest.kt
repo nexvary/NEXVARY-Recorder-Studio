@@ -34,13 +34,15 @@ class SmtpSenderTest {
     }
     @Test fun untrustedCertificateIsRejectedBeforeCredentials() {
         Server(true).use { server ->
-            assertTrue(runCatching { SmtpSender("", "").test(profile(server)) }.isFailure)
+            val error = runCatching { SmtpSender("", "").test(profile(server)) }.exceptionOrNull()!!
+            assertEquals(SmtpFailure.TLS, SmtpFailure.classify(error))
             assertFalse(server.authenticated); assertEquals(0, server.dataCommands)
         }
     }
     @Test fun missingStartTlsIsNeverDowngradedToPlaintextAuthentication() {
         Server(false, offerTls = false).use { server ->
-            assertTrue(runCatching { SmtpSender("", "", server.factory).test(profile(server)) }.isFailure)
+            val error = runCatching { SmtpSender("", "", server.factory).test(profile(server)) }.exceptionOrNull()!!
+            assertEquals(SmtpFailure.STARTTLS, SmtpFailure.classify(error))
             assertFalse(server.authenticated)
         }
     }
@@ -51,6 +53,14 @@ class SmtpSenderTest {
                 val error = runCatching { SmtpSender("", "", server.factory).send(profile(server), job(), file) { fail("DATA must not start") } }.exceptionOrNull()
                 assertTrue(error is MessageTooLarge); assertEquals(0, server.dataCommands); assertTrue(file.isFile)
             } finally { file.delete() }
+        }
+    }
+    @Test fun successfulConnectionTestAuthenticatesBothModesWithoutSubmittingAnyMessage() {
+        for (direct in listOf(true, false)) Server(direct).use { server ->
+            var saved = false
+            val result = SmtpSetup({ SmtpSender("", "", server.factory).test(it) }, { saved = true }).testAndSave(profile(server))
+            assertEquals(SmtpSetup.Result.Saved, result)
+            assertTrue(saved); assertTrue(server.authenticated); assertEquals(0, server.dataCommands)
         }
     }
 }

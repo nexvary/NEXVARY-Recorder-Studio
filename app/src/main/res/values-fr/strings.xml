@@ -309,7 +309,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="smtp_host">SMTP hostname</string>
     <string name="smtp_port">SMTP port</string>
     <string name="smtp_direct_tls">Direct TLS (usually port 465)</string>
-    <string name="smtp_tls_note">When off, STARTTLS is required (usually 587). Trusted certificate and hostname verification are always required.</string>
+    <string name="smtp_tls_note">Entering 465 selects direct TLS; 587 selects required STARTTLS. For custom ports choose the security mode specified by your provider. The certificate must be trusted and match the host.</string>
     <string name="smtp_user">SMTP username</string>
     <string name="smtp_password">SMTP password / app password</string>
     <string name="smtp_password_kept">Blank keeps the saved password for the same server/account.</string>
@@ -320,9 +320,9 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="smtp_save">Save server settings</string>
     <string name="smtp_saved">Settings saved securely.</string>
     <string name="smtp_store_failed">Could not encrypt/save the settings. Nothing was sent.</string>
-    <string name="smtp_test">Test TLS and login — no email</string>
+    <string name="smtp_test">Test connection and save settings — no email</string>
     <string name="smtp_testing">Testing secure connection and login…</string>
-    <string name="smtp_test_ok">TLS connection and SMTP login succeeded. No email was sent.</string>
+    <string name="smtp_test_ok">TLS and SMTP login succeeded. Settings were saved encrypted. No email was sent.</string>
     <string name="smtp_test_failed">Connection/login failed. Check network, server, credentials and its trusted TLS certificate.</string>
     <string name="smtp_forget">Remove saved credentials</string>
     <string name="smtp_forget_note">Remove SMTP credentials from this device? Pending messages stay paused until settings are configured again. An already active connection may finish.</string>
@@ -351,4 +351,12 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="mail_subject">NEXVARY camera recording</string>
     <string name="mail_body">Your saved camera recording is attached. Sent by your opted-in NEXVARY Recorder Studio recording session.</string>
     <string name="camera_saving">Saving video and preparing the opted-in send copy…</string>
+    <string name="smtp_host_invalid">Enter the SMTP host only, for example mail.example.com. Do not include smtp://, https://, a path or a port; enter the port separately.</string>
+    <string name="smtp_test_store_failed">TLS and login succeeded, but encrypted settings could not be saved. Nothing was sent. Try saving the settings again.</string>
+    <string name="smtp_error_dns">[DNS] SMTP host could not be found. Check the host spelling, internet connection and DNS/VPN settings.</string>
+    <string name="smtp_error_connection">[CONNECT] Connection to this host and port was refused or unavailable. Check the SMTP port, server and firewall.</string>
+    <string name="smtp_error_timeout">[TIMEOUT] SMTP connection timed out. Check the network and port: 465 uses direct TLS; 587 uses STARTTLS. A firewall may block SMTP.</string>
+    <string name="smtp_error_tls">[TLS] Secure connection failed. Check the server certificate, matching host name, device date and security mode. An untrusted certificate will not be bypassed.</string>
+    <string name="smtp_error_auth">[AUTH] The server rejected SMTP login. Check the full username, password or app password, and whether SMTP authentication is enabled for the account.</string>
+    <string name="smtp_error_starttls">[STARTTLS] This port did not offer required STARTTLS. Check server settings or use the direct TLS port specified by your provider.</string>
 </resources>

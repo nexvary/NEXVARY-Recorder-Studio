@@ -309,7 +309,7 @@
     <string name="smtp_host">اسم مضيف SMTP</string>
     <string name="smtp_port">منفذ SMTP</string>
     <string name="smtp_direct_tls">اتصال TLS مباشر (عادةً المنفذ ٤٦٥)</string>
-    <string name="smtp_tls_note">عند تعطيله يُستخدم STARTTLS إلزاميًا (عادةً ٥٨٧). يجب أن تكون شهادة الخادم موثوقة ومطابقة لاسمه.</string>
+    <string name="smtp_tls_note">يتحدد TLS المباشر تلقائيًا عند إدخال 465، وSTARTTLS عند إدخال 587. للمنافذ الأخرى اختر الحماية حسب مزودك. يجب أن تكون شهادة الخادم موثوقة ومطابقة لاسمه.</string>
     <string name="smtp_user">اسم مستخدم SMTP</string>
     <string name="smtp_password">كلمة مرور SMTP أو كلمة مرور التطبيق</string>
     <string name="smtp_password_kept">اتركه فارغًا للاحتفاظ بكلمة المرور لنفس الخادم والحساب.</string>
@@ -320,9 +320,9 @@
     <string name="smtp_save">حفظ إعدادات الخادم</string>
     <string name="smtp_saved">حُفظت الإعدادات بشكل آمن.</string>
     <string name="smtp_store_failed">تعذر تشفير الإعدادات أو حفظها. لم يُرسل شيء.</string>
-    <string name="smtp_test">اختبار TLS وتسجيل الدخول — دون إرسال</string>
+    <string name="smtp_test">اختبار الاتصال وحفظ الإعدادات — دون إرسال</string>
     <string name="smtp_testing">جارٍ اختبار الاتصال الآمن وتسجيل الدخول…</string>
-    <string name="smtp_test_ok">نجح اتصال TLS وتسجيل الدخول إلى SMTP. لم تُرسل رسالة.</string>
+    <string name="smtp_test_ok">نجح اتصال TLS وتسجيل الدخول، وحُفظت الإعدادات مشفّرة. لم تُرسل رسالة.</string>
     <string name="smtp_test_failed">فشل الاتصال أو تسجيل الدخول. تحقق من الشبكة والخادم وبيانات الدخول وشهادة TLS الموثوقة.</string>
     <string name="smtp_forget">إزالة بيانات الدخول المحفوظة</string>
     <string name="smtp_forget_note">إزالة بيانات SMTP من هذا الجهاز؟ ستتوقف الرسائل المنتظرة حتى إعداد الخادم مجددًا. قد يكتمل اتصال إرسال جارٍ بالفعل.</string>
@@ -351,4 +351,12 @@
     <string name="mail_subject">تسجيل كاميرا من NEXVARY</string>
     <string name="mail_body">مرفق تسجيل الكاميرا المحفوظ. أُرسل بناءً على خيار البريد الذي فعلته في جلسة تسجيل NEXVARY Recorder Studio.</string>
     <string name="camera_saving">جارٍ حفظ الفيديو وتجهيز نسخة الإرسال إن كانت مفعّلة…</string>
+    <string name="smtp_host_invalid">أدخل اسم مضيف SMTP فقط، مثل mail.example.com، دون smtp:// أو https:// أو مسار أو رقم منفذ. أدخل المنفذ في حقله المنفصل.</string>
+    <string name="smtp_test_store_failed">نجح اتصال TLS وتسجيل الدخول، لكن تعذر حفظ الإعدادات المشفّرة. لم تُرسل رسالة. حاول حفظ الإعدادات مجددًا.</string>
+    <string name="smtp_error_dns">[DNS] تعذر العثور على مضيف SMTP. تحقق من كتابة الاسم والاتصال بالإنترنت وإعدادات DNS أو VPN.</string>
+    <string name="smtp_error_connection">[CONNECT] رُفض الاتصال بهذا المضيف والمنفذ أو تعذر الوصول إليهما. تحقق من الخادم ومنفذ SMTP والجدار الناري.</string>
+    <string name="smtp_error_timeout">[TIMEOUT] انتهت مهلة اتصال SMTP. تحقق من الشبكة والمنفذ: 465 لاتصال TLS المباشر، و587 لاتصال STARTTLS. قد تحجب الشبكة اتصال البريد.</string>
+    <string name="smtp_error_tls">[TLS] فشل الاتصال الآمن. تحقق من شهادة الخادم ومطابقة اسم المضيف وتاريخ الهاتف ونوع الحماية. لن يتم تجاوز الشهادات غير الموثوقة.</string>
+    <string name="smtp_error_auth">[AUTH] رفض الخادم تسجيل الدخول إلى SMTP. تحقق من اسم المستخدم الكامل وكلمة المرور أو كلمة مرور التطبيق، وتفعيل مصادقة SMTP للحساب.</string>
+    <string name="smtp_error_starttls">[STARTTLS] لم يقدّم هذا المنفذ اتصال STARTTLS المطلوب. تحقق من إعدادات الخادم أو استخدم منفذ TLS المباشر المحدد من مزودك.</string>
 </resources>

@@ -3,6 +3,7 @@ package com.nexvary.recorder.delivery
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import androidx.core.widget.doAfterTextChanged
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -35,6 +36,9 @@ class SmtpSettingsActivity : AppCompatActivity() {
             }
             form.addView(this)
         }
+        port.doAfterTextChanged { text ->
+            DeliveryPolicy.conventionalTls(DeliveryPolicy.digits(text.toString()).toIntOrNull() ?: 0)?.let { tls.isChecked = it }
+        }
         DeliveryUi.text(form, R.string.smtp_tls_note)
         val user = DeliveryUi.field(form, R.string.smtp_user, R.id.smtpUser, existing?.username.orEmpty())
         val password = DeliveryUi.field(form, R.string.smtp_password, R.id.smtpPassword, type = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD).apply {
@@ -46,6 +50,12 @@ class SmtpSettingsActivity : AppCompatActivity() {
         val limit = DeliveryUi.field(form, R.string.smtp_limit, R.id.smtpLimit, (existing?.limitMiB ?: 25).toString(), InputType.TYPE_CLASS_NUMBER)
         val status = DeliveryUi.text(root, R.string.smtp_not_tested).apply { id = R.id.smtpStatus; accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE }
         fun profile(): SmtpProfile? {
+            if (!DeliveryPolicy.validHost(host.text.toString().trim())) {
+                host.error = getString(R.string.smtp_host_invalid)
+                status.setText(R.string.smtp_host_invalid)
+                return null
+            }
+            host.error = null
             val sameServer = existing?.let { it.host == host.text.toString().trim() && it.port == DeliveryPolicy.digits(port.text.toString()).toIntOrNull() &&
                 it.username == user.text.toString().trim() && it.directTls == tls.isChecked } ?: false
             val secret = password.text.toString().ifEmpty { if (sameServer) existing?.password.orEmpty() else "" }
@@ -55,36 +65,64 @@ class SmtpSettingsActivity : AppCompatActivity() {
             return value
         }
         var busy = false
+        val actions = mutableListOf<View>()
+        fun setBusy(value: Boolean) {
+            busy = value
+            (listOf(host, port, tls, user, password, from, limit) + actions).forEach {
+                it.isEnabled = !value; it.alpha = if (value) .45f else 1f
+            }
+        }
         DeliveryUi.button(root, R.string.smtp_save, R.id.smtpSave) {
+            if (busy) return@button
             val value = profile()
             if (value != null && !busy) {
-                busy = true
+                setBusy(true)
                 lifecycleScope.launch {
                     val ok = withContext(Dispatchers.IO) { runCatching { store.save(value) }.isSuccess }
-                    busy = false
+                    setBusy(false)
                     if (ok) { existing = value; password.text.clear(); password.setHint(R.string.smtp_password_kept) }
                     status.setText(if (ok) R.string.smtp_saved else R.string.smtp_store_failed)
                 }
             }
-        }
+        }.also(actions::add)
         DeliveryUi.button(root, R.string.smtp_test, R.id.smtpTest) {
+            if (busy) return@button
             val value = profile()
             if (value != null && !busy) {
-                busy = true; status.setText(R.string.smtp_testing)
+                setBusy(true); status.setText(R.string.smtp_testing)
                 lifecycleScope.launch {
-                    val ok = withContext(Dispatchers.IO) {
-                        runCatching { SmtpSender("", "").test(value) }.isSuccess
+                    val result = withContext(Dispatchers.IO) {
+                        SmtpSetup({ SmtpSender("", "").test(it) }, { store.save(it) }).testAndSave(value)
                     }
-                    busy = false; status.setText(if (ok) R.string.smtp_test_ok else R.string.smtp_test_failed)
+                    when (result) {
+                        is SmtpSetup.Result.Failed -> status.setText(failureLabel(result.reason))
+                        SmtpSetup.Result.StorageFailed -> status.setText(R.string.smtp_test_store_failed)
+                        SmtpSetup.Result.Saved -> {
+                            existing = value; password.text.clear(); password.setHint(R.string.smtp_password_kept)
+                            status.setText(R.string.smtp_test_ok)
+                        }
+                    }
+                    setBusy(false)
                 }
             }
-        }
+        }.also(actions::add)
         DeliveryUi.button(root, R.string.mail_outbox, R.id.mailOutbox) { startActivity(Intent(this, MailOutboxActivity::class.java)) }
         DeliveryUi.button(root, R.string.smtp_forget, R.id.smtpForget) {
             if (!busy) MaterialAlertDialogBuilder(this).setMessage(R.string.smtp_forget_note)
                 .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.smtp_forget) { _, _ ->
                     store.clear(); existing = null; password.text.clear(); password.setHint(R.string.smtp_password); status.setText(R.string.smtp_forgotten)
                 }.show()
+        }.also(actions::add)
+    }
+    companion object {
+        fun failureLabel(failure: SmtpFailure): Int = when (failure) {
+            SmtpFailure.DNS -> R.string.smtp_error_dns
+            SmtpFailure.CONNECTION -> R.string.smtp_error_connection
+            SmtpFailure.TIMEOUT -> R.string.smtp_error_timeout
+            SmtpFailure.TLS -> R.string.smtp_error_tls
+            SmtpFailure.AUTH -> R.string.smtp_error_auth
+            SmtpFailure.STARTTLS -> R.string.smtp_error_starttls
+            SmtpFailure.OTHER -> R.string.smtp_test_failed
         }
     }
 }
