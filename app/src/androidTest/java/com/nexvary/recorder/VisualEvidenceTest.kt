@@ -52,7 +52,7 @@ class VisualEvidenceTest {
                     if (captured == null) {
                         instrumentation.uiAutomation.waitForIdle(300, 5_000)
                         val candidate = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
-                        val readable = candidate.copy(Bitmap.Config.ARGB_8888, false)
+                        val readable = checkNotNull(candidate.copy(Bitmap.Config.ARGB_8888, false))
                         var dark = 0
                         var sampled = 0
                         for (y in 0 until readable.height step 24) for (x in 0 until readable.width step 24) {
