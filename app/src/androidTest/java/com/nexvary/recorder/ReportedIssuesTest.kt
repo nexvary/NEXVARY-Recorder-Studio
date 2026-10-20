@@ -95,6 +95,8 @@ class ReportedIssuesTest {
             val corrupted = encrypted.readBytes(); corrupted[corrupted.lastIndex] = (corrupted.last().toInt() xor 1).toByte(); encrypted.writeBytes(corrupted)
             assertTrue(runCatching { store.export(reopened, entry, ByteArrayOutputStream()) }.isFailure)
             store.delete(entry); assertTrue(store.entries(reopened).isEmpty())
+            repeat(5) { assertNull(store.unlock("000000".toCharArray())) }
+            assertNull(VaultStore(isolated).unlock("638291".toCharArray()))
         } finally { directory.deleteRecursively() }
     }
     @Test fun libraryHideLockWrongPinUnlockRestoreAndDelete() {
@@ -107,6 +109,9 @@ class ReportedIssuesTest {
         try {
             ActivityScenario.launch(RecordingsLibraryActivity::class.java).use {
                 await(withText(name))
+                onView(withText(R.string.library_delete)).perform(reveal(), click())
+                onView(withId(android.R.id.button2)).perform(click())
+                assertTrue(fixture.exists())
                 onView(withText(R.string.library_hide)).perform(reveal(), click())
                 onView(withId(R.id.vaultPin)).perform(replaceText("638291"))
                 onView(withId(R.id.vaultConfirmPin)).perform(replaceText("638291"), androidx.test.espresso.action.ViewActions.closeSoftKeyboard())
@@ -141,6 +146,35 @@ class ReportedIssuesTest {
             fixture.delete(); findRestored(name)?.let { context.contentResolver.delete(it, null, null) }
             vaultDir.deleteRecursively()
         }
+    }
+    @Test fun hiddenVideoPlaysInsideAppAndRecreationLocksVault() {
+        val vaultDir = File(context.noBackupFilesDir, "recording_vault")
+        check(!File(vaultDir, "access.properties").exists()) { "Requires a fresh test install" }
+        try {
+            val store = VaultStore(context)
+            val session = store.create("633777".toCharArray())
+            InstrumentationRegistry.getInstrumentation().context.assets.open("qa-sample.mp4").use {
+                store.import(session, "private-qa.mp4", "video/mp4", it)
+            }
+            ActivityScenario.launch(RecordingsLibraryActivity::class.java).use { scenario ->
+                onView(withId(R.id.openVault)).perform(reveal(), click())
+                onView(withId(R.id.vaultPin)).perform(replaceText("633777"), androidx.test.espresso.action.ViewActions.closeSoftKeyboard())
+                onView(withId(android.R.id.button1)).perform(click())
+                await(withText("private-qa.mp4"))
+                onView(withText(R.string.library_play)).perform(reveal(), click())
+                val playable = object : androidx.test.espresso.matcher.BoundedMatcher<View, android.widget.VideoView>(android.widget.VideoView::class.java) {
+                    override fun describeTo(description: org.hamcrest.Description) { description.appendText("internal VideoView decoded duration") }
+                    override fun matchesSafely(view: android.widget.VideoView) = view.duration > 0
+                }
+                await(playable)
+                scenario.recreate()
+                await(withText(R.string.library_empty))
+                assertTrue(File(context.cacheDir, "vault_playback").listFiles().orEmpty().isEmpty())
+                onView(withId(R.id.openVault)).perform(reveal(), click())
+                onView(withId(R.id.vaultPin)).check(matches(isDisplayed()))
+                onView(withId(android.R.id.button2)).perform(click())
+            }
+        } finally { vaultDir.deleteRecursively() }
     }
     private fun restoredUri(name: String) = checkNotNull(findRestored(name))
     private fun findRestored(name: String): android.net.Uri? {
