@@ -24,6 +24,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.7.1'
+          cache-read-only: false
       - name: Lint, unit tests, build and compile instrumentation
         run: gradle --no-daemon :app:lintDebug :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
       - name: Upload APK
@@ -50,6 +51,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.7.1'
+          cache-read-only: false
       - name: Install compile SDK
         run: /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
       - name: Enable KVM

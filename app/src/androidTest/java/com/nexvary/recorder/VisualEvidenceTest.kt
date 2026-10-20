@@ -18,7 +18,11 @@ import java.io.File
 class VisualEvidenceTest {
     @Test fun captureApprovedArabicScreens() {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
-        instrumentation.runOnMainSync { AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ar")) }
+        instrumentation.runOnMainSync {
+            if (android.os.Build.VERSION.SDK_INT >= 33) {
+                instrumentation.targetContext.getSystemService(android.app.LocaleManager::class.java).applicationLocales = android.os.LocaleList.forLanguageTags("ar")
+            } else AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ar"))
+        }
         val context = instrumentation.targetContext
         context.getSharedPreferences("sos_cards", 0).edit().clear().commit()
         val pages = listOf(

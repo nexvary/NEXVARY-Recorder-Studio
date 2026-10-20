@@ -15,3 +15,5 @@ Home: nine real routes, responsive scroll content, fixed bottom navigation and i
 SOS: local contact CRUD, phone validation including Arabic digits and short emergency numbers, per-contact optional image/location, recent monotonic location checks, explicit review and user-controlled SMS/share composer. No SEND_SMS permission or automatic sending. Test fixtures are cleared; screenshots show the actual empty state.
 
 The emulator gate runs API 35 with 2 CPU cores/2GB RAM, captures actual Arabic screens through instrumentation, retains Logcat/last ANR/memory and test reports, rejects app/launcher ANRs, and uploads screenshots only after tests pass. Physical-device background recording remains a separate requirement.
+
+Additional lifecycle fixes: cancel screen-recording countdown when leaving before capture starts; the foreground-only voice studio stops and saves on leaving instead of retaining an unmanaged microphone. Background camera recording still starts from the visible camera activity. These changes do not establish physical-device compatibility.

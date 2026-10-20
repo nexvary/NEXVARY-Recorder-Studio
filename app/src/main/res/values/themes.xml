@@ -1,6 +1,13 @@
 <resources>
     <style name="Theme.NexvaryRecorder.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:fontFamily">sans</item>
+        <item name="android:colorBackground">#0A0A0A</item>
+        <item name="android:textColorPrimary">#F5F7FA</item>
+        <item name="android:textColorSecondary">#C4CED9</item>
+        <item name="android:editTextColor">#F5F7FA</item>
+        <item name="colorSurface">#11151A</item>
+        <item name="colorOnSurface">#F5F7FA</item>
+        <item name="colorError">#FF7A85</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowActionModeOverlay">true</item>
         <item name="colorOnPrimary">#FFFFFF</item>

@@ -26,7 +26,7 @@
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NexvaryRecorder.Blue">
+        android:theme="@style/Theme.NexvaryRecorder.PianoBlack">
 
         <provider
             android:name="rikka.shizuku.ShizukuProvider"

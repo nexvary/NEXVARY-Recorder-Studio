@@ -22,6 +22,7 @@ import kotlin.concurrent.thread
 class VoiceRecorderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVoiceRecorderBinding
     private var recorder: ProfessionalAudioRecorder? = null
+    private var saving = false
 
     private val permission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
         if (ok) begin() else binding.txtStatus.text = getString(R.string.permission_mic_required)
@@ -42,7 +43,14 @@ class VoiceRecorderActivity : AppCompatActivity() {
         binding.btnStop.setOnClickListener { finishRecording() }
     }
 
+    // This studio has no microphone foreground service. Stop/save on leaving it.
+    override fun onStop() {
+        if (recorder != null) finishRecording()
+        super.onStop()
+    }
+
     private fun begin() {
+        if (recorder != null || saving) return
         try {
             recorder = ProfessionalAudioRecorder(this).also { it.start() }
             binding.btnRecord.isEnabled = false
@@ -54,9 +62,11 @@ class VoiceRecorderActivity : AppCompatActivity() {
     }
 
     private fun finishRecording() {
+        val worker = recorder ?: return
+        recorder = null
+        saving = true
         binding.btnStop.isEnabled = false
         binding.txtStatus.text = getString(R.string.voice_enhancing)
-        val worker = recorder ?: return
         thread {
             try {
                 val temp = File(cacheDir, "enhanced_${System.currentTimeMillis()}.wav")
@@ -84,7 +94,7 @@ class VoiceRecorderActivity : AppCompatActivity() {
                     binding.txtStatus.text = getString(R.string.voice_save_failed_format, e.message.orEmpty())
                 }
             } finally {
-                recorder = null
+                runOnUiThread { saving = false }
             }
         }
     }
