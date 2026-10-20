@@ -27,17 +27,7 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 class ReportedIssuesTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
-    private fun await(matcher: Matcher<View>) {
-        val end = android.os.SystemClock.uptimeMillis() + 20_000
-        var error: Throwable? = null
-        while (android.os.SystemClock.uptimeMillis() < end) {
-            try { onView(matcher).check(matches(org.hamcrest.Matchers.anything())); return }
-            catch (e: androidx.test.espresso.NoMatchingViewException) { error = e }
-            catch (e: AssertionError) { error = e }
-            android.os.SystemClock.sleep(100)
-        }
-        throw AssertionError("Timed out waiting for $matcher", error)
-    }
+    private fun await(matcher: Matcher<View>) = awaitUi(matcher)
     @Test fun sosEditorUsesNeonForTypedTextHintsAndActions() {
         ActivityScenario.launch(QuickRescueActivity::class.java).use {
             onView(withId(R.id.btnAddContact)).perform(reveal(), click())

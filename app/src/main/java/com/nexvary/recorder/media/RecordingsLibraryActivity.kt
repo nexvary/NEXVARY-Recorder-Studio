@@ -114,7 +114,11 @@ class RecordingsLibraryActivity : AppCompatActivity() {
                                 session = unlocked
                                 this@RecordingsLibraryActivity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
                                 dismiss(); vaultButton.setText(R.string.vault_lock)
-                                if (after != null) after() else load()
+                                vaultButton.post {
+                                    if (started && session === unlocked) {
+                                        if (after != null) after() else load()
+                                    }
+                                }
                             }
                         }
                     }

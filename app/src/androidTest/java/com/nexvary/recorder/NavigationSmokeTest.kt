@@ -31,24 +31,30 @@ class NavigationSmokeTest {
     fun bottomNavigationItemsAreConnected() {
         ActivityScenario.launch(MainActivity::class.java).use {
             onView(withId(R.id.navScreen)).perform(click())
+            awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
             onView(withId(R.id.navVoice)).perform(click())
+            awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
             onView(withId(R.id.navLive)).perform(click())
+            awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
             onView(withId(R.id.navMore)).perform(click())
             onView(withText(R.string.language_title)).check(matches(isDisplayed())).perform(click())
+            awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
             onView(withId(R.id.navMore)).perform(click())
             onView(withText(R.string.about_title)).check(matches(isDisplayed())).perform(click())
+            awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
             onView(withId(R.id.navMore)).perform(click())
             onView(withText(R.string.media_tools_title)).check(matches(isDisplayed())).perform(click())
+            awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
         }
     }

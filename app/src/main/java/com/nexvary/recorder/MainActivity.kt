@@ -50,6 +50,14 @@ class MainActivity : AppCompatActivity() {
         binding.cardSettings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
         binding.cardAbout.setOnClickListener { startActivity(Intent(this, AboutActivity::class.java)) }
         binding.bottomNav.itemIconTintList = null
+        // Labels are always visible. Suppress duplicate long-press tooltips so a
+        // slow/held tap can still activate a tab rather than consuming its click.
+        for (id in listOf(R.id.navHome, R.id.navScreen, R.id.navVoice, R.id.navLive, R.id.navMore)) {
+            binding.bottomNav.findViewById<android.view.View>(id)?.let { tab ->
+                androidx.appcompat.widget.TooltipCompat.setTooltipText(tab, null)
+                tab.isLongClickable = false
+            }
+        }
 
         binding.bottomNav.selectedItemId = R.id.navHome
         binding.bottomNav.setOnItemSelectedListener { item ->
