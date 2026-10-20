@@ -21,6 +21,7 @@ class MailOutboxActivity : AppCompatActivity() {
     private lateinit var queue: MailQueue
     private val handler = Handler(Looper.getMainLooper())
     private var last: List<MailQueue.Job>? = null
+    private var refreshing = false
     private val tick = object : Runnable { override fun run() { render(); handler.postDelayed(this, 1500) } }
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.apply(this); super.onCreate(savedInstanceState)
@@ -36,7 +37,17 @@ class MailOutboxActivity : AppCompatActivity() {
     }
     override fun onStop() { handler.removeCallbacks(tick); super.onStop() }
     private fun render() {
-        val rows = queue.jobs()
+        if (refreshing) return
+        refreshing = true
+        lifecycleScope.launch {
+            try {
+                val rows = withContext(Dispatchers.IO) { runCatching { queue.jobs() }.getOrNull() }
+                if (rows != null) showRows(rows)
+                else Toast.makeText(this@MailOutboxActivity, R.string.mail_failed, Toast.LENGTH_LONG).show()
+            } finally { refreshing = false }
+        }
+    }
+    private fun showRows(rows: List<MailQueue.Job>) {
         if (rows == last) return
         last = rows; list.removeAllViews()
         if (rows.isEmpty()) DeliveryUi.text(list, R.string.mail_empty)

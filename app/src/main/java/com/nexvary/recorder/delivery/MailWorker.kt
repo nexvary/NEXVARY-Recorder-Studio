@@ -23,12 +23,14 @@ class MailWorker(context: Context, params: WorkerParameters) : Worker(context, p
     override fun onStopped() { sender.close() }
     companion object {
         fun schedule(context: Context, id: String) {
-            val work = OneTimeWorkRequestBuilder<MailWorker>()
+            val builder = OneTimeWorkRequestBuilder<MailWorker>()
                 .setInputData(workDataOf("job" to id))
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST).build()
-            WorkManager.getInstance(context).enqueueUniqueWork("recording-mail-$id", ExistingWorkPolicy.KEEP, work).result.get()
+            // Below Android 12, expedited work needs its own foreground service.
+            // Use normal constrained work there; API 31+ uses JobScheduler expedited jobs.
+            if (android.os.Build.VERSION.SDK_INT >= 31) builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            WorkManager.getInstance(context).enqueueUniqueWork("recording-mail-$id", ExistingWorkPolicy.KEEP, builder.build()).result.get()
         }
         /** Call off the UI thread. Handles a crash between queue persistence and WorkManager enqueue. */
         fun reconcile(context: Context) {

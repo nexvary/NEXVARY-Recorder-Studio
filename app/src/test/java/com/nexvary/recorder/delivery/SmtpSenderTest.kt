@@ -6,16 +6,8 @@ import jakarta.mail.internet.MimeMultipart
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.*
-import java.net.InetAddress
-import java.net.ServerSocket
-import java.net.Socket
-import java.security.KeyStore
-import java.util.Base64
 import java.util.Properties
 import java.util.UUID
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import javax.net.ssl.*
 
 /** Only loopback is used. This committed key/certificate is PUBLIC TEST MATERIAL, never a server credential. */
 class SmtpSenderTest {

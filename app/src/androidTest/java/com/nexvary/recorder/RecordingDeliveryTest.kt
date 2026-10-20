@@ -50,8 +50,14 @@ class RecordingDeliveryTest {
                 val queue = MailQueue(app)
                 val job = queue.enqueue(source, "recipient@example.invalid", 25)
                 val sender = SmtpSender("Local fixture", "No external email", server.factory)
-                assertEquals(MailQueue.State.SENT, MailDispatcher(queue, sender).deliver(job.id,
-                    SmtpProfile("localhost", server.port, direct, "fixture-user", "fixture-password", "sender@example.invalid", 25)))
+                val diagnosticTransport = object : RecordingMailTransport by sender {
+                    override fun send(profile: SmtpProfile, job: MailQueue.Job, file: File, beforeData: () -> Unit) {
+                        try { sender.send(profile, job, file, beforeData) }
+                        catch (e: Exception) { throw AssertionError("Loopback SMTP runtime failed (direct TLS=$direct)", e) }
+                    }
+                }
+                assertEquals(MailQueue.State.SENT, MailDispatcher(queue, diagnosticTransport).deliver(job.id,
+                    SmtpProfile("127.0.0.1", server.port, direct, "fixture-user", "fixture-password", "sender@example.invalid", 25)))
                 assertTrue(source.isFile); assertFalse(queue.attachment(job.id).exists())
                 val mime = jakarta.mail.internet.MimeMessage(jakarta.mail.Session.getInstance(java.util.Properties()), java.io.ByteArrayInputStream(server.received))
                 val multipart = mime.content as jakarta.mail.internet.MimeMultipart
@@ -197,6 +203,7 @@ class RecordingDeliveryTest {
                 assertEquals(queuedBefore, MailQueue(context).jobs().size)
             }
         } finally {
+            context.stopService(Intent(context, BackgroundCameraService::class.java))
             instrumentation.uiAutomation.executeShellCommand("input keyevent KEYCODE_WAKEUP").close()
             instrumentation.uiAutomation.executeShellCommand("wm dismiss-keyguard").close()
             output?.delete()
@@ -227,6 +234,6 @@ class RecordingDeliveryTest {
                     } finally { metadata.release() }
                 }
             }
-        } finally { outputs.forEach { it.delete() } }
+        } finally { context.stopService(Intent(context, BackgroundCameraService::class.java)); outputs.forEach { it.delete() } }
     }
 }

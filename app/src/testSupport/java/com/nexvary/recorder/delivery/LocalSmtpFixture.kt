@@ -14,7 +14,7 @@ import javax.net.ssl.*
 class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct: Boolean, val offerTls: Boolean = true, val size: Long = 25_000_000) : AutoCloseable {
         val ssl: SSLContext
         val factory: SSLSocketFactory
-        val listener = ServerSocket(0, 1, InetAddress.getLoopbackAddress())
+        val listener = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))
         val port get() = listener.localPort
         @Volatile var received = ByteArray(0)
         @Volatile var authenticated = false
