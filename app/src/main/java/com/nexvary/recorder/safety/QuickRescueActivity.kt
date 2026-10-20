@@ -187,8 +187,7 @@ class QuickRescueActivity : AppCompatActivity() {
             setText(label)
             setTextColor(color)
             isAllCaps = false
-            backgroundTintList = null
-            supportBackgroundTintList = null
+            androidx.core.view.ViewCompat.setBackgroundTintList(this, null)
             setBackgroundResource(background)
             val unit = resources.displayMetrics.density
             minHeight = (48 * unit).toInt()
