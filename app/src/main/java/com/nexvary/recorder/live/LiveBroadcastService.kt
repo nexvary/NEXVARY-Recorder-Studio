@@ -19,7 +19,7 @@ import com.pedro.encoder.input.decoder.VideoDecoderInterface
 import com.pedro.library.rtmp.RtmpFromFile
 import kotlin.concurrent.thread
 
-class LiveBroadcastService : Service(), ConnectChecker, VideoDecoderInterface, AudioDecoderInterface {
+class LiveBroadcastService : Service() {
     companion object {
         const val ACTION_START = "com.nexvary.recorder.live.START"
         const val ACTION_STOP = "com.nexvary.recorder.live.STOP"
@@ -35,8 +35,8 @@ class LiveBroadcastService : Service(), ConnectChecker, VideoDecoderInterface, A
             private set
     }
 
-    private var streamer: RtmpFromFile? = null
-    private var loopEnabled = false
+    private val session = BroadcastSession<RtmpFromFile>()
+    private val main = android.os.Handler(android.os.Looper.getMainLooper())
 
     override fun onCreate() {
         super.onCreate()
@@ -70,82 +70,54 @@ class LiveBroadcastService : Service(), ConnectChecker, VideoDecoderInterface, A
     }
 
     private fun begin(uri: Uri, endpoint: String, loop: Boolean) {
-        if (isRunning) return
+        val token = session.begin() ?: return
         isRunning = true
-        loopEnabled = loop
         sendStatus(getString(R.string.live_preparing))
-
+        fun status(message: Int) { if (session.current(token)) sendStatus(getString(message)) }
+        fun fail(message: String) { main.post { stopBroadcast(token, message) } }
         thread(name = "NexvaryLivePrepare") {
+            var prepared: RtmpFromFile? = null
             try {
-                val rtmp = RtmpFromFile(this, this, this, this)
-                streamer = rtmp
+                val checker = object : ConnectChecker {
+                    override fun onConnectionStarted(url: String) = status(R.string.live_connecting)
+                    override fun onConnectionSuccess() = status(R.string.live_connected)
+                    override fun onConnectionFailed(reason: String) = fail(getString(R.string.live_connection_failed_format, reason))
+                    override fun onDisconnect() = fail(getString(R.string.live_disconnected))
+                    override fun onAuthError() = fail(getString(R.string.live_auth_error))
+                    override fun onAuthSuccess() = status(R.string.live_auth_success)
+                }
+                val video = object : VideoDecoderInterface {
+                    override fun onVideoDecoderFinished() { if (!loop) fail(getString(R.string.live_stopped)) }
+                }
+                val audio = object : AudioDecoderInterface { override fun onAudioDecoderFinished() = Unit }
+                val rtmp = RtmpFromFile(this, checker, video, audio)
+                prepared = rtmp
                 rtmp.setLoopMode(loop)
-
                 val videoReady = rtmp.prepareVideo(this, uri, 4_500_000, 0)
-                val audioReady = runCatching {
-                    rtmp.prepareAudio(this, uri, 128_000)
-                }.getOrDefault(false)
-
+                val audioReady = runCatching { rtmp.prepareAudio(this, uri, 128_000) }.getOrDefault(false)
                 if (!videoReady) error(getString(R.string.live_video_unsupported))
-                if (!audioReady) sendStatus(getString(R.string.live_audio_unsupported))
-
-                sendStatus(getString(R.string.live_connecting))
-                rtmp.startStream(endpoint)
-            } catch (e: Exception) {
-                sendStatus(
-                    getString(
-                        R.string.live_connection_failed_format,
-                        e.message ?: getString(R.string.live_video_unsupported)
-                    )
-                )
-                stopBroadcast()
+                if (!audioReady) status(R.string.live_audio_unsupported)
+                // Stop and committing start are serialized; a late preparation cannot restart a stopped service.
+                if (!session.attach(token, rtmp) {
+                        sendStatus(getString(R.string.live_connecting))
+                        rtmp.startStream(endpoint)
+                    }) runCatching { rtmp.stopStream() }
+            } catch (error: Exception) {
+                runCatching { prepared?.stopStream() }
+                fail(getString(R.string.live_connection_failed_format, error.message ?: getString(R.string.live_video_unsupported)))
             }
         }
     }
 
-    private fun stopBroadcast() {
-        val rtmp = streamer
-        streamer = null
-        if (rtmp != null) runCatching { if (rtmp.isStreaming) rtmp.stopStream() }
+    private fun stopBroadcast(token: Long? = null, message: String = getString(R.string.live_stopped)) {
+        val stopped = session.stop(token)
+        if (token != null && stopped == null) return // Ignore callbacks from an older stream.
+        runCatching { stopped?.resource?.stopStream() }
         isRunning = false
-        sendStatus(getString(R.string.live_stopped))
+        sendStatus(message)
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
-
-    override fun onConnectionStarted(url: String) {
-        sendStatus(getString(R.string.live_connecting))
-    }
-
-    override fun onConnectionSuccess() {
-        sendStatus(getString(R.string.live_connected))
-    }
-
-    override fun onConnectionFailed(reason: String) {
-        sendStatus(getString(R.string.live_connection_failed_format, reason))
-        isRunning = false
-    }
-
-    override fun onDisconnect() {
-        isRunning = false
-        sendStatus(getString(R.string.live_disconnected))
-    }
-
-    override fun onAuthError() {
-        sendStatus(getString(R.string.live_auth_error))
-    }
-
-    override fun onAuthSuccess() {
-        sendStatus(getString(R.string.live_auth_success))
-    }
-
-    override fun onVideoDecoderFinished() {
-        val rtmp = streamer ?: return
-        if (!rtmp.isStreaming || loopEnabled) return
-        stopBroadcast()
-    }
-
-    override fun onAudioDecoderFinished() = Unit
 
     private fun sendStatus(text: String) {
         sendBroadcast(
@@ -195,8 +167,8 @@ class LiveBroadcastService : Service(), ConnectChecker, VideoDecoderInterface, A
     }
 
     override fun onDestroy() {
-        if (streamer != null) runCatching { streamer?.stopStream() }
-        streamer = null
+        val stopped = session.stop()
+        runCatching { stopped?.resource?.stopStream() }
         isRunning = false
         super.onDestroy()
     }

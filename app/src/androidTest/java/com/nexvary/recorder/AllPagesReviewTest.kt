@@ -56,6 +56,26 @@ class AllPagesReviewTest {
         assertNull(com.nexvary.recorder.family.AudioEvidenceService.activeEvent)
     }
 
+    @Test fun screenOutputPublishesAPlayableVideoAndRejectsAnUnfinalizedFile() {
+        val owned = mutableListOf<android.net.Uri>()
+        fun pending(): android.net.Uri = checkNotNull(context.contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, android.content.ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "QA-screen-${java.util.UUID.randomUUID()}.mp4")
+            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, "Movies/NEXVARY Recorder/")
+            put(MediaStore.MediaColumns.IS_PENDING, 1)
+        })).also { owned.add(it) }
+        try {
+            val video = pending()
+            InstrumentationRegistry.getInstrumentation().context.assets.open("qa-sample.mp4").use { input -> checkNotNull(context.contentResolver.openOutputStream(video)).use { input.copyTo(it) } }
+            assertTrue(com.nexvary.recorder.screen.ScreenRecordingOutput.publish(context, video, true, true))
+            context.contentResolver.query(video, arrayOf(MediaStore.MediaColumns.IS_PENDING), null, null, null)!!.use { assertTrue(it.moveToFirst()); assertEquals(0, it.getInt(0)) }
+            val broken = pending()
+            checkNotNull(context.contentResolver.openOutputStream(broken)).use { it.write(byteArrayOf(0, 1, 2, 3)) }
+            assertFalse(com.nexvary.recorder.screen.ScreenRecordingOutput.publish(context, broken, true, true))
+            context.contentResolver.query(broken, arrayOf("_id"), null, null, null)?.use { assertEquals(0, it.count) }
+        } finally { owned.forEach { runCatching { context.contentResolver.delete(it, null, null) } } }
+    }
+
     @Test fun voiceStudioCreatesARealPlayableWavAndListsIt() {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         instrumentation.uiAutomation.grantRuntimePermission(context.packageName, android.Manifest.permission.RECORD_AUDIO)

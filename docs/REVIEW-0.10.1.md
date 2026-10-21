@@ -24,6 +24,8 @@ Reviewed manifest, navigation, all 34 internal activity classes, recorder/media 
 | Expired signed upload URL became a terminal failure | Obtain a new signed URL on retry without a new event reservation |
 | Subscription expiration could change an active event's storage lifecycle prefix | Fix storage tier at reservation; backend expiration regression test; reject boolean segment index |
 | Two legacy pages contained hardcoded bilingual instructions | Localized call companion and evidence pages; link to internal help |
+| Screen recording claimed saved after a failed MP4 finalization | Check playable metadata and successful MediaStore publication; valid/corrupt output instrumentation |
+| Stop during RTMP preparation could allow a late stream start; failed connections retained the service | Serialized session generation, stale-callback rejection and resource cleanup; three session lifecycle unit tests (live server remains unverified) |
 | Some document providers reject persistable URI permission | Accept the available transient grant without crashing the picker |
 
 ## Verification
