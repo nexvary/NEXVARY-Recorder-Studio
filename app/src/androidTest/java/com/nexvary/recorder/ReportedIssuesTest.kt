@@ -46,9 +46,11 @@ class ReportedIssuesTest {
         try {
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
                 onView(withId(R.id.cardSettings)).perform(reveal(), click())
-                onView(withText(R.string.choose_theme)).perform(click())
+                onView(withId(R.id.settingsAppearance)).perform(reveal(), click())
+                onView(withText(R.string.choose_theme)).perform(reveal(), click())
                 onView(withText(R.string.theme_purple)).perform(click())
-                onView(withId(R.id.btnBack)).perform(click())
+                onView(withId(R.id.btnBack)).perform(reveal(), click())
+                onView(withId(R.id.btnBack)).perform(reveal(), click())
                 await(withId(R.id.cardScreen))
                 scenario.onActivity { activity ->
                     val value = android.util.TypedValue()
