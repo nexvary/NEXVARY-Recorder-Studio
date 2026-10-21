@@ -34,3 +34,7 @@ GUARDIAN_TESTING=1 python backend/portable/manage.py check
 ```
 
 SQLite is test-only; the CI MySQL 8 job exercises production migrations and concurrent reservation/refresh locks. MySQL tests use only synthetic CI credentials. The SMTP certificate test runs on loopback with a disposable self-signed certificate and proves no credentials are sent before verified TLS. AWS object-store tests are mocked. Real Namecheap SMTP, live storage, actual Play transactions and institution operations require staged verification before advertising activation.
+
+A guardian-initiated retry may requeue definitively FAILED SOS recipients at most three times/day without a new package reservation. Already accepted or UNCERTAIN recipients are never reset by that action.
+
+SOS jobs have priority over account/contact mail. Non-emergency messages use at most 80% of the configured hourly service budget (minimum one for very small test/operator budgets), leaving normal hourly headroom for emergency alerts; all messages still share the hard provider-service caps.

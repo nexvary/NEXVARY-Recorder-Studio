@@ -165,7 +165,7 @@ jobs:
             app/build/outputs/androidTest-results/connected/
   publish-preview:
     if: false # Hold publishing during the family safety implementation and review
-    needs: [build-and-static-gate, emulator-ui-smoke]
+    needs: [build-and-static-gate, emulator-ui-smoke, backend-test, portable-backend-test]
     runs-on: ubuntu-latest
     permissions:
       contents: write

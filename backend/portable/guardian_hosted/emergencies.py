@@ -8,7 +8,7 @@ from django.utils.html import escape
 from django.http import HttpResponse
 from policy import Rejected, event_id, safe_payload, validate_segment, period, MAX_EVENT_BYTES
 from .models import Account, EmergencyEvent, Segment, Viewer, Record, EmailJob
-from .core import now, usage, take, digest, pk, enqueue, email_ready, storage_ready, storage, record_get
+from .core import now, usage, take, digest, pk, enqueue, email_ready, storage_ready, storage, record_get, rate
 
 
 def find(account, eid):
@@ -87,11 +87,14 @@ def viewer_token(item):
     return settings.SERVICE_URL + '/view/' + raw
 
 
-def dispatch(account, eid):
+def dispatch(account, eid, retry=False):
     with transaction.atomic():
         item = find(account,eid)
         item = EmergencyEvent.objects.select_for_update().get(pk=item.id)
         if item.state in ('SENT','SENDING','UNCERTAIN','CANCELLED'): return public(item)
+        if retry and EmailJob.objects.filter(event=item,state='FAILED',expires_at__gt=now()).exists():
+            rate(str(account.id),'manual-mail-retry',3,86400)
+            EmailJob.objects.filter(event=item,state='FAILED',expires_at__gt=now()).update(state='RETRYING',due_at=now(),attempts=0,error='')
         recipients = [account.email]
         if usage(account)['state'] != 'FREE':
             recipients += [r.payload['email'] for r in Record.objects.filter(owner_key=pk(account),sk__startswith='CONTACT#') if r.payload.get('verified')]

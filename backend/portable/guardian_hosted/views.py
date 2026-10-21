@@ -115,7 +115,7 @@ def api(request,path=''):
         elif method=='DELETE' and path=='account': result=erase_account(account)
         elif path.startswith('events/'):
             pieces=path.split('/');eid=pieces[1]
-            if method=='POST' and len(pieces)==3 and pieces[2]=='dispatch': result=emergencies.dispatch(account,eid)
+            if method=='POST' and len(pieces)==3 and pieces[2]=='dispatch': result=emergencies.dispatch(account,eid,retry=body.get('retry') is True)
             elif method=='POST' and len(pieces)==3 and pieces[2]=='cancel': result=emergencies.cancel(account,eid)
             elif method=='DELETE' and len(pieces)==2: result=emergencies.delete_event(account,eid)
             elif method=='GET' and len(pieces)==2: result=emergencies.public(emergencies.find(account,eid))

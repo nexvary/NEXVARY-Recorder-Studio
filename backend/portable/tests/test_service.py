@@ -314,3 +314,32 @@ def test_storage_guard_rejects_public_access_or_missing_encryption():
     client.get_public_access_block.return_value['PublicAccessBlockConfiguration']['BlockPublicPolicy']=True
     client.get_bucket_encryption.return_value={'ServerSideEncryptionConfiguration':{'Rules':[]}}
     with pytest.raises(CommandError,match='encryption'):check_private(client,'unencrypted')
+
+
+def test_explicit_retry_requeues_definitive_failure_but_not_ambiguous_delivery(account,connected):
+    eid=reserve(account)['eventId'];emergencies.dispatch(account,eid)
+    with patch('guardian_hosted.queue.mail') as provider:
+        provider.return_value.send.side_effect=smtplib.SMTPDataError(550,b'definitive rejection')
+        drain();assert emergencies.find(account,eid).state=='FAILED'
+    emergencies.dispatch(account,eid)
+    with patch('guardian_hosted.queue.mail') as provider:assert drain()==0;provider.assert_not_called()
+    emergencies.dispatch(account,eid,retry=True)
+    with patch('guardian_hosted.queue.mail') as provider:
+        provider.return_value.send.side_effect=EmailAcceptanceUnknown();drain()
+        emergencies.dispatch(account,eid,retry=True);drain();assert provider.return_value.send.call_count==1
+    assert emergencies.find(account,eid).state=='UNCERTAIN' and usage(account)['used']==1
+
+
+def test_auth_mail_cannot_use_the_reserved_sos_hourly_headroom(account,connected,settings):
+    from guardian_hosted.core import enqueue
+    settings.EMAIL_HOURLY_LIMIT=2
+    enqueue(account,'auth-first',account.email,'Account code','Synthetic only')
+    with patch('guardian_hosted.queue.mail') as provider:
+        provider.return_value.send.return_value='accepted';assert drain()==1
+    enqueue(account,'auth-second',account.email,'Account code','Synthetic only')
+    with patch('guardian_hosted.queue.mail') as provider:assert drain()==0;provider.assert_not_called()
+    eid=reserve(account)['eventId'];emergencies.dispatch(account,eid)
+    with patch('guardian_hosted.queue.mail') as provider:
+        provider.return_value.send.return_value='accepted';assert drain()==1
+    assert emergencies.find(account,eid).state=='SENT'
+    assert EmailJob.objects.get(key='auth-second').state=='RETRYING'

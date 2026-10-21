@@ -15,16 +15,22 @@ class CloudApi(private val context: Context, private val expectedSession: JSONOb
         var config=config(context)
         expectedSession?.let { if(!CloudSessionState.sameSession(config,it)) throw CloudFailure("SESSION_CHANGED",401) }
         if(System.currentTimeMillis() >= config.optLong("expiresAt")-30_000 && config.optString("refreshToken").isNotBlank()) {
-            val tokens = if(portable(config)) json(config.getString("baseUrl")+"/auth/refresh","POST",JSONObject().put("refreshToken",config.getString("refreshToken")))
-            else cognito("InitiateAuth",JSONObject().put("ClientId",config.getString("clientId")).put("AuthFlow","REFRESH_TOKEN_AUTH")
-                .put("AuthParameters",JSONObject().put("REFRESH_TOKEN",config.getString("refreshToken")))).getJSONObject("AuthenticationResult")
-            FamilyStore(context).update { root ->
-                if(!CloudSessionState.sameSession(config(root),config)) throw CloudFailure("SESSION_CHANGED",401)
-                config(root).put("idToken",tokens.getString("IdToken")).put("expiresAt",System.currentTimeMillis()+tokens.getLong("ExpiresIn")*1000)
-                if(tokens.has("RefreshToken")) config(root).put("refreshToken",tokens.getString("RefreshToken"))
+            synchronized(refreshLock) {
+                config=config(context)
+                expectedSession?.let { if(!CloudSessionState.sameSession(config,it)) throw CloudFailure("SESSION_CHANGED",401) }
+                if(System.currentTimeMillis() >= config.optLong("expiresAt")-30_000 && config.optString("refreshToken").isNotBlank()) {
+                    val tokens = if(portable(config)) json(config.getString("baseUrl")+"/auth/refresh","POST",JSONObject().put("refreshToken",config.getString("refreshToken")))
+                    else cognito("InitiateAuth",JSONObject().put("ClientId",config.getString("clientId")).put("AuthFlow","REFRESH_TOKEN_AUTH")
+                        .put("AuthParameters",JSONObject().put("REFRESH_TOKEN",config.getString("refreshToken")))).getJSONObject("AuthenticationResult")
+                    FamilyStore(context).update { root ->
+                        if(!CloudSessionState.sameSession(config(root),config)) throw CloudFailure("SESSION_CHANGED",401)
+                        config(root).put("idToken",tokens.getString("IdToken")).put("expiresAt",System.currentTimeMillis()+tokens.getLong("ExpiresIn")*1000)
+                        if(tokens.has("RefreshToken")) config(root).put("refreshToken",tokens.getString("RefreshToken"))
+                    }
+                    config=config(context)
+                    expectedSession?.let { if(!CloudSessionState.sameSession(config,it)) throw CloudFailure("SESSION_CHANGED",401) }
+                }
             }
-            config=config(context)
-            expectedSession?.let { if(!CloudSessionState.sameSession(config,it)) throw CloudFailure("SESSION_CHANGED",401) }
         }
         val token=config.optString("idToken")
         if(token.isBlank() || System.currentTimeMillis() >= config.optLong("expiresAt")) throw CloudFailure("LOGIN_REQUIRED",401)
@@ -59,6 +65,7 @@ class CloudApi(private val context: Context, private val expectedSession: JSONOb
         return json("https://cognito-idp.$region.amazonaws.com/","POST",body,mapOf("X-Amz-Target" to "AWSCognitoIdentityProviderService.$action","Content-Type" to "application/x-amz-json-1.1"))
     }
     companion object {
+        private val refreshLock=Any()
         fun portable(config: JSONObject)=config.optString("authType")=="NEXVARY"
         fun discover(address: String): JSONObject {
             val base=GuardianServiceAddress.normalize(address)

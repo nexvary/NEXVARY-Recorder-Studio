@@ -3,7 +3,7 @@ import ssl
 import time
 from django.conf import settings
 from django.db import transaction
-from django.db.models import Q, F
+from django.db.models import Q, F, Case, When, Value, IntegerField
 from botocore.exceptions import ClientError, ReadTimeoutError, EndpointConnectionError
 from policy import Rejected
 from providers import EmailAcceptanceUnknown
@@ -54,7 +54,7 @@ def drain(limit=1, seconds=10, account_id=None):
         if time.monotonic()-start >= seconds: break
         candidates=EmailJob.objects.filter(state__in=['QUEUED','RETRYING'],due_at__lte=now())
         if account_id: candidates=candidates.filter(account_id=account_id)
-        candidate=candidates.order_by('created_at').first()
+        candidate=candidates.annotate(priority=Case(When(kind='SOS',then=Value(0)),default=Value(1),output_field=IntegerField())).order_by('priority','created_at').first()
         if not candidate: break
         try:
             with transaction.atomic():
@@ -64,6 +64,8 @@ def drain(limit=1, seconds=10, account_id=None):
                     EmailJob.objects.filter(pk=candidate.id,state__in=['QUEUED','RETRYING']).update(state='CANCELLED',text='');continue
                 if EmailJob.objects.filter(pk=candidate.id,state__in=['QUEUED','RETRYING'],due_at__lte=now()).update(state='SENDING',claimed_at=now(),attempts=F('attempts')+1) != 1:
                     continue
+                if candidate.kind!='SOS':
+                    take('mail-auth-hour:'+str(now()//3600),max(1,int(settings.EMAIL_HOURLY_LIMIT*0.8)),now()+7200)
                 take('mail-hour:'+str(now()//3600),settings.EMAIL_HOURLY_LIMIT,now()+7200)
                 take('mail-day:'+str(now()//86400),settings.EMAIL_DAILY_LIMIT,now()+172800)
                 if event:

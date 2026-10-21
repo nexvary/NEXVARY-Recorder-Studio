@@ -18,6 +18,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
     private lateinit var accountForm: LinearLayout
     override fun build() {
         status=DeliveryUi.text(root,R.string.guardian_cloud_unconfigured)
+        accountForm=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
         DeliveryUi.text(root,R.string.service_setup_note)
         val institution=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
         val institutionUrl=FamilyUi.field(institution,R.string.service_institution_address,R.id.guardianInstitutionUrl,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
@@ -83,13 +84,12 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
             }
         }
         root.addView(advanced)
-        accountForm=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
         root.addView(accountForm)
         DeliveryUi.text(accountForm,R.string.service_account_note)
         val email=FamilyUi.field(accountForm,R.string.guardian_email,R.id.guardianEmail,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
         val password=FamilyUi.field(accountForm,R.string.smtp_password,R.id.guardianPassword,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
         val code=FamilyUi.field(accountForm,R.string.guardian_code,R.id.guardianCode,type=InputType.TYPE_CLASS_NUMBER)
-        fun auth(action: () -> Unit) { FamilyUi.io(this,{ runCatching(action) }) { result -> password.text.clear();status.setText(if(result.isSuccess) R.string.guardian_auth_ok else R.string.guardian_auth_failed);if(result.isSuccess) { CloudOutbox.retry(this);refresh() } } }
+        fun auth(action: () -> Unit) { FamilyUi.io(this,{ runCatching(action) }) { result -> password.text.clear();status.setText(if(result.isSuccess) R.string.guardian_auth_ok else R.string.guardian_auth_failed);if(result.isSuccess && CloudApi.config(this).optString("idToken").isNotBlank()) { CloudOutbox.retry(this);refresh() } } }
         DeliveryUi.button(accountForm,R.string.guardian_signup) { val e=email.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).signup(e,p) } }
         DeliveryUi.button(accountForm,R.string.guardian_confirm) { val e=email.text.toString();val c=code.text.toString();auth { CloudApi(this).confirm(e,c) } }
         DeliveryUi.button(accountForm,R.string.guardian_login) { val e=email.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).authenticate(e,p) } }
@@ -98,7 +98,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
         DeliveryUi.button(accountForm,R.string.guardian_invite) { val e=email.text.toString();auth { val result=CloudApi(this).request("POST","/contacts/invite",JSONObject().put("email",e));FamilyStore(this).update { it.put("cloudInvitation",result.getString("invitation")) } } }
         DeliveryUi.button(accountForm,R.string.guardian_confirm_contact) { val c=code.text.toString();auth { val id=FamilyStore(this).snapshot().optString("cloudInvitation");CloudApi(this).request("POST","/contacts/confirm",JSONObject().put("invitation",id).put("code",c)) } }
         DeliveryUi.button(accountForm,R.string.guardian_usage) { refresh() }
-        DeliveryUi.button(accountForm,R.string.mail_retry) { FamilyUi.io(this,{ CloudOutbox.retry(this) }) { refresh() } }
+        DeliveryUi.button(accountForm,R.string.mail_retry) { FamilyUi.io(this,{ CloudOutbox.retry(this,manual=true) }) { refresh() } }
         DeliveryUi.button(accountForm,R.string.guardian_logout) { FamilyUi.io(this,{ CloudApi(this).logout() }) { status.setText(R.string.guardian_login_required) } }
         DeliveryUi.button(accountForm,R.string.guardian_delete_account,red=true) {
             MaterialAlertDialogBuilder(this).setMessage(R.string.guardian_delete_note).setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.guardian_delete_account) { _,_ ->

@@ -20,10 +20,13 @@ object CloudOutbox {
         if(events(root).has(id)) return
         events(root).put(id,JSONObject().put("eventId",id).put("status","PENDING").put("payload",JSONObject(payload.toString())).put("manual",manual).put("createdAt",System.currentTimeMillis()))
     }
-    fun retry(context: Context) {
+    fun retry(context: Context, manual: Boolean=false) {
         FamilyStore(context).update { root -> val rows=events(root);rows.keys().forEach { key ->
             val job=rows.getJSONObject(key)
-            if(job.optString("status") !in listOf("SENT","CANCELLED","CANCEL_PENDING")) job.put("status","RETRYING")
+            if(job.optString("status") !in listOf("SENT","CANCELLED","CANCEL_PENDING")) {
+                if(manual && job.optString("status")=="FAILED") job.put("manualRetry",true)
+                job.put("status","RETRYING")
+            }
         } }
         CloudSyncWorker.schedule(context)
     }
@@ -97,7 +100,9 @@ class CloudSyncWorker(context: Context,params: WorkerParameters): Worker(context
                 }
                 // If evidence is still recording, keep reconciling the same server event, never reserve again.
                 if(!allowed(id,expectedSession)) continue
-                val result=api.request("POST","/events/$serverId/dispatch",JSONObject())
+                val retry=CloudOutbox.events(store.snapshot()).optJSONObject(id)?.optBoolean("manualRetry")==true
+                val result=api.request("POST","/events/$serverId/dispatch",JSONObject().put("retry",retry))
+                store.update { root -> CloudOutbox.events(root).optJSONObject(id)?.remove("manualRetry") }
                 val recording=store.snapshot().optJSONObject("evidenceActions")?.optString(id) in listOf("RECORDING","STARTING")
                 status(id,if(recording) "RECORDING" else result.optString("state","QUEUED"))
             }
