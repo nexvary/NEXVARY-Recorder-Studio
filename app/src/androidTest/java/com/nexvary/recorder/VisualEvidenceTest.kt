@@ -49,6 +49,10 @@ class VisualEvidenceTest {
             ActivityScenario.launch(page).use {
                 onView(withId(visibleId)).check(matches(isDisplayed()))
                 capture(it, name)
+                if (page == MoreActivity::class.java) {
+                    onView(withId(R.id.moreAbout)).perform(reveal()).check(matches(isDisplayed()))
+                    capture(it, "more-cards-bottom-ar")
+                }
                 if (page == GuideActivity::class.java) {
                     onView(withId(R.id.guideSearch)).perform(reveal(), androidx.test.espresso.action.ViewActions.replaceText(context.getString(R.string.guide_q_free)), androidx.test.espresso.action.ViewActions.closeSoftKeyboard())
                     awaitUi(withId(R.id.guideFaqFree))

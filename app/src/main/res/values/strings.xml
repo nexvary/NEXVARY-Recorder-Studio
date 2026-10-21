@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">Can this app record every phone call?</string>
     <string name="guide_a_calls">Call recording uses a separately installed companion and Shizuku where supported. Android version, device and permissions limit availability. Review the companion status in Call Recording; this app cannot guarantee recording every call.</string>
     <string name="guide_q_test">How can I test without causing a real alarm?</string>
-    <string name="guide_a_test">Use the explicitly labelled Test Alert in parent settings. A test email says TEST ALERT — NO EMERGENCY. The guide shortcuts only open pages; they do not start recording or send SOS. Never use a real emergency contact or emergency number for practice.</string>
+    <string name="guide_a_test">Use the explicitly labelled Test Alert under Family Safety → Start Safety Check. A test email says TEST ALERT — NO EMERGENCY. The guide shortcuts only open pages; they do not start recording or send SOS. Never use a real emergency contact or emergency number for practice.</string>
     <string name="call_companion_installed">Companion app installed</string>
     <string name="call_companion_missing">Companion app not installed</string>
     <string name="call_authorize">Authorize Shizuku</string>

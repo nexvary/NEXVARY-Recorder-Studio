@@ -85,6 +85,9 @@ class GuideActivity : AppCompatActivity() {
         })
         search.setText(savedInstanceState?.getString("query") ?: intent.getStringExtra("query").orEmpty())
         render()
+        // Open with the heading and Back visible, rather than auto-scrolling to the text field.
+        root.isFocusableInTouchMode = true
+        root.requestFocus()
     }
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("query", search.text.toString())

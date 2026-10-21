@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">Можно ли записывать все звонки?</string>
     <string name="guide_a_calls">Нужны отдельное приложение-помощник и Shizuku, если устройство поддерживает их. Android, модель и разрешения ограничивают доступность. Проверьте состояние на странице звонков; запись каждого звонка не гарантируется.</string>
     <string name="guide_q_test">Как проверить без настоящей тревоги?</string>
-    <string name="guide_a_test">Используйте Тестовую тревогу в настройках родителя. В письме указано TEST ALERT — NO EMERGENCY. Кнопки справки только открывают страницы. Не тренируйтесь с реальными экстренными номерами и адресатами.</string>
+    <string name="guide_a_test">Используйте Тестовую тревогу в разделе Безопасность семьи → Начать проверку безопасности. В письме указано TEST ALERT — NO EMERGENCY. Кнопки справки только открывают страницы. Не тренируйтесь с реальными экстренными номерами и адресатами.</string>
     <string name="call_companion_installed">Приложение-помощник установлено</string>
     <string name="call_companion_missing">Приложение-помощник не установлено</string>
     <string name="call_authorize">Разрешить Shizuku</string>

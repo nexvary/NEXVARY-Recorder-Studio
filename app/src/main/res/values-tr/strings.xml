@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">Her telefon görüşmesi kaydedilebilir mi?</string>
     <string name="guide_a_calls">Arama kaydı ayrı bir yardımcı uygulama ve destekleniyorsa Shizuku gerektirir. Android, cihaz ve izinler kullanılabilirliği sınırlar. Arama Kaydı sayfasında durumu inceleyin; her aramanın kaydı garanti değildir.</string>
     <string name="guide_q_test">Gerçek alarm oluşturmadan nasıl denerim?</string>
-    <string name="guide_a_test">Veli ayarlarındaki Test Uyarısını kullanın. E-posta TEST ALERT — NO EMERGENCY der. Kılavuz kısayolları yalnızca sayfa açar. Denemede gerçek acil numara veya acil kişi kullanmayın.</string>
+    <string name="guide_a_test">Aile Güvenliği → Güvenlik Kontrolünü Başlat altındaki Test Uyarısını kullanın. E-posta TEST ALERT — NO EMERGENCY der. Kılavuz kısayolları yalnızca sayfa açar. Denemede gerçek acil numara veya acil kişi kullanmayın.</string>
     <string name="call_companion_installed">Yardımcı uygulama yüklü</string>
     <string name="call_companion_missing">Yardımcı uygulama yüklü değil</string>
     <string name="call_authorize">Shizuku izni ver</string>

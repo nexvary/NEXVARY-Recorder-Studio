@@ -31,7 +31,7 @@ class AllPagesReviewTest {
     @Test fun everyRegisteredInternalActivityRendersWithSafeBackNavigation() {
         @Suppress("DEPRECATION")
         val pages = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_ACTIVITIES).activities.orEmpty()
-            .map { it.name }.filter { it.startsWith("com.nexvary.recorder.") }.sorted()
+            .map { it.targetActivity ?: it.name }.filter { it.startsWith("com.nexvary.recorder.") }.distinct().sorted()
         assertTrue("Manifest unexpectedly contains too few pages", pages.size >= 25)
         for (name in pages) {
             @Suppress("UNCHECKED_CAST")

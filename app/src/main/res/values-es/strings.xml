@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">¿Puede grabar todas las llamadas?</string>
     <string name="guide_a_calls">Las llamadas necesitan una aplicación auxiliar separada y Shizuku si es compatible. Android, dispositivo y permisos limitan la función. Revise su estado en Grabación de llamadas; no se garantiza grabar cada llamada.</string>
     <string name="guide_q_test">¿Cómo pruebo sin causar una alarma real?</string>
-    <string name="guide_a_test">Use Alerta de prueba en los ajustes del tutor. El correo dice TEST ALERT — NO EMERGENCY. Los accesos de la guía solo abren páginas. No practique con números ni contactos reales de emergencia.</string>
+    <string name="guide_a_test">Use Alerta de prueba en Seguridad familiar → Iniciar control de seguridad. El correo dice TEST ALERT — NO EMERGENCY. Los accesos de la guía solo abren páginas. No practique con números ni contactos reales de emergencia.</string>
     <string name="call_companion_installed">Aplicación auxiliar instalada</string>
     <string name="call_companion_missing">Aplicación auxiliar no instalada</string>
     <string name="call_authorize">Autorizar Shizuku</string>

@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">Si possono registrare tutte le chiamate?</string>
     <string name="guide_a_calls">Serve un’app di supporto separata e Shizuku se compatibile. Android, dispositivo e permessi limitano la disponibilità. Controlla lo stato nella pagina chiamate; non è garantita la registrazione di ogni chiamata.</string>
     <string name="guide_q_test">Come provo senza un vero allarme?</string>
-    <string name="guide_a_test">Usa Allarme di prova nelle impostazioni del tutore. La mail indica TEST ALERT — NO EMERGENCY. I collegamenti della guida aprono solo pagine. Non usare numeri o contatti di emergenza reali per provare.</string>
+    <string name="guide_a_test">Usa Allarme di prova in Sicurezza famiglia → Avvia controllo sicurezza. La mail indica TEST ALERT — NO EMERGENCY. I collegamenti della guida aprono solo pagine. Non usare numeri o contatti di emergenza reali per provare.</string>
     <string name="call_companion_installed">App di supporto installata</string>
     <string name="call_companion_missing">App di supporto non installata</string>
     <string name="call_authorize">Autorizza Shizuku</string>

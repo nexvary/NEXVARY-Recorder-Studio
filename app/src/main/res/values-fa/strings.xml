@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">آیا همه تماس‌ها ضبط می‌شوند؟</string>
     <string name="guide_a_calls">ضبط تماس به برنامه کمکی جدا و Shizuku در دستگاه سازگار نیاز دارد. نسخه Android، دستگاه و مجوزها محدودیت دارند. وضعیت را در صفحه تماس ببینید؛ ضبط هر تماس تضمین نیست.</string>
     <string name="guide_q_test">چگونه بدون هشدار واقعی آزمایش کنم؟</string>
-    <string name="guide_a_test">از هشدار آزمایشی در تنظیمات سرپرست استفاده کنید. عنوان ایمیل TEST ALERT — NO EMERGENCY است. میانبرهای راهنما فقط صفحه باز می‌کنند. با شماره یا مخاطب اضطراری واقعی تمرین نکنید.</string>
+    <string name="guide_a_test">از هشدار آزمایشی در امنیت خانواده ← شروع بررسی ایمنی استفاده کنید. عنوان ایمیل TEST ALERT — NO EMERGENCY است. میانبرهای راهنما فقط صفحه باز می‌کنند. با شماره یا مخاطب اضطراری واقعی تمرین نکنید.</string>
     <string name="call_companion_installed">برنامه کمکی نصب است</string>
     <string name="call_companion_missing">برنامه کمکی نصب نیست</string>
     <string name="call_authorize">دادن مجوز Shizuku</string>

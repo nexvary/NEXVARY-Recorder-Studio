@@ -623,7 +623,7 @@
     <string name="guide_q_calls">هل يمكن تسجيل كل المكالمات؟</string>
     <string name="guide_a_calls">تسجيل المكالمات يعتمد على تطبيق مساعد منفصل وShizuku حين يدعمهما الهاتف. إصدار Android والجهاز والأذونات تحدد الإتاحة. راجع حالة المساعد في صفحة تسجيل المكالمات؛ لا يُضمن تسجيل كل مكالمة.</string>
     <string name="guide_q_test">كيف أجرّب دون إطلاق إنذار حقيقي؟</string>
-    <string name="guide_a_test">استخدم تنبيه الاختبار المسمّى بوضوح في إعدادات ولي الأمر؛ عنوان بريده TEST ALERT — NO EMERGENCY. اختصارات الدليل تفتح الصفحات فقط ولا تبدأ التسجيل أو الاستغاثة. لا تستخدم رقم الطوارئ أو جهة طوارئ حقيقية للتدريب.</string>
+    <string name="guide_a_test">استخدم تنبيه الاختبار المسمّى بوضوح من أمان الأسرة ← بدء مؤقت الأمان؛ عنوان بريده TEST ALERT — NO EMERGENCY. اختصارات الدليل تفتح الصفحات فقط ولا تبدأ التسجيل أو الاستغاثة. لا تستخدم رقم الطوارئ أو جهة طوارئ حقيقية للتدريب.</string>
     <string name="call_companion_installed">التطبيق المساعد مثبت</string>
     <string name="call_companion_missing">التطبيق المساعد غير مثبت</string>
     <string name="call_authorize">منح إذن Shizuku</string>

@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">کیا ہر فون کال ریکارڈ ہو سکتی ہے؟</string>
     <string name="guide_a_calls">کال ریکارڈنگ کو الگ معاون ایپ اور معاون فون پر Shizuku چاہیے۔ Android ورژن، فون اور اجازتیں دستیابی محدود کرتی ہیں۔ کال ریکارڈنگ صفحے پر حالت دیکھیں؛ ہر کال کی ریکارڈنگ کی ضمانت نہیں۔</string>
     <string name="guide_q_test">حقیقی الارم کے بغیر کیسے آزماؤں؟</string>
-    <string name="guide_a_test">سرپرست سیٹنگ میں واضح ٹیسٹ الرٹ استعمال کریں۔ ای میل پر TEST ALERT — NO EMERGENCY لکھا ہوتا ہے۔ رہنما کے شارٹ کٹ صرف صفحے کھولتے ہیں۔ حقیقی ہنگامی نمبر یا رابطے پر مشق نہ کریں۔</string>
+    <string name="guide_a_test">خاندانی تحفظ ← حفاظتی چیک شروع کریں میں واضح ٹیسٹ الرٹ استعمال کریں۔ ای میل پر TEST ALERT — NO EMERGENCY لکھا ہوتا ہے۔ رہنما کے شارٹ کٹ صرف صفحے کھولتے ہیں۔ حقیقی ہنگامی نمبر یا رابطے پر مشق نہ کریں۔</string>
     <string name="call_companion_installed">معاون ایپ نصب ہے</string>
     <string name="call_companion_missing">معاون ایپ نصب نہیں</string>
     <string name="call_authorize">Shizuku کو اجازت دیں</string>

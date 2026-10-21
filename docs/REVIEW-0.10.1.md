@@ -32,6 +32,8 @@ Reviewed manifest, navigation, all 34 internal activity classes, recorder/media 
 
 CI performs Android build, release AAB, lint, JVM tests, backend tests with mocked AWS, Ruff, CloudFormation lint, page/help declaration gate and instrumented emulator tests on Android 13/14/15 (API 33/34/35). Real Arabic screenshots are captured by the app's instrumentation, including More, Guide and a filtered FAQ result. Final run and counts are recorded in the delivery report after successful completion.
 
+Lint currently reports no errors and 142 nonblocking warnings: unused resources/style/KTX suggestions, dependency/target updates, small legacy Home labels and floating-overlay accessibility. Five trust-manager findings are in bundled Bouncy Castle dependency jars; app HTTPS uses the platform verifier, and legacy SMTP enforces TLS and hostname verification with a rejection test for untrusted certificates. These warnings are retained for review, not suppressed as a blanket policy.
+
 The page gate checks all app Activity declarations, private internal pages and complete help copy in all ten languages. Tests cover actual WAV capture/playability and video export/Library visibility, along with the existing media, safety, camera/evidence, PIN, privacy and navigation cases.
 
 ## Physical Device Verification and external dependencies

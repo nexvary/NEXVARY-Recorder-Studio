@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">Tous les appels sont-ils enregistrables ?</string>
     <string name="guide_a_calls">Les appels nécessitent une application compagnon séparée et Shizuku si compatibles. Android, appareil et autorisations limitent la fonction. Consultez leur état sur la page des appels ; aucun enregistrement universel n’est garanti.</string>
     <string name="guide_q_test">Comment tester sans fausse alerte ?</string>
-    <string name="guide_a_test">Utilisez Alerte de test dans les réglages parentaux. Son courriel indique TEST ALERT — NO EMERGENCY. Les raccourcis du guide ouvrent seulement des pages. Ne testez pas avec un numéro ou destinataire d’urgence réel.</string>
+    <string name="guide_a_test">Utilisez Alerte de test dans Sécurité familiale → Démarrer le contrôle de sécurité. Son courriel indique TEST ALERT — NO EMERGENCY. Les raccourcis du guide ouvrent seulement des pages. Ne testez pas avec un numéro ou destinataire d’urgence réel.</string>
     <string name="call_companion_installed">Application compagnon installée</string>
     <string name="call_companion_missing">Application compagnon absente</string>
     <string name="call_authorize">Autoriser Shizuku</string>

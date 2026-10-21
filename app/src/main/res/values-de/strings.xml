@@ -623,7 +623,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_calls">Können alle Telefongespräche aufgenommen werden?</string>
     <string name="guide_a_calls">Anrufaufnahme benötigt eine separate Begleit-App und gegebenenfalls Shizuku. Android, Gerät und Berechtigungen begrenzen die Verfügbarkeit. Prüfen Sie den Status auf der Anrufseite; Aufnahme jedes Anrufs ist nicht garantiert.</string>
     <string name="guide_q_test">Wie teste ich ohne echten Alarm?</string>
-    <string name="guide_a_test">Nutzen Sie den Testalarm in den Elterneinstellungen. Seine E-Mail heißt TEST ALERT — NO EMERGENCY. Hilfekürzel öffnen nur Seiten. Verwenden Sie keine echte Notrufnummer oder echte Notfallkontakte zum Üben.</string>
+    <string name="guide_a_test">Nutzen Sie den Testalarm unter Familiensicherheit → Sicherheitscheck starten. Seine E-Mail heißt TEST ALERT — NO EMERGENCY. Hilfekürzel öffnen nur Seiten. Verwenden Sie keine echte Notrufnummer oder echte Notfallkontakte zum Üben.</string>
     <string name="call_companion_installed">Begleit-App installiert</string>
     <string name="call_companion_missing">Begleit-App nicht installiert</string>
     <string name="call_authorize">Shizuku autorisieren</string>
