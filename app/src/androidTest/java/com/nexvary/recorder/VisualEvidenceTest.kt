@@ -73,6 +73,7 @@ class VisualEvidenceTest {
                 }
                 if(page == com.nexvary.recorder.family.FamilyDashboardActivity::class.java) {
                     onView(withId(R.id.fsPresets)).perform(reveal(),androidx.test.espresso.action.ViewActions.click())
+                    androidx.test.espresso.Espresso.onData(org.hamcrest.Matchers.anything()).atPosition(0).check(matches(isDisplayed()))
                     capture(it,"timer-presets-ar")
                     androidx.test.espresso.Espresso.onData(org.hamcrest.Matchers.anything()).atPosition(0).perform(androidx.test.espresso.action.ViewActions.click())
                     onView(withId(R.id.fsStatus)).perform(reveal())
