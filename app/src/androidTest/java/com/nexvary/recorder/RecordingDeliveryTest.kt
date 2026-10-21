@@ -17,6 +17,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nexvary.recorder.camera.BackgroundCameraActivity
 import com.nexvary.recorder.camera.BackgroundCameraService
+import com.nexvary.recorder.camera.CameraQuality
 import com.nexvary.recorder.delivery.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -161,14 +162,77 @@ class RecordingDeliveryTest {
         }
         assertFalse(BackgroundCameraService.state.stage == BackgroundCameraService.Companion.Stage.RECORDING)
     }
-    private fun awaitCapture(predicate: (BackgroundCameraService.Companion.CaptureState) -> Boolean): BackgroundCameraService.Companion.CaptureState {
-        val until = SystemClock.uptimeMillis() + 35_000
+    private fun awaitCapture(timeoutMs: Long = 35_000, predicate: (BackgroundCameraService.Companion.CaptureState) -> Boolean): BackgroundCameraService.Companion.CaptureState {
+        val until = SystemClock.uptimeMillis() + timeoutMs
         while (SystemClock.uptimeMillis() < until) {
             val state = BackgroundCameraService.state
             if (predicate(state)) return state
             SystemClock.sleep(50)
         }
         throw AssertionError("Camera state timeout: ${BackgroundCameraService.state}")
+    }
+    @Test fun oneMinuteCompactCaptureWithAudioIsPlayableSmallAndSavesWithScreenOff() {
+        instrumentation.uiAutomation.grantRuntimePermission(context.packageName, Manifest.permission.CAMERA)
+        instrumentation.uiAutomation.grantRuntimePermission(context.packageName, Manifest.permission.RECORD_AUDIO)
+        var output: File? = null
+        val before = MailQueue(context).jobs().size
+        try {
+            ActivityScenario.launch(BackgroundCameraActivity::class.java).use { scenario ->
+                awaitUi(withId(R.id.cameraTimer))
+                scenario.onActivity { activity ->
+                    ContextCompat.startForegroundService(activity, Intent(activity, BackgroundCameraService::class.java)
+                        .setAction(BackgroundCameraService.ACTION_START)
+                        .putExtra(BackgroundCameraService.EXTRA_AUDIO, true)
+                        .putExtra(BackgroundCameraService.EXTRA_QUALITY, CameraQuality.COMPACT.key)
+                        .putExtra(BackgroundCameraService.EXTRA_DURATION, 60_000L))
+                }
+                awaitCapture { it.stage == BackgroundCameraService.Companion.Stage.RECORDING }
+                scenario.moveToState(Lifecycle.State.CREATED)
+                instrumentation.uiAutomation.executeShellCommand("input keyevent KEYCODE_SLEEP").close()
+                val power = context.getSystemService(android.os.PowerManager::class.java)
+                val sleepDeadline = SystemClock.uptimeMillis() + 2_000
+                while (power.isInteractive && SystemClock.uptimeMillis() < sleepDeadline) SystemClock.sleep(50)
+                assertFalse(power.isInteractive)
+                val saved = awaitCapture(90_000) { it.stage == BackgroundCameraService.Companion.Stage.SAVED || it.stage == BackgroundCameraService.Companion.Stage.ERROR }
+                assertEquals(BackgroundCameraService.Companion.Stage.SAVED, saved.stage)
+                output = File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES), saved.name)
+                val video = output!!
+                val metadata = android.media.MediaMetadataRetriever()
+                val duration: Long
+                try {
+                    metadata.setDataSource(video.absolutePath)
+                    duration = metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong()
+                    assertTrue("duration=$duration", duration in 55_000..66_000)
+                    assertEquals("yes", metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO))
+                    assertEquals("yes", metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO))
+                } finally { metadata.release() }
+                val extractor = android.media.MediaExtractor()
+                var width = 0; var height = 0; var audioTracks = 0
+                try {
+                    extractor.setDataSource(video.absolutePath)
+                    for (i in 0 until extractor.trackCount) {
+                        val format = extractor.getTrackFormat(i)
+                        when (format.getString(android.media.MediaFormat.KEY_MIME)) {
+                            "video/avc" -> { width = format.getInteger(android.media.MediaFormat.KEY_WIDTH); height = format.getInteger(android.media.MediaFormat.KEY_HEIGHT) }
+                            "audio/mp4a-latm" -> { audioTracks++; assertEquals(1, format.getInteger(android.media.MediaFormat.KEY_CHANNEL_COUNT)) }
+                        }
+                    }
+                } finally { extractor.release() }
+                assertTrue(width > 0 && height > 0 && maxOf(width,height) <= 640 && minOf(width,height) <= 480)
+                assertEquals(1, audioTracks)
+                assertTrue("Actual minute bytes=${video.length()}", video.length() in 1..4_500_000)
+                assertEquals(before, MailQueue(context).jobs().size)
+                File(context.getExternalFilesDir(null), "quality-measurements.json").writeText(org.json.JSONObject()
+                    .put("profile", "compact").put("durationMs", duration).put("bytes", video.length())
+                    .put("width", width).put("height", height).put("audioTracks", audioTracks)
+                    .put("mimeMessageBytes", DeliveryPolicy.messageBytes(video.length())).toString(2))
+            }
+        } finally {
+            context.stopService(Intent(context, BackgroundCameraService::class.java))
+            instrumentation.uiAutomation.executeShellCommand("input keyevent KEYCODE_WAKEUP").close()
+            instrumentation.uiAutomation.executeShellCommand("wm dismiss-keyguard").close()
+            output?.delete()
+        }
     }
     @Test fun nativeTimerSavesPlayableVideoWithActivityStoppedAndScreenOff() {
         instrumentation.uiAutomation.grantRuntimePermission(context.packageName, Manifest.permission.CAMERA)

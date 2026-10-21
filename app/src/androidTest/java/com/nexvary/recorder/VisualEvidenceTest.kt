@@ -41,6 +41,8 @@ class VisualEvidenceTest {
                 onView(withId(visibleId)).check(matches(isDisplayed()))
                 capture(it, name)
                 if (page == com.nexvary.recorder.camera.BackgroundCameraActivity::class.java) {
+                    onView(withId(R.id.cameraQualityGroup)).perform(reveal()).check(matches(isDisplayed()))
+                    capture(it, "camera-quality-ar")
                     onView(withId(R.id.cameraStart)).perform(reveal()).check(matches(isDisplayed()))
                     capture(it, "camera-delivery-ar")
                 }

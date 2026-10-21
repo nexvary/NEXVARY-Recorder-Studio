@@ -359,4 +359,14 @@
     <string name="smtp_error_tls">[TLS] فشل الاتصال الآمن. تحقق من شهادة الخادم ومطابقة اسم المضيف وتاريخ الهاتف ونوع الحماية. لن يتم تجاوز الشهادات غير الموثوقة.</string>
     <string name="smtp_error_auth">[AUTH] رفض الخادم تسجيل الدخول إلى SMTP. تحقق من اسم المستخدم الكامل وكلمة المرور أو كلمة مرور التطبيق، وتفعيل مصادقة SMTP للحساب.</string>
     <string name="smtp_error_starttls">[STARTTLS] لم يقدّم هذا المنفذ اتصال STARTTLS المطلوب. تحقق من إعدادات الخادم أو استخدم منفذ TLS المباشر المحدد من مزودك.</string>
+    <string name="camera_quality_title">جودة التسجيل وحجم الملف</string>
+    <string name="camera_quality_compact">حجم صغير — حتى 480p، مناسب للبريد</string>
+    <string name="camera_quality_balanced">متوازن — حتى 720p</string>
+    <string name="camera_quality_high">جودة مرتفعة — حتى 1080p، ملفات كبيرة</string>
+    <string name="camera_quality_estimate">المستهدف تقريبيًا: %1$s ميجابايت للدقيقة · %2$s ميجابايت لخمس دقائق.\nرسالة خمس دقائق بعد ترميز المرفق: نحو %3$s ميجابايت.</string>
+    <string name="camera_quality_note">الحجم الصغير يقلل التفاصيل، خاصة أثناء الحركة أو في الإضاءة الضعيفة. التقديرات غير مضمونة؛ قد يعدّل الهاتف الجودة ومعدل البيانات. تُختار الجودة قبل التسجيل، ولا تتغير الملفات السابقة.</string>
+    <string name="camera_quality_timed_size">للمدة المحددة: نحو %1$s ميجابايت للفيديو، و%2$s ميجابايت كرسالة بريد.</string>
+    <string name="camera_quality_unbounded">لا يوجد مؤقت صالح مفعّل؛ قد يتجاوز التسجيل الطويل حد البريد. لا يُقسّم التسجيل تلقائيًا إلى أجزاء بريدية.</string>
+    <string name="camera_quality_limit">حد الرسالة المضبوط: %1$d ميبيبايت (MiB)، شاملًا المرفق بعد ترميزه.</string>
+    <string name="camera_quality_over_limit">قد يتجاوز التسجيل حد الرسالة. اختر حجمًا أصغر أو مدة أقصر. ستبقى النسخة الأصلية على الهاتف إذا تعذر إرسال البريد.</string>
 </resources>

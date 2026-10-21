@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.nexvary.recorder.R
 import com.nexvary.recorder.delivery.*
@@ -28,6 +29,14 @@ class BackgroundCameraActivity : AppCompatActivity() {
     private lateinit var status: TextView
     private lateinit var start: Button
     private lateinit var stop: Button
+    private lateinit var qualityGroup: RadioGroup
+    private lateinit var qualityEstimate: TextView
+    private var smtpLimitMiB: Int? = null
+    private fun selectedQuality() = when (qualityGroup.checkedRadioButtonId) {
+        R.id.cameraQualityBalanced -> CameraQuality.BALANCED
+        R.id.cameraQualityHigh -> CameraQuality.HIGH
+        else -> CameraQuality.COMPACT
+    }
     private var pendingStart = false
     private var notificationAsked = false
     private var lastState: BackgroundCameraService.Companion.CaptureState? = null
@@ -43,19 +52,33 @@ class BackgroundCameraActivity : AppCompatActivity() {
         }
         front = switch(root, R.string.camera_front, R.id.cameraFront, "front")
         audio = switch(root, R.string.camera_mic, R.id.cameraMic, "audio")
+        val prefs = getSharedPreferences("camera_options", MODE_PRIVATE)
+        val qualityPanel = DeliveryUi.section(root, R.string.camera_quality_title)
+        qualityGroup = RadioGroup(this).apply { id = R.id.cameraQualityGroup; qualityPanel.addView(this) }
+        val initialQuality = CameraQuality.fromKey(savedInstanceState?.getString("quality") ?: prefs.getString("quality", null))
+        listOf(Triple(CameraQuality.COMPACT, R.id.cameraQualityCompact, R.string.camera_quality_compact),
+            Triple(CameraQuality.BALANCED, R.id.cameraQualityBalanced, R.string.camera_quality_balanced),
+            Triple(CameraQuality.HIGH, R.id.cameraQualityHigh, R.string.camera_quality_high)).forEach { (quality, ident, label) ->
+            qualityGroup.addView(androidx.appcompat.widget.AppCompatRadioButton(this).apply {
+                id = ident; setText(label); textSize = 15f
+                minHeight = (52 * resources.displayMetrics.density).toInt()
+                setTextColor(0xFF43FF88.toInt()); buttonTintList = android.content.res.ColorStateList.valueOf(0xFF43FF88.toInt())
+                setTag(R.id.studioStyled, true)
+            })
+            if (quality == initialQuality) qualityGroup.check(ident)
+        }
+        qualityEstimate = DeliveryUi.text(qualityPanel, R.string.camera_quality_note).apply { id = R.id.cameraQualityEstimate }
+        DeliveryUi.text(qualityPanel, R.string.camera_quality_note)
         val timing = DeliveryUi.section(root, R.string.camera_timer_title)
         timer = switch(timing, R.string.camera_timer_enable, R.id.cameraTimer, "timer")
         minutes = DeliveryUi.field(timing, R.string.camera_minutes, R.id.cameraMinutes, savedInstanceState?.getString("minutes") ?: "10", InputType.TYPE_CLASS_NUMBER)
         minutes.isEnabled = timer.isChecked
-        timer.setOnCheckedChangeListener { _, checked -> minutes.isEnabled = checked }
         DeliveryUi.text(timing, R.string.camera_timer_note)
         val delivery = DeliveryUi.section(root, R.string.camera_email_title)
         email = switch(delivery, R.string.camera_email_enable, R.id.cameraEmail, "email")
-        val prefs = getSharedPreferences("camera_options", MODE_PRIVATE)
         recipient = DeliveryUi.field(delivery, R.string.camera_recipient, R.id.cameraRecipient,
             savedInstanceState?.getString("recipient") ?: prefs.getString("recipient", "").orEmpty(), InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
         recipient.isEnabled = email.isChecked
-        email.setOnCheckedChangeListener { _, checked -> recipient.isEnabled = checked }
         DeliveryUi.text(delivery, R.string.camera_email_note)
         DeliveryUi.button(delivery, R.string.smtp_title, R.id.openSmtp) { startActivity(Intent(this, SmtpSettingsActivity::class.java)) }
         DeliveryUi.button(delivery, R.string.mail_outbox, R.id.mailOutbox) { startActivity(Intent(this, MailOutboxActivity::class.java)) }
@@ -64,10 +87,45 @@ class BackgroundCameraActivity : AppCompatActivity() {
         stop = DeliveryUi.button(root, R.string.camera_stop, R.id.cameraStop, red = true) {
             startService(Intent(this, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_STOP))
         }
+        qualityGroup.setOnCheckedChangeListener { _, _ ->
+            prefs.edit().putString("quality", selectedQuality().key).apply(); updateEstimate()
+        }
+        audio.setOnCheckedChangeListener { _, _ -> updateEstimate() }
+        timer.setOnCheckedChangeListener { _, checked -> minutes.isEnabled = checked; updateEstimate() }
+        email.setOnCheckedChangeListener { _, checked -> recipient.isEnabled = checked; updateEstimate() }
+        minutes.doAfterTextChanged { updateEstimate() }
+        updateEstimate()
     }
     override fun onStart() {
         super.onStart(); handler.post(tick)
-        lifecycleScope.launch { withContext(Dispatchers.IO) { runCatching { MailWorker.reconcile(this@BackgroundCameraActivity) } } }
+        lifecycleScope.launch {
+            smtpLimitMiB = withContext(Dispatchers.IO) {
+                runCatching { MailWorker.reconcile(this@BackgroundCameraActivity) }
+                SmtpSettings(this@BackgroundCameraActivity).load()?.limitMiB
+            }
+            updateEstimate()
+        }
+    }
+    private fun updateEstimate() {
+        val quality = selectedQuality()
+        fun mb(bytes: Long) = String.format(resources.configuration.locales[0], "%.1f", bytes / 1_000_000.0)
+        val five = quality.estimatedBytes(300_000, audio.isChecked)
+        val lines = mutableListOf(getString(R.string.camera_quality_estimate, mb(quality.estimatedBytes(60_000, audio.isChecked)),
+            mb(five), mb(DeliveryPolicy.messageBytes(five))))
+        var warning = false
+        if (email.isChecked) {
+            val duration = if (timer.isChecked) DeliveryPolicy.duration(minutes.text.toString()) else null
+            if (duration != null) lines.add(getString(R.string.camera_quality_timed_size, mb(quality.estimatedBytes(duration, audio.isChecked)),
+                mb(DeliveryPolicy.messageBytes(quality.estimatedBytes(duration, audio.isChecked)))))
+            else lines.add(getString(R.string.camera_quality_unbounded))
+            smtpLimitMiB?.let { limit ->
+                lines.add(getString(R.string.camera_quality_limit, limit))
+                warning = !DeliveryPolicy.fits(quality.budgetBytes(duration ?: 300_000, audio.isChecked), limit)
+                if (warning) lines.add(getString(R.string.camera_quality_over_limit))
+            }
+        }
+        qualityEstimate.text = lines.joinToString("\n")
+        qualityEstimate.setTextColor(if (warning) 0xFFFF6377.toInt() else 0xFFE2E8F0.toInt())
     }
     override fun onStop() { handler.removeCallbacks(tick); super.onStop() }
     private fun updateState() {
@@ -77,6 +135,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
         start.alpha = if (start.isEnabled) 1f else 0.45f
         stop.alpha = if (stop.isEnabled) 1f else 0.45f
         front.isEnabled = !active; audio.isEnabled = !active; timer.isEnabled = !active; email.isEnabled = !active
+        for (i in 0 until qualityGroup.childCount) qualityGroup.getChildAt(i).isEnabled = !active
         minutes.isEnabled = !active && timer.isChecked; recipient.isEnabled = !active && email.isChecked
         if (active || state != lastState) status.text = when (state.stage) {
             BackgroundCameraService.Companion.Stage.IDLE -> getString(R.string.camera_ready)
@@ -94,6 +153,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
         outState.putBoolean("front", front.isChecked); outState.putBoolean("audio", audio.isChecked)
         outState.putBoolean("timer", timer.isChecked); outState.putBoolean("email", email.isChecked)
         outState.putString("minutes", minutes.text.toString()); outState.putString("recipient", recipient.text.toString())
+        outState.putString("quality", selectedQuality().key)
         super.onSaveInstanceState(outState)
     }
     private fun requestAndStart() {
@@ -112,7 +172,8 @@ class BackgroundCameraActivity : AppCompatActivity() {
         runCatching {
             ContextCompat.startForegroundService(this, Intent(this, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_START)
                 .putExtra(BackgroundCameraService.EXTRA_FRONT, front.isChecked).putExtra(BackgroundCameraService.EXTRA_AUDIO, audio.isChecked)
-                .putExtra(BackgroundCameraService.EXTRA_DURATION, duration).putExtra(BackgroundCameraService.EXTRA_RECIPIENT, to))
+                .putExtra(BackgroundCameraService.EXTRA_DURATION, duration).putExtra(BackgroundCameraService.EXTRA_RECIPIENT, to)
+                .putExtra(BackgroundCameraService.EXTRA_QUALITY, selectedQuality().key))
         }.onFailure { status.setText(R.string.camera_failed) }
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

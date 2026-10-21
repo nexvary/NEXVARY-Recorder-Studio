@@ -19,13 +19,14 @@ adb shell dumpsys activity lastanr > diagnostics/last-anr.txt
 adb shell dumpsys activity activities > diagnostics/activities.txt
 adb shell dumpsys window windows > diagnostics/windows.txt
 adb pull /sdcard/Pictures/NEXVARYVisualEvidence/. screenshots/ || true
+adb pull /sdcard/Android/data/com.nexvary.recorder/files/quality-measurements.json diagnostics/quality-measurements.json || true
 # A screenshot is evidence only when the instrumentation gate succeeds.
 if [ "$status" -ne 0 ]; then
   cp -r screenshots diagnostics/unapproved-screenshots
   rm -f screenshots/*.png
   exit "$status"
 fi
-for screen in dashboard-ar dashboard-purple-ar sos-ar sos-editor-ar sos-contact-ar camera-ar camera-delivery-ar outbox-ar settings-ar library-ar; do
+for screen in dashboard-ar dashboard-purple-ar sos-ar sos-editor-ar sos-contact-ar camera-ar camera-quality-ar camera-delivery-ar outbox-ar settings-ar library-ar; do
   test -s "screenshots/$screen.png"
 done
 if grep -E 'ANR in com.nexvary.recorder|ANR in com.google.android.apps.nexuslauncher|ANR in com.android.launcher3|FATAL EXCEPTION:' diagnostics/logcat.txt; then

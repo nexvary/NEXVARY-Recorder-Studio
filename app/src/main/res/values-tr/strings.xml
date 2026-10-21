@@ -359,4 +359,14 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="smtp_error_tls">[TLS] Secure connection failed. Check the server certificate, matching host name, device date and security mode. An untrusted certificate will not be bypassed.</string>
     <string name="smtp_error_auth">[AUTH] The server rejected SMTP login. Check the full username, password or app password, and whether SMTP authentication is enabled for the account.</string>
     <string name="smtp_error_starttls">[STARTTLS] This port did not offer required STARTTLS. Check server settings or use the direct TLS port specified by your provider.</string>
+    <string name="camera_quality_title">Recording quality and file size</string>
+    <string name="camera_quality_compact">Small file — up to 480p, recommended for email</string>
+    <string name="camera_quality_balanced">Balanced — up to 720p</string>
+    <string name="camera_quality_high">High quality — up to 1080p, large files</string>
+    <string name="camera_quality_estimate">Approximate targets: %1$s MB/minute · %2$s MB/5 minutes.\nFive-minute email message after attachment encoding: about %3$s MB.</string>
+    <string name="camera_quality_note">Small file records fewer details, especially in motion or low light. Estimates are not guaranteed: the phone encoder may adjust quality and bitrate. Quality is selected before recording; existing files are unchanged.</string>
+    <string name="camera_quality_timed_size">Selected duration: about %1$s MB of video, %2$s MB as an email message.</string>
+    <string name="camera_quality_unbounded">No valid timer is enabled: a long recording can exceed the email limit. Recording is not automatically split into email parts.</string>
+    <string name="camera_quality_limit">Configured message limit: %1$d MiB, including the encoded attachment.</string>
+    <string name="camera_quality_over_limit">This recording may exceed the message limit. Choose a smaller file mode or a shorter duration. The local original remains available if email cannot be sent.</string>
 </resources>

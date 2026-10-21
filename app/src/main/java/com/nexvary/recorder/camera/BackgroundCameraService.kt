@@ -23,6 +23,7 @@ class BackgroundCameraService : Service() {
         const val EXTRA_AUDIO = "audio"
         const val EXTRA_DURATION = "duration_ms"
         const val EXTRA_RECIPIENT = "email_recipient"
+        const val EXTRA_QUALITY = "quality"
         @Volatile var activeOutputPath: String? = null
             private set
         enum class Stage { IDLE, STARTING, RECORDING, SAVING, SAVED, ERROR }
@@ -48,12 +49,14 @@ class BackgroundCameraService : Service() {
     private var requested = false
     private var recipient = ""
     private var duration = 0L
+    private var quality = CameraQuality.COMPACT
 
     override fun onBind(intent: Intent?) = null
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) { handler.post { finishRecording() }; return START_NOT_STICKY }
         if (intent?.action != ACTION_START || requested) return START_NOT_STICKY
         duration = intent.getLongExtra(EXTRA_DURATION, 0)
+        quality = CameraQuality.fromKey(intent.getStringExtra(EXTRA_QUALITY))
         recipient = intent.getStringExtra(EXTRA_RECIPIENT).orEmpty().trim()
         if (!DeliveryPolicy.validDuration(duration) || (recipient.isNotBlank() && !DeliveryPolicy.email(recipient)) ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -88,8 +91,13 @@ class BackgroundCameraService : Service() {
                 ?: error("Camera unavailable")
             val characteristics = manager.getCameraCharacteristics(id)
             val supported = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)?.getOutputSizes(MediaRecorder::class.java).orEmpty()
-            val size = supported.filter { it.width <= 1920 && it.height <= 1080 }.maxByOrNull { it.width.toLong() * it.height }
-                ?: supported.firstOrNull() ?: error("Recording unsupported")
+            val size = quality.chooseSize(supported.map { CameraQuality.FrameSize(it.width, it.height) })
+                ?: error("Recording unsupported")
+            val ranges = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES).orEmpty()
+            val fpsRange = ranges.filter { it.lower <= quality.fps && it.upper >= quality.fps }
+                .minWithOrNull(compareBy<android.util.Range<Int>> { it.upper }.thenByDescending { it.lower })
+                ?: ranges.minByOrNull { kotlin.math.abs(it.upper - quality.fps) }
+            val fps = fpsRange?.let { quality.fps.coerceIn(it.lower, it.upper) } ?: quality.fps
             val file = File(getExternalFilesDir(Environment.DIRECTORY_MOVIES), "NEXVARY_${System.currentTimeMillis()}.mp4")
             output = file; activeOutputPath = file.absolutePath
             val media = MediaRecorder(); recorder = media
@@ -98,8 +106,12 @@ class BackgroundCameraService : Service() {
             media.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             media.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
             if (audio) media.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            media.setVideoSize(size.width, size.height); media.setVideoFrameRate(30); media.setVideoEncodingBitRate(5_000_000)
-            if (audio) media.setAudioEncodingBitRate(128_000)
+            media.setVideoSize(size.width, size.height); media.setVideoFrameRate(fps); media.setVideoEncodingBitRate(quality.videoBitrate)
+            if (audio) {
+                media.setAudioEncodingBitRate(quality.audioBitrate)
+                media.setAudioSamplingRate(quality.audioSampleRate)
+                media.setAudioChannels(1)
+            }
             media.setOrientationHint(characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0)
             media.setOutputFile(file.absolutePath)
             // Enforced by Android's recorder, including while the activity is stopped / screen is off.
@@ -123,7 +135,10 @@ class BackgroundCameraService : Service() {
                                 if (closing) { capture.close(); return }
                                 session = capture
                                 try {
-                                    val request = camera.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply { addTarget(surface) }.build()
+                                    val request = camera.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply {
+                                        addTarget(surface)
+                                        fpsRange?.let { set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, it) }
+                                    }.build()
                                     capture.setRepeatingRequest(request, null, handler); media.start(); started = true
                                     state = CaptureState(Stage.RECORDING, if (duration > 0) SystemClock.elapsedRealtime() + duration else 0)
                                 } catch (_: Exception) { finishRecording() }
