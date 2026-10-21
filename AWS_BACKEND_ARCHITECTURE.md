@@ -25,7 +25,7 @@ Read API URL, Cognito client ID and region from stack outputs; enter them in Par
 
 ## API
 
-Authenticated: GET `/usage`; POST `/events`; POST `/uploads/sign`; POST `/uploads/complete`; GET `/events/{eventId}`; POST `/events/{eventId}/dispatch`; DELETE `/events/{eventId}`; POST `/contacts/invite`; POST `/contacts/confirm`; GET `/contacts`; DELETE `/contacts/{id}`; POST `/billing/verify`; DELETE `/account`.
+Authenticated: GET `/usage`; POST `/events`; POST `/uploads/sign`; POST `/uploads/complete`; GET `/events/{eventId}`; POST `/events/{eventId}/dispatch`; POST `/events/{eventId}/cancel`; DELETE `/events/{eventId}`; POST `/contacts/invite`; POST `/contacts/confirm`; GET `/contacts`; DELETE `/contacts/{id}`; POST `/billing/verify`; DELETE `/account`.
 
 JWTs are validated by API Gateway (issuer, audience, signature, expiration) and the handler requires a verified Cognito email and ID token. Viewer GET `/view/{random-token}` is intentionally a **bearer link** that expires in 15 minutes; it reveals only that event's evidence, supports refresh as new segments arrive and sends no referrer. A signed S3 URL may remain valid until its own expiration after account/event deletion unless the underlying object has been deleted; explicit deletion removes the objects.
 

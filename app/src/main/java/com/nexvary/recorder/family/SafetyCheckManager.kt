@@ -70,6 +70,10 @@ class SafetyCheckManager(private val context: Context) {
             }
             FamilyStore.putState(root,old.copy(phase=if(cancelled) SafetyPhase.CANCELLED else SafetyPhase.RESOLVED))
             FamilyStore.event(root,if(cancelled) "SOS_CANCELLED" else "CHECK_CONFIRMED")
+            com.nexvary.recorder.guardian.CloudOutbox.events(root).optJSONObject(old.id)?.let { cloud ->
+                if(cloud.optString("status") !in listOf("SENT","SENDING","CANCELLED"))
+                    cloud.put("status",if(cloud.optString("serverEventId").isBlank()) "CANCELLED" else "CANCEL_PENDING")
+            }
             FamilyStore.jobs(root).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { job ->
                 val payload=job.optJSONObject("payload")
                 if(payload?.optString("sessionId")==old.id && payload.optString("eventType") !in listOf("SAFE_ARRIVAL","TEST_ALERT") && job.optString("status") !in listOf("SENT","SENDING")) job.put("status","CANCELLED")
@@ -80,7 +84,7 @@ class SafetyCheckManager(private val context: Context) {
             context.stopService(Intent(context,SafetyLocationService::class.java))
             EvidenceManager.stopOwned(context,expectedId)
             context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
-            schedule();if(journeyArrival) SafetyAlertWorker.reconcile(context)
+            schedule();com.nexvary.recorder.guardian.CloudSyncWorker.schedule(context);if(journeyArrival) SafetyAlertWorker.reconcile(context)
         }
         return changed
     }

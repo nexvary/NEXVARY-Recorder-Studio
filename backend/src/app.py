@@ -182,6 +182,16 @@ def dispatch(pk, eid):
         MessageGroupId=hashlib.sha256(pk.encode()).hexdigest(), MessageDeduplicationId=eid)
     return public_event(event_get(pk, eid))
 
+def cancel_event(pk, eid):
+    item = event_get(pk, eid)
+    try:
+        table().update_item(Key={"pk": pk, "sk": item["sk"]}, UpdateExpression="SET #s=:cancelled",
+            ConditionExpression="NOT (#s IN (:sent,:sending,:uncertain))", ExpressionAttributeNames={"#s": "state"},
+            ExpressionAttributeValues={":cancelled": "CANCELLED", ":sent": "SENT", ":sending": "SENDING", ":uncertain": "UNCERTAIN"})
+    except ClientError as exc:
+        if exc.response["Error"]["Code"] != "ConditionalCheckFailedException": raise
+    return public_event(event_get(pk, eid))
+
 def invite(pk, email):
     import secrets
     import re
@@ -257,6 +267,7 @@ def handler(event, context):
         if method == "DELETE" and path == "/account": return response(200, erase(pk))
         if path.startswith("/events/"):
             parts = path.strip("/").split("/"); eid = event_id(parts[1])
+            if method == "POST" and len(parts) == 3 and parts[2] == "cancel": return response(200, cancel_event(pk, eid))
             if method == "POST" and len(parts) == 3 and parts[2] == "dispatch": return response(200, dispatch(pk, eid))
             if method == "DELETE" and len(parts) == 2: return response(200, erase(pk, eid))
             if method == "GET" and len(parts) == 2:

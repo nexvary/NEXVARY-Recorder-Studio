@@ -1,3 +1,7 @@
+# NEXVARY Guardian Studio — 0.10.0 candidate
+
+Recorder Studio is being extended with Media Center, Family Safety, Child Mode and private emergency evidence. Package `com.nexvary.recorder` is preserved. See [implementation status](GUARDIAN_IMPLEMENTATION_STATUS.md), [AWS deployment](AWS_BACKEND_ARCHITECTURE.md), [SES setup](AWS_SES_SETUP.md), [quotas](FREE_PREMIUM_QUOTAS.md) and [storage](EVIDENCE_STORAGE.md). Cloud service and Play subscriptions require operator configuration; physical Android 15 verification remains separate from CI.
+
 # NEXVARY Recorder Studio
 
 ## v0.2.0 Android 15 recorder rebuild

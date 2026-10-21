@@ -55,6 +55,8 @@ class GuardianIntegrationTest {
         val bytes=File(context.noBackupFilesDir,"family-safety.aes").readBytes().toString(Charsets.ISO_8859_1)
         assertFalse(bytes.contains(first.id))
         assertTrue(FamilyStore.events(FamilyStore(context).snapshot()).length()>=20)
+        assertTrue(SafetyCheckManager(context).resolve(first.id))
+        assertEquals("CANCELLED",CloudOutbox.events(FamilyStore(context).snapshot()).getJSONObject(first.id).getString("status"))
     }
     @Test fun childHomeHidesCloudBillingAndParentExitNeedsPin() {
         GuardianGate.create(context,"123456");GuardianGate.lock()

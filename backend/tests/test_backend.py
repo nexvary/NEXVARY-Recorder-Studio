@@ -169,3 +169,13 @@ def test_prefix_retention_and_event_size_budget():
     for index in range(1,10): app.sign(PK, dict(body,index=index))
     with pytest.raises(Rejected, match="CONCURRENT_UPDATE"): app.sign(PK,dict(body,index=10))
     assert app.usage(PK)["used"] == 1
+
+
+def test_resolved_offline_event_cancels_queued_email_but_keeps_evidence():
+    eid = reserve()["eventId"]; app.dispatch(PK, eid)
+    assert app.cancel_event(PK, eid)["state"] == "CANCELLED"
+    record = {"messageId": "m", "body": json.dumps({"pk": PK, "eventId": eid})}
+    with patch("app.mail") as provider:
+        app.worker({"Records": [record]}, None)
+        provider.return_value.send.assert_not_called()
+    assert app.event_get(PK, eid)["eventId"] == eid

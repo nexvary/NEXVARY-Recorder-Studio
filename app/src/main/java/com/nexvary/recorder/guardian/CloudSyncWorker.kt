@@ -39,6 +39,14 @@ class CloudSyncWorker(context: Context,params: WorkerParameters): Worker(context
             for(job in pending) {
                 if(isStopped) return Result.retry()
                 val id=job.getString("eventId")
+                if(job.optString("status")=="CANCEL_PENDING") {
+                    val serverId=job.optString("serverEventId")
+                    if(serverId.isNotBlank()) {
+                        val response=api.request("POST","/events/$serverId/cancel",JSONObject())
+                        status(id,response.optString("state","CANCELLED"))
+                    } else status(id,"CANCELLED")
+                    continue
+                }
                 if(job.optString("status") in listOf("SENT","CANCELLED","LIMIT","LOGIN_REQUIRED")) continue
                 val snapshot=store.snapshot();val current=CloudOutbox.events(snapshot).optJSONObject(id) ?: continue
                 if(!current.optBoolean("manual") && !FamilyStore.config(snapshot).optBoolean("autoShare")) { status(id,"CANCELLED");continue }
@@ -48,9 +56,10 @@ class CloudSyncWorker(context: Context,params: WorkerParameters): Worker(context
                 if(serverId.isBlank()) {
                     val reservation=api.request("POST","/events",JSONObject().put("eventId",id).put("payload",payload).put("test",payload.optString("eventType")=="TEST_ALERT"))
                     serverId=reservation.getString("eventId")
-                    store.update { root -> CloudOutbox.events(root).getJSONObject(id).put("serverEventId",serverId);reservation.optJSONObject("usage")?.let { root.put("cloudUsage",it) } }
+                    store.update { root -> CloudOutbox.events(root).getJSONObject(id).put("serverEventId",serverId).put("merged",reservation.optBoolean("merged"));reservation.optJSONObject("usage")?.let { root.put("cloudUsage",it) } }
                 }
-                val files=snapshot.optJSONObject("evidence") ?: JSONObject()
+                val merged=CloudOutbox.events(store.snapshot()).getJSONObject(id).optBoolean("merged")
+                val files=if(merged) JSONObject() else snapshot.optJSONObject("evidence") ?: JSONObject()
                 files.keys().asSequence().map { files.getJSONObject(it) }.filter { it.optString("eventId")==id }.sortedBy { it.optInt("segmentIndex") }.forEach { manifest ->
                     val index=manifest.optInt("segmentIndex",0)
                     val latest=store.snapshot();val latestJob=CloudOutbox.events(latest).getJSONObject(id)
@@ -73,7 +82,7 @@ class CloudSyncWorker(context: Context,params: WorkerParameters): Worker(context
                 status(id,if(recording) "RECORDING" else result.optString("state","QUEUED"))
             }
             QuotaManager(applicationContext).refresh()
-            val remains=CloudOutbox.events(store.snapshot()).let { rows -> rows.keys().asSequence().any { rows.getJSONObject(it).optString("status") in listOf("QUEUED","RETRYING","UPLOADING","PENDING") } }
+            val remains=CloudOutbox.events(store.snapshot()).let { rows -> rows.keys().asSequence().any { rows.getJSONObject(it).optString("status") in listOf("QUEUED","RETRYING","UPLOADING","PENDING","CANCEL_PENDING") } }
             return if(remains) Result.retry() else Result.success()
         } catch(error: CloudFailure) {
             val state=when { error.status==401 -> "LOGIN_REQUIRED";error.code=="MONTHLY_QUOTA_EXHAUSTED" -> "LIMIT";error.status in listOf(400,403,404,410,413) -> "FAILED";else -> "RETRYING" }
