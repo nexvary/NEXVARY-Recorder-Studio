@@ -158,6 +158,50 @@ class FamilySafetyTest {
             }
         } finally { context.stopService(Intent(context,BackgroundCameraService::class.java));manifest?.let { File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES),it.getString("fileName")).delete() } }
     }
+    @Test fun queuedPayloadRespectsRevokedLocationDeviceAndMedicalConsent()=isolated { app ->
+        val guardian=contact();TrustedContactsRepository(app).save(guardian)
+        val store=FamilyStore(app)
+        store.update { root ->
+            root.put("config",JSONObject().put("autoShare",true).put("location",true).put("shareDevice",true).put("shareMedical",true))
+            root.put("lastLocation",JSONObject().put("latitude",12.0).put("longitude",34.0).put("accuracy",10).put("timestamp",System.currentTimeMillis()))
+            root.put("medical",JSONObject().put("allergies","Synthetic test"))
+            val payload=AlertPayload.create(app,root,"SOS",UUID.randomUUID().toString()).put("evidence",JSONArray().put(JSONObject().put("device",JSONObject().put("model","Test")).put("locationSnapshot",root.getJSONObject("lastLocation"))))
+            EmergencyQueue.enqueue(root,payload)
+        }
+        store.update { it.getJSONObject("config").put("location",false).put("shareDevice",false).put("shareMedical",false) }
+        val queue=EmergencyQueue(app);val job=queue.claim(queue.all().single().getString("id"))!!;val payload=job.getJSONObject("payload")
+        assertTrue(payload.isNull("location"));assertTrue(payload.isNull("lastKnownLocation"));assertFalse(payload.has("device"));assertFalse(payload.has("emergencyProfile"))
+        assertFalse(payload.getJSONArray("evidence").getJSONObject(0).has("locationSnapshot"));assertFalse(payload.getJSONArray("evidence").getJSONObject(0).has("device"))
+    }
+    @Test fun legacySosContactsMigrateOnceAndLeaveNoPlaintextPreference() {
+        val prefs=context.getSharedPreferences("sos_cards",0)
+        prefs.edit().putString("cards",JSONArray().put(JSONObject().put("name","Migration fixture").put("phone","+201000000000")).toString()).commit()
+        val cards=RescueCardsStore(context).read();assertEquals(1,cards.length());assertFalse(prefs.contains("cards"))
+        assertEquals("Migration fixture",RescueCardsStore(context).read().getJSONObject(0).getString("name"))
+        RescueCardsStore(context).clear()
+    }
+    @Test fun settingsContactsAndProfileHaveRealPersistenceAndReturnNavigation() {
+        ActivityScenario.launch(FamilySettingsActivity::class.java).use {
+            awaitUi(withId(R.id.fsDisplayName))
+            onView(withId(R.id.fsDisplayName)).perform(reveal(),replaceText("Local test name"),closeSoftKeyboard())
+            onView(withId(R.id.fsSaveSettings)).perform(reveal(),click());onView(withId(android.R.id.button1)).perform(click())
+            await { FamilyStore.config(FamilyStore(context).snapshot()).optString("displayName")=="Local test name" }
+            onView(withId(R.id.btnBack)).perform(reveal(),click())
+        }
+        ActivityScenario.launch(TrustedContactsActivity::class.java).use {
+            awaitUi(withId(R.id.fsAddContact));onView(withId(R.id.fsAddContact)).perform(reveal(),click())
+            onView(withId(R.id.fsContactName)).perform(reveal(),replaceText("Test guardian"),closeSoftKeyboard())
+            onView(withId(R.id.fsContactEmail)).perform(reveal(),replaceText("guardian@example.invalid"),closeSoftKeyboard())
+            onView(withId(android.R.id.button1)).perform(click())
+            await { TrustedContactsRepository(context).all().size==1 }
+            onView(withText(R.string.rescue_delete)).perform(reveal(),click());onView(withId(android.R.id.button1)).perform(click())
+            await { TrustedContactsRepository(context).all().isEmpty() }
+        }
+        listOf(EmergencyProfileActivity::class.java,PrivacyCenterActivity::class.java,SafetyHistoryActivity::class.java,SafetyQueueActivity::class.java,EvidenceActivity::class.java,ParentSettingsActivity::class.java,com.nexvary.recorder.billing.SubscriptionActivity::class.java).forEach { page ->
+            ActivityScenario.launch(page).use { awaitUi(withId(R.id.btnBack));onView(withId(R.id.btnBack)).perform(reveal(),click()) }
+        }
+        assertTrue(EmergencyQueue(context).all().isEmpty())
+    }
     private fun findManifest(id: String): JSONObject? = FamilyStore(context).snapshot().optJSONObject("evidence")?.let { rows -> rows.keys().asSequence().map { rows.getJSONObject(it) }.firstOrNull { it.optString("eventId")==id } }
     private fun await(timeout: Long=10_000,predicate: () -> Boolean) {
         val end=SystemClock.uptimeMillis()+timeout

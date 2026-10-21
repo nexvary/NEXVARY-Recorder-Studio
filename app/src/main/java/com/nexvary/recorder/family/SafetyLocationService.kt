@@ -89,12 +89,17 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
         if(!fix.hasAccuracy() || !fix.latitude.isFinite() || !fix.longitude.isFinite()) return
         val age=(SystemClock.elapsedRealtimeNanos()-fix.elapsedRealtimeNanos)/1_000_000
         if(age !in 0..120_000) return
-        var arrived=false
+        var arrived=false;var locationAlert=false
         store.update { root ->
             if(FamilyStore.state(root)?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)) return@update
             val snapshot=JSONObject().put("latitude",fix.latitude).put("longitude",fix.longitude).put("accuracy",fix.accuracy)
                 .put("timestamp",fix.time).put("elapsed",fix.elapsedRealtimeNanos/1_000_000).put("boot",android.provider.Settings.Global.getInt(contentResolver,android.provider.Settings.Global.BOOT_COUNT,-1)).put("source","ACTIVE_SAFETY_SESSION")
             root.put("lastLocation",snapshot)
+            FamilyStore.state(root)?.takeIf { it.phase==SafetyPhase.SOS_ACTIVE && root.optString("locationAlertFor")!=it.id }?.let { state ->
+                val payload=AlertPayload.create(this,root,"LOCATION_UPDATE",java.util.UUID.randomUUID().toString())
+                EmergencyQueue.enqueue(root,payload);root.put("locationAlertFor",state.id);locationAlert=true
+                FamilyStore.event(root,"LOCATION_UPDATED")
+            }
             val trail=root.optJSONArray("trail") ?: JSONArray();val next=JSONArray()
             for(i in maxOf(0,trail.length()-719) until trail.length()) next.put(trail.get(i))
             next.put(snapshot);root.put("trail",next)
@@ -108,6 +113,7 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
                 } else arrivalCandidate=0
             }
         }
+        if(locationAlert) runCatching { SafetyAlertWorker.reconcile(this) }
         if(arrived) {
             SafetyCheckManager(this).emit("SAFE_ARRIVAL")
             val state=FamilyStore.state(store.snapshot());SafetyCheckManager(this).resolve(state?.id)

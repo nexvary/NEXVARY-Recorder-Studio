@@ -51,13 +51,13 @@ class AudioEvidenceService: Service() {
                     prepare();start()
                 }
                 started=true;activeEvent=event
-                FamilyStore(this).update { EvidenceManager.action(it,event,"RECORDING");FamilyStore.event(it,"AUDIO_EVIDENCE_STARTED") }
+                FamilyStore(this).update { EvidenceManager.started(it,event);FamilyStore.event(it,"AUDIO_EVIDENCE_STARTED") }
             } catch(_: Exception) { close() }
         }
         return START_NOT_STICKY
     }
     private fun close() {
-        val media=recorder ?: run { stopSelf();return };recorder=null
+        val media=recorder ?: run { runCatching { FamilyStore(this).update { EvidenceManager.action(it,event,"FAILED") } };stopSelf();return };recorder=null
         val valid=started && runCatching { media.stop() }.isSuccess
         runCatching { media.release() }
         runCatching {

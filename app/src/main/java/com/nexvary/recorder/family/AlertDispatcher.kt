@@ -14,7 +14,12 @@ interface AlertTransport {
 
 class EmergencyQueue(private val context: Context) {
     private val store = FamilyStore(context)
-    fun all(): List<JSONObject> = FamilyStore.jobs(store.snapshot()).let { jobs -> jobs.keys().asSequence().map { jobs.getJSONObject(it) }.toList().sortedByDescending { it.optLong("created") } }
+    fun all(): List<JSONObject> {
+        val root=store.snapshot();val config=FamilyStore.config(root)
+        return FamilyStore.jobs(root).let { jobs -> jobs.keys().asSequence().map { key -> jobs.getJSONObject(key).apply {
+            optJSONObject("payload")?.let { AlertPayload.redactConsent(it,config) }
+        } }.toList().sortedByDescending { it.optLong("created") } }
+    }
     companion object {
         /** Called inside the same transaction that records the event: no state/queue gap. */
         fun enqueue(root: JSONObject, payload: JSONObject, manual: Boolean = false) {
@@ -29,7 +34,7 @@ class EmergencyQueue(private val context: Context) {
                 jobs.put(id,JSONObject().put("id",id).put("eventId",payload.getString("eventId")).put("created",System.currentTimeMillis())
                     .put("contactId",contact.getString("id")).put("channel",contact.optString("channel"))
                     .put("recipient",contact.optString(if(contact.optString("channel") == "EMAIL") "email" else "phone"))
-                    .put("payload",payload).put("manual",manual).put("attempts",0)
+                    .put("payload",AlertPayload.redactConsent(JSONObject(payload.toString()),config)).put("manual",manual).put("attempts",0)
                     .put("status",if(contact.optString("channel") == "EMAIL") "QUEUED" else "WAITING_USER"))
             }
         }
@@ -50,6 +55,7 @@ class EmergencyQueue(private val context: Context) {
             contact.optString(if(job.optString("channel")=="EMAIL") "email" else "phone") != job.optString("recipient") || (!job.optBoolean("manual") && !FamilyStore.config(root).optBoolean("autoShare"))) {
             job.put("status","CANCELLED");return@update null
         }
+        job.optJSONObject("payload")?.let { AlertPayload.redactConsent(it,FamilyStore.config(root)) }
         job.put("status","SENDING").put("attempts",job.optInt("attempts")+1)
         JSONObject(job.toString())
     }

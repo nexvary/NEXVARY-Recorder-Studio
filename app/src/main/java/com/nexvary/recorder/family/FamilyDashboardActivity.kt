@@ -118,6 +118,13 @@ class FamilyDashboardActivity: AppCompatActivity() {
             status.text=getString(FamilyUi.state(state?.phase))+"\n"+getString(R.string.fs_dashboard_status,remaining/60_000,(remaining/1000)%60,first.ifEmpty { getString(R.string.fs_none) },battery,AlertPayload.network(this))+
                 "\n"+getString(if(config.optBoolean("autoShare")) R.string.fs_sharing_on else R.string.fs_local_only)
             status.append("\n"+getString(if(root.has("lastLocation")) R.string.fs_location_available else R.string.fs_location_unavailable)+"\n"+getString(if(exact()) R.string.fs_exact_on else R.string.fs_inexact))
+            val evidenceAction=state?.let { root.optJSONObject("evidenceActions")?.optString(it.id) }.orEmpty()
+            if(evidenceAction.isNotEmpty()) status.append("\n"+getString(when(evidenceAction) {
+                "RECORDING","STARTING" -> R.string.fs_evidence_started
+                "SAVED" -> R.string.fs_evidence_saved
+                "FAILED" -> R.string.camera_failed
+                else -> R.string.fs_evidence_configure
+            }))
             root.optJSONObject("journey")?.optDouble("distanceMeters",Double.NaN)?.takeIf { it.isFinite() && state?.phase==SafetyPhase.ARMED }?.let { status.append("\n"+getString(R.string.fs_distance,it.toInt())) }
             medical.visibility=if(state?.phase==SafetyPhase.SOS_ACTIVE && config.optBoolean("showMedical")) View.VISIBLE else View.GONE
             if(medical.visibility==View.VISIBLE) medical.text=root.optJSONObject("medical")?.let { m -> listOf("name","age","blood","allergies","medications","notes","guardian","phone","secondary").mapNotNull { m.optString(it).takeIf(String::isNotBlank) }.joinToString("\n") }.orEmpty()
@@ -130,6 +137,9 @@ class FamilyDashboardActivity: AppCompatActivity() {
                 if(mode in listOf("VIDEO","AUDIO") && ContextCompat.checkSelfPermission(this,permission)==PackageManager.PERMISSION_GRANTED && (!config.optBoolean("videoMic") || mode!="VIDEO" || ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)) {
                     FamilyUi.io(this,{ FamilyStore(this).update { EvidenceManager.action(it,state.id,"STARTING") } }) { evidence(false) }
                 }
+            }
+            if(pendingTest.isNotBlank() && root.optJSONObject("evidenceActions")?.optString(pendingTest)=="FAILED") {
+                pendingTest="";MaterialAlertDialogBuilder(this).setMessage(R.string.camera_failed).setPositiveButton(R.string.back,null).show()
             }
             if(pendingTest.isNotBlank()) root.optJSONObject("evidence")?.let { items ->
                 items.keys().asSequence().map { items.getJSONObject(it) }.firstOrNull { it.optString("eventId")==pendingTest }?.let { manifest ->

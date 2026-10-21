@@ -5,7 +5,7 @@ import kotlin.math.sqrt
 enum class SafetyPhase { IDLE, ARMED, COUNTDOWN, SOS_ACTIVE, RESOLVED, CANCELLED }
 data class SafetyDeadline(val wall: Long, val elapsed: Long, val boot: Int) {
     fun remaining(wallNow: Long, elapsedNow: Long, bootNow: Int): Long =
-        (if (boot == bootNow) elapsed - elapsedNow else wall - wallNow).coerceAtLeast(0)
+        (if (boot >= 0 && boot == bootNow) elapsed - elapsedNow else wall - wallNow).coerceAtLeast(0)
 }
 data class SafetyState(val id: String, val phase: SafetyPhase, val deadline: SafetyDeadline,
     val graceSeconds: Int = 60, val reason: String = "CHECK_IN", val test: Boolean = false)

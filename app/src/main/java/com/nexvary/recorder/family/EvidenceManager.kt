@@ -19,6 +19,10 @@ object EvidenceManager {
         actions.put(eventId,value)
         if(FamilyStore.state(root)?.id==eventId) root.put("evidenceAction",value)
     }
+    fun started(root: JSONObject,eventId: String) {
+        val starts=root.optJSONObject("evidenceStarted") ?: JSONObject().also { root.put("evidenceStarted",it) }
+        starts.put(eventId,System.currentTimeMillis());action(root,eventId,"RECORDING")
+    }
     fun hash(file: File): String {
         val digest=MessageDigest.getInstance("SHA-256")
         file.inputStream().use { input -> val buffer=ByteArray(64*1024);while(true) { val count=input.read(buffer);if(count < 0) break;digest.update(buffer,0,count) } }
@@ -38,6 +42,7 @@ object EvidenceManager {
             .put("durationMs",duration).put("device",JSONObject().put("manufacturer",android.os.Build.MANUFACTURER).put("model",android.os.Build.MODEL))
         val store=FamilyStore(context)
         store.update { root ->
+            metadata.put("createdAt",Instant.ofEpochMilli(root.optJSONObject("evidenceStarted")?.optLong(eventId,System.currentTimeMillis()) ?: System.currentTimeMillis()).toString())
             root.optJSONObject("lastLocation")?.let { metadata.put("locationSnapshot",it) }
             val evidence=root.optJSONObject("evidence") ?: JSONObject().also { root.put("evidence",it) }
             evidence.put(file.name,metadata);action(root,eventId,"SAVED")

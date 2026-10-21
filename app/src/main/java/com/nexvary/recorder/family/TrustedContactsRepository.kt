@@ -9,7 +9,7 @@ import java.util.UUID
 
 class TrustedContactsRepository(private val context: Context) {
     private val store = FamilyStore(context)
-    fun all(): List<JSONObject> = FamilyStore.contacts(store.snapshot()).let { rows -> (0 until rows.length()).map { rows.getJSONObject(it) }.sortedBy { listOf("PRIMARY","SECONDARY","EMERGENCY").indexOf(it.optString("role")).let { index -> if(index<0) 3 else index } }
+    fun all(): List<JSONObject> = FamilyStore.contacts(store.snapshot()).let { rows -> (0 until rows.length()).map { rows.getJSONObject(it) }.sortedBy { listOf("PRIMARY","SECONDARY","EMERGENCY").indexOf(it.optString("role")).let { index -> if(index<0) 3 else index } } }
     fun save(contact: JSONObject) {
         require(contact.optString("name").isNotBlank() && contact.optString("name").length <= 120)
         val channel = contact.optString("channel")
