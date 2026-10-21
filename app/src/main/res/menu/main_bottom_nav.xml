@@ -9,9 +9,9 @@
         android:icon="@drawable/asset_screen"
         android:title="@string/nav_screen"/>
     <item
-        android:id="@+id/navVoice"
-        android:icon="@drawable/asset_audio"
-        android:title="@string/nav_voice"/>
+        android:id="@+id/navSafety"
+        android:icon="@drawable/asset_family"
+        android:title="@string/guardian_safety"/>
     <item
         android:id="@+id/navLive"
         android:icon="@drawable/asset_live"

@@ -26,6 +26,10 @@ class VisualEvidenceTest {
         com.nexvary.recorder.family.RescueCardsStore(context).clear()
         val pages = listOf(
             Triple(MainActivity::class.java, R.id.cardScreen, "dashboard-ar"),
+            Triple(com.nexvary.recorder.media.MediaCenterActivity::class.java,R.id.btnBack,"media-center-ar"),
+            Triple(com.nexvary.recorder.family.FamilyHubActivity::class.java,R.id.btnBack,"family-hub-ar"),
+            Triple(com.nexvary.recorder.guardian.GuardianEmergencyActivity::class.java,R.id.btnBack,"guardian-sos-ar"),
+            Triple(com.nexvary.recorder.guardian.CloudSettingsActivity::class.java,R.id.btnBack,"cloud-usage-ar"),
             Triple(com.nexvary.recorder.family.FamilyDashboardActivity::class.java,R.id.fsSafe,"family-dashboard-ar"),
             Triple(com.nexvary.recorder.family.PrivacyCenterActivity::class.java,R.id.btnBack,"privacy-center-ar"),
             Triple(com.nexvary.recorder.safety.QuickRescueActivity::class.java, R.id.btnAddContact, "sos-ar"),

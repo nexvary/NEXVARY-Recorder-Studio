@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NEXVARY Recorder Studio</string>
+    <string name="app_name">NEXVARY Guardian Studio</string>
     <string name="home_subtitle">تسجيل شاشة وصوت احترافي واستبدال الصوت وبث فيديو مسجل مسبقًا</string>
     <string name="theme_current_format">الثيم الحالي: %1$s</string>
     <string name="theme_hint">اضغط أعلى الشاشة لتغيير اللون</string>
@@ -178,7 +178,7 @@
     <string name="screen_projection_stopped_immediately">أوقف أندرويد مشاركة الشاشة فورًا. اختر الشاشة بالكامل من نافذة المشاركة وتجنب نافذة محمية أو حساسة.</string>
     <string name="save_folder_help">يمكنك اختيار أي مجلد قابل للكتابة وسيتم تذكره للتسجيلات التالية.</string>
     <string name="quick_record_tile">مسجل الشاشة</string>
-    <string name="media_tools_title">أدوات الوسائط</string>
+    <string name="media_tools_title">مركز الوسائط</string>
     <string name="media_tools_desc">استبدال الصوت وتحويل الصوت وقص الفيديو وتحويل صيغة الفيديو محليًا على الهاتف.</string>
     <string name="audio_convert_title">تحويل الصوت</string>
     <string name="no_audio_selected">لم يتم اختيار ملف صوت</string>
@@ -206,7 +206,7 @@
     <string name="video_trimmed_keyframe_format">تم حفظ %1$s • يبدأ القص من أقرب إطار مفتاح آمن قرب %2$.2f ثانية</string>
     <string name="theme_piano_black">أسود بيانو لامع</string>
     <string name="brand_name">NEXVARY</string>
-    <string name="studio_name">RECORDER STUDIO</string>
+    <string name="studio_name">GUARDIAN STUDIO</string>
     <string name="camera_title">تسجيل الكاميرا</string>
     <string name="rescue_title">الإنقاذ السريع</string>
     <string name="library_title">مكتبة التسجيلات</string>
@@ -418,7 +418,7 @@
     <string name="fs_immediate_consent">أختار صراحة بدء الاستغاثة اليدوية فورًا دون عد تنازلي للإلغاء.</string>
     <string name="fs_audible">تنبيهات إشعارات مسموعة (الوضع الصامت هو الافتراضي)</string>
     <string name="fs_share_device">إرفاق طراز الهاتف بالتنبيهات</string>
-    <string name="fs_battery_alerts">التنبيه عند ١٥٪ و١٠٪ و٥٪ أثناء وضع موقع الأمان النشط</string>
+    <string name="fs_battery_alerts" formatted="false">التنبيه عند ١٥٪ و١٠٪ و٥٪ أثناء وضع موقع الأمان النشط</string>
     <string name="fs_battery_saver">عند ٥٪ تقليل تحديث الموقع وإيقاف حساس الحركة</string>
     <string name="fs_motion_consent">تفعيل رصد الارتطام المحتمل أثناء وضع موقع الأمان النشط</string>
     <string name="fs_motion_note">قد يستجيب هذا التقدير بحساس التسارع لسقوط الهاتف. ليس كشفًا طبيًا للسقوط أو الحوادث. يسبق الاستغاثة عد تنازلي قابل للإلغاء لمدة ٢٠ ثانية. يتطلب وضع موقع الأمان النشط.</string>
@@ -528,4 +528,52 @@
     <string name="fs_smtp_test_time">آخر اختبار اتصال ومصادقة: %1$s</string>
     <string name="fs_emergency_size">فيديو الطوارئ: حتى 480p، نحو %1$.1f ميجابايت/دقيقة مع الصوت. الحجم الفعلي يختلف حسب الجهاز.</string>
     <string name="fs_evidence_action_required">ابدأ التوثيق من هذه الشاشة بعد منح إذن الكاميرا أو الميكروفون. لا يبدأ الالتقاط تلقائيًا من الخلفية.</string>
+    <string name="guardian_family_hint">الاطمئنان والرحلات والأدلة</string>
+    <string name="guardian_safety">الأمان</string>
+    <string name="guardian_cloud">السحابة والحساب</string>
+    <string name="guardian_child_mode">وضع الطفل</string>
+    <string name="guardian_pin_required">أنشئ رمز ولي الأمر أولًا لتفعيل وضع الطفل.</string>
+    <string name="guardian_local_always">الاستغاثة والتسجيل المحلي متاحان دائمًا دون اشتراك أو حصة سحابية. الإرسال السحابي يحتاج إعدادًا وموافقة واتصالًا بالإنترنت.</string>
+    <string name="guardian_silent_sos">استغاثة صامتة</string>
+    <string name="guardian_call">فتح لوحة اتصال الطوارئ</string>
+    <string name="guardian_share_location">مشاركة آخر موقع معروف</string>
+    <string name="guardian_last_location">آخر موقع معروف — راجع وقت تسجيله.</string>
+    <string name="guardian_usage">الاستخدام والحصة المتبقية</string>
+    <string name="guardian_cloud_unconfigured">السحابة غير مهيأة. التسجيل المحلي متاح.</string>
+    <string name="guardian_cloud_note">إعداد ولي الأمر: أدخل عنوان API الآمن وبيانات Cognito العامة من مخرجات النشر. بريد حسابك المؤكد هو جهة الاستقبال السحابية في Free. أعد تسجيل الدخول عند انتهاء الجلسة. لا تُدخل مفاتيح AWS أو SES هنا.</string>
+    <string name="guardian_api">عنوان API الآمن HTTPS</string>
+    <string name="guardian_region">منطقة AWS</string>
+    <string name="guardian_client">معرّف عميل Cognito العام</string>
+    <string name="guardian_invalid_config">أدخل عنوان HTTPS صحيحًا ومنطقة AWS ومعرّف عميل عام.</string>
+    <string name="guardian_email">بريد ولي الأمر</string>
+    <string name="guardian_code">رمز التأكيد</string>
+    <string name="guardian_signup">إنشاء حساب</string>
+    <string name="guardian_confirm">تأكيد البريد</string>
+    <string name="guardian_login">تسجيل الدخول</string>
+    <string name="guardian_forgot">إرسال رمز استعادة كلمة المرور</string>
+    <string name="guardian_reset_password">تغيير كلمة المرور بالرمز</string>
+    <string name="guardian_auth_ok">تم تنفيذ الطلب. راجع بريدك أو حدّث الاستخدام بعد تسجيل الدخول.</string>
+    <string name="guardian_auth_failed">تعذر تنفيذ الطلب. راجع الإعدادات وبيانات الدخول والرمز والاتصال. لم يُسجّل نجاح للإرسال السحابي.</string>
+    <string name="guardian_logout">تسجيل الخروج</string>
+    <string name="guardian_login_required">السحابة غير متاحة أو انتهت جلسة الدخول. الاستغاثة المحلية متاحة.</string>
+    <string name="guardian_delete_account">حذف الحساب السحابي</string>
+    <string name="guardian_delete_evidence">حذف الدليل السحابي</string>
+    <string name="guardian_delete_note">هل تريد حذف البيانات السحابية المحددة نهائيًا؟ التسجيلات المحلية تبقى على الهاتف. حذف الحساب لا يلغي اشتراك Play؛ أدِره من Google Play.</string>
+    <string name="guardian_deleted">تم حذف البيانات السحابية.</string>
+    <string name="guardian_usage_format">إرسالات SOS السحابية: متبقٍ %1$d / %2$d\nرفع أدلة الفيديو: متبقٍ %3$d / %4$d\nالتجديد: %5$s — حسب الخادم؛ آخر حالة محفوظة</string>
+    <string name="guardian_quota_used">تم استهلاك حصة الإرسال السحابي المجانية. يمكنك حفظ الدليل محليًا أو فتح الاتصال أو رسالة SMS أو مشاركة الموقع يدويًا أو مراجعة Premium.</string>
+    <string name="guardian_record_audio">تسجيل الصوت</string>
+    <string name="guardian_extract_audio">استخراج الصوت من الفيديو</string>
+    <string name="guardian_compress_audio">تحويل وضغط التسجيلات الصوتية</string>
+    <string name="guardian_file_info">معلومات الملف</string>
+    <string name="guardian_share_export">مشاركة وتصدير</string>
+    <string name="guardian_exported">تم حفظ التصدير في مكتبة وسائط الهاتف.</string>
+    <string name="guardian_compress_video">ضغط الفيديو</string>
+    <string name="guardian_compress_note">تحويل محلي إلى H.264 وAAC بدقة تصل إلى 720p ومعدل فيديو مستهدف 1 Mbps، نحو 8 ميجابايت للدقيقة مع الصوت. قد يعدّل المشفّر المعدل، وقد يزيد الحجم إذا كان المصدر مضغوطًا بالفعل. اترك الشاشة مفتوحة حتى الحفظ.</string>
+    <string name="guardian_compressing">جارٍ الضغط على الهاتف…</string>
+    <string name="guardian_compress_failed">تعذر الضغط أو أن الترميز غير مدعوم. الملف الأصلي محفوظ.</string>
+    <string name="guardian_settings_saved">تم حفظ الإعدادات.</string>
+    <string name="guardian_save_settings">حفظ الإعدادات</string>
+<string name="guardian_invite">إرسال تأكيد جهة سحابية — Premium</string>
+<string name="guardian_confirm_contact">تأكيد رمز جهة الاتصال السحابية</string>
 </resources>

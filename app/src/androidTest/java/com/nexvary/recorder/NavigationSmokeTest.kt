@@ -21,7 +21,7 @@ class NavigationSmokeTest {
     fun everyDashboardPageOpensAndBackReturnsHome() {
         ActivityScenario.launch(MainActivity::class.java).use {
             openAndReturn(R.id.cardScreen)
-            openAndReturn(R.id.cardVoice)
+            openAndReturn(R.id.cardFamily)
             openAndReturn(R.id.cardReplace)
             openAndReturn(R.id.cardLive)
         }
@@ -34,7 +34,7 @@ class NavigationSmokeTest {
             awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
-            onView(withId(R.id.navVoice)).perform(click())
+            onView(withId(R.id.navSafety)).perform(click())
             awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 

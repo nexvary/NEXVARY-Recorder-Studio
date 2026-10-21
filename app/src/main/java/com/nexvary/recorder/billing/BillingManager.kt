@@ -43,7 +43,7 @@ class BillingManager(private val context: Context,private val verifier: Purchase
     fun launch(activity: Activity,product: ProductDetails): Boolean {
         if(!canPurchase) return false
         val offer=product.subscriptionOfferDetails?.firstOrNull() ?: return false
-        return client.launchBillingFlow(activity,BillingFlowParams.newBuilder().setProductDetailsParamsList(listOf(
+        return client.launchBillingFlow(activity,BillingFlowParams.newBuilder().setObfuscatedAccountId(com.nexvary.recorder.guardian.CloudApi(context).accountId()).setProductDetailsParamsList(listOf(
             BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(product).setOfferToken(offer.offerToken).build())).build()).responseCode==BillingClient.BillingResponseCode.OK
     }
     override fun onPurchasesUpdated(result: BillingResult,purchases: MutableList<Purchase>?) {

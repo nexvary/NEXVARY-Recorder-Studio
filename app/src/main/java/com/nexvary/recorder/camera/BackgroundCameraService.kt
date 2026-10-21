@@ -53,6 +53,12 @@ class BackgroundCameraService : Service() {
     private var recipient = ""
     private var duration = 0L
     private var quality = CameraQuality.COMPACT
+    private var nextOutput: File? = null
+    private var segmentIndex = 0
+    private val finalizer = java.util.concurrent.Executors.newSingleThreadExecutor()
+    private fun finalizeSegment(file: File, event: String, index: Int, terminal: Boolean) {
+        finalizer.execute { runCatching { com.nexvary.recorder.family.EvidenceManager.finalized(this,file,event,index,terminal) } }
+    }
 
     override fun onBind(intent: Intent?) = null
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -120,7 +126,22 @@ class BackgroundCameraService : Service() {
             media.setOutputFile(file.absolutePath)
             // Enforced by Android's recorder, including while the activity is stopped / screen is off.
             if (duration > 0) media.setMaxDuration(duration.toInt())
+            if (activeEvidenceEvent != null) media.setMaxFileSize(quality.estimatedBytes(30_000, audio))
             media.setOnInfoListener { _, what, _ ->
+                if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_APPROACHING && activeEvidenceEvent != null) handler.post {
+                    if (!closing && nextOutput == null) runCatching {
+                        val next = File(getExternalFilesDir(Environment.DIRECTORY_MOVIES), "NEXVARY_${System.currentTimeMillis()}_part${segmentIndex+1}.mp4")
+                        media.setNextOutputFile(next); nextOutput = next
+                    }
+                }
+                if (what == MediaRecorder.MEDIA_RECORDER_INFO_NEXT_OUTPUT_FILE_STARTED) handler.post {
+                    val previous = output; val next = nextOutput
+                    if (!closing && previous != null && next != null) {
+                        val index = segmentIndex++
+                        output = next; activeOutputPath = next.absolutePath; nextOutput = null
+                        activeEvidenceEvent?.let { finalizeSegment(previous,it,index,false) }
+                    }
+                }
                 if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED || what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) handler.post { finishRecording() }
             }
             media.setOnErrorListener { _, _, _ -> handler.post { finishRecording() } }
@@ -177,8 +198,7 @@ class BackgroundCameraService : Service() {
         }.getOrDefault(false)
         var queued = false
         if (valid && file != null) activeEvidenceEvent?.let { event ->
-            runCatching { com.nexvary.recorder.family.EvidenceManager.finalized(this,file,event) }
-                .onFailure { runCatching { com.nexvary.recorder.family.FamilyStore(this).update { com.nexvary.recorder.family.EvidenceManager.action(it,event,"FAILED") } } }
+            finalizeSegment(file,event,segmentIndex,true)
         }
         if (valid && file != null && recipient.isNotBlank()) queued = runCatching {
             val profile = SmtpSettings(this).load()
@@ -190,6 +210,7 @@ class BackgroundCameraService : Service() {
             file?.delete()
             activeEvidenceEvent?.let { event -> runCatching { com.nexvary.recorder.family.FamilyStore(this).update { com.nexvary.recorder.family.EvidenceManager.action(it,event,"FAILED") } } }
         }
+        nextOutput?.delete(); nextOutput = null
         val finished = if (valid && file != null) CaptureState(Stage.SAVED, name = file.name, mailQueued = queued, mailRequested = recipient.isNotBlank()) else CaptureState(Stage.ERROR)
         finalState = finished
         activeOutputPath = null
@@ -200,6 +221,7 @@ class BackgroundCameraService : Service() {
     override fun onDestroy() {
         finalState?.let { state = it }
         handler.post { destroyed = true; finishRecording(); if (openPending) handler.postDelayed({ thread.quitSafely() }, 10_000) else thread.quitSafely() }
+        handler.post { finalizer.shutdown() }
         super.onDestroy()
     }
 }

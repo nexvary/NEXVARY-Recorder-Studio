@@ -1,0 +1,243 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: NEXVARY Guardian private emergency queue and evidence API (no DNS changes)
+Parameters:
+  SenderEmail:
+    Type: String
+    Default: alerts@nexvary.com
+  BudgetEmail:
+    Type: String
+    Description: Verified operator email for AWS cost alarms
+  MonthlyBudgetUsd:
+    Type: Number
+    Default: 10
+  PlayServiceAccountSecretArn:
+    Type: String
+    Default: ''
+    Description: Optional Secrets Manager ARN holding a Google Play service-account JSON
+Conditions:
+  HasPlaySecret: !Not [!Equals [!Ref PlayServiceAccountSecretArn, '']]
+Globals:
+  Function:
+    Runtime: python3.13
+    CodeUri: src/
+    Timeout: 30
+    MemorySize: 256
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref Data
+        EVIDENCE_BUCKET: !Ref Evidence
+        QUEUE_URL: !Ref Alerts
+        SES_SENDER: !Ref SenderEmail
+        USER_POOL: !Ref Users
+        PLAY_SECRET_ARN: !Ref PlayServiceAccountSecretArn
+Resources:
+  Users:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UsernameAttributes: [email]
+      AutoVerifiedAttributes: [email]
+      AccountRecoverySetting:
+        RecoveryMechanisms: [{Name: verified_email, Priority: 1}]
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 12
+          RequireLowercase: true
+          RequireUppercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+  AndroidClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref Users
+      GenerateSecret: false
+      ExplicitAuthFlows: [ALLOW_USER_PASSWORD_AUTH, ALLOW_REFRESH_TOKEN_AUTH]
+      PreventUserExistenceErrors: ENABLED
+      IdTokenValidity: 15
+      AccessTokenValidity: 15
+      TokenValidityUnits: {IdToken: minutes, AccessToken: minutes}
+  Api:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 30
+        ThrottlingRateLimit: 10
+      Auth:
+        DefaultAuthorizer: Cognito
+        Authorizers:
+          Cognito:
+            IdentitySource: $request.header.Authorization
+            JwtConfiguration:
+              issuer: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${Users}
+              audience: [!Ref AndroidClient]
+  Data:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - {AttributeName: pk, AttributeType: S}
+        - {AttributeName: sk, AttributeType: S}
+      KeySchema:
+        - {AttributeName: pk, KeyType: HASH}
+        - {AttributeName: sk, KeyType: RANGE}
+      TimeToLiveSpecification: {AttributeName: ttl, Enabled: true}
+      SSESpecification: {SSEEnabled: true}
+      PointInTimeRecoverySpecification: {PointInTimeRecoveryEnabled: false}
+  Evidence:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules: [{ObjectOwnership: BucketOwnerEnforced}]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: {SSEAlgorithm: AES256}
+      LifecycleConfiguration:
+        Rules:
+          - {Id: FreeRetention, Status: Enabled, Prefix: 'free/', ExpirationInDays: 2, AbortIncompleteMultipartUpload: {DaysAfterInitiation: 1}}
+          - {Id: PremiumRetention, Status: Enabled, Prefix: 'premium/', ExpirationInDays: 7, AbortIncompleteMultipartUpload: {DaysAfterInitiation: 1}}
+  EvidencePolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Evidence
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Deny
+            Principal: '*'
+            Action: s3:*
+            Resource: [!GetAtt Evidence.Arn, !Sub '${Evidence.Arn}/*']
+            Condition: {Bool: {'aws:SecureTransport': false}}
+  DeadLetters:
+    Type: AWS::SQS::Queue
+    Properties:
+      FifoQueue: true
+      MessageRetentionPeriod: 1209600
+      SqsManagedSseEnabled: true
+  Alerts:
+    Type: AWS::SQS::Queue
+    Properties:
+      FifoQueue: true
+      SqsManagedSseEnabled: true
+      VisibilityTimeout: 240
+      MessageRetentionPeriod: 172800
+      RedrivePolicy: {deadLetterTargetArn: !GetAtt DeadLetters.Arn, maxReceiveCount: 5}
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      ReservedConcurrentExecutions: 4
+      Timeout: 90
+      Policies:
+        - DynamoDBCrudPolicy: {TableName: !Ref Data}
+        - S3CrudPolicy: {BucketName: !Ref Evidence}
+        - SQSSendMessagePolicy: {QueueName: !GetAtt Alerts.QueueName}
+        - Statement:
+            - Effect: Allow
+              Action: [ses:SendEmail]
+              Resource: !Sub arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/nexvary.com
+            - Effect: Allow
+              Action: [cognito-idp:AdminDeleteUser]
+              Resource: !GetAtt Users.Arn
+            - !If
+              - HasPlaySecret
+              - Effect: Allow
+                Action: [secretsmanager:GetSecretValue]
+                Resource: !Ref PlayServiceAccountSecretArn
+              - !Ref AWS::NoValue
+      Events:
+        All:
+          Type: HttpApi
+          Properties: {ApiId: !Ref Api, Path: '/{proxy+}', Method: ANY}
+        EvidenceViewer:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref Api
+            Path: /view/{token}
+            Method: GET
+            Auth: {Authorizer: NONE}
+  EmailWorker:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.worker
+      ReservedConcurrentExecutions: 2
+      Timeout: 35
+      Policies:
+        - DynamoDBCrudPolicy: {TableName: !Ref Data}
+        - S3ReadPolicy: {BucketName: !Ref Evidence}
+        - Statement:
+            - Effect: Allow
+              Action: [ses:SendEmail]
+              Resource: !Sub arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/nexvary.com
+      Environment:
+        Variables:
+          API_BASE_URL: !Sub https://${Api}.execute-api.${AWS::Region}.amazonaws.com
+      Events:
+        Queue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt Alerts.Arn
+            BatchSize: 1
+            FunctionResponseTypes: [ReportBatchItemFailures]
+  ApiLogs:
+    Type: AWS::Logs::LogGroup
+    Properties: {LogGroupName: !Sub '/aws/lambda/${ApiFunction}', RetentionInDays: 7}
+  WorkerLogs:
+    Type: AWS::Logs::LogGroup
+    Properties: {LogGroupName: !Sub '/aws/lambda/${EmailWorker}', RetentionInDays: 7}
+  AlarmTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription: [{Endpoint: !Ref BudgetEmail, Protocol: email}]
+  QueueAgeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions: [{Name: QueueName, Value: !GetAtt Alerts.QueueName}]
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 120
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions: [!Ref AlarmTopic]
+  DeadLetterAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions: [{Name: QueueName, Value: !GetAtt DeadLetters.QueueName}]
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions: [!Ref AlarmTopic]
+  Budget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${AWS::StackName}-monthly'
+        BudgetLimit: {Amount: !Ref MonthlyBudgetUsd, Unit: USD}
+        BudgetType: COST
+        TimeUnit: MONTHLY
+      NotificationsWithSubscribers:
+        - Notification: {NotificationType: ACTUAL, ComparisonOperator: GREATER_THAN, Threshold: 80}
+          Subscribers: [{SubscriptionType: EMAIL, Address: !Ref BudgetEmail}]
+        - Notification: {NotificationType: FORECASTED, ComparisonOperator: GREATER_THAN, Threshold: 100}
+          Subscribers: [{SubscriptionType: EMAIL, Address: !Ref BudgetEmail}]
+Outputs:
+  ApiBaseUrl: {Value: !Sub 'https://${Api}.execute-api.${AWS::Region}.amazonaws.com'}
+  CognitoClientId: {Value: !Ref AndroidClient}
+  UserPoolId: {Value: !Ref Users}
+  Region: {Value: !Ref 'AWS::Region'}
+  EvidenceBucket: {Value: !Ref Evidence}
+  QueueUrl: {Value: !Ref Alerts}
+  DataTable: {Value: !Ref Data}

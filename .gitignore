@@ -6,3 +6,7 @@ local.properties
 screenshots/
 diagnostics/
 .kotlin/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.aws-sam/

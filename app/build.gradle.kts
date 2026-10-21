@@ -12,8 +12,8 @@ android {
         applicationId = "com.nexvary.recorder"
         minSdk = 29
         targetSdk = 35
-        versionCode = 15
-        versionName = "0.9.0"
+        versionCode = 16
+        versionName = "0.10.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -58,6 +58,8 @@ android {
 }
 
 dependencies {
+    implementation("androidx.media3:media3-transformer:1.8.0")
+    implementation("androidx.media3:media3-effect:1.8.0")
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
     implementation("androidx.core:core-ktx:1.17.0")

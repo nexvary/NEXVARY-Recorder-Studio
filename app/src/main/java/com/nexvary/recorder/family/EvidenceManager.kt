@@ -30,14 +30,14 @@ object EvidenceManager {
     }
     fun storageBytes(context: Context) = StatFs(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)!!.absolutePath).availableBytes
     /** Called only after the recorder has stopped and released its output. */
-    fun finalized(context: Context,file: File,eventId: String): JSONObject {
+    fun finalized(context: Context,file: File,eventId: String,segmentIndex: Int = 0,terminal: Boolean = true): JSONObject {
         UUID.fromString(eventId)
         require(file.canonicalFile.parentFile == context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)?.canonicalFile && file.isFile && file.length() > 0)
         val duration=if(file.extension.lowercase() in listOf("mp4","m4a")) {
             val media=MediaMetadataRetriever();try { media.setDataSource(file.absolutePath);media.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0 } finally { media.release() }
         } else 0
         val metadata=JSONObject().put("schemaVersion",1).put("integrityType","SHA-256 — not a legal chain of custody")
-            .put("eventId",eventId).put("fileName",file.name).put("fileSize",file.length()).put("sha256",hash(file))
+            .put("eventId",eventId).put("segmentIndex",segmentIndex).put("fileName",file.name).put("fileSize",file.length()).put("sha256",hash(file))
             .put("closedAt",Instant.now().toString()).put("deviceTimeMs",System.currentTimeMillis()).put("timezone",ZoneId.systemDefault().id)
             .put("durationMs",duration).put("device",JSONObject().put("manufacturer",android.os.Build.MANUFACTURER).put("model",android.os.Build.MODEL))
         val store=FamilyStore(context)
@@ -45,13 +45,24 @@ object EvidenceManager {
             metadata.put("createdAt",Instant.ofEpochMilli(root.optJSONObject("evidenceStarted")?.optLong(eventId,System.currentTimeMillis()) ?: System.currentTimeMillis()).toString())
             root.optJSONObject("lastLocation")?.let { metadata.put("locationSnapshot",it) }
             val evidence=root.optJSONObject("evidence") ?: JSONObject().also { root.put("evidence",it) }
-            evidence.put(file.name,metadata);action(root,eventId,"SAVED")
+            evidence.put(file.name,metadata);action(root,eventId,if(terminal) "SAVED" else "RECORDING")
             FamilyStore.event(root,"EVIDENCE_SAVED")
-            if(FamilyStore.state(root)?.let { it.id==eventId && it.phase==SafetyPhase.SOS_ACTIVE }==true) {
+            if(terminal && FamilyStore.state(root)?.let { it.id==eventId && it.phase==SafetyPhase.SOS_ACTIVE }==true) {
                 val payload=AlertPayload.create(context,root,"EVIDENCE_READY",UUID.randomUUID().toString())
                     .put("evidence",org.json.JSONArray().put(metadata))
                 EmergencyQueue.enqueue(root,payload)
             }
+        }
+        val manifests=store.snapshot().optJSONObject("evidence") ?: JSONObject()
+        val list=org.json.JSONArray()
+        manifests.keys().forEach { key -> manifests.getJSONObject(key).takeIf { it.optString("eventId")==eventId }?.let { list.put(it) } }
+        val manifestFile=android.util.AtomicFile(File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES),"${eventId}_evidence_manifest.json"))
+        val stream=manifestFile.startWrite()
+        try { stream.write(JSONObject().put("eventId",eventId).put("files",list).toString(2).toByteArray());manifestFile.finishWrite(stream) }
+        catch(error: Exception) { manifestFile.failWrite(stream);throw error }
+        store.update { root ->
+            val event=com.nexvary.recorder.guardian.CloudOutbox.events(root).optJSONObject(eventId)
+            if(event != null && event.optString("status") !in listOf("CANCELLED","LIMIT")) event.put("status","RETRYING")
         }
         runCatching { SafetyAlertWorker.reconcile(context) }
         return metadata

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NEXVARY Recorder Studio</string>
+    <string name="app_name">NEXVARY Guardian Studio</string>
     <string name="home_subtitle">اسکرین ریکارڈنگ، پیشہ ورانہ آواز، آڈیو کی تبدیلی اور پہلے سے ریکارڈ شدہ لائیو ویڈیو</string>
     <string name="theme_current_format">موجودہ تھیم: %1$s</string>
     <string name="theme_hint">رنگ بدلنے کے لیے اوپر والے حصے پر ٹیپ کریں</string>
@@ -178,7 +178,7 @@
     <string name="screen_projection_stopped_immediately">اینڈرائیڈ نے اسکرین شیئرنگ فوراً بند کر دی۔ پورا اسکرین منتخب کریں اور محفوظ ونڈوز سے بچیں۔</string>
     <string name="save_folder_help">آپ کوئی بھی قابلِ تحریر فولڈر منتخب کر سکتے ہیں؛ یہ آئندہ ریکارڈنگ کے لیے محفوظ رہے گا۔</string>
     <string name="quick_record_tile">اسکرین ریکارڈر</string>
-    <string name="media_tools_title">میڈیا ٹولز</string>
+    <string name="media_tools_title">Media Center</string>
     <string name="media_tools_desc">آڈیو بدلیں، آڈیو تبدیل کریں، ویڈیو کاٹیں اور ویڈیو کنٹینر فارمیٹ فون پر ہی تبدیل کریں۔</string>
     <string name="audio_convert_title">آڈیو تبدیل کریں</string>
     <string name="no_audio_selected">کوئی آڈیو منتخب نہیں</string>
@@ -206,7 +206,7 @@
     <string name="video_trimmed_keyframe_format">%1$s محفوظ ہوا • کٹ قریب ترین محفوظ کی فریم سے تقریباً %2$.2f سیکنڈ پر شروع ہوتی ہے</string>
     <string name="theme_piano_black">چمکدار پیانو سیاہ</string>
     <string name="brand_name">NEXVARY</string>
-    <string name="studio_name">RECORDER STUDIO</string>
+    <string name="studio_name">GUARDIAN STUDIO</string>
     <string name="camera_title">Camera recording</string>
     <string name="rescue_title">Quick rescue</string>
     <string name="library_title">Recordings library</string>
@@ -418,7 +418,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="fs_immediate_consent">I explicitly choose immediate manual SOS without a cancellation countdown.</string>
     <string name="fs_audible">Audible notification alerts (silent is the default)</string>
     <string name="fs_share_device">Include the device model in alerts</string>
-    <string name="fs_battery_alerts">Alert at 15%, 10% and 5% during active safety location mode</string>
+    <string name="fs_battery_alerts" formatted="false">Alert at 15%, 10% and 5% during active safety location mode</string>
     <string name="fs_battery_saver">At 5% reduce location updates and stop motion sensing</string>
     <string name="fs_motion_consent">Enable possible-impact sensing during active location safety mode</string>
     <string name="fs_motion_note">This accelerometer heuristic can react to a dropped phone. It is not medical crash/fall detection. A 20-second cancellable prompt precedes SOS. Location safety mode must be active.</string>
@@ -528,4 +528,52 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="fs_smtp_test_time">Last connection/authentication test: %1$s</string>
     <string name="fs_emergency_size">Emergency video: up to 480p, ~%1$.1f MB/min with audio. Actual size varies by device.</string>
     <string name="fs_evidence_action_required">Start evidence from this screen after granting camera/microphone permission. Background capture is not started automatically.</string>
+    <string name="guardian_family_hint">Check-ins · journeys · evidence</string>
+    <string name="guardian_safety">Safety</string>
+    <string name="guardian_cloud">Cloud &amp; account</string>
+    <string name="guardian_child_mode">Child Mode</string>
+    <string name="guardian_pin_required">Create a Guardian PIN before enabling Child Mode.</string>
+    <string name="guardian_local_always">Local SOS and local evidence remain available without a subscription or cloud quota. Cloud delivery requires setup, consent and internet.</string>
+    <string name="guardian_silent_sos">Silent SOS</string>
+    <string name="guardian_call">Open emergency dialer</string>
+    <string name="guardian_share_location">Share last known location</string>
+    <string name="guardian_last_location">Last known location — check its timestamp.</string>
+    <string name="guardian_usage">Cloud usage &amp; remaining quota</string>
+    <string name="guardian_cloud_unconfigured">Cloud status: not configured. Local recording is available.</string>
+    <string name="guardian_cloud_note">Parent setup: enter the HTTPS API and public Cognito configuration from deployment outputs. Your verified account email is the Free cloud recipient. Tokens expire; sign in again when requested. No AWS or SES keys belong here.</string>
+    <string name="guardian_api">HTTPS API URL</string>
+    <string name="guardian_region">AWS region</string>
+    <string name="guardian_client">Cognito public client ID</string>
+    <string name="guardian_invalid_config">Enter a valid HTTPS origin, AWS region and public client ID.</string>
+    <string name="guardian_email">Guardian email</string>
+    <string name="guardian_code">Verification code</string>
+    <string name="guardian_signup">Create account</string>
+    <string name="guardian_confirm">Confirm email</string>
+    <string name="guardian_login">Sign in</string>
+    <string name="guardian_forgot">Send password reset code</string>
+    <string name="guardian_reset_password">Reset password with code</string>
+    <string name="guardian_auth_ok">Request completed. Check your email or refresh usage after signing in.</string>
+    <string name="guardian_auth_failed">Request failed. Check configuration, credentials, code and connection; no cloud success was recorded.</string>
+    <string name="guardian_logout">Sign out</string>
+    <string name="guardian_login_required">Cloud unavailable or sign-in expired. Local SOS remains available.</string>
+    <string name="guardian_delete_account">Delete cloud account</string>
+    <string name="guardian_delete_evidence">Delete cloud evidence</string>
+    <string name="guardian_delete_note">Permanently delete the selected cloud data? Local recordings remain on this device. Account deletion does not cancel a Play subscription; manage it in Google Play.</string>
+    <string name="guardian_deleted">Cloud data deleted.</string>
+    <string name="guardian_usage_format">SOS Cloud Sends: %1$d / %2$d remaining\nVideo Evidence Uploads: %3$d / %4$d remaining\nReset: %5$s (server calendar; cached snapshot)</string>
+    <string name="guardian_quota_used">Free cloud sending quota used. Save evidence locally, open the dialer or SMS composer, share location manually, or review Premium.</string>
+    <string name="guardian_record_audio">Record audio</string>
+    <string name="guardian_extract_audio">Extract audio from video</string>
+    <string name="guardian_compress_audio">Convert / compress audio recordings</string>
+    <string name="guardian_file_info">File information</string>
+    <string name="guardian_share_export">Share / export</string>
+    <string name="guardian_exported">Export saved to the device media library.</string>
+    <string name="guardian_compress_video">Compress video</string>
+    <string name="guardian_compress_note">Local H.264 / AAC conversion, up to 720p; target video bitrate 1 Mbps (about 8 MB/min with audio). Encoders may adjust the target. Output can be larger than an already compressed source. Keep this screen open until saved.</string>
+    <string name="guardian_compressing">Compressing on this device…</string>
+    <string name="guardian_compress_failed">Compression failed or this codec is unsupported. The original file is unchanged.</string>
+    <string name="guardian_settings_saved">Settings saved.</string>
+    <string name="guardian_save_settings">Save configuration</string>
+<string name="guardian_invite">Send cloud guardian verification (Premium)</string>
+<string name="guardian_confirm_contact">Confirm cloud guardian code</string>
 </resources>

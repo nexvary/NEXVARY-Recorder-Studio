@@ -25,6 +25,7 @@ class EmergencyQueue(private val context: Context) {
         fun enqueue(root: JSONObject, payload: JSONObject, manual: Boolean = false) {
             val config = FamilyStore.config(root)
             if(!manual && !config.optBoolean("autoShare")) return
+            com.nexvary.recorder.guardian.CloudOutbox.enqueue(root,payload,manual)
             val jobs = FamilyStore.jobs(root)
             val contacts = FamilyStore.contacts(root)
             for(i in 0 until contacts.length()) {
@@ -93,6 +94,7 @@ class EmergencyQueue(private val context: Context) {
 class SafetyAlertWorker(context: Context, params: WorkerParameters): Worker(context,params) {
     private val smtp = SmtpSender("NEXVARY Safety Alert", "Emergency assistance tools — delivery to the inbox is not guaranteed.")
     override fun doWork(): Result {
+        if (!com.nexvary.recorder.BuildConfig.DEBUG) return Result.failure()
         val id = inputData.getString("id") ?: return Result.failure()
         val queue = EmergencyQueue(applicationContext)
         val transport = object : AlertTransport {
@@ -107,6 +109,8 @@ class SafetyAlertWorker(context: Context, params: WorkerParameters): Worker(cont
     override fun onStopped() = smtp.close()
     companion object {
         fun reconcile(context: Context) {
+            com.nexvary.recorder.guardian.CloudSyncWorker.schedule(context)
+            if (!com.nexvary.recorder.BuildConfig.DEBUG || com.nexvary.recorder.guardian.CloudApi.configured(context) || !context.getSharedPreferences("fixture",0).getBoolean("legacySmtp",false)) return
             val manager = WorkManager.getInstance(context);val queue = EmergencyQueue(context)
             queue.all().forEach { job ->
                 val id = job.getString("id");val status = job.optString("status")

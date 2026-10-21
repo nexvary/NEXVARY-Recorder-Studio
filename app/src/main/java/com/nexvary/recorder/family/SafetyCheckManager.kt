@@ -35,7 +35,14 @@ class SafetyCheckManager(private val context: Context) {
         val state = store.update { root ->
             val existing = FamilyStore.state(root)
             if(expectedId!=null) check(existing!=null && existing.id==expectedId && existing.phase in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE))
-            if(existing?.phase == SafetyPhase.SOS_ACTIVE) return@update existing
+            if(existing?.phase == SafetyPhase.SOS_ACTIVE) {
+                FamilyStore.event(root,"SOS_MARKER",existing.id)
+                root.optJSONObject("lastLocation")?.let { location ->
+                    val markers=root.optJSONArray("sosMarkers") ?: org.json.JSONArray().also { root.put("sosMarkers",it) }
+                    if(markers.length()<1000) markers.put(JSONObject().put("eventId",existing.id).put("timestamp",System.currentTimeMillis()).put("location",location))
+                }
+                return@update existing
+            }
             if(existing?.phase == SafetyPhase.COUNTDOWN && !immediate) return@update existing
             if(existing?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN)) {
                 root.remove("journey");root.remove("batterySent");root.remove("batterySaverActive");root.remove("locationAlertFor");root.remove("reminderSent")
@@ -149,7 +156,7 @@ class SafetyCheckManager(private val context: Context) {
         manager.createNotificationChannel(NotificationChannel(CHANNEL,context.getString(R.string.fs_title),NotificationManager.IMPORTANCE_HIGH).apply {
             setSound(null,null);enableVibration(false);lockscreenVisibility=Notification.VISIBILITY_PRIVATE
         })
-        val audible=FamilyStore.config(store.snapshot()).optBoolean("audible") && state.phase in listOf(SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)
+        val audible=state.reason!="SILENT_SOS" && FamilyStore.config(store.snapshot()).optBoolean("audible") && state.phase in listOf(SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)
         if(audible) manager.createNotificationChannel(NotificationChannel(AUDIBLE_CHANNEL,context.getString(R.string.fs_audible),NotificationManager.IMPORTANCE_HIGH).apply { lockscreenVisibility=Notification.VISIBILITY_PRIVATE })
         fun action(name: String) = PendingIntent.getBroadcast(context,name.hashCode(),Intent(context,SafetyActionReceiver::class.java).setAction(name).putExtra("id",state.id),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val open = PendingIntent.getActivity(context,0,Intent(context,FamilyDashboardActivity::class.java),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)

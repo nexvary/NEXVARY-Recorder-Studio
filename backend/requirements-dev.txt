@@ -1,0 +1,4 @@
+-r requirements.txt
+moto[dynamodb,s3,sqs,cognitoidp,ses]>=5.1,<6
+pytest>=8,<10
+ruff>=0.14,<1

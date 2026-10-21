@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
 
+        if (com.nexvary.recorder.guardian.ChildMode.enabled(this)) {
+            startActivity(Intent(this, com.nexvary.recorder.guardian.ChildHomeActivity::class.java)); finish(); return
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         UiInsets.applyWithBottomBar(binding.root, binding.bottomNav)
@@ -44,22 +47,22 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnThemePicker.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
-            showThemePicker()
+            com.nexvary.recorder.family.GuardianGate.action(this) { showThemePicker() }
         }
 
         binding.cardScreen.setOnClickListener { openScreenRecorder() }
-        binding.cardVoice.setOnClickListener { openVoiceStudio() }
+        binding.cardFamily.setOnClickListener { openFamilySafety() }
         binding.cardReplace.setOnClickListener { openMediaTools() }
         binding.cardLive.setOnClickListener { openLiveBroadcast() }
         binding.cardCamera.setOnClickListener { startActivity(Intent(this, BackgroundCameraActivity::class.java)) }
-        binding.cardRescue.setOnClickListener { startActivity(Intent(this, QuickRescueActivity::class.java)) }
+        binding.cardRescue.setOnClickListener { startActivity(Intent(this, com.nexvary.recorder.guardian.GuardianEmergencyActivity::class.java)) }
         binding.cardLibrary.setOnClickListener { startActivity(Intent(this, RecordingsLibraryActivity::class.java)) }
         binding.cardSettings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
         binding.cardAbout.setOnClickListener { startActivity(Intent(this, AboutActivity::class.java)) }
         binding.bottomNav.itemIconTintList = null
         // Labels are always visible. Suppress duplicate long-press tooltips so a
         // slow/held tap can still activate a tab rather than consuming its click.
-        for (id in listOf(R.id.navHome, R.id.navScreen, R.id.navVoice, R.id.navLive, R.id.navMore)) {
+        for (id in listOf(R.id.navHome, R.id.navScreen, R.id.navSafety, R.id.navLive, R.id.navMore)) {
             binding.bottomNav.findViewById<android.view.View>(id)?.let { tab ->
                 androidx.appcompat.widget.TooltipCompat.setTooltipText(tab, null)
                 tab.isLongClickable = false
@@ -74,8 +77,8 @@ class MainActivity : AppCompatActivity() {
                     openScreenRecorder()
                     false
                 }
-                R.id.navVoice -> {
-                    openVoiceStudio()
+                R.id.navSafety -> {
+                    openFamilySafety()
                     false
                 }
                 R.id.navLive -> {
@@ -104,12 +107,16 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, ScreenRecorderActivity::class.java))
     }
 
+    private fun openFamilySafety() {
+        startActivity(Intent(this, com.nexvary.recorder.family.FamilyHubActivity::class.java))
+    }
+
     private fun openVoiceStudio() {
         startActivity(Intent(this, VoiceRecorderActivity::class.java))
     }
 
     private fun openMediaTools() {
-        startActivity(Intent(this, MediaToolsActivity::class.java))
+        startActivity(Intent(this, com.nexvary.recorder.media.MediaCenterActivity::class.java))
     }
 
     private fun openLiveBroadcast() {
@@ -140,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                     4 -> startActivity(Intent(this, BackgroundCameraActivity::class.java))
                     5 -> startActivity(Intent(this, CallRecorderActivity::class.java))
                     6 -> startActivity(Intent(this, SafetyCaptureActivity::class.java))
-                    7 -> startActivity(Intent(this, QuickRescueActivity::class.java))
+                    7 -> startActivity(Intent(this, com.nexvary.recorder.guardian.GuardianEmergencyActivity::class.java))
                     8 -> startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java))
                 }
             }

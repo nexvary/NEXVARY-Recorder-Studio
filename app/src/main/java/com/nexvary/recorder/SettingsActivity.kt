@@ -8,13 +8,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.nexvary.recorder.ui.StudioPage
 import com.nexvary.recorder.ui.ThemeManager
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : com.nexvary.recorder.family.GuardianProtectedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         val root = StudioPage.install(this, R.string.settings_title)
         com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.fs_title, R.id.fsOpenDashboard) { startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java)) }
-        com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.smtp_title, R.id.openSmtp) {
+        com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.guardian_cloud) { startActivity(Intent(this, com.nexvary.recorder.guardian.CloudSettingsActivity::class.java)) }
+        com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.guardian_child_mode) { com.nexvary.recorder.guardian.ChildMode.activate(this) }
+        if (BuildConfig.DEBUG) com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.smtp_title, R.id.openSmtp) {
             startActivity(Intent(this, com.nexvary.recorder.delivery.SmtpSettingsActivity::class.java))
         }
         com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.mail_outbox, R.id.mailOutbox) {
