@@ -32,6 +32,7 @@ class RecordingsLibraryActivity : AppCompatActivity() {
     private var started = false
     private var generation = 0
     private var player: VideoView? = null
+    private var playbackController: MediaController? = null
     private var playerDialog: androidx.appcompat.app.AlertDialog? = null
     private var prompt: androidx.appcompat.app.AlertDialog? = null
     private val playbackDir by lazy { File(cacheDir, "vault_playback").apply { mkdirs() } }
@@ -58,6 +59,15 @@ class RecordingsLibraryActivity : AppCompatActivity() {
         if (session == null) window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         load()
     }
+    override fun onPause() {
+        // Close the floating controller/dialog before Android 13 transfers window focus during recreation.
+        lock()
+        super.onPause()
+    }
+    override fun onResume() {
+        super.onResume()
+        if(started) load()
+    }
     override fun onStop() {
         started = false
         prompt?.dismiss(); prompt = null
@@ -66,8 +76,11 @@ class RecordingsLibraryActivity : AppCompatActivity() {
     }
     private fun lock() {
         session = null; generation++
-        player?.stopPlayback(); player = null
-        playerDialog?.dismiss(); playerDialog = null
+        runCatching { playbackController?.hide() };playbackController=null
+        val oldPlayer=player;player=null
+        runCatching { oldPlayer?.setMediaController(null);oldPlayer?.stopPlayback() }
+        val oldDialog=playerDialog;playerDialog=null
+        oldDialog?.dismiss()
         playbackDir.listFiles()?.forEach { it.delete() }
         if (::list.isInitialized) list.removeAllViews()
         if (::vaultButton.isInitialized) vaultButton.setText(R.string.vault_open)
@@ -230,12 +243,17 @@ class RecordingsLibraryActivity : AppCompatActivity() {
             if (temp == null) { toast(R.string.open_media_failed); return@launch }
             val video = VideoView(this@RecordingsLibraryActivity)
             player = video
-            video.setMediaController(MediaController(this@RecordingsLibraryActivity).apply { setAnchorView(video) })
-            video.setOnErrorListener { _, _, _ -> toast(R.string.open_media_failed); playerDialog?.dismiss(); true }
+            val controller=MediaController(this@RecordingsLibraryActivity).apply { setAnchorView(video) }
+            playbackController=controller
+            video.setMediaController(controller)
+            video.setOnErrorListener { _, _, _ -> if(player===video) { toast(R.string.open_media_failed);playerDialog?.dismiss() };true }
             video.setVideoPath(temp.absolutePath)
             playerDialog = MaterialAlertDialogBuilder(this@RecordingsLibraryActivity).setTitle(entry.name).setView(video)
                 .setNegativeButton(R.string.back, null).create().apply {
-                    setOnDismissListener { video.stopPlayback(); temp.delete(); player = null }
+                    setOnDismissListener {
+                        runCatching { controller.hide() };video.setMediaController(null);video.stopPlayback();temp.delete()
+                        if(player===video) { player=null;playbackController=null;playerDialog=null }
+                    }
                     show(); window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
                 }
             video.layoutParams = android.widget.FrameLayout.LayoutParams(-1, (300 * resources.displayMetrics.density).toInt())
