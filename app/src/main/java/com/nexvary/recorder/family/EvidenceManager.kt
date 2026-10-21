@@ -62,7 +62,7 @@ object EvidenceManager {
         catch(error: Exception) { manifestFile.failWrite(stream);throw error }
         store.update { root ->
             val event=com.nexvary.recorder.guardian.CloudOutbox.events(root).optJSONObject(eventId)
-            if(event != null && event.optString("status") !in listOf("CANCELLED","LIMIT")) event.put("status","RETRYING")
+            if(event != null && event.optString("status") !in listOf("CANCELLED","CANCEL_PENDING","LIMIT","LOGIN_REQUIRED")) event.put("status","RETRYING")
         }
         runCatching { SafetyAlertWorker.reconcile(context) }
         return metadata

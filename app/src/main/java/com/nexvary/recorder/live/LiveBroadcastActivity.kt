@@ -26,7 +26,7 @@ class LiveBroadcastActivity : AppCompatActivity() {
 
     private val picker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri ?: return@registerForActivityResult
-        contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        runCatching { contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
         videoUri = uri
         binding.txtVideo.text = uri.lastPathSegment ?: uri.toString()
     }

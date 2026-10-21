@@ -96,7 +96,7 @@ def reserve(pk, email, body):
     recipients = list(dict.fromkeys(recipients))[:1 if state == "FREE" else 5]
     # Default 48 hours Free, 7 days Premium. Local evidence is never removed here.
     item = {"pk": pk, "sk": "EVENT#" + eid, "eventId": eid, "state": "PENDING", "createdAt": now(),
-            "ttl": now() + (172800 if state == "FREE" else 604800), "test": body.get("test") is True,
+            "ttl": now() + (172800 if state == "FREE" else 604800), "storageTier": "free" if state == "FREE" else "premium", "test": body.get("test") is True,
             "payload": safe_payload(body.get("payload", {})), "recipients": recipients, "totalBytes": 0}
     key = {"pk": pk, "sk": "USAGE#" + period_key}
     cool_condition = "attribute_not_exists(#at) OR #at <= :cutoff"
@@ -145,7 +145,7 @@ def sign(pk, body):
     else:
         chunk = {"pk": pk, "sk": sk, "eventId": eid, "index": index, "size": size, "sha256": sha,
             "contentType": body["contentType"], "durationMs": body.get("durationMs", 0), "ttl": int(item["ttl"]),
-            "key": f"{'free' if usage(pk)['state']=='FREE' else 'premium'}/{pk}/{eid}/{index:03}.bin", "complete": False}
+            "key": f"{item.get('storageTier', 'premium' if int(item['ttl']) - int(item['createdAt']) > 172800 else 'free')}/{pk}/{eid}/{index:03}.bin", "complete": False}
         transaction([
             {"Put": {"TableName": table().name, "Item": wire(chunk), "ConditionExpression": "attribute_not_exists(pk)"}},
             {"Update": {"TableName": table().name, "Key": wire({"pk": pk, "sk": item["sk"]}),
@@ -159,7 +159,7 @@ def sign(pk, body):
 def complete(pk, body):
     eid = event_id(body.get("eventId")); event_get(pk, eid)
     index = body.get("index")
-    if not isinstance(index, int) or not 0 <= index < MAX_SEGMENTS: raise Rejected("INVALID_SEGMENT")
+    if isinstance(index, bool) or not isinstance(index, int) or not 0 <= index < MAX_SEGMENTS: raise Rejected("INVALID_SEGMENT")
     item = get(pk, f"CHUNK#{eid}#{index:03}")
     if not item: raise Rejected("SEGMENT_NOT_FOUND", 404)
     if not item.get("complete"):

@@ -40,6 +40,7 @@ class ChildHomeActivity: AppCompatActivity() {
         DeliveryUi.button(root,R.string.fs_check_start) {
             FamilyUi.io(this,{ SafetyCheckManager(this).start(15,60) }) { Toast.makeText(this,R.string.fs_check_active,Toast.LENGTH_LONG).show() }
         }
+        DeliveryUi.button(root,R.string.guide_title) { startActivity(Intent(this,com.nexvary.recorder.GuideActivity::class.java)) }
         DeliveryUi.button(root,R.string.fs_parent_mode) {
             GuardianGate.lock()
             GuardianGate.prompt(this,cancel={}) {

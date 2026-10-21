@@ -27,7 +27,7 @@ class SubscriptionActivity: ProtectedFamilyPage() {
             product.subscriptionOfferDetails?.forEach { offer ->
                 offers.addView(TextView(this).apply { text=product.name+"\n"+offer.pricingPhases.pricingPhaseList.joinToString("\n") { it.formattedPrice+" · "+it.billingPeriod } })
             }
-            if(manager.canPurchase) DeliveryUi.button(offers,R.string.fs_subscribe) { manager.launch(this,product) }
+            if(manager.canPurchase) DeliveryUi.button(offers,R.string.fs_subscribe) { if(!manager.launch(this,product)) status.setText(R.string.guardian_login_required) }
         }
     }
     override fun onDestroy() { if(::manager.isInitialized) manager.close();super.onDestroy() }

@@ -9,26 +9,28 @@ import javax.net.ssl.HttpsURLConnection
 class CloudFailure(val code: String,val status: Int=0): Exception(code)
 
 /** Cognito client IDs and endpoint addresses are public configuration. No AWS key enters the APK. */
-class CloudApi(private val context: Context) {
+class CloudApi(private val context: Context, private val expectedSession: JSONObject? = null) {
     fun request(method: String,path: String,body: JSONObject?=null): JSONObject {
         require(path.startsWith("/") && !path.contains(".."))
         var config=config(context)
+        expectedSession?.let { if(!CloudSessionState.sameSession(config,it)) throw CloudFailure("SESSION_CHANGED",401) }
         if(System.currentTimeMillis() >= config.optLong("expiresAt")-30_000 && config.optString("refreshToken").isNotBlank()) {
             val refreshed=cognito("InitiateAuth",JSONObject().put("ClientId",config.getString("clientId")).put("AuthFlow","REFRESH_TOKEN_AUTH")
                 .put("AuthParameters",JSONObject().put("REFRESH_TOKEN",config.getString("refreshToken"))))
             val tokens=refreshed.getJSONObject("AuthenticationResult")
-            FamilyStore(context).update { root -> config(root).put("idToken",tokens.getString("IdToken")).put("expiresAt",System.currentTimeMillis()+tokens.getLong("ExpiresIn")*1000) }
+            FamilyStore(context).update { root ->
+                if(!CloudSessionState.sameSession(config(root),config)) throw CloudFailure("SESSION_CHANGED",401)
+                config(root).put("idToken",tokens.getString("IdToken")).put("expiresAt",System.currentTimeMillis()+tokens.getLong("ExpiresIn")*1000)
+            }
             config=config(context)
+            expectedSession?.let { if(!CloudSessionState.sameSession(config,it)) throw CloudFailure("SESSION_CHANGED",401) }
         }
         val token=config.optString("idToken")
         if(token.isBlank() || System.currentTimeMillis() >= config.optLong("expiresAt")) throw CloudFailure("LOGIN_REQUIRED",401)
         return json(config.getString("baseUrl").trimEnd('/')+path,method,body,mapOf("Authorization" to "Bearer $token"))
     }
     fun accountId(): String {
-        val token=config(context).optString("idToken").split('.').getOrNull(1) ?: throw CloudFailure("LOGIN_REQUIRED",401)
-        val sub=JSONObject(String(android.util.Base64.decode(token,android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP),Charsets.UTF_8)).getString("sub")
-        // This is an account-binding hint; the backend independently verifies it with Google Play.
-        return java.security.MessageDigest.getInstance("SHA-256").digest(sub.toByteArray()).joinToString("") { "%02x".format(it) }
+        return CloudSessionState.binding(config(context).optString("idToken"))
     }
     fun authenticate(email: String,password: String) {
         val config=config(context)
@@ -36,10 +38,8 @@ class CloudApi(private val context: Context) {
             .put("AuthParameters",JSONObject().put("USERNAME",email.trim()).put("PASSWORD",password)))
         val tokens=result.optJSONObject("AuthenticationResult") ?: throw CloudFailure("AUTH_CHALLENGE_REQUIRED")
         FamilyStore(context).update { root ->
-            val value=config(root)
-            value.put("idToken",tokens.getString("IdToken")).put("expiresAt",System.currentTimeMillis()+tokens.getLong("ExpiresIn")*1000)
-            value.put("refreshToken",tokens.optString("RefreshToken"))
-            // Refresh token is encrypted at rest; AWS credentials and passwords are never persisted.
+            if(CloudApi.config(root).optString("baseUrl")!=config.optString("baseUrl") || CloudApi.config(root).optString("clientId")!=config.optString("clientId")) throw CloudFailure("SESSION_CHANGED",401)
+            CloudSessionState.install(root,tokens)
         }
     }
     fun signup(email: String,password: String) = cognito("SignUp",JSONObject().put("ClientId",config(context).getString("clientId"))
@@ -77,8 +77,15 @@ class CloudApi(private val context: Context) {
 
 /** One source of truth for sensitive quotas: GET /usage, never the handset calendar. */
 class QuotaManager(private val context: Context) {
-    fun refresh(): JSONObject = CloudApi(context).request("GET","/usage").also { usage ->
-        FamilyStore(context).update { root -> root.put("cloudUsage",usage.put("receivedAt",System.currentTimeMillis())) }
+    fun refresh(): JSONObject {
+        val session=CloudApi.config(context)
+        val account=CloudSessionState.binding(session.optString("idToken"))
+        val usage=CloudApi(context,session).request("GET","/usage")
+        FamilyStore(context).update { root ->
+            if(runCatching { CloudSessionState.binding(CloudApi.config(root).optString("idToken")) }.getOrNull()!=account) throw CloudFailure("SESSION_CHANGED",401)
+            root.put("cloudUsage",usage.put("receivedAt",System.currentTimeMillis()))
+        }
+        return usage
     }
     fun cached()=FamilyStore(context).snapshot().optJSONObject("cloudUsage")
 }

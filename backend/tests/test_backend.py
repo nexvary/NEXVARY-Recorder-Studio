@@ -179,3 +179,18 @@ def test_resolved_offline_event_cancels_queued_email_but_keeps_evidence():
         app.worker({"Records": [record]}, None)
         provider.return_value.send.assert_not_called()
     assert app.event_get(PK, eid)["eventId"] == eid
+
+
+def test_event_retention_tier_does_not_change_when_subscription_expires():
+    app.put({"pk": PK, "sk": "ENTITLEMENT", "state": "PREMIUM", "expiresAt": app.now()+3600})
+    eid = reserve()["eventId"]
+    app.put({"pk": PK, "sk": "ENTITLEMENT", "state": "EXPIRED", "expiresAt": 1})
+    app.sign(PK, {"eventId": eid, "index": 0, "size": 32, "sha256": "0"*64, "contentType": "video/mp4"})
+    assert app.get(PK, f"CHUNK#{eid}#000")["key"].startswith("premium/")
+    assert app.usage(PK)["state"] == "FREE"
+
+
+def test_completion_rejects_boolean_segment_index():
+    eid = reserve()["eventId"]
+    with pytest.raises(Rejected, match="INVALID_SEGMENT"):
+        app.complete(PK, {"eventId": eid, "index": True})

@@ -50,9 +50,9 @@ class VideoCompressionActivity: AppCompatActivity() {
     }
     private fun publish(file: File) {
         val uri=checkNotNull(contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME,"NEXVARY_compressed_${System.currentTimeMillis()}.mp4");put(MediaStore.MediaColumns.MIME_TYPE,"video/mp4");put(MediaStore.MediaColumns.RELATIVE_PATH,"Movies/NEXVARY");put(MediaStore.MediaColumns.IS_PENDING,1)
+            put(MediaStore.MediaColumns.DISPLAY_NAME,"NEXVARY_compressed_${System.currentTimeMillis()}.mp4");put(MediaStore.MediaColumns.MIME_TYPE,"video/mp4");put(MediaStore.MediaColumns.RELATIVE_PATH,"Movies/NEXVARY Recorder");put(MediaStore.MediaColumns.IS_PENDING,1)
         }))
-        try { checkNotNull(contentResolver.openOutputStream(uri)).use { output -> file.inputStream().use { it.copyTo(output) } };contentResolver.update(uri,ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING,0) },null,null) }
+        try { checkNotNull(contentResolver.openOutputStream(uri)).use { output -> file.inputStream().use { it.copyTo(output) } };check(contentResolver.update(uri,ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING,0) },null,null)==1) }
         catch(error: Exception) { contentResolver.delete(uri,null,null);throw error }
     }
     override fun onDestroy() { transformer?.cancel();output?.delete();super.onDestroy() }

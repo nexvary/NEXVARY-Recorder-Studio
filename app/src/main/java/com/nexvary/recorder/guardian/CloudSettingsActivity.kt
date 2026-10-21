@@ -26,7 +26,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
             val address=base.text.toString().trim().trimEnd('/');val area=region.text.toString().trim();val id=client.text.toString().trim()
             val url=runCatching { java.net.URI(address) }.getOrNull()
             if(url?.scheme!="https" || url.host.isNullOrBlank() || url.userInfo!=null || !url.path.isNullOrEmpty() || url.query!=null || url.fragment!=null || !area.matches(Regex("[a-z]{2}-[a-z]+-\\d")) || !id.matches(Regex("[a-zA-Z0-9]{10,128}"))) { status.setText(R.string.guardian_invalid_config);return@button }
-            FamilyUi.io(this,{ FamilyStore(this).update { it.put("cloud",JSONObject().put("baseUrl",address).put("region",area).put("clientId",id)) } }) { status.setText(R.string.guardian_settings_saved) }
+            FamilyUi.io(this,{ FamilyStore(this).update { CloudSessionState.logout(it);it.put("cloud",JSONObject().put("baseUrl",address).put("region",area).put("clientId",id)) } }) { status.setText(R.string.guardian_settings_saved) }
         }
         val email=FamilyUi.field(root,R.string.guardian_email,R.id.guardianEmail,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
         val password=FamilyUi.field(root,R.string.smtp_password,R.id.guardianPassword,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
@@ -41,7 +41,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
         DeliveryUi.button(root,R.string.guardian_confirm_contact) { val c=code.text.toString();auth { val id=FamilyStore(this).snapshot().optString("cloudInvitation");CloudApi(this).request("POST","/contacts/confirm",JSONObject().put("invitation",id).put("code",c)) } }
         DeliveryUi.button(root,R.string.guardian_usage) { refresh() }
         DeliveryUi.button(root,R.string.mail_retry) { FamilyUi.io(this,{ CloudOutbox.retry(this) }) { refresh() } }
-        DeliveryUi.button(root,R.string.guardian_logout) { FamilyUi.io(this,{ FamilyStore(this).update { CloudApi.config(it).remove("idToken");CloudApi.config(it).remove("expiresAt");CloudApi.config(it).remove("refreshToken") } }) { status.setText(R.string.guardian_login_required) } }
+        DeliveryUi.button(root,R.string.guardian_logout) { FamilyUi.io(this,{ FamilyStore(this).update { CloudSessionState.logout(it) } }) { status.setText(R.string.guardian_login_required) } }
         DeliveryUi.button(root,R.string.guardian_delete_account,red=true) {
             MaterialAlertDialogBuilder(this).setMessage(R.string.guardian_delete_note).setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.guardian_delete_account) { _,_ ->
                 FamilyUi.io(this,{ runCatching { CloudApi(this).request("DELETE","/account");FamilyStore(this).update { it.remove("cloud");it.remove("cloudUsage");it.remove("cloudEvents");it.remove("verifiedEntitlement") } } }) { result -> status.setText(if(result.isSuccess) R.string.guardian_deleted else R.string.guardian_auth_failed) }

@@ -27,6 +27,8 @@ class VisualEvidenceTest {
         com.nexvary.recorder.family.RescueCardsStore(context).clear()
         val pages = listOf(
             Triple(MainActivity::class.java, R.id.cardScreen, "dashboard-ar"),
+            Triple(MoreActivity::class.java, R.id.moreGuide, "more-cards-ar"),
+            Triple(GuideActivity::class.java, R.id.guideSearch, "guide-ar"),
             Triple(com.nexvary.recorder.media.MediaCenterActivity::class.java,R.id.btnBack,"media-center-ar"),
             Triple(com.nexvary.recorder.family.FamilyHubActivity::class.java,R.id.btnBack,"family-hub-ar"),
             Triple(com.nexvary.recorder.guardian.GuardianEmergencyActivity::class.java,R.id.btnBack,"guardian-sos-ar"),
@@ -47,6 +49,11 @@ class VisualEvidenceTest {
             ActivityScenario.launch(page).use {
                 onView(withId(visibleId)).check(matches(isDisplayed()))
                 capture(it, name)
+                if (page == GuideActivity::class.java) {
+                    onView(withId(R.id.guideSearch)).perform(reveal(), androidx.test.espresso.action.ViewActions.replaceText(context.getString(R.string.guide_q_free)), androidx.test.espresso.action.ViewActions.closeSoftKeyboard())
+                    awaitUi(withId(R.id.guideFaqFree))
+                    capture(it, "guide-search-ar")
+                }
                 if (page == com.nexvary.recorder.camera.BackgroundCameraActivity::class.java) {
                     onView(withId(R.id.cameraQualityGroup)).perform(reveal()).check(matches(isDisplayed()))
                     capture(it, "camera-quality-ar")

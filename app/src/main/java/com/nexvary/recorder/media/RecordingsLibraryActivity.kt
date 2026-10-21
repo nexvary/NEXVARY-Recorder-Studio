@@ -183,6 +183,12 @@ class RecordingsLibraryActivity : AppCompatActivity() {
                 runCatching { startActivity(Intent(Intent.ACTION_VIEW).setDataAndType(recording.uri, recording.mime).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)) }
                     .onFailure { toast(R.string.open_media_failed) }
             }
+            action(R.string.guardian_share_export) {
+                runCatching { startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType(recording.mime)
+                    .putExtra(Intent.EXTRA_STREAM, recording.uri).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    .apply { clipData = android.content.ClipData.newUri(contentResolver, recording.name, recording.uri) }, getString(R.string.guardian_share_export))) }
+                    .onFailure { toast(R.string.rescue_share_error) }
+            }
             action(R.string.library_delete) { confirm(R.string.library_delete_confirm) { operation { deleteOriginal(recording) } } }
             if (recording.mime.startsWith("video/")) action(R.string.library_hide) {
                 askPin { confirm(R.string.vault_hide_confirm) {
@@ -308,8 +314,8 @@ class RecordingsLibraryActivity : AppCompatActivity() {
         for ((collection, fallback) in listOf(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI to "audio/mp4", MediaStore.Video.Media.EXTERNAL_CONTENT_URI to "video/mp4")) {
             contentResolver.query(collection,
                 arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.MIME_TYPE),
-                "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ? AND ${MediaStore.MediaColumns.IS_PENDING} = 0",
-                arrayOf("%/NEXVARY Recorder/%"), "${MediaStore.MediaColumns.DATE_ADDED} DESC")?.use { cursor ->
+                "(${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ? OR ${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ?) AND ${MediaStore.MediaColumns.IS_PENDING} = 0",
+                arrayOf("%/NEXVARY Recorder/%", "%/NEXVARY/%"), "${MediaStore.MediaColumns.DATE_ADDED} DESC")?.use { cursor ->
                 while (cursor.moveToNext()) rows.add(Recording(cursor.getString(1), ContentUris.withAppendedId(collection, cursor.getLong(0)), cursor.getString(2) ?: fallback))
             }
         }

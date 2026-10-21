@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                     false
                 }
                 R.id.navMore -> {
-                    showMoreMenu()
+                    startActivity(Intent(this, MoreActivity::class.java))
                     false
                 }
                 else -> false
@@ -121,38 +121,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun openLiveBroadcast() {
         startActivity(Intent(this, LiveBroadcastActivity::class.java))
-    }
-
-    private fun showMoreMenu() {
-        val labels = arrayOf(
-            getString(R.string.media_tools_title),
-            getString(R.string.language_title),
-            getString(R.string.about_title),
-            getString(R.string.choose_theme),
-            getString(R.string.camera_title),
-            getString(R.string.call_title),
-            getString(R.string.safety_title),
-            getString(R.string.rescue_title),
-            getString(R.string.fs_title)
-        )
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.nav_more)
-            .setItems(labels) { _, which ->
-                when (which) {
-                    0 -> openMediaTools()
-                    1 -> startActivity(Intent(this, LanguageActivity::class.java))
-                    2 -> startActivity(Intent(this, AboutActivity::class.java))
-                    3 -> showThemePicker()
-                    4 -> startActivity(Intent(this, BackgroundCameraActivity::class.java))
-                    5 -> startActivity(Intent(this, CallRecorderActivity::class.java))
-                    6 -> startActivity(Intent(this, SafetyCaptureActivity::class.java))
-                    7 -> startActivity(Intent(this, com.nexvary.recorder.guardian.GuardianEmergencyActivity::class.java))
-                    8 -> startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java))
-                }
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
     }
 
     private fun showThemePicker() {

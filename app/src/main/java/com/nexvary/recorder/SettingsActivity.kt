@@ -13,6 +13,7 @@ class SettingsActivity : com.nexvary.recorder.family.GuardianProtectedActivity()
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         val root = StudioPage.install(this, R.string.settings_title)
+        com.nexvary.recorder.ui.FeatureCards.add(root, R.drawable.asset_info, R.string.guide_title) { startActivity(Intent(this, GuideActivity::class.java)) }
         com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.fs_title, R.id.fsOpenDashboard) { startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java)) }
         com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.guardian_cloud) { startActivity(Intent(this, com.nexvary.recorder.guardian.CloudSettingsActivity::class.java)) }
         com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.guardian_child_mode) { com.nexvary.recorder.guardian.ChildMode.activate(this) }

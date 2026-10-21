@@ -25,6 +25,7 @@ class EntitlementManager(private val context: Context) {
     }
     fun hasPremium(): Boolean {
         val value=FamilyStore(context).snapshot().optJSONObject("verifiedEntitlement") ?: return false
+        if(value.has("accountBinding") && value.optString("accountBinding")!=runCatching { com.nexvary.recorder.guardian.CloudApi(context).accountId() }.getOrNull()) return false
         val entitlement=runCatching { VerifiedEntitlement(SubscriptionState.valueOf(value.getString("state")),value.getLong("expiresAt"),value.getLong("verifiedAt")) }.getOrNull()
         return EntitlementPolicy.premium(entitlement,System.currentTimeMillis())
     }

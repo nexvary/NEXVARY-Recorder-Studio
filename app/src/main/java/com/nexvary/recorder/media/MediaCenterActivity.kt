@@ -78,10 +78,11 @@ class MediaCenterActivity: AppCompatActivity() {
             } finally { if(started) runCatching { muxer?.stop() };muxer?.release();extractor.release();temp.delete() }
         }) { Toast.makeText(this,R.string.guardian_exported,Toast.LENGTH_LONG).show() }
     }
-    internal fun publish(file: File,mime: String,extension: String) {
-        val values=ContentValues().apply { put(MediaStore.MediaColumns.DISPLAY_NAME,"NEXVARY_${System.currentTimeMillis()}.$extension");put(MediaStore.MediaColumns.MIME_TYPE,mime);put(MediaStore.MediaColumns.RELATIVE_PATH,if(mime.startsWith("audio/")) Environment.DIRECTORY_MUSIC+"/NEXVARY" else Environment.DIRECTORY_MOVIES+"/NEXVARY");put(MediaStore.MediaColumns.IS_PENDING,1) }
+    internal fun publish(file: File,mime: String,extension: String): Uri {
+        val values=ContentValues().apply { put(MediaStore.MediaColumns.DISPLAY_NAME,"NEXVARY_${System.currentTimeMillis()}.$extension");put(MediaStore.MediaColumns.MIME_TYPE,mime);put(MediaStore.MediaColumns.RELATIVE_PATH,if(mime.startsWith("audio/")) Environment.DIRECTORY_MUSIC+"/NEXVARY Recorder" else Environment.DIRECTORY_MOVIES+"/NEXVARY Recorder");put(MediaStore.MediaColumns.IS_PENDING,1) }
         val uri=checkNotNull(contentResolver.insert(if(mime.startsWith("audio/")) MediaStore.Audio.Media.EXTERNAL_CONTENT_URI else MediaStore.Video.Media.EXTERNAL_CONTENT_URI,values))
-        try { checkNotNull(contentResolver.openOutputStream(uri)).use { output -> file.inputStream().use { it.copyTo(output) } };contentResolver.update(uri,ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING,0) },null,null) }
+        try { checkNotNull(contentResolver.openOutputStream(uri)).use { output -> file.inputStream().use { it.copyTo(output) } };check(contentResolver.update(uri,ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING,0) },null,null)==1) }
         catch(error: Exception) { contentResolver.delete(uri,null,null);throw error }
+        return uri
     }
 }

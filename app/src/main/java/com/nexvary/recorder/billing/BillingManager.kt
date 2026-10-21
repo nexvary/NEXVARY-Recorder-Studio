@@ -43,7 +43,8 @@ class BillingManager(private val context: Context,private val verifier: Purchase
     fun launch(activity: Activity,product: ProductDetails): Boolean {
         if(!canPurchase) return false
         val offer=product.subscriptionOfferDetails?.firstOrNull() ?: return false
-        return client.launchBillingFlow(activity,BillingFlowParams.newBuilder().setObfuscatedAccountId(com.nexvary.recorder.guardian.CloudApi(context).accountId()).setProductDetailsParamsList(listOf(
+        val accountId=runCatching { com.nexvary.recorder.guardian.CloudApi(context).accountId() }.getOrNull() ?: return false
+        return client.launchBillingFlow(activity,BillingFlowParams.newBuilder().setObfuscatedAccountId(accountId).setProductDetailsParamsList(listOf(
             BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(product).setOfferToken(offer.offerToken).build())).build()).responseCode==BillingClient.BillingResponseCode.OK
     }
     override fun onPurchasesUpdated(result: BillingResult,purchases: MutableList<Purchase>?) {
@@ -55,13 +56,22 @@ class BillingManager(private val context: Context,private val verifier: Purchase
         runCatching { executor.execute { runCatching {
             purchases.forEach { purchase ->
                 // Tokens are encrypted and are never included in callbacks or logs.
-                FamilyStore(context).update { root -> root.put("playPurchase",JSONObject().put("token",purchase.purchaseToken).put("state",purchase.purchaseState)) }
+                val account=runCatching { com.nexvary.recorder.guardian.CloudApi(context).accountId() }.getOrNull() ?: return@forEach
+                val ownsSession=FamilyStore(context).update { root ->
+                    if(runCatching { com.nexvary.recorder.guardian.CloudSessionState.binding(com.nexvary.recorder.guardian.CloudApi.config(root).optString("idToken")) }.getOrNull()!=account) return@update false
+                    root.put("playPurchase",JSONObject().put("token",purchase.purchaseToken).put("state",purchase.purchaseState).put("accountBinding",account));true
+                }
+                if(!ownsSession) return@forEach
                 if(purchase.purchaseState==Purchase.PurchaseState.PENDING) return@forEach
                 val validator=verifier ?: return@forEach
                 if(purchase.purchaseState!=Purchase.PurchaseState.PURCHASED) return@forEach
                 val verified=runCatching { validator.verify(purchase.products,purchase.purchaseToken) }.getOrNull() ?: return@forEach
-                FamilyStore(context).update { root -> root.put("verifiedEntitlement",JSONObject().put("state",verified.state.name).put("expiresAt",verified.expiresAt).put("verifiedAt",verified.verifiedAt)) }
-                if(EntitlementPolicy.premium(verified,System.currentTimeMillis()) && !purchase.isAcknowledged)
+                val committed=FamilyStore(context).update { root ->
+                    val current=runCatching { com.nexvary.recorder.guardian.CloudSessionState.binding(com.nexvary.recorder.guardian.CloudApi.config(root).optString("idToken")) }.getOrNull()
+                    if(current!=account) return@update false
+                    root.put("verifiedEntitlement",JSONObject().put("state",verified.state.name).put("expiresAt",verified.expiresAt).put("verifiedAt",verified.verifiedAt).put("accountBinding",account));true
+                }
+                if(committed && EntitlementPolicy.premium(verified,System.currentTimeMillis()) && !purchase.isAcknowledged)
                     client.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()) { changed() }
             }
             changed()
