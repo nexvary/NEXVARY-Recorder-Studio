@@ -607,11 +607,11 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_sos">Cosa succede premendo SOS?</string>
     <string name="guide_a_sos">Crea un evento locale. Restano disponibili prova locale, tastiera telefonica, SMS e condivisione manuale della posizione. Confermi tu chiamate e messaggi. Il cloud richiede configurazione del tutore, consenso e rete. SOS non chiama automaticamente la polizia.</string>
     <string name="guide_q_free">Cosa indica la quota gratuita?</string>
-    <string name="guide_a_free">Free include 3 pacchetti SOS remoti al mese condivisi tra invii e video. Segmenti e tentativi usano lo stesso evento. SOS e prove locali restano disponibili senza quota o connessione.</string>
+    <string name="guide_a_free">Free consente tre eventi di allarme remoto al mese. Secondo il servizio: email con testo/posizione e video locale, oppure prove cloud private. Verifica le capacità. Segmenti e tentativi condividono un evento. SOS e prove locali restano disponibili senza quota o Internet.</string>
     <string name="guide_q_family">Come imposto la sicurezza familiare?</string>
     <string name="guide_a_family">In modalità tutore imposta PIN, contatto fidato e profilo di emergenza. Avvia un timer e premi Sto bene alla fine. Viaggio sicuro e opzioni avanzate richiedono Premium verificato. Il PIN non blocca mai SOS.</string>
     <string name="guide_q_cloud">Perché il cloud non invia?</string>
-    <string name="guide_a_cloud">Il tutore configura il servizio HTTPS distribuito, conferma la posta, accede e abilita la condivisione. Controlla quota e coda in Cloud e account. Non inserire chiavi AWS o SES sul telefono.</string>
+    <string name="guide_a_cloud">In Cloud e account scegli Personale o Istituto. NEXVARY deve attivare il servizio personale; l’istituto fornisce il suo indirizzo. Conferma l’email e accedi. Il gestore deve abilitare email e archiviazione privata. Nessun segreto SMTP, AWS o di archiviazione sul telefono.</string>
     <string name="guide_q_evidence">Come si salvano le prove di emergenza?</string>
     <string name="guide_a_evidence">I brevi segmenti video si caricano con rete, consenso e quota. Il riavvio della fotocamera può lasciare una breve pausa. I segmenti chiusi hanno impronte; uno aperto può perdersi se termina il processo. Consegna e validità legale non sono garantite.</string>
     <string name="guide_q_library">Dove sono le registrazioni private?</string>
@@ -631,4 +631,21 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="call_permission_prompt">Controlla la richiesta di permesso Shizuku</string>
     <string name="call_start_shizuku">Avvia prima Shizuku</string>
     <string name="voice_partial_saved">Audio disponibile salvato dopo una interruzione inattesa.</string>
+    <string name="service_setup_note">Scegli un account personale o il servizio del tuo istituto. SOS e registrazione locali restano disponibili. Non inserire segreti SMTP o di archiviazione sul telefono.</string>
+    <string name="service_personal">Account personale</string>
+    <string name="service_personal_note">Servizio NEXVARY per privati</string>
+    <string name="service_institution">Account istituto</string>
+    <string name="service_institution_note">Servizio della scuola o organizzazione</string>
+    <string name="service_institution_address">Indirizzo del servizio dell’istituto (HTTPS)</string>
+    <string name="service_connect">Connetti</string>
+    <string name="service_connect_confirm">Connettersi a %1$s? Il gestore amministrerà il tuo account e le prove cloud che scegli di condividere.</string>
+    <string name="service_connecting">Verifica del servizio…</string>
+    <string name="service_unavailable">Il servizio personale non è attivo in questa versione. SOS e registrazione locali disponibili.</string>
+    <string name="service_connected">Servizio scelto: %1$s</string>
+    <string name="service_remote_off">L’invio delle prove cloud non è abilitato qui. Le prove locali restano disponibili.</string>
+    <string name="service_connect_failed">Impossibile verificare il servizio. Controlla indirizzo e disponibilità.</string>
+    <string name="service_advanced">Connessione avanzata</string>
+    <string name="service_legacy_note">Solo connessioni AWS esistenti. Gli account normali non richiedono questi campi. Non inserire chiavi segrete AWS o SES.</string>
+    <string name="service_account_note">Crea un account, conferma il codice email e accedi. L’istituto può limitare le iscrizioni.</string>
+    <string name="service_busy">Servizio occupato: l’invio cloud può ritardare. SOS locale disponibile.</string>
 </resources>

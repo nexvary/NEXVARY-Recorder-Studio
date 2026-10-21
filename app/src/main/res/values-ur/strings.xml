@@ -607,11 +607,11 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_sos">SOS دبانے سے کیا ہوتا ہے؟</string>
     <string name="guide_a_sos">مقامی حفاظتی واقعہ بنتا ہے۔ مقامی ثبوت، ڈائلر، SMS ایڈیٹر اور مقام دستی طور پر بھیجنا دستیاب رہتے ہیں۔ کال اور SMS کی تصدیق آپ کرتے ہیں۔ کلاؤڈ کے لیے سرپرست کی ترتیب، رضامندی اور انٹرنیٹ چاہیے۔ SOS پولیس سے خود رابطہ نہیں کرتا۔</string>
     <string name="guide_q_free">مفت کلاؤڈ حد کا کیا مطلب ہے؟</string>
-    <string name="guide_a_free">Free میں ماہانہ 3 ریموٹ SOS پیکج ہیں؛ کلاؤڈ ارسال اور ویڈیو ایک ہی حد استعمال کرتے ہیں۔ حصے اور دوبارہ کوشش وہی واقعہ استعمال کرتے ہیں۔ حد یا انٹرنیٹ نہ ہو تب بھی مقامی SOS اور ثبوت دستیاب ہیں۔</string>
+    <string name="guide_a_free">Free میں ماہانہ تین دور دراز الرٹ ایونٹس ہیں۔ سروس کے مطابق متن اور مقام کی ای میل کے ساتھ ویڈیو مقامی رہتی ہے، یا نجی کلاؤڈ شواہد کا مکمل پیکیج ملتا ہے۔ پہلے سروس کی صلاحیت دیکھیں۔ حصے اور دوبارہ کوشش ایک ایونٹ ہیں۔ کوٹہ یا انٹرنیٹ کے بغیر مقامی SOS اور شواہد دستیاب ہیں۔</string>
     <string name="guide_q_family">خاندانی حفاظت کیسے ترتیب دوں؟</string>
     <string name="guide_a_family">سرپرست موڈ میں PIN، قابل اعتماد رابطہ اور ہنگامی پروفائل بنائیں۔ حفاظتی ٹائمر شروع کریں اور اختتام پر میں محفوظ ہوں دبائیں۔ محفوظ سفر اور اعلیٰ اختیارات کے لیے تصدیق شدہ Premium چاہیے۔ PIN مدد کو نہیں روکتا۔</string>
     <string name="guide_q_cloud">کلاؤڈ ارسال کیوں دستیاب نہیں؟</string>
-    <string name="guide_a_cloud">سرپرست تعینات HTTPS سروس ترتیب دے، ای میل کی تصدیق کرے، لاگ ان ہو اور اشتراک فعال کرے۔ کلاؤڈ اور اکاؤنٹ میں حد اور قطار دیکھیں۔ فون میں AWS یا SES کی چابیاں نہ ڈالیں۔</string>
+    <string name="guide_a_cloud">کلاؤڈ اور اکاؤنٹ میں ذاتی یا ادارہ منتخب کریں۔ ذاتی سروس NEXVARY فعال کرے گا؛ ادارہ اپنا سروس پتہ فراہم کرے گا۔ ای میل کی تصدیق کرکے لاگ ان ہوں۔ منتظم کو ای میل اور نجی اسٹوریج بھی فعال کرنی ہوگی۔ فون میں SMTP، AWS یا اسٹوریج کے راز نہ لکھیں۔</string>
     <string name="guide_q_evidence">ہنگامی ثبوت کیسے محفوظ ہوتا ہے؟</string>
     <string name="guide_a_evidence">مختصر ویڈیو حصے نیٹ ورک، رضامندی اور حد ہونے پر اپ لوڈ ہوتے ہیں۔ کیمرا دوبارہ کھلنے پر مختصر وقفہ ہو سکتا ہے۔ بند حصوں کی ہیش ہوتی ہے؛ عمل ختم ہونے سے کھلا حصہ ضائع ہو سکتا ہے۔ ترسیل یا قانونی حیثیت کی ضمانت نہیں۔</string>
     <string name="guide_q_library">ریکارڈنگ اور نجی فائلیں کہاں ہیں؟</string>
@@ -631,4 +631,21 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="call_permission_prompt">Shizuku کی اجازت کی درخواست دیکھیں</string>
     <string name="call_start_shizuku">پہلے Shizuku چلائیں</string>
     <string name="voice_partial_saved">غیر متوقع طور پر رکنے کے بعد دستیاب آواز محفوظ ہوئی۔</string>
+    <string name="service_setup_note">ذاتی اکاؤنٹ یا ادارے کی سروس منتخب کریں۔ مقامی SOS اور ریکارڈنگ دستیاب ہیں۔ فون میں SMTP یا اسٹوریج کے خفیہ کوائف نہ لکھیں۔</string>
+    <string name="service_personal">ذاتی اکاؤنٹ</string>
+    <string name="service_personal_note">افراد کے لیے NEXVARY سروس</string>
+    <string name="service_institution">ادارے کا اکاؤنٹ</string>
+    <string name="service_institution_note">اسکول یا ادارے کی اپنی سروس</string>
+    <string name="service_institution_address">ادارے کی سروس کا پتہ (HTTPS)</string>
+    <string name="service_connect">منسلک کریں</string>
+    <string name="service_connect_confirm">%1$s سے جڑیں؟ یہ منتظم آپ کے اکاؤنٹ اور ان کلاؤڈ شواہد کو سنبھالے گا جو آپ شیئر کریں گے۔</string>
+    <string name="service_connecting">سروس کی جانچ جاری ہے…</string>
+    <string name="service_unavailable">اس ورژن میں ذاتی سروس فعال نہیں۔ مقامی ریکارڈنگ اور SOS دستیاب ہیں۔</string>
+    <string name="service_connected">منتخب سروس: %1$s</string>
+    <string name="service_remote_off">اس سروس پر کلاؤڈ شواہد بھیجنا فعال نہیں۔ مقامی شواہد دستیاب ہیں۔</string>
+    <string name="service_connect_failed">سروس کی تصدیق نہ ہو سکی۔ پتہ اور دستیابی دیکھیں۔</string>
+    <string name="service_advanced">جدید رابطہ سیٹنگ</string>
+    <string name="service_legacy_note">صرف موجودہ AWS کنکشن کے لیے۔ عام اکاؤنٹ کو ان خانوں کی ضرورت نہیں۔ AWS یا SES کی خفیہ کلید نہ لکھیں۔</string>
+    <string name="service_account_note">اکاؤنٹ بنائیں، ای میل کوڈ کی تصدیق کریں اور لاگ ان ہوں۔ ادارہ رجسٹریشن محدود کر سکتا ہے۔</string>
+    <string name="service_busy">سروس مصروف ہے؛ کلاؤڈ ارسال میں تاخیر ہو سکتی ہے۔ مقامی SOS دستیاب ہے۔</string>
 </resources>

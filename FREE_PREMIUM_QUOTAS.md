@@ -1,21 +1,23 @@
-# Plans and quota semantics
+# Remote quotas and operating profiles (0.11.0)
 
-| Feature | Free | Premium |
-|---|---|---|
-| Local recording, local SOS/evidence | Available; device space permits | Available |
-| Trusted local contacts | 1 | Multiple |
-| Basic safety check and profile | Available | Available |
-| Remote SOS package | 3 per UTC calendar month | 100 fair-use reservations/month |
-| Video uploads | Same 3 packages; segments do not consume extra packages | Within event fair-use limits |
-| Advanced journey, motion, evidence automation | Premium feature gates | Available after verification |
-| Cloud retention | API access up to 48 h; physical S3 expiration typically 48–72 h | 7 days default |
+Local SOS and local recording are never limited by cloud counters. Sensitive quotas are enforced using the server UTC clock, not phone preferences.
 
-A remote package covers location, progressive evidence and email/cloud link under one event UUID. Both usage meters refer to the **same** remaining packages. They are not independent pools. Local-only SOS does not decrement the backend counter. Server UTC month, daily counter, quota reservation and cooldown are authoritative; handset clock changes do not reset them.
+## Portable managed/institution deployment
 
-One reservation is consumed when the server accepts the event; a failed upload/email retains that same reservation for safe retry. Active SOS taps add markers to the current session. Server merges different event IDs during a 10-minute cooldown; an authenticated parent override may bypass the cooldown but never monthly/daily/file limits. No quota reset endpoint exists in Android. An override UI is not enabled for child taps.
+- Free: three **remote alert events** per UTC month, at most three/day. A text alert includes permitted metadata/location; local evidence remains available.
+- An `ALERT_ONLY` reservation sends no video, exposes `uploadEvidence=false`, and has no cloud evidence link. Video-upload remaining count is zero while storage is disabled/unverified. This is explicitly different from a full remote video package.
+- A `FULL_EVIDENCE` reservation requires verified private external object storage. Segments/retries share one reservation and count; monthly allowance remains shared with remote alerts already sent that month. Merely pressing local SOS consumes no remote quota unless consented remote processing actually reserves an event.
+- Cooldown: ten minutes. Repeated remote reservations merge into the active event. Clients cannot bypass cooldown by sending an `override` flag. Local call/SMS/share and recording remain available.
+- Premium/active institution contract: bounded fair use, initially 100 remote events/month and ten/day; not technically unlimited. Personal paid state requires real server-side Play verification. Institution entitlement is a trusted server-operator contract configuration; no phone-selected Premium mode.
+- Max segment: 12 MiB; max event: 120 MiB; up to 24 segments. Server fixes package type and free/premium retention tier at reservation.
+- Default cloud retention: two days Free, seven days Premium. Local files are not deleted by server cleanup. Viewer links last at most 15 minutes; S3 links expire separately and may remain valid until expiration or actual object removal after a deletion request.
 
-Daily caps: Free 3, Premium 10 events. Segment cap 12 MiB; event cap 120 MiB; 24 segments; network retries use the original event and index. The 720p H.264 emergency target is 1 Mbps video + 48 kbps AAC: `(1,000,000 + 48,000) × 60 / 8 = 7,860,000 bytes/min`, plus container overhead (about 7.93 MB/min with the app allowance). Actual codec/device output must be measured. Emergency MP4 segments use a 30-second native duration limit or 12 MiB safety cap. Camera restart gaps and actual durations require physical measurement.
+Global service budgets cover **all** email recipient attempts (verification, password reset, contact consent and SOS), not just events. Default 100/hour, 1000/day, 50 new accounts/day and 3 GiB/month reserved upload bytes are operator budgets within verified hosting headroom, not promises about the provider. Reserve upload budget before signing; deletion/retry does not refund it for abuse protection.
 
-An encrypted snapshot shows remaining quota and reset date before the next send; it is explicitly cached. Offline/local evidence and dial/SMS/manual location sharing remain available when remote quota is exhausted. No paywall blocks the emergency screen.
+A first bounded attempt runs after commit, with five-minute-or-longer CLI cron fallback on shared hosting. Email delay is possible. Definitive rejection can retry; acceptance ambiguity becomes UNCERTAIN and is not silently resent or failed over. Local safety actions remain available.
 
-Subscription target prices: $2.99/month and $24.99/year, configured in Play Console. Android displays actual localized ProductDetails prices. No AWS account/Play catalog is provisioned by this commit. Both debug and production use verified entitlement. Synthetic instrumentation fixtures seed test-only entitlements. No local Premium toggle exists.
+Account deletion revokes sessions/views immediately and erases private account/contact/payload data. Private object removal is queued for bounded maintenance; retention lifecycle is an independent backstop. Operators must monitor cleanup backlog. Auth/mail metadata expires after its short purpose plus seven days; purged event tombstones after 60 days. Minimal account/purchase-ownership security tombstones are retained without the user's original email.
+
+## Existing AWS SAM deployment
+
+The original AWS implementation retains three full remote SOS/video packages/month Free, atomic DynamoDB counters and FIFO queue, with the same local-safety guarantee. It uses Cognito rather than the portable identity database. It is still source-tested, not deployed; SES production state and actual storage/Play remain unverified. A move between these identity/database systems needs an explicit migration, whereas SMTP/SES/S3 provider changes inside the portable service keep the same endpoint and accounts.

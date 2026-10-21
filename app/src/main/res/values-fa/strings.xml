@@ -607,11 +607,11 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_sos">دکمه کمک چه می‌کند؟</string>
     <string name="guide_a_sos">یک رویداد محلی می‌سازد. ضبط محلی، شماره‌گیر، ویرایشگر پیامک و اشتراک دستی مکان در دسترس می‌مانند. تماس و پیامک را شما تأیید می‌کنید. ابر نیازمند تنظیم سرپرست، رضایت و اینترنت است. کمک خودکار با پلیس تماس نمی‌گیرد.</string>
     <string name="guide_q_free">سهمیه رایگان ابری چیست؟</string>
-    <string name="guide_a_free">Free ماهانه 3 بسته کمک از راه دور دارد که ارسال و ویدیو مشترکاً مصرف می‌کنند. قطعه‌ها و تلاش مجدد از همان رویداد استفاده می‌کنند. کمک و مدرک محلی بدون سهمیه یا اینترنت باقی می‌مانند.</string>
+    <string name="guide_a_free">Free ماهانه سه رویداد هشدار از راه دور می‌دهد. بسته به سرویس، ایمیل متن و مکان با ویدیوی محلی یا بسته کامل مدارک ابری خصوصی است. قابلیت سرویس را بررسی کنید. بخش‌ها و تلاش مجدد یک رویداد دارند. SOS و مدارک محلی بدون سهمیه یا اینترنت در دسترس‌اند.</string>
     <string name="guide_q_family">ایمنی خانواده را چگونه تنظیم کنم؟</string>
     <string name="guide_a_family">در حالت سرپرست رمز، مخاطب معتمد و نمایه اضطراری بسازید. زمان‌سنج را شروع و در پایان من امن هستم را بزنید. سفر امن و گزینه‌های پیشرفته Premium تأییدشده می‌خواهند. رمز مانع کمک نمی‌شود.</string>
     <string name="guide_q_cloud">چرا ارسال ابری فعال نیست؟</string>
-    <string name="guide_a_cloud">سرپرست باید سرویس HTTPS مستقر را تنظیم، ایمیل را تأیید، وارد حساب شود و اشتراک را فعال کند. سهمیه و صف را در ابر و حساب ببینید. کلید AWS یا SES را در گوشی وارد نکنید.</string>
+    <string name="guide_a_cloud">در ابر و حساب، شخصی یا مؤسسه را انتخاب کنید. سرویس شخصی باید توسط NEXVARY فعال شود؛ مؤسسه نشانی خود را می‌دهد. ایمیل را تأیید و وارد شوید. گرداننده باید ایمیل و ذخیره‌سازی خصوصی را فعال کند. رمز SMTP، AWS یا ذخیره‌سازی را در گوشی وارد نکنید.</string>
     <string name="guide_q_evidence">مدرک اضطراری چگونه ذخیره می‌شود؟</string>
     <string name="guide_a_evidence">قطعات کوتاه با وجود شبکه، رضایت و سهمیه بارگذاری می‌شوند. راه‌اندازی دوباره دوربین ممکن است وقفه کوتاه داشته باشد. قطعات بسته اثرانگشت دارند؛ قطعه باز با پایان فرایند ممکن است گم شود. تحویل یا اعتبار حقوقی تضمین نیست.</string>
     <string name="guide_q_library">ضبط‌ها و فایل‌های خصوصی کجا هستند؟</string>
@@ -631,4 +631,21 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="call_permission_prompt">درخواست مجوز Shizuku را بررسی کنید</string>
     <string name="call_start_shizuku">ابتدا Shizuku را اجرا کنید</string>
     <string name="voice_partial_saved">صدای موجود پس از توقف غیرمنتظره ضبط ذخیره شد.</string>
+    <string name="service_setup_note">حساب شخصی یا سرویس مؤسسه را انتخاب کنید. SOS و ضبط محلی در دسترس‌اند. رمز SMTP یا ذخیره‌سازی را در گوشی وارد نکنید.</string>
+    <string name="service_personal">حساب شخصی</string>
+    <string name="service_personal_note">سرویس NEXVARY برای افراد</string>
+    <string name="service_institution">حساب مؤسسه</string>
+    <string name="service_institution_note">سرویس مدرسه یا سازمان شما</string>
+    <string name="service_institution_address">نشانی سرویس مؤسسه (HTTPS)</string>
+    <string name="service_connect">اتصال</string>
+    <string name="service_connect_confirm">به %1$s متصل شوید؟ گرداننده این سرویس حساب و مدارک ابری انتخابی شما را مدیریت می‌کند.</string>
+    <string name="service_connecting">در حال بررسی سرویس…</string>
+    <string name="service_unavailable">سرویس شخصی در این نسخه فعال نشده است. ضبط و SOS محلی در دسترس‌اند.</string>
+    <string name="service_connected">سرویس انتخابی: %1$s</string>
+    <string name="service_remote_off">ارسال مدارک ابری در این سرویس فعال نیست. مدارک محلی در دسترس‌اند.</string>
+    <string name="service_connect_failed">سرویس تأیید نشد. نشانی و دسترسی آن را بررسی کنید.</string>
+    <string name="service_advanced">تنظیمات پیشرفته اتصال</string>
+    <string name="service_legacy_note">فقط اتصال‌های قبلی AWS. حساب عادی به این فیلدها نیاز ندارد. کلید محرمانه AWS یا SES وارد نکنید.</string>
+    <string name="service_account_note">حساب بسازید، کد ایمیل را تأیید و وارد شوید. مؤسسه ممکن است ثبت‌نام را محدود کند.</string>
+    <string name="service_busy">سرویس شلوغ است؛ ارسال ابری ممکن است تأخیر داشته باشد. SOS محلی در دسترس است.</string>
 </resources>

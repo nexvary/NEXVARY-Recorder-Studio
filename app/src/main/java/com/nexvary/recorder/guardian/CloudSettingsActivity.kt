@@ -15,34 +15,92 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
     override val title=R.string.guardian_cloud
     private lateinit var status: TextView
     private lateinit var events: LinearLayout
+    private lateinit var accountForm: LinearLayout
     override fun build() {
         status=DeliveryUi.text(root,R.string.guardian_cloud_unconfigured)
-        DeliveryUi.text(root,R.string.guardian_cloud_note)
-        val base=FamilyUi.field(root,R.string.guardian_api,R.id.guardianApi,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
-        val region=FamilyUi.field(root,R.string.guardian_region,R.id.guardianRegion)
-        val client=FamilyUi.field(root,R.string.guardian_client,R.id.guardianClient)
-        FamilyUi.io(this,{ CloudApi.config(this) }) { data -> base.setText(data.optString("baseUrl"));region.setText(data.optString("region"));client.setText(data.optString("clientId")) }
-        DeliveryUi.button(root,R.string.guardian_save_settings) {
-            val address=base.text.toString().trim().trimEnd('/');val area=region.text.toString().trim();val id=client.text.toString().trim()
-            val url=runCatching { java.net.URI(address) }.getOrNull()
-            if(url?.scheme!="https" || url.host.isNullOrBlank() || url.userInfo!=null || !url.path.isNullOrEmpty() || url.query!=null || url.fragment!=null || !area.matches(Regex("[a-z]{2}-[a-z]+-\\d")) || !id.matches(Regex("[a-zA-Z0-9]{10,128}"))) { status.setText(R.string.guardian_invalid_config);return@button }
-            FamilyUi.io(this,{ FamilyStore(this).update { CloudSessionState.logout(it);it.put("cloud",JSONObject().put("baseUrl",address).put("region",area).put("clientId",id)) } }) { status.setText(R.string.guardian_settings_saved) }
+        DeliveryUi.text(root,R.string.service_setup_note)
+        val institution=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
+        val institutionUrl=FamilyUi.field(institution,R.string.service_institution_address,R.id.guardianInstitutionUrl,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
+        fun connect(address: String, expected: String) {
+            if(address.isBlank()) { status.setText(R.string.service_unavailable);return }
+            val origin=runCatching { GuardianServiceAddress.normalize(address) }.getOrNull()
+            if(origin==null) { status.setText(R.string.guardian_invalid_config);return }
+            MaterialAlertDialogBuilder(this).setTitle(R.string.service_connect)
+                .setMessage(getString(R.string.service_connect_confirm,origin)).setNegativeButton(R.string.cancel,null)
+                .setPositiveButton(R.string.service_connect) { _,_ ->
+                    status.setText(R.string.service_connecting)
+                    FamilyUi.io(this,{
+                        runCatching {
+                            val description=CloudApi.discover(origin)
+                            require(description.getJSONObject("service").getString("edition")==expected)
+                            FamilyStore(this).update { CloudApi.installService(it,description) }
+                            description
+                        }
+                    }) { result ->
+                        if(result.isSuccess) {
+                            val service=result.getOrThrow().getJSONObject("service")
+                            status.text=getString(R.string.service_connected,service.getString("name"))
+                            if(!service.optBoolean("remoteSos") || !service.optBoolean("evidenceUpload")) status.append("\n"+getString(R.string.service_remote_off))
+                            accountForm.visibility=android.view.View.VISIBLE
+                        } else status.setText(R.string.service_connect_failed)
+                    }
+                }.show()
         }
-        val email=FamilyUi.field(root,R.string.guardian_email,R.id.guardianEmail,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
-        val password=FamilyUi.field(root,R.string.smtp_password,R.id.guardianPassword,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
-        val code=FamilyUi.field(root,R.string.guardian_code,R.id.guardianCode,type=InputType.TYPE_CLASS_NUMBER)
+        com.nexvary.recorder.ui.FeatureCards.grid(root,listOf(
+            com.nexvary.recorder.ui.FeatureCards.Item(R.id.guardianPersonalService,R.drawable.asset_family,R.string.service_personal,R.string.service_personal_note) {
+                connect(com.nexvary.recorder.BuildConfig.GUARDIAN_PUBLIC_API_URL,"MANAGED")
+            },
+            com.nexvary.recorder.ui.FeatureCards.Item(R.id.guardianInstitutionService,R.drawable.asset_tools,R.string.service_institution,R.string.service_institution_note) {
+                institution.visibility=android.view.View.VISIBLE
+                institutionUrl.requestFocus()
+            }
+        ))
+        DeliveryUi.button(institution,R.string.service_connect,R.id.guardianConnectInstitution) { connect(institutionUrl.text.toString(),"INSTITUTION") }
+        root.addView(institution)
+        val advanced=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
+        DeliveryUi.button(root,R.string.service_advanced,R.id.guardianAdvancedConnection) {
+            advanced.visibility=if(advanced.visibility==android.view.View.VISIBLE) android.view.View.GONE else android.view.View.VISIBLE
+        }
+        DeliveryUi.text(advanced,R.string.service_legacy_note)
+        val base=FamilyUi.field(advanced,R.string.guardian_api,R.id.guardianApi,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
+        val region=FamilyUi.field(advanced,R.string.guardian_region,R.id.guardianRegion)
+        val client=FamilyUi.field(advanced,R.string.guardian_client,R.id.guardianClient)
+        FamilyUi.io(this,{ CloudApi.config(this) }) { data ->
+            if(CloudApi.portable(data)) institutionUrl.setText(data.optString("baseUrl"))
+            else { base.setText(data.optString("baseUrl"));region.setText(data.optString("region"));client.setText(data.optString("clientId")) }
+            accountForm.visibility=if(data.optString("baseUrl").isNotBlank()) android.view.View.VISIBLE else android.view.View.GONE
+            data.optJSONObject("service")?.let { service ->
+                status.text=getString(R.string.service_connected,service.optString("name"))
+                if(!service.optBoolean("remoteSos") || !service.optBoolean("evidenceUpload")) status.append("\n"+getString(R.string.service_remote_off))
+            }
+        }
+        DeliveryUi.button(advanced,R.string.guardian_save_settings) {
+            val address=runCatching { GuardianServiceAddress.normalize(base.text.toString()) }.getOrNull()
+            val area=region.text.toString().trim();val id=client.text.toString().trim()
+            if(address==null || !area.matches(Regex("[a-z]{2}-[a-z]+-\\d")) || !id.matches(Regex("[a-zA-Z0-9]{10,128}"))) { status.setText(R.string.guardian_invalid_config);return@button }
+            FamilyUi.io(this,{ FamilyStore(this).update { CloudSessionState.logout(it);it.put("cloud",JSONObject().put("baseUrl",address).put("region",area).put("clientId",id)) } }) {
+                status.setText(R.string.guardian_settings_saved);accountForm.visibility=android.view.View.VISIBLE
+            }
+        }
+        root.addView(advanced)
+        accountForm=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
+        root.addView(accountForm)
+        DeliveryUi.text(accountForm,R.string.service_account_note)
+        val email=FamilyUi.field(accountForm,R.string.guardian_email,R.id.guardianEmail,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+        val password=FamilyUi.field(accountForm,R.string.smtp_password,R.id.guardianPassword,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
+        val code=FamilyUi.field(accountForm,R.string.guardian_code,R.id.guardianCode,type=InputType.TYPE_CLASS_NUMBER)
         fun auth(action: () -> Unit) { FamilyUi.io(this,{ runCatching(action) }) { result -> password.text.clear();status.setText(if(result.isSuccess) R.string.guardian_auth_ok else R.string.guardian_auth_failed);if(result.isSuccess) { CloudOutbox.retry(this);refresh() } } }
-        DeliveryUi.button(root,R.string.guardian_signup) { val e=email.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).signup(e,p) } }
-        DeliveryUi.button(root,R.string.guardian_confirm) { val e=email.text.toString();val c=code.text.toString();auth { CloudApi(this).confirm(e,c) } }
-        DeliveryUi.button(root,R.string.guardian_login) { val e=email.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).authenticate(e,p) } }
-        DeliveryUi.button(root,R.string.guardian_forgot) { val e=email.text.toString();auth { CloudApi(this).forgot(e) } }
-        DeliveryUi.button(root,R.string.guardian_reset_password) { val e=email.text.toString();val c=code.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).reset(e,c,p) } }
-        DeliveryUi.button(root,R.string.guardian_invite) { val e=email.text.toString();auth { val result=CloudApi(this).request("POST","/contacts/invite",JSONObject().put("email",e));FamilyStore(this).update { it.put("cloudInvitation",result.getString("invitation")) } } }
-        DeliveryUi.button(root,R.string.guardian_confirm_contact) { val c=code.text.toString();auth { val id=FamilyStore(this).snapshot().optString("cloudInvitation");CloudApi(this).request("POST","/contacts/confirm",JSONObject().put("invitation",id).put("code",c)) } }
-        DeliveryUi.button(root,R.string.guardian_usage) { refresh() }
-        DeliveryUi.button(root,R.string.mail_retry) { FamilyUi.io(this,{ CloudOutbox.retry(this) }) { refresh() } }
-        DeliveryUi.button(root,R.string.guardian_logout) { FamilyUi.io(this,{ FamilyStore(this).update { CloudSessionState.logout(it) } }) { status.setText(R.string.guardian_login_required) } }
-        DeliveryUi.button(root,R.string.guardian_delete_account,red=true) {
+        DeliveryUi.button(accountForm,R.string.guardian_signup) { val e=email.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).signup(e,p) } }
+        DeliveryUi.button(accountForm,R.string.guardian_confirm) { val e=email.text.toString();val c=code.text.toString();auth { CloudApi(this).confirm(e,c) } }
+        DeliveryUi.button(accountForm,R.string.guardian_login) { val e=email.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).authenticate(e,p) } }
+        DeliveryUi.button(accountForm,R.string.guardian_forgot) { val e=email.text.toString();auth { CloudApi(this).forgot(e) } }
+        DeliveryUi.button(accountForm,R.string.guardian_reset_password) { val e=email.text.toString();val c=code.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).reset(e,c,p) } }
+        DeliveryUi.button(accountForm,R.string.guardian_invite) { val e=email.text.toString();auth { val result=CloudApi(this).request("POST","/contacts/invite",JSONObject().put("email",e));FamilyStore(this).update { it.put("cloudInvitation",result.getString("invitation")) } } }
+        DeliveryUi.button(accountForm,R.string.guardian_confirm_contact) { val c=code.text.toString();auth { val id=FamilyStore(this).snapshot().optString("cloudInvitation");CloudApi(this).request("POST","/contacts/confirm",JSONObject().put("invitation",id).put("code",c)) } }
+        DeliveryUi.button(accountForm,R.string.guardian_usage) { refresh() }
+        DeliveryUi.button(accountForm,R.string.mail_retry) { FamilyUi.io(this,{ CloudOutbox.retry(this) }) { refresh() } }
+        DeliveryUi.button(accountForm,R.string.guardian_logout) { FamilyUi.io(this,{ CloudApi(this).logout() }) { status.setText(R.string.guardian_login_required) } }
+        DeliveryUi.button(accountForm,R.string.guardian_delete_account,red=true) {
             MaterialAlertDialogBuilder(this).setMessage(R.string.guardian_delete_note).setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.guardian_delete_account) { _,_ ->
                 FamilyUi.io(this,{ runCatching { CloudApi(this).request("DELETE","/account");FamilyStore(this).update { it.remove("cloud");it.remove("cloudUsage");it.remove("cloudEvents");it.remove("verifiedEntitlement") } } }) { result -> status.setText(if(result.isSuccess) R.string.guardian_deleted else R.string.guardian_auth_failed) }
             }.show()
@@ -62,6 +120,10 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
                 val reset=Instant.ofEpochSecond(usage.optLong("resetAt")).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("d MMM yyyy"))
                 status.text=getString(R.string.guardian_usage_format,usage.optInt("sosRemaining"),usage.optInt("monthlyLimit"),usage.optInt("uploadsRemaining"),usage.optInt("monthlyLimit"),reset)
                 if(usage.optInt("remaining")==0) status.append("\n"+getString(R.string.guardian_quota_used))
+            }
+            CloudApi.config(snapshot).optJSONObject("service")?.let { service ->
+                if(!service.optBoolean("remoteSos") || !service.optBoolean("evidenceUpload")) status.append("\n"+getString(R.string.service_remote_off))
+                if(service.optString("serviceState")=="DEGRADED") status.append("\n"+getString(R.string.service_busy))
             }
             events.removeAllViews()
             val jobs=CloudOutbox.events(snapshot)

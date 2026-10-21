@@ -53,6 +53,12 @@ class VisualEvidenceTest {
                     onView(withId(R.id.moreAbout)).perform(reveal()).check(matches(isDisplayed()))
                     capture(it, "more-cards-bottom-ar")
                 }
+                if (page == com.nexvary.recorder.guardian.CloudSettingsActivity::class.java) {
+                    onView(withId(R.id.guardianInstitutionService)).perform(reveal(), androidx.test.espresso.action.ViewActions.click())
+                    onView(withId(R.id.guardianInstitutionUrl)).perform(reveal()).check(matches(isDisplayed()))
+                    androidx.test.espresso.Espresso.closeSoftKeyboard()
+                    capture(it, "institution-connect-ar")
+                }
                 if (page == GuideActivity::class.java) {
                     onView(withId(R.id.guideSearch)).perform(reveal(), androidx.test.espresso.action.ViewActions.replaceText(context.getString(R.string.guide_q_free)), androidx.test.espresso.action.ViewActions.closeSoftKeyboard())
                     awaitUi(withId(R.id.guideFaqFree))

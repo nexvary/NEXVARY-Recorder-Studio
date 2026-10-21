@@ -1,5 +1,7 @@
 # Guardian AWS backend — implementation and deployment
 
+For the new cPanel/institution profile, use `NAMECHEAP_DEPLOYMENT.md` and `backend/portable/README.md`. This document describes the preserved AWS/Cognito deployment; its manual endpoint/region/client fields are now under Android Advanced settings. SMTP/S3 provider migration inside the portable service preserves its own endpoint/accounts; migrating those identities to Cognito requires a separate migration.
+
 Status: source implemented and tested with mocked AWS. **Not deployed to an AWS account in this session.** SES status, sending approval, production DNS, billing catalog and real S3/Wasabi access are unverified. Android package remains `com.nexvary.recorder`.
 
 ## Resources

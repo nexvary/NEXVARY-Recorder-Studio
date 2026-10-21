@@ -56,7 +56,7 @@ class WasabiStorageProvider(S3StorageProvider):
         if url.scheme != "https" or not url.hostname or not url.hostname.endswith(".wasabisys.com"):
             raise ValueError("Use the official regional Wasabi HTTPS endpoint")
         super().__init__(bucket, boto3.client("s3", endpoint_url=endpoint, region_name=region,
-            aws_access_key_id=access_key, aws_secret_access_key=secret_key, config=Config(signature_version="s3v4")))
+            aws_access_key_id=access_key, aws_secret_access_key=secret_key, config=Config(signature_version="s3v4", connect_timeout=5, read_timeout=8, retries={"total_max_attempts": 1})))
 
 class EmailProvider(ABC):
     @abstractmethod
@@ -64,8 +64,66 @@ class EmailProvider(ABC):
 
 class AmazonSesProvider(EmailProvider):
     def __init__(self, sender, client=None):
-        self.sender, self.client = sender, client or boto3.client("sesv2")
+        self.sender, self.client = sender, client or boto3.client("sesv2", config=Config(connect_timeout=5, read_timeout=8, retries={"total_max_attempts": 1}))
     def send(self, recipient, subject, text):
         return self.client.send_email(FromEmailAddress=self.sender, Destination={"ToAddresses": [recipient]},
             Content={"Simple": {"Subject": {"Data": subject, "Charset": "UTF-8"},
                 "Body": {"Text": {"Data": text, "Charset": "UTF-8"}}}})["MessageId"]
+
+class EmailAcceptanceUnknown(Exception):
+    """Connection lost after DATA was attempted; never automatically send a second copy."""
+
+class SmtpProvider(EmailProvider):
+    """Institution/cPanel SMTP. Mandatory certificate-checked TLS; secrets stay server-side."""
+    def __init__(self, sender, host, port, username, password, direct_tls=False, timeout=8):
+        from email.headerregistry import Address
+        from urllib.parse import urlparse
+        Address(addr_spec=sender)
+        if not host or any(c in host for c in '\r\n/@') or urlparse('//' + host).hostname != host:
+            raise ValueError('Invalid operator SMTP host')
+        if port not in (465, 587) or direct_tls != (port == 465):
+            raise ValueError('SMTP requires TLS on 465 or STARTTLS on 587')
+        self.sender, self.host, self.port = sender, host, port
+        self.username, self.password, self.direct_tls, self.timeout = username, password, direct_tls, timeout
+    def send(self, recipient, subject, text):
+        import smtplib
+        import ssl
+        from email.message import EmailMessage
+        from email.utils import make_msgid
+        if any(c in recipient + subject for c in '\r\n'):
+            raise ValueError('Mail header injection rejected')
+        message = EmailMessage()
+        message['From'], message['To'], message['Subject'] = self.sender, recipient, subject
+        message['Message-ID'] = make_msgid(domain=self.sender.rsplit('@', 1)[-1])
+        message.set_content(text)
+        context = ssl.create_default_context()
+        transport = smtplib.SMTP_SSL if self.direct_tls else smtplib.SMTP
+        options = {'timeout': self.timeout}
+        if self.direct_tls: options['context'] = context
+        # Authentication is never attempted before verified TLS succeeds.
+        smtp = transport(self.host, self.port, **options)
+        try:
+            if not self.direct_tls:
+                smtp.ehlo(); smtp.starttls(context=context); smtp.ehlo()
+            smtp.login(self.username, self.password)
+            try:
+                refused = smtp.send_message(message)
+            except (smtplib.SMTPServerDisconnected, TimeoutError, OSError) as error:
+                raise EmailAcceptanceUnknown() from error
+            if refused:
+                raise smtplib.SMTPRecipientsRefused(refused)
+            return str(message['Message-ID'])
+        finally:
+            # The server has acknowledged DATA before send_message returns. A QUIT
+            # failure must not turn that accepted delivery into a duplicate retry.
+            try: smtp.close()
+            except OSError: pass
+
+
+class S3ChecksumStorageProvider(S3StorageProvider):
+    """Avoid relaying/re-hashing video bytes through shared hosting. S3 validates signed PUT checksum."""
+    def completeUpload(self, key, size, sha256):
+        obj = self.client.head_object(Bucket=self.bucket, Key=key, ChecksumMode='ENABLED')
+        if obj['ContentLength'] != size: raise Rejected('SIZE_MISMATCH')
+        checksum = base64.b64encode(bytes.fromhex(sha256)).decode()
+        if obj.get('ChecksumSHA256') != checksum: raise Rejected('STORAGE_CHECKSUM_UNVERIFIED', 409)

@@ -607,11 +607,11 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_sos">SOS düğmesi ne yapar?</string>
     <string name="guide_a_sos">Yerel bir güvenlik olayı oluşturur. Yerel delil, arama ekranı, SMS düzenleyici ve elle konum paylaşımı açık kalır. Arama ve SMS için sizin onayınız gerekir. Bulut, veli ayarı, izin ve internet ister. SOS polisi otomatik aramaz.</string>
     <string name="guide_q_free">Ücretsiz bulut kotası ne demek?</string>
-    <string name="guide_a_free">Free ayda 3 uzak SOS paketi sunar; bulut gönderimi ve video aynı kotayı paylaşır. Parçalar ve yeniden denemeler aynı olayı kullanır. Kota veya internet olmasa da yerel SOS ve delil kullanılabilir.</string>
+    <string name="guide_a_free">Free ayda üç uzak uyarı olayı sunar. Hizmete göre video yerelde kalırken metin/konum e-postası veya özel bulut kanıtlı tam paket gönderilir. Hizmet yeteneklerini kontrol edin. Bölümler ve tekrarlar aynı olayı kullanır. Kota veya internet olmasa da yerel SOS ve kanıt kullanılabilir.</string>
     <string name="guide_q_family">Aile güvenliğini nasıl kurarım?</string>
     <string name="guide_a_family">Veli modunda PIN, güvenilir kişi ve acil durum profili oluşturun. Güvenlik zamanlayıcısını başlatıp bitince Güvendeyim deyin. Güvenli Yolculuk ve gelişmiş ayarlar doğrulanmış Premium ister. PIN, SOS işlemini engellemez.</string>
     <string name="guide_q_cloud">Bulut gönderimi neden çalışmıyor?</string>
-    <string name="guide_a_cloud">Veli yayımlanan HTTPS hizmetini ayarlamalı, e-postayı doğrulamalı, giriş yapmalı ve paylaşımı açmalıdır. Bulut ve hesap bölümünde kota ve kuyruğu kontrol edin. Telefona AWS veya SES anahtarı girmeyin.</string>
+    <string name="guide_a_cloud">Bulut ve hesapta Kişisel veya Kurum seçin. Kişisel hizmeti NEXVARY etkinleştirmelidir; kurum kendi adresini sağlar. E-postayı doğrulayıp giriş yapın. İşletmeci e-posta ve özel depolamayı da açmalıdır. Telefona SMTP, AWS veya depolama sırrı girmeyin.</string>
     <string name="guide_q_evidence">Acil durum delili nasıl saklanır?</string>
     <string name="guide_a_evidence">Kısa video parçaları ağ, izin ve kota varsa yüklenir. Kamera yeniden açılırken kısa boşluk oluşabilir. Kapanan parçaların özeti vardır; açık parça işlem sonlandırılırsa kaybolabilir. Teslim ve hukuki geçerlilik garanti edilmez.</string>
     <string name="guide_q_library">Kayıtlarım ve özel dosyalarım nerede?</string>
@@ -631,4 +631,21 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="call_permission_prompt">Shizuku izin isteğini inceleyin</string>
     <string name="call_start_shizuku">İzin vermeden önce Shizuku başlatın</string>
     <string name="voice_partial_saved">Beklenmedik durmadan sonra mevcut ses kaydedildi.</string>
+    <string name="service_setup_note">Kişisel hesabı veya kurum hizmetini seçin. Yerel SOS ve kayıt kullanılabilir. Telefona SMTP ya da depolama sırrı girmeyin.</string>
+    <string name="service_personal">Kişisel hesap</string>
+    <string name="service_personal_note">Bireyler için NEXVARY hizmeti</string>
+    <string name="service_institution">Kurum hesabı</string>
+    <string name="service_institution_note">Okulunuzun veya kurumunuzun hizmeti</string>
+    <string name="service_institution_address">Kurum hizmet adresi (HTTPS)</string>
+    <string name="service_connect">Bağlan</string>
+    <string name="service_connect_confirm">%1$s hizmetine bağlanılsın mı? Bu işletmeci hesabınızı ve paylaşmayı seçtiğiniz bulut kanıtlarını yönetecek.</string>
+    <string name="service_connecting">Hizmet doğrulanıyor…</string>
+    <string name="service_unavailable">Kişisel hizmet bu sürümde etkin değil. Yerel kayıt ve SOS kullanılabilir.</string>
+    <string name="service_connected">Seçilen hizmet: %1$s</string>
+    <string name="service_remote_off">Bu hizmette bulut kanıt gönderimi etkin değil. Yerel kanıtlar kullanılabilir.</string>
+    <string name="service_connect_failed">Hizmet doğrulanamadı. Adresi ve erişilebilirliği denetleyin.</string>
+    <string name="service_advanced">Gelişmiş bağlantı</string>
+    <string name="service_legacy_note">Yalnızca mevcut AWS bağlantıları. Normal hesaplarda bu alanlar gerekmez. AWS veya SES gizli anahtarı girmeyin.</string>
+    <string name="service_account_note">Hesap oluşturun, e-posta kodunu doğrulayın ve giriş yapın. Kurum kayıtları kısıtlayabilir.</string>
+    <string name="service_busy">Hizmet yoğun; bulut gönderimi gecikebilir. Yerel SOS kullanılabilir.</string>
 </resources>

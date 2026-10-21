@@ -1,3 +1,13 @@
+# Guardian Studio 0.11.0 — portable managed/institution service
+
+The existing 0.10.x recorder and AWS source remain. The new portable Django WSGI/MySQL service can run on suitable cPanel hosting or an institution-operated server without Cognito/SQS/DynamoDB. It uses server-owned SMTP, durable SQL outbox, server-clock quotas, rotating sessions, operator capacity budgets and optional private external S3/Wasabi storage. Android adds personal/institution service discovery while preserving legacy AWS connections under Advanced settings.
+
+**Operating distinction:** with SMTP only, remote alerts contain text/location and video stays local (`ALERT_ONLY`). Full cloud evidence requires a verified private external store (`FULL_EVIDENCE`); an unverified bucket does not enable uploads. There is no local video-storage backend on shared hosting. Free has three shared remote events/month; local SOS/recording remain available. Institution enrollment and contractual entitlement are server-configured; fleet administration/license issuance dashboards are not claimed implemented.
+
+Prepared deployment source bundle, tests, research and Android build are delivered by CI. A personal managed-service origin is a public build variable and remains empty until deployment verification. No Namecheap deployment, SMTP credentials, DNS record, storage activation or Play activation is performed automatically. Existing nexvary.com site files are not overwritten. Real provider capacity, mailbox delivery, institution operations and physical OPPO/Samsung/Pixel behavior require staged verification. See `NAMECHEAP_DEPLOYMENT.md`, `INSTITUTION_DEPLOYMENT.md`, `HOSTING_RESEARCH_2026-10-21.md`, `FREE_PREMIUM_QUOTAS.md` and `docs/REVIEW-0.10.1.md`.
+
+The older audit below records the AWS source foundation and its original verification boundary; it is not a live cloud-deployment claim.
+
 # Guardian Studio 0.10.0 — source audit and verification boundary
 
 ## Source audit

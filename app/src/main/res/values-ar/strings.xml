@@ -607,11 +607,11 @@
     <string name="guide_q_sos">ماذا يحدث عند الضغط على الاستغاثة؟</string>
     <string name="guide_a_sos">تُنشئ الاستغاثة حدث أمان محليًا. يظل تسجيل الدليل وفتح الاتصال ومحرر الرسائل ومشاركة الموقع يدويًا متاحًا. الاتصال وإرسال SMS يحتاجان تأكيدك. الإرسال السحابي يحتاج إعداد ولي الأمر والموافقة والإنترنت. لا يتصل SOS بالشرطة تلقائيًا.</string>
     <string name="guide_q_free">ماذا تعني الحصة السحابية المجانية؟</string>
-    <string name="guide_a_free">تتيح Free ثلاث حزم استغاثة سحابية شهريًا، يشترك فيها عدادا الإرسال والفيديو. المقاطع وإعادة المحاولة تستخدم الحدث نفسه. تستمر الاستغاثة والأدلة المحلية عند نفاد الحصة أو انقطاع الإنترنت.</string>
+    <string name="guide_a_free">تتيح Free ثلاثة أحداث إرسال بعيد شهريًا. حسب الخدمة، قد تكون رسالة تنبيه نصية مع الموقع والفيديو محلي، أو حزمة كاملة بأدلة سحابية خاصة. راجع قدرات الخدمة أولًا. المقاطع وإعادة المحاولة تستخدم الحدث نفسه. تستمر الاستغاثة والأدلة المحلية عند نفاد الحصة أو انقطاع الإنترنت.</string>
     <string name="guide_q_family">كيف أجهز أمان الأسرة؟</string>
     <string name="guide_a_family">في وضع ولي الأمر، أنشئ رمز الحماية وأضف جهة ثقة وملف الطوارئ. ابدأ مؤقت الأمان واضغط أنا بخير عند الانتهاء. الرحلة الآمنة والخيارات المتقدمة تحتاج Premium مؤكدًا. الرمز يحمي الإعدادات ولا يمنع الاستغاثة.</string>
     <string name="guide_q_cloud">لماذا لا يعمل الإرسال السحابي؟</string>
-    <string name="guide_a_cloud">على ولي الأمر إعداد خدمة HTTPS المنشورة وتأكيد بريد الحساب وتسجيل الدخول وتفعيل المشاركة. السحابة غير المهيأة لا ترسل. راجع الاستخدام وطابور الأحداث في السحابة والحساب. لا تُدخل مفاتيح AWS أو SES في الهاتف.</string>
+    <string name="guide_a_cloud">افتح السحابة والحساب واختر شخصي أو مؤسسة. خدمة الأفراد تحتاج تفعيل NEXVARY، وحساب المؤسسة يحتاج عنوان الخدمة الذي توفره المؤسسة. أكد بريدك وسجل الدخول. تتطلب الأدلة السحابية أيضًا تفعيل البريد والتخزين الخاص من مشغل الخدمة. لا تُدخل أسرار SMTP أو AWS أو التخزين في الهاتف.</string>
     <string name="guide_q_evidence">كيف يُحفظ دليل الطوارئ؟</string>
     <string name="guide_a_evidence">يُغلق فيديو الطوارئ في مقاطع قصيرة وتُرفع عند توفر الشبكة والموافقة والحصة. قد يوجد فاصل قصير عند إعادة فتح الكاميرا. للمقاطع المغلقة بصمة سلامة؛ وقد يُفقد المقطع المفتوح إذا قُتلت العملية. لا يُضمن وصول الدليل أو اعتماده قانونيًا.</string>
     <string name="guide_q_library">أين أجد التسجيلات والملفات الخاصة؟</string>
@@ -631,4 +631,21 @@
     <string name="call_permission_prompt">راجع طلب إذن Shizuku</string>
     <string name="call_start_shizuku">شغّل Shizuku قبل منح الإذن</string>
     <string name="voice_partial_saved">حُفظ الجزء المتاح من الصوت بعد توقف التسجيل بصورة غير متوقعة.</string>
+    <string name="service_setup_note">اختر حسابًا شخصيًا أو خدمة مؤسستك. تبقى الاستغاثة والتسجيل المحليان متاحين. لا تُدخل أسرار SMTP أو التخزين في الهاتف.</string>
+    <string name="service_personal">حساب شخصي</string>
+    <string name="service_personal_note">خدمة NEXVARY للأفراد</string>
+    <string name="service_institution">حساب مؤسسة</string>
+    <string name="service_institution_note">خدمة تديرها المدرسة أو المؤسسة</string>
+    <string name="service_institution_address">عنوان خدمة المؤسسة (HTTPS)</string>
+    <string name="service_connect">اتصال</string>
+    <string name="service_connect_confirm">الاتصال بالخدمة %1$s؟ سيتولى مشغّلها إدارة حسابك والأدلة السحابية التي تختار مشاركتها.</string>
+    <string name="service_connecting">جارٍ التحقق من الخدمة…</string>
+    <string name="service_unavailable">خدمة الأفراد غير مفعلة في هذا الإصدار. التسجيل والاستغاثة المحليان متاحان.</string>
+    <string name="service_connected">الخدمة المختارة: %1$s</string>
+    <string name="service_remote_off">إرسال الأدلة السحابية غير مفعّل على هذه الخدمة. تبقى أدلتك المحلية متاحة.</string>
+    <string name="service_connect_failed">تعذر التحقق من الخدمة. راجع عنوانها وتوفرها.</string>
+    <string name="service_advanced">إعدادات اتصال متقدمة</string>
+    <string name="service_legacy_note">للاتصالات السابقة عبر AWS فقط. الحساب العادي لا يحتاج هذه الحقول. لا تُدخل مفاتيح AWS أو SES السرية هنا.</string>
+    <string name="service_account_note">أنشئ حسابًا وأكد رمز بريدك ثم سجّل الدخول. قد تحصر المؤسسة التسجيل في أشخاص محددين.</string>
+    <string name="service_busy">الخدمة مزدحمة؛ قد يتأخر الإرسال السحابي. الاستغاثة المحلية متاحة.</string>
 </resources>

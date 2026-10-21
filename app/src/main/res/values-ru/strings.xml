@@ -607,11 +607,11 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_sos">Что делает кнопка SOS?</string>
     <string name="guide_a_sos">Создаёт локальное событие. Доступны локальная запись, набор номера, редактор SMS и ручная отправка места. Звонки и SMS подтверждаете вы. Облако требует настройки родителя, согласия и сети. SOS не вызывает полицию автоматически.</string>
     <string name="guide_q_free">Что означает бесплатная квота?</string>
-    <string name="guide_a_free">Free даёт 3 удалённых SOS-пакета в месяц, общих для отправок и видео. Сегменты и повторы используют то же событие. Локальные SOS и запись остаются без квоты или интернета.</string>
+    <string name="guide_a_free">Free даёт три события удалённого оповещения в месяц. По возможностям сервиса: письмо с текстом/местоположением и локальное видео либо пакет с частными облачными доказательствами. Сегменты и повторы используют одно событие. Локальные SOS и доказательства доступны без квоты или интернета.</string>
     <string name="guide_q_family">Как настроить безопасность семьи?</string>
     <string name="guide_a_family">В режиме родителя задайте PIN, доверенный контакт и профиль. Запустите таймер и подтвердите Я в безопасности. Безопасный маршрут и расширенные функции требуют проверенного Premium. PIN не блокирует SOS.</string>
     <string name="guide_q_cloud">Почему нет отправки в облако?</string>
-    <string name="guide_a_cloud">Родитель настраивает развёрнутый HTTPS-сервис, подтверждает почту, входит и разрешает отправку. Проверьте квоту и очередь в Облако и аккаунт. Не вводите ключи AWS или SES на телефоне.</string>
+    <string name="guide_a_cloud">В разделе Облако и аккаунт выберите Личный или Организация. NEXVARY должен активировать личный сервис; организация предоставляет свой адрес. Подтвердите почту и войдите. Оператор должен включить почту и частное хранилище. Не вводите секреты SMTP, AWS или хранилища на телефоне.</string>
     <string name="guide_q_evidence">Как сохраняются записи происшествия?</string>
     <string name="guide_a_evidence">Короткие сегменты загружаются при наличии сети, согласия и квоты. При перезапуске камеры возможен пробел. Закрытые сегменты имеют контрольные суммы; открытый может потеряться при завершении процесса. Доставка и юридическая сила не гарантированы.</string>
     <string name="guide_q_library">Где записи и приватные файлы?</string>
@@ -631,4 +631,21 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="call_permission_prompt">Проверьте запрос разрешения Shizuku</string>
     <string name="call_start_shizuku">Сначала запустите Shizuku</string>
     <string name="voice_partial_saved">Доступный звук сохранён после неожиданной остановки записи.</string>
+    <string name="service_setup_note">Выберите личный аккаунт или сервис организации. Локальные SOS и запись доступны всегда. Не вводите на телефоне секреты SMTP или хранилища.</string>
+    <string name="service_personal">Личный аккаунт</string>
+    <string name="service_personal_note">Сервис NEXVARY для частных лиц</string>
+    <string name="service_institution">Аккаунт организации</string>
+    <string name="service_institution_note">Сервис вашей школы или организации</string>
+    <string name="service_institution_address">Адрес сервиса организации (HTTPS)</string>
+    <string name="service_connect">Подключить</string>
+    <string name="service_connect_confirm">Подключиться к %1$s? Оператор будет управлять аккаунтом и облачными доказательствами, которыми вы решите поделиться.</string>
+    <string name="service_connecting">Проверка сервиса…</string>
+    <string name="service_unavailable">Личный сервис в этой версии не активирован. Локальные запись и SOS доступны.</string>
+    <string name="service_connected">Выбранный сервис: %1$s</string>
+    <string name="service_remote_off">Отправка облачных доказательств здесь отключена. Локальные доказательства доступны.</string>
+    <string name="service_connect_failed">Не удалось проверить сервис. Проверьте адрес и доступность.</string>
+    <string name="service_advanced">Расширенное подключение</string>
+    <string name="service_legacy_note">Только существующие подключения AWS. Обычным аккаунтам эти поля не нужны. Не вводите секретные ключи AWS или SES.</string>
+    <string name="service_account_note">Создайте аккаунт, подтвердите код из письма и войдите. Организация может ограничить регистрацию.</string>
+    <string name="service_busy">Сервис занят: облачная отправка может задержаться. Локальный SOS доступен.</string>
 </resources>

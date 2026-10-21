@@ -607,11 +607,11 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_sos">Que fait le bouton SOS ?</string>
     <string name="guide_a_sos">Il crée un événement local. Preuve locale, composeur téléphonique, SMS et partage manuel restent accessibles. Vous confirmez appels et SMS. Le cloud nécessite configuration parentale, consentement et réseau. SOS ne contacte pas automatiquement la police.</string>
     <string name="guide_q_free">Que signifie le quota gratuit ?</string>
-    <string name="guide_a_free">Free permet 3 ensembles SOS distants par mois, communs aux envois cloud et vidéos. Segments et tentatives gardent le même événement. SOS et preuves locales restent disponibles sans réseau ou quota.</string>
+    <string name="guide_a_free">Free offre trois événements d’alerte à distance par mois. Selon le service : courriel texte/localisation avec vidéo locale, ou preuves cloud privées. Vérifiez les capacités du service. Segments et nouvelles tentatives partagent un événement. SOS et preuves locaux restent disponibles sans quota ou Internet.</string>
     <string name="guide_q_family">Comment configurer la sécurité familiale ?</string>
     <string name="guide_a_family">En mode parent, définissez un code, un contact de confiance et le profil d’urgence. Lancez un minuteur et confirmez Je vais bien. Trajet sécurisé et options avancées nécessitent Premium vérifié. Le code ne bloque jamais SOS.</string>
     <string name="guide_q_cloud">Pourquoi le cloud ne fonctionne-t-il pas ?</string>
-    <string name="guide_a_cloud">Le parent configure le service HTTPS déployé, confirme son adresse, se connecte et autorise le partage. Vérifiez le quota et la file dans Cloud et compte. Ne saisissez jamais de clés AWS ou SES sur le téléphone.</string>
+    <string name="guide_a_cloud">Dans Cloud et compte, choisissez Personnel ou Établissement. NEXVARY doit activer le service personnel ; l’établissement fournit sa propre adresse. Confirmez votre courriel et connectez-vous. L’opérateur doit aussi activer le courriel et le stockage privé. Aucun secret SMTP, AWS ou de stockage sur le téléphone.</string>
     <string name="guide_q_evidence">Comment les preuves sont-elles conservées ?</string>
     <string name="guide_a_evidence">La vidéo est découpée en courts segments envoyés si réseau, consentement et quota le permettent. Une brève interruption entre segments est possible. Les segments fermés ont une empreinte ; un segment ouvert peut être perdu si le processus est tué. Livraison et valeur juridique non garanties.</string>
     <string name="guide_q_library">Où sont les enregistrements privés ?</string>
@@ -631,4 +631,21 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="call_permission_prompt">Consultez la demande de permission Shizuku</string>
     <string name="call_start_shizuku">Démarrez Shizuku avant d’autoriser</string>
     <string name="voice_partial_saved">Le son disponible a été sauvegardé après un arrêt inattendu.</string>
+    <string name="service_setup_note">Choisissez un compte personnel ou le service de votre établissement. Le SOS et l’enregistrement locaux restent disponibles. Ne saisissez aucun secret SMTP ou de stockage sur le téléphone.</string>
+    <string name="service_personal">Compte personnel</string>
+    <string name="service_personal_note">Service NEXVARY pour particuliers</string>
+    <string name="service_institution">Compte établissement</string>
+    <string name="service_institution_note">Service géré par votre école ou organisation</string>
+    <string name="service_institution_address">Adresse du service de l’établissement (HTTPS)</string>
+    <string name="service_connect">Connexion</string>
+    <string name="service_connect_confirm">Se connecter à %1$s ? Cet opérateur gérera votre compte et les preuves cloud que vous choisissez de partager.</string>
+    <string name="service_connecting">Vérification du service…</string>
+    <string name="service_unavailable">Le service personnel n’est pas activé dans cette version. SOS et enregistrement locaux disponibles.</string>
+    <string name="service_connected">Service choisi : %1$s</string>
+    <string name="service_remote_off">L’envoi des preuves cloud est désactivé sur ce service. Vos preuves locales restent disponibles.</string>
+    <string name="service_connect_failed">Impossible de vérifier le service. Vérifiez son adresse et sa disponibilité.</string>
+    <string name="service_advanced">Connexion avancée</string>
+    <string name="service_legacy_note">Connexions AWS existantes uniquement. Ces champs sont inutiles pour un compte ordinaire. Aucun secret AWS ou SES ici.</string>
+    <string name="service_account_note">Créez un compte, confirmez le code reçu puis connectez-vous. L’établissement peut limiter les inscriptions.</string>
+    <string name="service_busy">Service occupé : l’envoi cloud peut être retardé. Le SOS local reste disponible.</string>
 </resources>

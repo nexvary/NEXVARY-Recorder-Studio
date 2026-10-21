@@ -37,6 +37,11 @@ class CloudSyncWorker(context: Context,params: WorkerParameters): Worker(context
         val api=CloudApi(applicationContext,expectedSession)
         val pending=CloudOutbox.events(store.snapshot()).let { rows -> rows.keys().asSequence().map { rows.getJSONObject(it) }.toList() }
         try {
+            if(CloudApi.portable(expectedSession)) {
+                QuotaManager(applicationContext).refresh()
+                val description=CloudApi.config(applicationContext).optJSONObject("service")
+                if(description?.optBoolean("remoteSos")!=true) return Result.retry()
+            }
             for(job in pending) {
                 if(isStopped) return Result.retry()
                 if(!CloudSessionState.sameSession(CloudApi.config(applicationContext),expectedSession)) return Result.success()
@@ -63,14 +68,14 @@ class CloudSyncWorker(context: Context,params: WorkerParameters): Worker(context
                     serverId=reservation.getString("eventId")
                     store.update { root ->
                         val latest=CloudOutbox.events(root).getJSONObject(id)
-                        latest.put("serverEventId",serverId).put("merged",reservation.optBoolean("merged"))
+                        latest.put("serverEventId",serverId).put("merged",reservation.optBoolean("merged")).put("uploadEvidence",reservation.optBoolean("uploadEvidence",true))
                         if(latest.optString("status")=="CANCELLED" && CloudSessionState.sameSession(CloudApi.config(root),expectedSession)) latest.put("status","CANCEL_PENDING")
                         if(CloudSessionState.sameSession(CloudApi.config(root),expectedSession)) reservation.optJSONObject("usage")?.let { root.put("cloudUsage",it) }
                     }
                 }
                 if(!allowed(id,expectedSession)) continue
                 val merged=CloudOutbox.events(store.snapshot()).getJSONObject(id).optBoolean("merged")
-                val files=if(merged) JSONObject() else snapshot.optJSONObject("evidence") ?: JSONObject()
+                val files=if(merged || !CloudOutbox.events(store.snapshot()).getJSONObject(id).optBoolean("uploadEvidence",true)) JSONObject() else snapshot.optJSONObject("evidence") ?: JSONObject()
                 files.keys().asSequence().map { files.getJSONObject(it) }.filter { it.optString("eventId")==id }.sortedBy { it.optInt("segmentIndex") }.forEach { manifest ->
                     if(!allowed(id,expectedSession)) return@forEach
                     val index=manifest.optInt("segmentIndex",0)

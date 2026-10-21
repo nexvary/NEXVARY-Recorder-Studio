@@ -607,11 +607,11 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guide_q_sos">What happens when I press SOS?</string>
     <string name="guide_a_sos">SOS creates a local safety event. Evidence recording, dialer, SMS composer and manual location sharing remain available. Calling or sending SMS needs your confirmation. Cloud delivery needs parent setup, consent and internet. SOS does not automatically contact police.</string>
     <string name="guide_q_free">What does the Free cloud quota mean?</string>
-    <string name="guide_a_free">Free allows 3 remote SOS packages each month, shared by cloud sends and video uploads. Segments and retries reuse the same event. Local SOS and local evidence stay available after quota exhaustion or without internet.</string>
+    <string name="guide_a_free">Free allows three remote alert events per month. Depending on the service, this is a text/location email with local video, or a full package with private cloud evidence. Check service capabilities first. Segments and retries share one event. Local SOS and local evidence remain available when the quota runs out or the internet is absent.</string>
     <string name="guide_q_family">How do I set up family safety?</string>
     <string name="guide_a_family">In Parent Mode, set a Guardian PIN, trusted contact and emergency profile. Start a safety timer and tap I am Safe when finished. Safe Journey and advanced options require verified Premium. The PIN protects settings, never SOS.</string>
     <string name="guide_q_cloud">Why is cloud sending unavailable?</string>
-    <string name="guide_a_cloud">A parent must configure the deployed HTTPS service, confirm the account email, sign in and enable sharing. Unconfigured cloud cannot send. Check usage and the queue under Cloud &amp; account. Never enter AWS or SES keys on the phone.</string>
+    <string name="guide_a_cloud">Open Cloud &amp; account and choose Personal or Institution. Personal service must be activated by NEXVARY; institution accounts need the service address provided by the organization. Confirm your email and sign in. Cloud evidence also requires the operator to enable private storage and email. Never enter SMTP, AWS or storage secrets on the phone.</string>
     <string name="guide_q_evidence">How is emergency evidence saved?</string>
     <string name="guide_a_evidence">Emergency video closes short segments and uploads them when network, consent and quota allow. A brief camera restart gap can occur. Closed segments have integrity hashes; an open segment can be lost if the process is killed. This is not a guarantee of delivery or legal authenticity.</string>
     <string name="guide_q_library">Where are my recordings and private files?</string>
@@ -631,4 +631,21 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="call_permission_prompt">Review the Shizuku permission request</string>
     <string name="call_start_shizuku">Start Shizuku before granting permission</string>
     <string name="voice_partial_saved">The available audio was saved after capture stopped unexpectedly.</string>
+    <string name="service_setup_note">Choose a personal account or your institution’s service. Local SOS and recording remain available. Never enter SMTP or storage secrets on the phone.</string>
+    <string name="service_personal">Personal account</string>
+    <string name="service_personal_note">NEXVARY service for individuals</string>
+    <string name="service_institution">Institution account</string>
+    <string name="service_institution_note">Your school or organization operates this service</string>
+    <string name="service_institution_address">Institution service address (HTTPS)</string>
+    <string name="service_connect">Connect</string>
+    <string name="service_connect_confirm">Connect to %1$s? This service operator will manage your account and any cloud evidence you choose to share.</string>
+    <string name="service_connecting">Checking service…</string>
+    <string name="service_unavailable">The personal service is not activated in this release. Local recording and SOS remain available.</string>
+    <string name="service_connected">Selected service: %1$s</string>
+    <string name="service_remote_off">Cloud evidence delivery is not enabled on this service. Your local evidence remains available.</string>
+    <string name="service_connect_failed">Could not verify this service. Check its address and availability.</string>
+    <string name="service_advanced">Advanced connection settings</string>
+    <string name="service_legacy_note">Existing AWS connections only. Ordinary accounts do not need these fields. Never enter AWS or SES secret keys here.</string>
+    <string name="service_account_note">Create an account, confirm your email code, then sign in. Your institution may restrict enrollment.</string>
+    <string name="service_busy">The service is busy. Cloud delivery may be delayed; local SOS remains available.</string>
 </resources>

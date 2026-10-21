@@ -51,6 +51,7 @@ def validate_segment(body):
 
 def safe_payload(body):
     """No client recipients, links, subject, arbitrary HTML or storage keys are accepted."""
+    if not isinstance(body, dict): raise Rejected("INVALID_PAYLOAD")
     result = {}
     for key, limit in (("displayName", 120), ("timestamp", 64), ("network", 32), ("message", 500)):
         value = body.get(key, "")

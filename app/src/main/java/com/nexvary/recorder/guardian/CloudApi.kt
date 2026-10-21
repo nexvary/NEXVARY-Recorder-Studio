@@ -15,12 +15,13 @@ class CloudApi(private val context: Context, private val expectedSession: JSONOb
         var config=config(context)
         expectedSession?.let { if(!CloudSessionState.sameSession(config,it)) throw CloudFailure("SESSION_CHANGED",401) }
         if(System.currentTimeMillis() >= config.optLong("expiresAt")-30_000 && config.optString("refreshToken").isNotBlank()) {
-            val refreshed=cognito("InitiateAuth",JSONObject().put("ClientId",config.getString("clientId")).put("AuthFlow","REFRESH_TOKEN_AUTH")
-                .put("AuthParameters",JSONObject().put("REFRESH_TOKEN",config.getString("refreshToken"))))
-            val tokens=refreshed.getJSONObject("AuthenticationResult")
+            val tokens = if(portable(config)) json(config.getString("baseUrl")+"/auth/refresh","POST",JSONObject().put("refreshToken",config.getString("refreshToken")))
+            else cognito("InitiateAuth",JSONObject().put("ClientId",config.getString("clientId")).put("AuthFlow","REFRESH_TOKEN_AUTH")
+                .put("AuthParameters",JSONObject().put("REFRESH_TOKEN",config.getString("refreshToken")))).getJSONObject("AuthenticationResult")
             FamilyStore(context).update { root ->
                 if(!CloudSessionState.sameSession(config(root),config)) throw CloudFailure("SESSION_CHANGED",401)
                 config(root).put("idToken",tokens.getString("IdToken")).put("expiresAt",System.currentTimeMillis()+tokens.getLong("ExpiresIn")*1000)
+                if(tokens.has("RefreshToken")) config(root).put("refreshToken",tokens.getString("RefreshToken"))
             }
             config=config(context)
             expectedSession?.let { if(!CloudSessionState.sameSession(config,it)) throw CloudFailure("SESSION_CHANGED",401) }
@@ -34,25 +35,44 @@ class CloudApi(private val context: Context, private val expectedSession: JSONOb
     }
     fun authenticate(email: String,password: String) {
         val config=config(context)
-        val result=cognito("InitiateAuth",JSONObject().put("ClientId",config.getString("clientId")).put("AuthFlow","USER_PASSWORD_AUTH")
-            .put("AuthParameters",JSONObject().put("USERNAME",email.trim()).put("PASSWORD",password)))
-        val tokens=result.optJSONObject("AuthenticationResult") ?: throw CloudFailure("AUTH_CHALLENGE_REQUIRED")
+        val tokens = if(portable(config)) json(config.getString("baseUrl")+"/auth/login","POST",JSONObject().put("email",email.trim()).put("password",password))
+        else cognito("InitiateAuth",JSONObject().put("ClientId",config.getString("clientId")).put("AuthFlow","USER_PASSWORD_AUTH")
+            .put("AuthParameters",JSONObject().put("USERNAME",email.trim()).put("PASSWORD",password))).optJSONObject("AuthenticationResult") ?: throw CloudFailure("AUTH_CHALLENGE_REQUIRED")
         FamilyStore(context).update { root ->
-            if(CloudApi.config(root).optString("baseUrl")!=config.optString("baseUrl") || CloudApi.config(root).optString("clientId")!=config.optString("clientId")) throw CloudFailure("SESSION_CHANGED",401)
+            if(CloudApi.config(root).optString("sessionNonce")!=config.optString("sessionNonce") || CloudApi.config(root).optString("authType")!=config.optString("authType") || CloudApi.config(root).optString("baseUrl")!=config.optString("baseUrl") || CloudApi.config(root).optString("clientId")!=config.optString("clientId")) throw CloudFailure("SESSION_CHANGED",401)
             CloudSessionState.install(root,tokens)
         }
     }
-    fun signup(email: String,password: String) = cognito("SignUp",JSONObject().put("ClientId",config(context).getString("clientId"))
+    fun signup(email: String,password: String) = if(portable(config(context))) portableAuth("signup",JSONObject().put("email",email.trim()).put("password",password)) else cognito("SignUp",JSONObject().put("ClientId",config(context).getString("clientId"))
         .put("Username",email.trim()).put("Password",password).put("UserAttributes",org.json.JSONArray().put(JSONObject().put("Name","email").put("Value",email.trim()))))
-    fun confirm(email: String,code: String) = cognito("ConfirmSignUp",JSONObject().put("ClientId",config(context).getString("clientId")).put("Username",email.trim()).put("ConfirmationCode",code.trim()))
-    fun forgot(email: String)=cognito("ForgotPassword",JSONObject().put("ClientId",config(context).getString("clientId")).put("Username",email.trim()))
-    fun reset(email: String,code: String,password: String)=cognito("ConfirmForgotPassword",JSONObject().put("ClientId",config(context).getString("clientId")).put("Username",email.trim()).put("ConfirmationCode",code.trim()).put("Password",password))
+    fun confirm(email: String,code: String) = if(portable(config(context))) portableAuth("confirm",JSONObject().put("email",email.trim()).put("code",code.trim())) else cognito("ConfirmSignUp",JSONObject().put("ClientId",config(context).getString("clientId")).put("Username",email.trim()).put("ConfirmationCode",code.trim()))
+    fun forgot(email: String)=if(portable(config(context))) portableAuth("forgot",JSONObject().put("email",email.trim())) else cognito("ForgotPassword",JSONObject().put("ClientId",config(context).getString("clientId")).put("Username",email.trim()))
+    fun reset(email: String,code: String,password: String)=if(portable(config(context))) portableAuth("reset",JSONObject().put("email",email.trim()).put("code",code.trim()).put("password",password)) else cognito("ConfirmForgotPassword",JSONObject().put("ClientId",config(context).getString("clientId")).put("Username",email.trim()).put("ConfirmationCode",code.trim()).put("Password",password))
+    private fun portableAuth(action: String, body: JSONObject) = json(config(context).getString("baseUrl")+"/auth/$action","POST",body)
+    fun logout() {
+        if(portable(config(context))) runCatching { request("POST","/auth/logout",JSONObject()) }
+        FamilyStore(context).update { CloudSessionState.logout(it) }
+    }
     private fun cognito(action: String,body: JSONObject): JSONObject {
         val region=config(context).getString("region")
         require(region.matches(Regex("[a-z]{2}-[a-z]+-\\d")))
         return json("https://cognito-idp.$region.amazonaws.com/","POST",body,mapOf("X-Amz-Target" to "AWSCognitoIdentityProviderService.$action","Content-Type" to "application/x-amz-json-1.1"))
     }
     companion object {
+        fun portable(config: JSONObject)=config.optString("authType")=="NEXVARY"
+        fun discover(address: String): JSONObject {
+            val base=GuardianServiceAddress.normalize(address)
+            val description=json(base+"/.well-known/nexvary-guardian","GET",null)
+            require(description.optInt("schemaVersion")==1 && description.optString("authType")=="NEXVARY" &&
+                description.optString("edition") in listOf("MANAGED","INSTITUTION") && description.optString("name").length in 1..120)
+            return JSONObject().put("baseUrl",base).put("authType","NEXVARY").put("service",description)
+        }
+        fun installService(root: JSONObject, service: JSONObject) {
+            GuardianServiceAddress.normalize(service.getString("baseUrl"))
+            require(portable(service) && service.optJSONObject("service")?.optInt("schemaVersion")==1)
+            CloudSessionState.logout(root)
+            root.put("cloud",JSONObject(service.toString()))
+        }
         fun config(root: JSONObject): JSONObject = root.optJSONObject("cloud") ?: JSONObject().also { root.put("cloud",it) }
         fun config(context: Context)=config(FamilyStore(context).snapshot())
         fun configured(context: Context)=config(context).let { it.optString("baseUrl").isNotBlank() }
@@ -84,6 +104,12 @@ class QuotaManager(private val context: Context) {
         FamilyStore(context).update { root ->
             if(runCatching { CloudSessionState.binding(CloudApi.config(root).optString("idToken")) }.getOrNull()!=account) throw CloudFailure("SESSION_CHANGED",401)
             root.put("cloudUsage",usage.put("receivedAt",System.currentTimeMillis()))
+            usage.optJSONObject("capabilities")?.let { CloudApi.config(root).put("service",it) }
+            if(CloudApi.portable(CloudApi.config(root))) {
+                val state=when(usage.optString("state")) { "PREMIUM","TRIAL" -> "ACTIVE";"GRACE_PERIOD" -> "GRACE_PERIOD";"ACCOUNT_HOLD" -> "ACCOUNT_HOLD";else -> "EXPIRED" }
+                root.put("verifiedEntitlement",JSONObject().put("state",state).put("expiresAt",usage.optLong("expiresAt"))
+                    .put("verifiedAt",usage.optLong("verifiedAt")).put("accountBinding",account))
+            }
         }
         return usage
     }

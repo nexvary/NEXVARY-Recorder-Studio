@@ -15,7 +15,10 @@ class SubscriptionActivity: ProtectedFamilyPage() {
         DeliveryUi.text(root,if(com.nexvary.recorder.BuildConfig.DEBUG) R.string.fs_billing_preview else R.string.fs_billing_note)
         status=DeliveryUi.text(root,R.string.fs_billing_loading)
         offers=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;root.addView(this) }
-        manager=BillingManager(this,if(com.nexvary.recorder.guardian.CloudApi.configured(this)) CloudPurchaseVerifier(this) else null) { runOnUiThread { render() } }
+        val cloud=com.nexvary.recorder.guardian.CloudApi.config(this)
+        val purchasable=com.nexvary.recorder.guardian.CloudApi.configured(this) && (!com.nexvary.recorder.guardian.CloudApi.portable(cloud) ||
+            (cloud.optJSONObject("service")?.optBoolean("billing")==true && cloud.optJSONObject("service")?.optString("edition")=="MANAGED"))
+        manager=BillingManager(this,if(purchasable) CloudPurchaseVerifier(this) else null) { runOnUiThread { render() } }
         DeliveryUi.button(root,R.string.fs_restore) { manager.restore() }
         manager.connect()
     }
