@@ -99,7 +99,12 @@ class FamilyDashboardActivity: AppCompatActivity() {
     }
     private fun refresh() {
         if(refreshing) return;refreshing=true
-        FamilyUi.io(this,{ runCatching { FamilyStore(this).snapshot() } }) { result ->
+        FamilyUi.io(this,{ runCatching {
+            val current=FamilyStore.state(FamilyStore(this).snapshot())
+            if(current?.phase in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN) && current!!.deadline.remaining(System.currentTimeMillis(),SystemClock.elapsedRealtime(),Settings.Global.getInt(contentResolver,Settings.Global.BOOT_COUNT,-1))==0L)
+                SafetyCheckManager(this).evaluate()
+            FamilyStore(this).snapshot()
+        } }) { result ->
             refreshing=false
             val root=result.getOrElse { status.setText(R.string.fs_storage_error);return@io };snapshot=root
             val state=FamilyStore.state(root);val config=FamilyStore.config(root)
@@ -116,6 +121,15 @@ class FamilyDashboardActivity: AppCompatActivity() {
             medical.visibility=if(state?.phase==SafetyPhase.SOS_ACTIVE && config.optBoolean("showMedical")) View.VISIBLE else View.GONE
             if(medical.visibility==View.VISIBLE) medical.text=root.optJSONObject("medical")?.let { m -> listOf("name","age","blood","allergies","medications","notes","guardian","phone","secondary").mapNotNull { m.optString(it).takeIf(String::isNotBlank) }.joinToString("\n") }.orEmpty()
             if(active && !locationRequested) maybeLocation()
+            if(state?.phase==SafetyPhase.SOS_ACTIVE && config.optBoolean("autoEvidence") &&
+                root.optJSONObject("evidenceActions")?.optString(state.id)=="USER_ACTION_REQUIRED" &&
+                lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED) && window.decorView.hasWindowFocus()) {
+                val mode=config.optString("evidence")
+                val permission=if(mode=="AUDIO") Manifest.permission.RECORD_AUDIO else Manifest.permission.CAMERA
+                if(mode in listOf("VIDEO","AUDIO") && ContextCompat.checkSelfPermission(this,permission)==PackageManager.PERMISSION_GRANTED) {
+                    FamilyUi.io(this,{ FamilyStore(this).update { EvidenceManager.action(it,state.id,"STARTING") } }) { evidence(false) }
+                }
+            }
             if(pendingTest.isNotBlank()) root.optJSONObject("evidence")?.let { items ->
                 items.keys().asSequence().map { items.getJSONObject(it) }.firstOrNull { it.optString("eventId")==pendingTest }?.let { manifest ->
                     pendingTest=""

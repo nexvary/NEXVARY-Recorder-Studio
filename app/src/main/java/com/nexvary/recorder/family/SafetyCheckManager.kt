@@ -3,6 +3,7 @@ package com.nexvary.recorder.family
 import android.app.*
 import android.content.*
 import android.os.*
+import android.os.SystemClock
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -22,7 +23,7 @@ class SafetyCheckManager(private val context: Context) {
             SafetyDeadline(System.currentTimeMillis()+minutes*60_000,SystemClock.elapsedRealtime()+minutes*60_000,boot()),graceSeconds)
         store.update { root ->
             check(FamilyStore.state(root)?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE))
-            FamilyStore.putState(root,state); root.remove("alertPrepared");root.remove("batterySent");root.remove("arrivalCandidate")
+            FamilyStore.putState(root,state); root.remove("alertPrepared");root.remove("batterySent");root.remove("arrivalCandidate");root.remove("reminderSent");root.remove("batterySaverActive")
             if(journey != null) root.put("journey",journey) else root.remove("journey")
             FamilyStore.event(root,if(journey == null) "CHECK_STARTED" else "JOURNEY_STARTED")
         }
@@ -32,6 +33,7 @@ class SafetyCheckManager(private val context: Context) {
         val state = store.update { root ->
             val existing = FamilyStore.state(root)
             if(existing?.phase == SafetyPhase.SOS_ACTIVE) return@update existing
+            if(existing?.phase == SafetyPhase.COUNTDOWN && !immediate) return@update existing
             val state = SafetyState(existing?.takeIf { it.phase in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN) }?.id ?: UUID.randomUUID().toString(),
                 if(immediate) SafetyPhase.SOS_ACTIVE else SafetyPhase.COUNTDOWN,
                 SafetyDeadline(System.currentTimeMillis()+20_000,SystemClock.elapsedRealtime()+20_000,boot()),20,reason)
@@ -45,6 +47,7 @@ class SafetyCheckManager(private val context: Context) {
         val changed = store.update { root ->
             val old = FamilyStore.state(root) ?: return@update false
             if(expectedId != null && old.id != expectedId) return@update false
+            if(old.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)) return@update false
             FamilyStore.putState(root,old.copy(phase=if(cancelled) SafetyPhase.CANCELLED else SafetyPhase.RESOLVED))
             FamilyStore.event(root,if(cancelled) "SOS_CANCELLED" else "CHECK_CONFIRMED")
             if(cancelled) FamilyStore.jobs(root).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { if(it.optString("status") !in listOf("SENT","SENDING")) it.put("status","CANCELLED") } } }
@@ -65,7 +68,7 @@ class SafetyCheckManager(private val context: Context) {
             if(state.id != expectedId || state.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN)) return@update false
             FamilyStore.putState(root,state.copy(phase=SafetyPhase.ARMED,
                 deadline=SafetyDeadline(System.currentTimeMillis()+minutes*60_000,SystemClock.elapsedRealtime()+minutes*60_000,boot())))
-            FamilyStore.event(root,"CHECK_EXTENDED");true
+            root.remove("reminderSent");FamilyStore.event(root,"CHECK_EXTENDED");true
         }
         if(changed) { schedule(); FamilyStore.state(store.snapshot())?.let(::notifyState) };return changed
     }
@@ -73,7 +76,12 @@ class SafetyCheckManager(private val context: Context) {
         val changed = store.update { root ->
             val before = FamilyStore.state(root) ?: return@update null
             val after = SafetyPolicy.evaluate(before,System.currentTimeMillis(),SystemClock.elapsedRealtime(),boot())
-            if(before == after) return@update null
+            if(before == after) {
+                if(before.phase==SafetyPhase.ARMED && before.deadline.remaining(System.currentTimeMillis(),SystemClock.elapsedRealtime(),boot())<=60_000 && root.optString("reminderSent")!=before.id) {
+                    root.put("reminderSent",before.id);FamilyStore.event(root,"CHECK_REMINDER");return@update before
+                }
+                return@update null
+            }
             FamilyStore.putState(root,after);FamilyStore.event(root,if(after.phase == SafetyPhase.COUNTDOWN) "CHECK_PROMPTED" else "SOS_STARTED")
             after
         }
@@ -88,7 +96,7 @@ class SafetyCheckManager(private val context: Context) {
             root.put("lastAlert",payload);EmergencyQueue.enqueue(root,payload)
             root.put("alertPrepared",state.id)
             if(FamilyStore.config(root).optString("evidence","NONE") != "NONE") {
-                root.put("evidenceAction","USER_ACTION_REQUIRED")
+                EvidenceManager.action(root,state.id,"USER_ACTION_REQUIRED")
                 FamilyStore.event(root,"EVIDENCE_USER_ACTION_REQUIRED")
             }
         }
@@ -109,7 +117,8 @@ class SafetyCheckManager(private val context: Context) {
         manager.cancel(pending)
         val work = WorkManager.getInstance(context)
         if(state == null || state.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN)) { work.cancelUniqueWork("safety-deadline");return }
-        val delay = state.deadline.remaining(System.currentTimeMillis(),SystemClock.elapsedRealtime(),boot()).coerceAtLeast(100)
+        val remaining = state.deadline.remaining(System.currentTimeMillis(),SystemClock.elapsedRealtime(),boot())
+        val delay = (if(state.phase==SafetyPhase.ARMED && store.snapshot().optString("reminderSent")!=state.id && remaining>60_000) remaining-60_000 else remaining).coerceAtLeast(100)
         try {
             if(Build.VERSION.SDK_INT < 31 || manager.canScheduleExactAlarms()) {
                 val open = PendingIntent.getActivity(context,10,Intent(context,FamilyDashboardActivity::class.java),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -125,18 +134,20 @@ class SafetyCheckManager(private val context: Context) {
         manager.createNotificationChannel(NotificationChannel(CHANNEL,context.getString(R.string.fs_title),NotificationManager.IMPORTANCE_HIGH).apply {
             setSound(null,null);enableVibration(false);lockscreenVisibility=Notification.VISIBILITY_PRIVATE
         })
+        val audible=FamilyStore.config(store.snapshot()).optBoolean("audible") && state.phase in listOf(SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)
+        if(audible) manager.createNotificationChannel(NotificationChannel(AUDIBLE_CHANNEL,context.getString(R.string.fs_audible),NotificationManager.IMPORTANCE_HIGH).apply { lockscreenVisibility=Notification.VISIBILITY_PRIVATE })
         fun action(name: String) = PendingIntent.getBroadcast(context,name.hashCode(),Intent(context,SafetyActionReceiver::class.java).setAction(name).putExtra("id",state.id),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val open = PendingIntent.getActivity(context,0,Intent(context,FamilyDashboardActivity::class.java),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        val message = if(state.phase == SafetyPhase.COUNTDOWN) R.string.fs_are_safe else if(state.phase == SafetyPhase.SOS_ACTIVE) R.string.fs_sos_active else R.string.fs_check_active
-        val notification = NotificationCompat.Builder(context,CHANNEL).setSmallIcon(R.drawable.ic_feature_screen)
+        val message = if(state.phase == SafetyPhase.COUNTDOWN || (state.phase==SafetyPhase.ARMED && store.snapshot().optString("reminderSent")==state.id)) R.string.fs_are_safe else if(state.phase == SafetyPhase.SOS_ACTIVE) R.string.fs_sos_active else R.string.fs_check_active
+        val notification = NotificationCompat.Builder(context,if(audible) AUDIBLE_CHANNEL else CHANNEL).setSmallIcon(R.drawable.ic_feature_screen)
             .setContentTitle(context.getString(R.string.fs_title)).setContentText(context.getString(message)).setContentIntent(open)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE).setOngoing(state.phase in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN))
             .addAction(0,context.getString(R.string.fs_safe),action("SAFE"))
             .addAction(0,context.getString(R.string.fs_extend),action("EXTEND"))
-            .addAction(0,context.getString(R.string.fs_sos),open).setAutoCancel(false).build()
+            .addAction(0,context.getString(R.string.fs_sos),action("TRIGGER_SOS")).setAutoCancel(false).build()
         runCatching { manager.notify(NOTIFICATION,notification) }
     }
-    companion object { const val CHANNEL = "family_safety_silent";const val NOTIFICATION = 3601 }
+    companion object { const val CHANNEL = "family_safety_silent";const val AUDIBLE_CHANNEL="family_safety_audible";const val NOTIFICATION = 3601 }
 }
 
 class SafetyTickWorker(context: Context,params: WorkerParameters): Worker(context,params) {

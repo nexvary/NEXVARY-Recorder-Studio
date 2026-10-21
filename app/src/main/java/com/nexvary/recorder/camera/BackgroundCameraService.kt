@@ -144,6 +144,7 @@ class BackgroundCameraService : Service() {
                                         fpsRange?.let { set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, it) }
                                     }.build()
                                     capture.setRepeatingRequest(request, null, handler); media.start(); started = true
+                                    activeEvidenceEvent?.let { event -> runCatching { com.nexvary.recorder.family.FamilyStore(this@BackgroundCameraService).update { com.nexvary.recorder.family.EvidenceManager.action(it,event,"RECORDING") } } }
                                     state = CaptureState(Stage.RECORDING, if (duration > 0) SystemClock.elapsedRealtime() + duration else 0)
                                 } catch (_: Exception) { finishRecording() }
                             }

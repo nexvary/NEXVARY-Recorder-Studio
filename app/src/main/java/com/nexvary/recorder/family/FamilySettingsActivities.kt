@@ -43,6 +43,7 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
                 val latitude=DeliveryPolicy.digits(lat.text.toString()).replace('٫','.').toDoubleOrNull()
                 val longitude=DeliveryPolicy.digits(lon.text.toString()).replace('٫','.').toDoubleOrNull()
                 if(destName.text.isNotBlank() && (latitude==null || longitude==null || latitude !in -90.0..90.0 || longitude !in -180.0..180.0)) { lat.error=getString(R.string.fs_coordinates_invalid);return@button }
+                if(motion.isChecked && !location.isChecked) { Toast.makeText(this,R.string.fs_location_consent,Toast.LENGTH_LONG).show();return@button }
                 val value=JSONObject().put("displayName",name.text.toString().take(120)).put("note",note.text.toString().take(2000))
                     .put("autoShare",share.isChecked).put("location",location.isChecked).put("immediate",immediate.isChecked).put("audible",audible.isChecked)
                     .put("shareDevice",device.isChecked).put("batteryAlerts",battery.isChecked).put("batterySaver",saver.isChecked)
@@ -56,10 +57,10 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
                         FamilyUi.io(this,{
                             FamilyStore(this).update { state ->
                                 state.put("config",value)
-                                if(!share.isChecked) FamilyStore.jobs(state).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { if(!it.optBoolean("manual") && it.optString("status") !in listOf("SENT","SENDING")) it.put("status","CANCELLED") } } }
+                                if(!value.optBoolean("autoShare")) FamilyStore.jobs(state).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { if(!it.optBoolean("manual") && it.optString("status") !in listOf("SENT","SENDING")) it.put("status","CANCELLED") } } }
                                 FamilyStore.event(state,"CONFIGURATION_UPDATED")
                             }
-                            if(!location.isChecked) stopService(Intent(this,SafetyLocationService::class.java))
+                            if(!value.optBoolean("location")) stopService(Intent(this,SafetyLocationService::class.java))
                         }) { Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show() }
                     }.show()
             }
@@ -131,8 +132,9 @@ class EmergencyProfileActivity: ProtectedFamilyPage() {
             val share=FamilyUi.check(root,R.string.fs_share_medical,FamilyStore.config(data).optBoolean("shareMedical"))
             DeliveryUi.button(root,R.string.rescue_save,R.id.fsSaveProfile) {
                 val value=JSONObject();editors.forEach { (key,field) -> value.put(key,field.text.toString().take(1000)) }
+                val showValue=show.isChecked;val shareValue=share.isChecked
                 FamilyUi.io(this,{ FamilyStore(this).update { state ->
-                    state.put("medical",value);val cfg=FamilyStore.config(state);cfg.put("showMedical",show.isChecked).put("shareMedical",share.isChecked);state.put("config",cfg)
+                    state.put("medical",value);val cfg=FamilyStore.config(state);cfg.put("showMedical",showValue).put("shareMedical",shareValue);state.put("config",cfg)
                     FamilyStore.event(state,"EMERGENCY_PROFILE_UPDATED")
                 } }) { Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show() }
             }

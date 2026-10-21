@@ -50,7 +50,7 @@ class AudioEvidenceService: Service() {
                     prepare();start()
                 }
                 started=true;activeEvent=event
-                FamilyStore(this).update { it.put("evidenceAction","RECORDING");FamilyStore.event(it,"AUDIO_EVIDENCE_STARTED") }
+                FamilyStore(this).update { EvidenceManager.action(it,event,"RECORDING");FamilyStore.event(it,"AUDIO_EVIDENCE_STARTED") }
             } catch(_: Exception) { close() }
         }
         return START_NOT_STICKY
@@ -62,7 +62,7 @@ class AudioEvidenceService: Service() {
         runCatching {
             val output=file
             if(valid && output != null && output.length()>0) EvidenceManager.finalized(this,output,event)
-            else { output?.delete();FamilyStore(this).update { it.put("evidenceAction","FAILED");FamilyStore.event(it,"EVIDENCE_FAILED") } }
+            else { output?.delete();FamilyStore(this).update { EvidenceManager.action(it,event,"FAILED");FamilyStore.event(it,"EVIDENCE_FAILED") } }
         }
         activeEvent=null;started=false
         Handler(mainLooper).post { stopForeground(STOP_FOREGROUND_REMOVE);stopSelf() }

@@ -21,7 +21,11 @@ object AlertPayload {
         val config = FamilyStore.config(root)
         val now = System.currentTimeMillis()
         val last = root.optJSONObject("lastLocation")
-        val age = last?.let { (now-it.optLong("timestamp",0)).coerceAtLeast(0) }
+        val boot=android.provider.Settings.Global.getInt(context.contentResolver,android.provider.Settings.Global.BOOT_COUNT,-1)
+        val age = last?.let {
+            if(it.optInt("boot",-2)==boot && boot>=0) (android.os.SystemClock.elapsedRealtime()-it.optLong("elapsed",-1)).takeIf { value -> value>=0 }
+            else (now-it.optLong("timestamp",0)).takeIf { value -> value>=0 }
+        }
         return JSONObject().put("schemaVersion",1).put("eventId",id).put("eventType",if(test) "TEST_ALERT" else type)
             .put("timestamp",Instant.ofEpochMilli(now).toString()).put("timezone",ZoneId.systemDefault().id)
             .put("displayName",config.optString("displayName"))

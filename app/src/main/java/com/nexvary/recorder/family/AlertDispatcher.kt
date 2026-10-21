@@ -46,7 +46,8 @@ class EmergencyQueue(private val context: Context) {
         val job = FamilyStore.jobs(root).optJSONObject(id) ?: return@update null
         if(job.optString("status") !in listOf("QUEUED","RETRY")) return@update null
         val contact = FamilyStore.contacts(root).let { rows -> (0 until rows.length()).map { rows.getJSONObject(it) }.firstOrNull { it.optString("id") == job.optString("contactId") } }
-        if(contact == null || (!job.optBoolean("manual") && !FamilyStore.config(root).optBoolean("autoShare"))) {
+        if(contact == null || contact.optString("channel") != job.optString("channel") ||
+            contact.optString(if(job.optString("channel")=="EMAIL") "email" else "phone") != job.optString("recipient") || (!job.optBoolean("manual") && !FamilyStore.config(root).optBoolean("autoShare"))) {
             job.put("status","CANCELLED");return@update null
         }
         job.put("status","SENDING").put("attempts",job.optInt("attempts")+1)

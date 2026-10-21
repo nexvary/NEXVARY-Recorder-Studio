@@ -37,12 +37,12 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
         }
     }
     private val battery = object: BroadcastReceiver() {
-        override fun onReceive(context: Context,intent: Intent) { val level=intent.getIntExtra(BatteryManager.EXTRA_LEVEL,-1); handler.post { batteryChanged(level) } }
+        override fun onReceive(context: Context,intent: Intent) { val level=intent.getIntExtra(BatteryManager.EXTRA_LEVEL,-1); handler.post { runCatching { batteryChanged(level) } } }
     }
     private val network = object: ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(net: Network) { handler.post { connectivityChanged() } }
-        override fun onLost(net: Network) { handler.post { connectivityChanged() } }
-        override fun onCapabilitiesChanged(net: Network,capabilities: NetworkCapabilities) { handler.post { connectivityChanged() } }
+        override fun onAvailable(net: Network) { handler.post { runCatching { connectivityChanged() } } }
+        override fun onLost(net: Network) { handler.post { runCatching { connectivityChanged() } } }
+        override fun onCapabilitiesChanged(net: Network,capabilities: NetworkCapabilities) { handler.post { runCatching { connectivityChanged() } } }
     }
     override fun onBind(intent: Intent?) = null
     override fun onStartCommand(intent: Intent?,flags: Int,startId: Int): Int {
@@ -82,7 +82,8 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
             runCatching { location.requestLocationUpdates(provider,interval,25f,this,thread.looper) }
         }
     }
-    override fun onLocationChanged(fix: Location) {
+    override fun onLocationChanged(fix: Location) { runCatching { acceptLocation(fix) } }
+    private fun acceptLocation(fix: Location) {
         if(!fix.hasAccuracy() || !fix.latitude.isFinite() || !fix.longitude.isFinite()) return
         val age=(SystemClock.elapsedRealtimeNanos()-fix.elapsedRealtimeNanos)/1_000_000
         if(age !in 0..120_000) return
@@ -90,7 +91,7 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
         store.update { root ->
             if(FamilyStore.state(root)?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)) return@update
             val snapshot=JSONObject().put("latitude",fix.latitude).put("longitude",fix.longitude).put("accuracy",fix.accuracy)
-                .put("timestamp",fix.time).put("source","ACTIVE_SAFETY_SESSION")
+                .put("timestamp",fix.time).put("elapsed",fix.elapsedRealtimeNanos/1_000_000).put("boot",android.provider.Settings.Global.getInt(contentResolver,android.provider.Settings.Global.BOOT_COUNT,-1)).put("source","ACTIVE_SAFETY_SESSION")
             root.put("lastLocation",snapshot)
             val trail=root.optJSONArray("trail") ?: JSONArray();val next=JSONArray()
             for(i in maxOf(0,trail.length()-719) until trail.length()) next.put(trail.get(i))

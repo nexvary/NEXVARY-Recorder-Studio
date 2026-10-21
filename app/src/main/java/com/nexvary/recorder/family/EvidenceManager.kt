@@ -14,6 +14,11 @@ import java.time.ZoneId
 import java.util.UUID
 
 object EvidenceManager {
+    fun action(root: JSONObject,eventId: String,value: String) {
+        val actions=root.optJSONObject("evidenceActions") ?: JSONObject().also { root.put("evidenceActions",it) }
+        actions.put(eventId,value)
+        if(FamilyStore.state(root)?.id==eventId) root.put("evidenceAction",value)
+    }
     fun hash(file: File): String {
         val digest=MessageDigest.getInstance("SHA-256")
         file.inputStream().use { input -> val buffer=ByteArray(64*1024);while(true) { val count=input.read(buffer);if(count < 0) break;digest.update(buffer,0,count) } }
@@ -35,9 +40,15 @@ object EvidenceManager {
         store.update { root ->
             root.optJSONObject("lastLocation")?.let { metadata.put("locationSnapshot",it) }
             val evidence=root.optJSONObject("evidence") ?: JSONObject().also { root.put("evidence",it) }
-            evidence.put(file.name,metadata);root.put("evidenceAction","SAVED")
+            evidence.put(file.name,metadata);action(root,eventId,"SAVED")
             FamilyStore.event(root,"EVIDENCE_SAVED")
+            if(FamilyStore.state(root)?.let { it.id==eventId && it.phase==SafetyPhase.SOS_ACTIVE }==true) {
+                val payload=AlertPayload.create(context,root,"EVIDENCE_READY",UUID.randomUUID().toString())
+                    .put("evidence",org.json.JSONArray().put(metadata))
+                EmergencyQueue.enqueue(root,payload)
+            }
         }
+        runCatching { SafetyAlertWorker.reconcile(context) }
         return metadata
     }
     fun verify(context: Context,manifest: JSONObject): Boolean {

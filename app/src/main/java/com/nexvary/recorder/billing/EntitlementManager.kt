@@ -12,7 +12,7 @@ enum class SafetyFeature(val basic: Boolean) { RECORDING(true), BASIC_SOS(true),
 object EntitlementPolicy {
     fun premium(value: VerifiedEntitlement?,now: Long): Boolean = value != null &&
         value.state in listOf(SubscriptionState.ACTIVE,SubscriptionState.GRACE_PERIOD,SubscriptionState.CANCELLED_ACTIVE) &&
-        now in value.verifiedAt..minOf(value.expiresAt,value.verifiedAt+24*60*60_000L)
+        now >= value.verifiedAt && now < minOf(value.expiresAt,value.verifiedAt+24*60*60_000L)
 }
 /** No local switch grants premium. Debug preview access is separate from purchase entitlement. */
 class EntitlementManager(private val context: Context) {

@@ -52,19 +52,20 @@ class BillingManager(private val context: Context,private val verifier: Purchase
         changed()
     }
     private fun process(purchases: List<Purchase>) {
-        executor.execute {
+        runCatching { executor.execute { runCatching {
             purchases.forEach { purchase ->
                 // Tokens are encrypted and are never included in callbacks or logs.
                 FamilyStore(context).update { root -> root.put("playPurchase",JSONObject().put("token",purchase.purchaseToken).put("state",purchase.purchaseState)) }
                 if(purchase.purchaseState==Purchase.PurchaseState.PENDING) return@forEach
-                if(purchase.purchaseState!=Purchase.PurchaseState.PURCHASED || verifier==null) return@forEach
-                val verified=runCatching { verifier.verify(purchase.products,purchase.purchaseToken) }.getOrNull() ?: return@forEach
+                val validator=verifier ?: return@forEach
+                if(purchase.purchaseState!=Purchase.PurchaseState.PURCHASED) return@forEach
+                val verified=runCatching { validator.verify(purchase.products,purchase.purchaseToken) }.getOrNull() ?: return@forEach
                 FamilyStore(context).update { root -> root.put("verifiedEntitlement",JSONObject().put("state",verified.state.name).put("expiresAt",verified.expiresAt).put("verifiedAt",verified.verifiedAt)) }
                 if(EntitlementPolicy.premium(verified,System.currentTimeMillis()) && !purchase.isAcknowledged)
                     client.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()) { changed() }
             }
             changed()
-        }
+        } } }
     }
     fun close() { client.endConnection();executor.shutdown() }
 }
