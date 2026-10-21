@@ -576,4 +576,5 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="guardian_save_settings">Save configuration</string>
 <string name="guardian_invite">Send cloud guardian verification (Premium)</string>
 <string name="guardian_confirm_contact">Confirm cloud guardian code</string>
+    <string name="vault_close_player">Chiudi lettore privato</string>
 </resources>
