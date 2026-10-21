@@ -33,14 +33,19 @@ def rate(subject, bucket='api', limit=60, window=60):
 
 
 def usage(account):
-    state, limit = entitlement(record_get(pk(account), 'ENTITLEMENT'), now())
-    expiry = int(record_get(pk(account), 'ENTITLEMENT').get('expiresAt', 0))
+    verified=record_get(pk(account),'ENTITLEMENT')
+    state, limit = entitlement(verified, now())
+    expiry = int(verified.get('expiresAt',0))
+    subscription_state=state if state!='FREE' else ('ACCOUNT_HOLD' if verified.get('state')=='ACCOUNT_HOLD' else 'EXPIRED' if verified else 'FREE')
     if settings.EDITION == 'INSTITUTION' and settings.INSTITUTION_EXPIRES > now():
         state, limit, expiry = 'PREMIUM', PREMIUM_MONTHLY, settings.INSTITUTION_EXPIRES
+        subscription_state='PREMIUM'
+    elif settings.EDITION=='INSTITUTION' and settings.INSTITUTION_EXPIRES>0:
+        subscription_state='EXPIRED'
     month, reset = period(now())
     counter = Counter.objects.filter(key=f'quota:{account.id}:{month}').first()
     used = counter.used if counter else 0
-    return {'state': state, 'edition': settings.EDITION, 'monthlyLimit': limit, 'used': used,
+    return {'state': state, 'subscriptionState':subscription_state, 'edition': settings.EDITION, 'monthlyLimit': limit, 'used': used,
         'remaining': max(0, limit-used), 'sosRemaining': max(0, limit-used), 'uploadsRemaining': max(0, limit-used) if storage_ready() else 0,
         'resetAt': reset, 'serverTime': now(), 'expiresAt': expiry*1000, 'verifiedAt': now()*1000}
 

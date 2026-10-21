@@ -113,8 +113,10 @@ class QuotaManager(private val context: Context) {
             root.put("cloudUsage",usage.put("receivedAt",System.currentTimeMillis()))
             usage.optJSONObject("capabilities")?.let { CloudApi.config(root).put("service",it) }
             if(CloudApi.portable(CloudApi.config(root))) {
-                val state=when(usage.optString("state")) { "PREMIUM","TRIAL" -> "ACTIVE";"GRACE_PERIOD" -> "GRACE_PERIOD";"ACCOUNT_HOLD" -> "ACCOUNT_HOLD";else -> "EXPIRED" }
-                root.put("verifiedEntitlement",JSONObject().put("state",state).put("expiresAt",usage.optLong("expiresAt"))
+                val subscription=usage.optString("subscriptionState",usage.optString("state"))
+                val state=when(subscription) { "PREMIUM","TRIAL" -> "ACTIVE";"GRACE_PERIOD" -> "GRACE_PERIOD";"ACCOUNT_HOLD" -> "ACCOUNT_HOLD";else -> "EXPIRED" }
+                if(subscription=="FREE") root.remove("verifiedEntitlement")
+                else root.put("verifiedEntitlement",JSONObject().put("state",state).put("expiresAt",usage.optLong("expiresAt"))
                     .put("verifiedAt",usage.optLong("verifiedAt")).put("accountBinding",account))
             }
         }

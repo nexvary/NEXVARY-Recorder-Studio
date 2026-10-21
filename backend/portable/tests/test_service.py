@@ -343,3 +343,10 @@ def test_auth_mail_cannot_use_the_reserved_sos_hourly_headroom(account,connected
         provider.return_value.send.return_value='accepted';assert drain()==1
     assert emergencies.find(account,eid).state=='SENT'
     assert EmailJob.objects.get(key='auth-second').state=='RETRYING'
+
+
+def test_free_is_not_mislabeled_expired_and_hold_does_not_gain_paid_quota(account):
+    assert usage(account)['subscriptionState']=='FREE'
+    record_put({'pk':pk(account),'sk':'ENTITLEMENT','state':'ACCOUNT_HOLD','expiresAt':now()+300,'verifiedAt':now()})
+    result=usage(account)
+    assert result['subscriptionState']=='ACCOUNT_HOLD' and result['state']=='FREE' and result['monthlyLimit']==3
