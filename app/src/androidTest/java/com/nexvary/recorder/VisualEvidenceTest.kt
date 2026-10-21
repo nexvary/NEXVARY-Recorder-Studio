@@ -75,6 +75,7 @@ class VisualEvidenceTest {
                     onView(withId(R.id.fsPresets)).perform(reveal(),androidx.test.espresso.action.ViewActions.click())
                     capture(it,"timer-presets-ar")
                     androidx.test.espresso.Espresso.onData(org.hamcrest.Matchers.anything()).atPosition(0).perform(androidx.test.espresso.action.ViewActions.click())
+                    onView(withId(R.id.fsStatus)).perform(reveal())
                     com.nexvary.recorder.family.SafetyCheckManager(context).sos(false)
                     awaitUi(org.hamcrest.Matchers.allOf(withId(R.id.fsStatus),withText(org.hamcrest.Matchers.startsWith(context.getString(R.string.fs_are_safe)))))
                     capture(it,"family-sos-countdown-ar")
