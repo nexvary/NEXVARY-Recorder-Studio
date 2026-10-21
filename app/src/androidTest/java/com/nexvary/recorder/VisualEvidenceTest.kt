@@ -48,7 +48,7 @@ class VisualEvidenceTest {
         try {
         for ((page, visibleId, name) in pages) {
             ActivityScenario.launch(page).use {
-                onView(withId(visibleId)).check(matches(isDisplayed()))
+                awaitUi(org.hamcrest.Matchers.allOf(withId(visibleId),isDisplayed()))
                 capture(it, name)
                 if (page == MoreActivity::class.java) {
                     onView(withId(R.id.moreAbout)).perform(reveal()).check(matches(isDisplayed()))

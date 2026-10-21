@@ -13,7 +13,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.nexvary.recorder.family.*
 import com.nexvary.recorder.guardian.CloudSettingsActivity
-import com.nexvary.recorder.ui.StudioSpinner
 import org.hamcrest.Matchers.anything
 import org.json.JSONObject
 import org.junit.*
@@ -59,11 +58,12 @@ class SettingsSimplificationTest {
             onView(withId(R.id.fsGrace)).check(matches(withEffectiveVisibility(Visibility.GONE)))
             scenario.onActivity { activity ->
                 val spinner=activity.findViewById<Spinner>(R.id.fsPresets)
-                assertEquals(StudioSpinner.GREEN,(spinner.selectedView as TextView).currentTextColor)
-                for(i in 0 until spinner.adapter.count) assertEquals(StudioSpinner.GREEN,(spinner.adapter.getDropDownView(i,null,spinner) as TextView).currentTextColor)
+                assertEquals(0xFF43FF88.toInt(),(spinner.selectedView as TextView).currentTextColor)
+                for(i in 0 until spinner.adapter.count) assertEquals(0xFF43FF88.toInt(),(spinner.adapter.getDropDownView(i,null,spinner) as TextView).currentTextColor)
             }
             onView(withId(R.id.fsPresets)).perform(reveal(),click())
-            onData(anything()).atPosition(4).check { view,error -> if(error!=null) throw error;assertEquals(StudioSpinner.GREEN,(view as TextView).currentTextColor) }.perform(click())
+            onData(anything()).atPosition(0).check(matches(withText(context.resources.getStringArray(R.array.fs_durations)[0])))
+            onData(anything()).atPosition(4).check { view,error -> if(error!=null) throw error;assertEquals(0xFF43FF88.toInt(),(view as TextView).currentTextColor) }.perform(click())
             onView(withId(R.id.fsMinutes)).perform(reveal(),replaceText("23"),closeSoftKeyboard())
             scenario.recreate();awaitUi(withId(R.id.fsPresets));onView(withId(R.id.fsMinutes)).perform(reveal()).check(matches(withText("23")))
             onView(withId(R.id.timerOptions)).perform(reveal(),click());onView(withId(R.id.fsGrace)).perform(reveal()).check(matches(isDisplayed()))
