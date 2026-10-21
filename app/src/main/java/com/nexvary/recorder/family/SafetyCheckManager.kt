@@ -19,6 +19,7 @@ class SafetyCheckManager(private val context: Context) {
     private fun boot() = Settings.Global.getInt(context.contentResolver,Settings.Global.BOOT_COUNT,-1)
     fun start(minutes: Long, graceSeconds: Int, journey: JSONObject? = null): SafetyState {
         require(SafetyPolicy.validMinutes(minutes) && SafetyPolicy.validGrace(graceSeconds))
+        if(journey!=null) check(com.nexvary.recorder.billing.EntitlementManager(context).canUse(com.nexvary.recorder.billing.SafetyFeature.JOURNEY))
         val state = SafetyState(UUID.randomUUID().toString(),SafetyPhase.ARMED,
             SafetyDeadline(System.currentTimeMillis()+minutes*60_000,SystemClock.elapsedRealtime()+minutes*60_000,boot()),graceSeconds)
         store.update { root ->

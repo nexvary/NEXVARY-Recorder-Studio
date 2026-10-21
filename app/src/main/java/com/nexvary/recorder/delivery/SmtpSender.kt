@@ -63,7 +63,7 @@ class SmtpSender(private val subject: String, private val body: String,
             override fun updateMessageID() { setHeader("Message-ID", "<$id@safety.nexvary.invalid>") }
         }.apply {
             setFrom(InternetAddress(profile.from,true)); setRecipient(Message.RecipientType.TO,InternetAddress(recipient,true))
-            setSubject(subject,"UTF-8"); sentDate = Date()
+            setSubject((if(org.json.JSONObject(payload).optString("eventType")=="TEST_ALERT") "TEST ALERT — " else "")+subject,"UTF-8"); sentDate = Date()
             setContent(MimeMultipart().apply {
                 addBodyPart(MimeBodyPart().apply { setText(body + "\n\n" + payload,"UTF-8") })
                 addBodyPart(MimeBodyPart().apply {

@@ -50,6 +50,10 @@ jobs:
           name: android-quality-reports
           path: app/build/reports/
   emulator-ui-smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [33, 34, 35]
     needs: build-and-static-gate
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -75,7 +79,7 @@ jobs:
       - name: Stable emulator navigation and actual Arabic screenshots
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 35
+          api-level: ${{ matrix.api }}
           target: default
           arch: x86_64
           profile: Nexus 5X
@@ -88,14 +92,14 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: android-emulator-real-screenshots
+          name: android-emulator-real-screenshots-${{ matrix.api }}
           path: screenshots/*.png
           if-no-files-found: error
       - name: Upload emulator diagnostics and test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: android-emulator-diagnostics
+          name: android-emulator-diagnostics-${{ matrix.api }}
           path: |
             diagnostics/
             app/build/reports/androidTests/
@@ -113,12 +117,16 @@ jobs:
           path: preview-download/
       - uses: actions/download-artifact@v4
         with:
-          name: android-emulator-real-screenshots
+          name: android-emulator-real-screenshots-35
           path: preview-screenshots/
+      - uses: actions/download-artifact@v4
+        with:
+          name: NEXVARY-Recorder-Studio-v0.9.0-unsigned-rc-aab
+          path: preview-download/
       - name: Publish quality-gated installable preview
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mv preview-download/app-debug.apk preview-download/NEXVARY-Recorder-Studio-v0.9.0-debug.apk
           sha256sum preview-download/*.apk > preview-download/SHA256SUMS.txt
-          gh release create "recorder-ui-0.9.0-${GITHUB_RUN_NUMBER}" preview-download/* preview-screenshots/*.png --target "$GITHUB_SHA" --prerelease --title "NEXVARY Recorder Studio 0.9.0 — UI preview" --notes-file docs/release-notes-0.9.0.md
+          gh release create "recorder-ui-0.9.0-${GITHUB_RUN_NUMBER}" preview-download/* preview-screenshots/*.png --target "$GITHUB_SHA" --prerelease --title "NEXVARY Recorder Studio 0.9.0 — Child & Family Safety preview" --notes-file docs/release-notes-0.9.0.md

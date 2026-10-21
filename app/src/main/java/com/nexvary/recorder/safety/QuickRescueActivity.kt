@@ -103,6 +103,9 @@ class QuickRescueActivity : AppCompatActivity() {
     }
 
     private fun editCard(index: Int?, restored: JSONObject? = null) {
+        com.nexvary.recorder.family.GuardianGate.action(this) { openCardEditor(index,restored) }
+    }
+    private fun openCardEditor(index: Int?, restored: JSONObject?) {
         val original = restored ?: index?.let { cards.getOrNull(it) }
         editorIndex = index
         editingImage = original?.optString("image")?.takeIf { it.isNotBlank() }?.let(Uri::parse)
@@ -227,7 +230,7 @@ class QuickRescueActivity : AppCompatActivity() {
             panel.addView(contactAction(R.string.rescue_delete, R.drawable.bg_sos_card, 0xFFFF7A85.toInt()).apply {
                 setOnClickListener {
                     MaterialAlertDialogBuilder(this@QuickRescueActivity).setMessage(R.string.rescue_delete_confirm)
-                        .setPositiveButton(R.string.rescue_delete) { _, _ -> cards.removeAt(index); persist(); render() }
+                        .setPositiveButton(R.string.rescue_delete) { _, _ -> com.nexvary.recorder.family.GuardianGate.action(this@QuickRescueActivity) { cards.removeAt(index); persist(); render() } }
                         .setNegativeButton(R.string.cancel, null).show()
                 }
             })

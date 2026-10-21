@@ -38,6 +38,7 @@ class AudioEvidenceService: Service() {
         val duration=intent?.getIntExtra("duration",0)?.coerceIn(0,86_400_000) ?: 0
         executor.execute {
             try {
+                check(com.nexvary.recorder.billing.EntitlementManager(this).canUse(com.nexvary.recorder.billing.SafetyFeature.ADVANCED_EVIDENCE))
                 check(EvidenceManager.storageBytes(this) >= 20_000_000)
                 val output=File(getExternalFilesDir(Environment.DIRECTORY_MOVIES),"NEXVARY_AUDIO_${System.currentTimeMillis()}.m4a");file=output
                 val media=MediaRecorder();recorder=media

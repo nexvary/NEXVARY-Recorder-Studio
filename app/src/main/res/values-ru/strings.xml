@@ -516,4 +516,8 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="fs_billing_verifier_missing">Live subscription verification is not configured. Purchasing is unavailable until the real verification service is connected. Prices, if available, come from Google Play.</string>
     <string name="fs_restore">Restore Play purchases</string>
     <string name="fs_subscribe">Subscribe with Google Play</string>
+    <string name="fs_video_mic">Include microphone in video evidence (permission required)</string>
+    <string name="fs_location_available">Location snapshot saved — see its timestamp in the alert</string>
+    <string name="fs_storage_minutes">Emergency video estimate: ~%1$d minutes available</string>
+    <string name="fs_storage_low">Storage is low. Save or export existing recordings.</string>
 </resources>

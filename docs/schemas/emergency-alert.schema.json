@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexvary.com/schemas/emergency-alert-v1.json",
+  "title": "NEXVARY emergency assistance event v1",
+  "type": "object",
+  "required": ["schemaVersion", "eventId", "eventType", "timestamp", "timezone", "location", "lastKnownLocation", "locationAgeMs", "battery", "network", "message", "evidence"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "eventId": {"type": "string", "format": "uuid"},
+    "eventType": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "timezone": {"type": "string"},
+    "displayName": {"type": "string"},
+    "location": {"anyOf": [{"$ref": "#/$defs/location"}, {"type": "null"}]},
+    "lastKnownLocation": {"anyOf": [{"$ref": "#/$defs/location"}, {"type": "null"}]},
+    "locationAgeMs": {"type": ["integer", "null"], "minimum": 0},
+    "battery": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+    "network": {"enum": ["WIFI", "MOBILE", "ONLINE", "OFFLINE", "UNVALIDATED"]},
+    "message": {"type": "string"},
+    "evidence": {"type": "array", "items": {"type": "object"}},
+    "emergencyProfile": {"type": "object"},
+    "device": {"type": "object", "properties": {"manufacturer": {"type": "string"}, "model": {"type": "string"}}}
+  },
+  "$defs": {"location": {"type": "object", "required": ["latitude", "longitude", "accuracy", "timestamp"], "properties": {
+    "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+    "longitude": {"type": "number", "minimum": -180, "maximum": 180},
+    "accuracy": {"type": "number", "minimum": 0},
+    "timestamp": {"type": "integer"}
+  }}}
+}

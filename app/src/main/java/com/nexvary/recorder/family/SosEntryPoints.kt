@@ -10,6 +10,7 @@ import com.nexvary.recorder.R
 
 class SafetySosTile: TileService() {
     override fun onStartListening() { super.onStartListening();qsTile?.state=Tile.STATE_INACTIVE;qsTile?.updateTile() }
+    @android.annotation.SuppressLint("StartActivityAndCollapseDeprecated") // Legacy branch only on API <34.
     override fun onClick() {
         super.onClick()
         unlockAndRun {

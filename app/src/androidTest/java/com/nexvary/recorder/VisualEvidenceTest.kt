@@ -26,6 +26,8 @@ class VisualEvidenceTest {
         com.nexvary.recorder.family.RescueCardsStore(context).clear()
         val pages = listOf(
             Triple(MainActivity::class.java, R.id.cardScreen, "dashboard-ar"),
+            Triple(com.nexvary.recorder.family.FamilyDashboardActivity::class.java,R.id.fsSafe,"family-dashboard-ar"),
+            Triple(com.nexvary.recorder.family.PrivacyCenterActivity::class.java,R.id.btnBack,"privacy-center-ar"),
             Triple(com.nexvary.recorder.safety.QuickRescueActivity::class.java, R.id.btnAddContact, "sos-ar"),
             Triple(com.nexvary.recorder.camera.BackgroundCameraActivity::class.java, R.id.btnBack, "camera-ar"),
             Triple(SettingsActivity::class.java, R.id.btnBack, "settings-ar"),
@@ -45,6 +47,14 @@ class VisualEvidenceTest {
                     capture(it, "camera-quality-ar")
                     onView(withId(R.id.cameraStart)).perform(reveal()).check(matches(isDisplayed()))
                     capture(it, "camera-delivery-ar")
+                }
+                if(page == com.nexvary.recorder.family.FamilyDashboardActivity::class.java) {
+                    com.nexvary.recorder.family.SafetyCheckManager(context).sos(false)
+                    val until=android.os.SystemClock.uptimeMillis()+5000
+                    while(android.os.SystemClock.uptimeMillis()<until && !com.nexvary.recorder.family.FamilyStore(context).snapshot().has("state")) android.os.SystemClock.sleep(50)
+                    androidx.test.espresso.Espresso.onIdle()
+                    capture(it,"family-sos-countdown-ar")
+                    com.nexvary.recorder.family.SafetyCheckManager(context).resolve(null,true)
                 }
                 if (page == MainActivity::class.java) {
                     com.nexvary.recorder.ui.ThemeManager.select(context, 3)

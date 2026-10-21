@@ -64,7 +64,7 @@ class BackgroundCameraService : Service() {
         recipient = intent.getStringExtra(EXTRA_RECIPIENT).orEmpty().trim()
         if (!DeliveryPolicy.validDuration(duration) || (recipient.isNotBlank() && !DeliveryPolicy.email(recipient)) ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            state = CaptureState(Stage.ERROR); stopSelf(); return START_NOT_STICKY
+            activeEvidenceEvent = null; state = CaptureState(Stage.ERROR); stopSelf(); return START_NOT_STICKY
         }
         requested = true; state = CaptureState(Stage.STARTING)
         val audio = intent.getBooleanExtra(EXTRA_AUDIO, false) && ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
@@ -76,7 +76,7 @@ class BackgroundCameraService : Service() {
                 (if (audio) ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE else 0))
             else startForeground(NOTIFICATION_ID, notification())
             handler.post { openCamera(front, audio) }
-        } catch (_: Exception) { state = CaptureState(Stage.ERROR); stopSelf() }
+        } catch (_: Exception) { handler.post { finishRecording() } }
         return START_NOT_STICKY
     }
     private fun notification(): Notification {
@@ -178,7 +178,7 @@ class BackgroundCameraService : Service() {
         var queued = false
         if (valid && file != null) activeEvidenceEvent?.let { event ->
             runCatching { com.nexvary.recorder.family.EvidenceManager.finalized(this,file,event) }
-                .onFailure { runCatching { com.nexvary.recorder.family.FamilyStore(this).update { it.put("evidenceAction","FAILED") } } }
+                .onFailure { runCatching { com.nexvary.recorder.family.FamilyStore(this).update { com.nexvary.recorder.family.EvidenceManager.action(it,event,"FAILED") } } }
         }
         if (valid && file != null && recipient.isNotBlank()) queued = runCatching {
             val profile = SmtpSettings(this).load()
@@ -186,7 +186,10 @@ class BackgroundCameraService : Service() {
             if (job.state == MailQueue.State.QUEUED) MailWorker.schedule(this, job.id)
             true
         }.getOrDefault(false)
-        if (!valid) file?.delete()
+        if (!valid) {
+            file?.delete()
+            activeEvidenceEvent?.let { event -> runCatching { com.nexvary.recorder.family.FamilyStore(this).update { com.nexvary.recorder.family.EvidenceManager.action(it,event,"FAILED") } } }
+        }
         val finished = if (valid && file != null) CaptureState(Stage.SAVED, name = file.name, mailQueued = queued, mailRequested = recipient.isNotBlank()) else CaptureState(Stage.ERROR)
         finalState = finished
         activeOutputPath = null

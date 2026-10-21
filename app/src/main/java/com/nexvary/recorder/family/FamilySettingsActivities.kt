@@ -31,6 +31,7 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
             val volume=FamilyUi.check(root,R.string.fs_volume_trigger,config.optBoolean("volumeTrigger"))
             DeliveryUi.text(root,R.string.fs_evidence_mode)
             val evidence=Spinner(this).apply { id=R.id.fsEvidenceMode;adapter=ArrayAdapter(this@FamilySettingsActivity,android.R.layout.simple_spinner_dropdown_item,resources.getStringArray(R.array.fs_evidence_modes));setSelection(listOf("NONE","AUDIO","VIDEO","PHOTO").indexOf(config.optString("evidence","NONE")).coerceAtLeast(0));root.addView(this) }
+            val videoMic=FamilyUi.check(root,R.string.fs_video_mic,config.optBoolean("videoMic"))
             val autoEvidence=FamilyUi.check(root,R.string.fs_auto_evidence,config.optBoolean("autoEvidence"))
             DeliveryUi.text(root,R.string.fs_upload_unconfigured)
             val destination=DeliveryUi.section(root,R.string.fs_destination)
@@ -44,12 +45,14 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
                 val longitude=DeliveryPolicy.digits(lon.text.toString()).replace('٫','.').toDoubleOrNull()
                 if(destName.text.isNotBlank() && (latitude==null || longitude==null || latitude !in -90.0..90.0 || longitude !in -180.0..180.0)) { lat.error=getString(R.string.fs_coordinates_invalid);return@button }
                 if(motion.isChecked && !location.isChecked) { Toast.makeText(this,R.string.fs_location_consent,Toast.LENGTH_LONG).show();return@button }
+                val entitlements=com.nexvary.recorder.billing.EntitlementManager(this)
+                if((motion.isChecked && !entitlements.canUse(com.nexvary.recorder.billing.SafetyFeature.MOTION)) || (autoEvidence.isChecked && !entitlements.canUse(com.nexvary.recorder.billing.SafetyFeature.ADVANCED_EVIDENCE))) { Toast.makeText(this,R.string.fs_billing_verifier_missing,Toast.LENGTH_LONG).show();return@button }
                 val value=JSONObject().put("displayName",name.text.toString().take(120)).put("note",note.text.toString().take(2000))
                     .put("autoShare",share.isChecked).put("location",location.isChecked).put("immediate",immediate.isChecked).put("audible",audible.isChecked)
                     .put("shareDevice",device.isChecked).put("batteryAlerts",battery.isChecked).put("batterySaver",saver.isChecked)
                     .put("motion",motion.isChecked).put("sensitivity",sensitivity.selectedItemPosition).put("volumeTrigger",volume.isChecked)
                     .put("evidence",listOf("NONE","AUDIO","VIDEO","PHOTO")[evidence.selectedItemPosition]).put("autoEvidence",autoEvidence.isChecked)
-                    .put("showMedical",config.optBoolean("showMedical")).put("shareMedical",config.optBoolean("shareMedical"))
+                    .put("videoMic",videoMic.isChecked).put("showMedical",config.optBoolean("showMedical")).put("shareMedical",config.optBoolean("shareMedical"))
                 if(destName.text.isNotBlank()) value.put("destination",JSONObject().put("name",destName.text.toString().take(120)).put("latitude",latitude).put("longitude",longitude))
                 MaterialAlertDialogBuilder(this).setTitle(R.string.fs_consent_review)
                     .setMessage(getString(if(share.isChecked) R.string.fs_sharing_review else R.string.fs_local_only))

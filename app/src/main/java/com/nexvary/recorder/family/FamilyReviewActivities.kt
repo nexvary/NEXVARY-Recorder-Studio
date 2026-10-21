@@ -145,7 +145,8 @@ class PrivacyCenterActivity: AppCompatActivity() {
         DeliveryUi.button(root,R.string.fs_open_battery) { runCatching { startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) } }
         DeliveryUi.text(root,R.string.fs_contacts_note);DeliveryUi.text(root,R.string.fs_upload_unconfigured)
         DeliveryUi.text(root,R.string.fs_storage_estimate).also { label ->
-            FamilyUi.io(this,{ EvidenceManager.storageBytes(this) }) { available -> label.text=getString(R.string.fs_storage_available,available/1_000_000) }
+            FamilyUi.io(this,{ EvidenceManager.storageBytes(this) }) { available -> label.text=getString(R.string.fs_storage_available,available/1_000_000)+"\n"+getString(R.string.fs_storage_minutes,(available/(com.nexvary.recorder.camera.CameraQuality.EMERGENCY.estimatedBytes(60_000,true))).coerceAtLeast(0))
+                if(available<100_000_000) label.append("\n"+getString(R.string.fs_storage_low)) }
         }
     }
 }

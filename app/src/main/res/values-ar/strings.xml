@@ -516,4 +516,8 @@
     <string name="fs_billing_verifier_missing">التحقق الحي من الاشتراك غير مهيّأ. الشراء متوقف حتى ربط خدمة تحقق حقيقية. الأسعار إن توفرت تأتي من Google Play.</string>
     <string name="fs_restore">استعادة مشتريات Play</string>
     <string name="fs_subscribe">الاشتراك عبر Google Play</string>
+    <string name="fs_video_mic">إرفاق صوت الميكروفون بدليل الفيديو (يتطلب الإذن)</string>
+    <string name="fs_location_available">تم حفظ موقع — راجع وقته في التنبيه</string>
+    <string name="fs_storage_minutes">تقدير فيديو الطوارئ: حوالي %1$d دقيقة متاحة</string>
+    <string name="fs_storage_low">مساحة التخزين منخفضة. احفظ التسجيلات الحالية أو صدّرها.</string>
 </resources>

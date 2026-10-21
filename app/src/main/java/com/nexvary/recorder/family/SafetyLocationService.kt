@@ -66,7 +66,7 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
                 registerLocations(60_000)
                 ContextCompat.registerReceiver(this,battery,IntentFilter(Intent.ACTION_BATTERY_CHANGED),ContextCompat.RECEIVER_NOT_EXPORTED)
                 getSystemService(ConnectivityManager::class.java).registerDefaultNetworkCallback(network)
-                if(config.optBoolean("motion")) {
+                if(config.optBoolean("motion") && com.nexvary.recorder.billing.EntitlementManager(this).canUse(com.nexvary.recorder.billing.SafetyFeature.MOTION)) {
                     motion=MotionDetector(config.optInt("sensitivity",1))
                     sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.let { sensors.registerListener(this,it,SensorManager.SENSOR_DELAY_UI,handler) }
                 }
@@ -78,8 +78,10 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
     }
     private fun registerLocations(interval: Long) {
         runCatching { location.removeUpdates(this) }
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED) return
         location.getProviders(true).filter { it in listOf(LocationManager.GPS_PROVIDER,LocationManager.NETWORK_PROVIDER) }.forEach { provider ->
-            runCatching { location.requestLocationUpdates(provider,interval,25f,this,thread.looper) }
+            try { location.requestLocationUpdates(provider,interval,25f,this,thread.looper) } catch(_: SecurityException) { stopSelf() }
         }
     }
     override fun onLocationChanged(fix: Location) { runCatching { acceptLocation(fix) } }

@@ -8,15 +8,15 @@ import java.io.File
 class SafetyPolicyTest {
     @Test fun wallClockChangesDoNotChangeSameBootDeadline() {
         val deadline=SafetyDeadline(1_000_000,50_000,3)
-        assertEquals(10_000,deadline.remaining(900_000,40_000,3))
-        assertEquals(10_000,deadline.remaining(1_100_000,40_000,3))
-        assertEquals(100_000,deadline.remaining(900_000,10,4))
+        assertEquals(10_000L,deadline.remaining(900_000,40_000,3))
+        assertEquals(10_000L,deadline.remaining(1_100_000,40_000,3))
+        assertEquals(100_000L,deadline.remaining(900_000,10,4))
     }
     @Test fun overdueRebootStillProvidesARealGracePromptBeforeAutomaticSos() {
         val armed=SafetyState("test",SafetyPhase.ARMED,SafetyDeadline(1000,1000,1),60)
         val prompted=SafetyPolicy.evaluate(armed,50_000,5_000,2)
         assertEquals(SafetyPhase.COUNTDOWN,prompted.phase)
-        assertEquals(60_000,prompted.deadline.remaining(50_000,5_000,2))
+        assertEquals(60_000L,prompted.deadline.remaining(50_000,5_000,2))
         assertEquals(SafetyPhase.SOS_ACTIVE,SafetyPolicy.evaluate(prompted,110_000,65_000,2).phase)
     }
     @Test fun resolvedCancelledAndActiveSosNeverRearmFromAnOldTick() {

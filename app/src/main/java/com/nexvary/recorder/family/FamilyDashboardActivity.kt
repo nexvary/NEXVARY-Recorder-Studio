@@ -113,10 +113,11 @@ class FamilyDashboardActivity: AppCompatActivity() {
             findViewById<View>(R.id.fsExtend).isEnabled=state?.phase in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN)
             findViewById<View>(R.id.fsStart).isEnabled=!active;findViewById<View>(R.id.fsJourney).isEnabled=!active
             val remaining=state?.deadline?.remaining(System.currentTimeMillis(),SystemClock.elapsedRealtime(),Settings.Global.getInt(contentResolver,Settings.Global.BOOT_COUNT,-1)) ?: 0
-            val first=FamilyStore.contacts(root).optJSONObject(0)?.optString("name").orEmpty()
+            val first=FamilyStore.contacts(root).let { rows -> (0 until rows.length()).map { rows.getJSONObject(it) }.firstOrNull { it.optString("role")=="PRIMARY" } ?: rows.optJSONObject(0) }?.optString("name").orEmpty()
             val battery=getSystemService(BatteryManager::class.java).getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
             status.text=getString(FamilyUi.state(state?.phase))+"\n"+getString(R.string.fs_dashboard_status,remaining/60_000,(remaining/1000)%60,first.ifEmpty { getString(R.string.fs_none) },battery,AlertPayload.network(this))+
                 "\n"+getString(if(config.optBoolean("autoShare")) R.string.fs_sharing_on else R.string.fs_local_only)
+            status.append("\n"+getString(if(root.has("lastLocation")) R.string.fs_location_available else R.string.fs_location_unavailable)+"\n"+getString(if(exact()) R.string.fs_exact_on else R.string.fs_inexact))
             root.optJSONObject("journey")?.optDouble("distanceMeters",Double.NaN)?.takeIf { it.isFinite() && state?.phase==SafetyPhase.ARMED }?.let { status.append("\n"+getString(R.string.fs_distance,it.toInt())) }
             medical.visibility=if(state?.phase==SafetyPhase.SOS_ACTIVE && config.optBoolean("showMedical")) View.VISIBLE else View.GONE
             if(medical.visibility==View.VISIBLE) medical.text=root.optJSONObject("medical")?.let { m -> listOf("name","age","blood","allergies","medications","notes","guardian","phone","secondary").mapNotNull { m.optString(it).takeIf(String::isNotBlank) }.joinToString("\n") }.orEmpty()
@@ -126,7 +127,7 @@ class FamilyDashboardActivity: AppCompatActivity() {
                 lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED) && window.decorView.hasWindowFocus()) {
                 val mode=config.optString("evidence")
                 val permission=if(mode=="AUDIO") Manifest.permission.RECORD_AUDIO else Manifest.permission.CAMERA
-                if(mode in listOf("VIDEO","AUDIO") && ContextCompat.checkSelfPermission(this,permission)==PackageManager.PERMISSION_GRANTED) {
+                if(mode in listOf("VIDEO","AUDIO") && ContextCompat.checkSelfPermission(this,permission)==PackageManager.PERMISSION_GRANTED && (!config.optBoolean("videoMic") || mode!="VIDEO" || ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)) {
                     FamilyUi.io(this,{ FamilyStore(this).update { EvidenceManager.action(it,state.id,"STARTING") } }) { evidence(false) }
                 }
             }
@@ -172,7 +173,8 @@ class FamilyDashboardActivity: AppCompatActivity() {
         val mode=if(test) "VIDEO" else FamilyStore.config(snapshot).optString("evidence","NONE")
         if(mode=="NONE") { status.setText(R.string.fs_evidence_configure);return }
         if(BackgroundCameraService.activeOutputPath!=null || AudioEvidenceService.activeEvent!=null) { status.setText(R.string.fs_recording_busy);return }
-        val required=if(mode=="AUDIO") listOf(Manifest.permission.RECORD_AUDIO) else listOf(Manifest.permission.CAMERA)
+        val videoMic=mode=="VIDEO" && FamilyStore.config(snapshot).optBoolean("videoMic")
+        val required=if(mode=="AUDIO") listOf(Manifest.permission.RECORD_AUDIO) else listOf(Manifest.permission.CAMERA)+(if(videoMic) listOf(Manifest.permission.RECORD_AUDIO) else emptyList())
         val missing=required.filter { ContextCompat.checkSelfPermission(this,it)!=PackageManager.PERMISSION_GRANTED }
         if(missing.isNotEmpty()) { permissions.launch(missing.toTypedArray());return }
         if(mode=="PHOTO") { photoEvent=FamilyStore.state(snapshot)?.id ?: UUID.randomUUID().toString();photoFile=File(getExternalFilesDir(Environment.DIRECTORY_MOVIES),"NEXVARY_PHOTO_${System.currentTimeMillis()}.jpg")
@@ -184,7 +186,7 @@ class FamilyDashboardActivity: AppCompatActivity() {
                 if(mode=="AUDIO") ContextCompat.startForegroundService(this,Intent(this,AudioEvidenceService::class.java).putExtra("event",event).putExtra("duration",if(test) 10_000 else 0))
                 else ContextCompat.startForegroundService(this,Intent(this,BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_START)
                     .putExtra(BackgroundCameraService.EXTRA_EVIDENCE_EVENT,event).putExtra(BackgroundCameraService.EXTRA_DURATION,if(test) 10_000L else 0L)
-                    .putExtra(BackgroundCameraService.EXTRA_QUALITY,"emergency"))
+                    .putExtra(BackgroundCameraService.EXTRA_AUDIO,videoMic).putExtra(BackgroundCameraService.EXTRA_QUALITY,"emergency"))
             }.onSuccess { status.setText(R.string.fs_evidence_started) }.onFailure { status.setText(R.string.camera_failed) }
         }
     }

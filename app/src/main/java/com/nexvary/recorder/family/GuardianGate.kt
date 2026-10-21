@@ -46,11 +46,16 @@ object GuardianGate {
         else { val failures=saved.optInt("failures")+1;saved.put("failures",failures);if(failures>=5) saved.put("lockedUntil",System.currentTimeMillis()+60_000).put("failures",0) }
         valid
     }
-    fun prompt(activity: AppCompatActivity,allowed: () -> Unit) {
+    fun action(activity: AppCompatActivity,allowed: () -> Unit) {
+        FamilyUi.io(activity,{ enabled(activity) }) { required ->
+            if(required && !unlocked()) prompt(activity,cancel={}) { allowed() } else allowed()
+        }
+    }
+    fun prompt(activity: AppCompatActivity,cancel: () -> Unit = { activity.finish() },allowed: () -> Unit) {
         val field=EditText(activity).apply { id=R.id.fsGuardianPin;inputType=InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD;isSaveEnabled=false;setHint(R.string.fs_parent_pin) }
         val dialog=MaterialAlertDialogBuilder(activity).setTitle(R.string.fs_parent_mode).setMessage(R.string.fs_parent_gate_note).setView(field)
-            .setNegativeButton(R.string.cancel) { _,_ -> activity.finish() }.setPositiveButton(R.string.vault_unlock,null).create()
-        dialog.setOnCancelListener { activity.finish() }
+            .setNegativeButton(R.string.cancel) { _,_ -> cancel() }.setPositiveButton(R.string.vault_unlock,null).create()
+        dialog.setOnCancelListener { cancel() }
         dialog.setOnShowListener {
             dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
             dialog.getButton(-1).setOnClickListener {
