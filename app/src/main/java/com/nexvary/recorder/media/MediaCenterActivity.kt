@@ -68,7 +68,10 @@ class MediaCenterActivity: AppCompatActivity() {
                 val info=MediaCodec.BufferInfo()
                 while(true) {
                     buffer.clear();val size=extractor.readSampleData(buffer,0);if(size<0) break
-                    info.set(0,size,extractor.sampleTime,extractor.sampleFlags);muxer.writeSampleData(track,buffer,info);extractor.advance()
+                    require(extractor.sampleFlags and MediaExtractor.SAMPLE_FLAG_ENCRYPTED==0) { "Encrypted audio cannot be exported" }
+                    var flags=if(extractor.sampleFlags and MediaExtractor.SAMPLE_FLAG_SYNC!=0) MediaCodec.BUFFER_FLAG_KEY_FRAME else 0
+                    if(extractor.sampleFlags and MediaExtractor.SAMPLE_FLAG_PARTIAL_FRAME!=0) flags=flags or MediaCodec.BUFFER_FLAG_PARTIAL_FRAME
+                    info.set(0,size,extractor.sampleTime,flags);muxer.writeSampleData(track,buffer,info);extractor.advance()
                 }
                 muxer.stop();started=false;muxer.release();muxer=null
                 publish(temp,"audio/mp4","m4a")

@@ -66,7 +66,7 @@ class CloudApi(private val context: Context) {
                 if(body!=null) { connection.doOutput=true;connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) } }
                 val code=connection.responseCode
                 val stream=if(code in 200..299) connection.inputStream else connection.errorStream
-                val bytes=stream?.use { it.readNBytes(256*1024) } ?: byteArrayOf()
+                val bytes=stream?.use { BoundedInput.read(it,256*1024) } ?: byteArrayOf()
                 val result=runCatching { JSONObject(bytes.toString(Charsets.UTF_8)) }.getOrDefault(JSONObject())
                 if(code !in 200..299) throw CloudFailure(result.optString("error",result.optString("__type","HTTP_$code")).substringAfter('#'),code)
                 result

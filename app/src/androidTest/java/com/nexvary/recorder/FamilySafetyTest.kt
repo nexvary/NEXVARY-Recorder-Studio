@@ -67,6 +67,7 @@ class FamilySafetyTest {
         assertTrue(EmergencyQueue(app).all().all { it.optString("status")=="CANCELLED" })
     }
     @Test fun uncertainEmailDoesNotResendAndFailureDoesNotStopOtherGuardian()=isolated { app ->
+        FamilyStore(app).update { it.put("verifiedEntitlement",JSONObject().put("state","ACTIVE").put("expiresAt",System.currentTimeMillis()+3600_000).put("verifiedAt",System.currentTimeMillis())) }
         TrustedContactsRepository(app).save(contact());TrustedContactsRepository(app).save(contact("second@example.invalid"))
         FamilyStore(app).update { root -> root.put("config",JSONObject().put("autoShare",true));EmergencyQueue.enqueue(root,AlertPayload.create(app,root,"SOS",UUID.randomUUID().toString())) }
         var calls=0
@@ -230,6 +231,7 @@ class FamilySafetyTest {
         val guardian=contact();TrustedContactsRepository(context).save(guardian)
         val store=FamilyStore(context);store.update { it.put("config",JSONObject().put("autoShare",true)) }
         val manager=SafetyCheckManager(context)
+        store.update { it.put("verifiedEntitlement",JSONObject().put("state","ACTIVE").put("expiresAt",System.currentTimeMillis()+3600_000).put("verifiedAt",System.currentTimeMillis())) }
         val journey=manager.start(15,60,JSONObject().put("latitude",12.0).put("longitude",34.0).put("contactId",guardian.getString("id")))
         manager.resolve(journey.id,true)
         val sos=manager.sos(false)

@@ -156,3 +156,16 @@ def test_revoked_account_tokens_cannot_recreate_usage():
     app.put({"pk": PK, "sk": "DELETED", "at": app.now()})
     claims = {"sub": "test-parent", "email": "parent@example.com", "email_verified": "true", "token_use": "id"}
     with pytest.raises(Rejected, match="ACCOUNT_DELETED"): app.actor({"requestContext": {"authorizer": {"jwt": {"claims": claims}}}})
+
+def test_storage_provider_selection_requires_server_secret():
+    with patch.dict(os.environ, {"STORAGE_PROVIDER": "WASABI"}, clear=False):
+        with pytest.raises(Rejected, match="STORAGE_NOT_CONFIGURED"): app.storage()
+
+def test_prefix_retention_and_event_size_budget():
+    eid = reserve()["eventId"]
+    body = {"eventId": eid, "index": 0, "size": 12*1024*1024, "sha256": "a"*64, "contentType": "video/mp4"}
+    app.sign(PK, body)
+    assert app.get(PK, f"CHUNK#{eid}#000")["key"].startswith("free/")
+    for index in range(1,10): app.sign(PK, dict(body,index=index))
+    with pytest.raises(Rejected, match="CONCURRENT_UPDATE"): app.sign(PK,dict(body,index=10))
+    assert app.usage(PK)["used"] == 1

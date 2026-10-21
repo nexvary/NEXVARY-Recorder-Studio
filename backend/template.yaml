@@ -11,11 +11,20 @@ Parameters:
   MonthlyBudgetUsd:
     Type: Number
     Default: 10
+  StorageProvider:
+    Type: String
+    Default: S3
+    AllowedValues: [S3, WASABI]
+  WasabiSecretArn:
+    Type: String
+    Default: ''
+    Description: Server-only secret containing bucket, endpoint, region, accessKey and secretKey
   PlayServiceAccountSecretArn:
     Type: String
     Default: ''
     Description: Optional Secrets Manager ARN holding a Google Play service-account JSON
 Conditions:
+  HasWasabiSecret: !Not [!Equals [!Ref WasabiSecretArn, '']]
   HasPlaySecret: !Not [!Equals [!Ref PlayServiceAccountSecretArn, '']]
 Globals:
   Function:
@@ -30,6 +39,8 @@ Globals:
         QUEUE_URL: !Ref Alerts
         SES_SENDER: !Ref SenderEmail
         USER_POOL: !Ref Users
+        STORAGE_PROVIDER: !Ref StorageProvider
+        WASABI_SECRET_ARN: !Ref WasabiSecretArn
         PLAY_SECRET_ARN: !Ref PlayServiceAccountSecretArn
 Resources:
   Users:
@@ -151,6 +162,12 @@ Resources:
                 Action: [secretsmanager:GetSecretValue]
                 Resource: !Ref PlayServiceAccountSecretArn
               - !Ref AWS::NoValue
+            - !If
+              - HasWasabiSecret
+              - Effect: Allow
+                Action: [secretsmanager:GetSecretValue]
+                Resource: !Ref WasabiSecretArn
+              - !Ref AWS::NoValue
       Events:
         All:
           Type: HttpApi
@@ -175,6 +192,12 @@ Resources:
             - Effect: Allow
               Action: [ses:SendEmail]
               Resource: !Sub arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/nexvary.com
+            - !If
+              - HasWasabiSecret
+              - Effect: Allow
+                Action: [secretsmanager:GetSecretValue]
+                Resource: !Ref WasabiSecretArn
+              - !Ref AWS::NoValue
       Environment:
         Variables:
           API_BASE_URL: !Sub https://${Api}.execute-api.${AWS::Region}.amazonaws.com

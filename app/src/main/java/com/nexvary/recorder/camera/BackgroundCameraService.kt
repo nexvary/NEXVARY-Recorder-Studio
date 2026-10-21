@@ -220,8 +220,7 @@ class BackgroundCameraService : Service() {
     }
     override fun onDestroy() {
         finalState?.let { state = it }
-        handler.post { destroyed = true; finishRecording(); if (openPending) handler.postDelayed({ thread.quitSafely() }, 10_000) else thread.quitSafely() }
-        handler.post { finalizer.shutdown() }
+        handler.post { destroyed = true; finishRecording(); finalizer.shutdown(); if (openPending) handler.postDelayed({ thread.quitSafely() }, 10_000) else thread.quitSafely() }
         super.onDestroy()
     }
 }

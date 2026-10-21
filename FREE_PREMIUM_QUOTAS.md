@@ -18,4 +18,4 @@ Daily caps: Free 3, Premium 10 events. Segment cap 12 MiB; event cap 120 MiB; 24
 
 An encrypted snapshot shows remaining quota and reset date before the next send; it is explicitly cached. Offline/local evidence and dial/SMS/manual location sharing remain available when remote quota is exhausted. No paywall blocks the emergency screen.
 
-Subscription target prices: $2.99/month and $24.99/year, configured in Play Console. Android displays actual localized ProductDetails prices. No AWS account/Play catalog is provisioned by this commit. A development-only historical feature preview exists in the inherited entitlement policy; server quotas never honor it. Production has no local Premium toggle.
+Subscription target prices: $2.99/month and $24.99/year, configured in Play Console. Android displays actual localized ProductDetails prices. No AWS account/Play catalog is provisioned by this commit. Both debug and production use verified entitlement. Synthetic instrumentation fixtures seed test-only entitlements. No local Premium toggle exists.

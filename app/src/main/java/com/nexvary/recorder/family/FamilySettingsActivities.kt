@@ -34,7 +34,7 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
             val evidence=Spinner(this).apply { id=R.id.fsEvidenceMode;adapter=ArrayAdapter(this@FamilySettingsActivity,android.R.layout.simple_spinner_dropdown_item,resources.getStringArray(R.array.fs_evidence_modes));setSelection(listOf("NONE","AUDIO","VIDEO","PHOTO").indexOf(config.optString("evidence","NONE")).coerceAtLeast(0));root.addView(this) }
             val videoMic=FamilyUi.check(root,R.string.fs_video_mic,config.optBoolean("videoMic"))
             val autoEvidence=FamilyUi.check(root,R.string.fs_auto_evidence,config.optBoolean("autoEvidence"))
-            DeliveryUi.text(root,R.string.fs_upload_unconfigured)
+            DeliveryUi.button(root,R.string.guardian_cloud) { startActivity(Intent(this,com.nexvary.recorder.guardian.CloudSettingsActivity::class.java)) }
             val destination=DeliveryUi.section(root,R.string.fs_destination)
             val dest=config.optJSONObject("destination") ?: JSONObject()
             val destName=FamilyUi.field(destination,R.string.fs_destination_name,R.id.fsDestination,dest.optString("name"))

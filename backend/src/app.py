@@ -10,7 +10,7 @@ import boto3
 from boto3.dynamodb.types import TypeSerializer
 from botocore.exceptions import ClientError
 from policy import *
-from providers import S3StorageProvider, AmazonSesProvider
+from providers import S3StorageProvider, WasabiStorageProvider, AmazonSesProvider
 
 SER = TypeSerializer()
 
@@ -18,7 +18,13 @@ def table(): return boto3.resource("dynamodb").Table(os.environ["TABLE_NAME"])
 def wire(value): return {key: SER.serialize(item) for key, item in value.items()}
 def get(pk, sk): return table().get_item(Key={"pk": pk, "sk": sk}, ConsistentRead=True).get("Item", {})
 def put(item): table().put_item(Item=item)
-def storage(): return S3StorageProvider(os.environ["EVIDENCE_BUCKET"])
+def storage():
+    if os.environ.get("STORAGE_PROVIDER", "S3") == "WASABI":
+        arn = os.environ.get("WASABI_SECRET_ARN")
+        if not arn: raise Rejected("STORAGE_NOT_CONFIGURED", 503)
+        value = json.loads(boto3.client("secretsmanager").get_secret_value(SecretId=arn)["SecretString"])
+        return WasabiStorageProvider(value["bucket"], value["endpoint"], value["region"], value["accessKey"], value["secretKey"])
+    return S3StorageProvider(os.environ["EVIDENCE_BUCKET"])
 def mail(): return AmazonSesProvider(os.environ["SES_SENDER"])
 def now(): return int(time.time())
 def response(status, value):

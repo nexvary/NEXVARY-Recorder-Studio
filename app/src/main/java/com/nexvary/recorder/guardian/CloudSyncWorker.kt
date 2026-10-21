@@ -70,7 +70,7 @@ class CloudSyncWorker(context: Context,params: WorkerParameters): Worker(context
                 // If evidence is still recording, keep reconciling the same server event, never reserve again.
                 val result=api.request("POST","/events/$serverId/dispatch",JSONObject())
                 val recording=store.snapshot().optJSONObject("evidenceActions")?.optString(id) in listOf("RECORDING","STARTING")
-                status(id,if(recording) "RETRYING" else result.optString("state","QUEUED"))
+                status(id,if(recording) "RECORDING" else result.optString("state","QUEUED"))
             }
             QuotaManager(applicationContext).refresh()
             val remains=CloudOutbox.events(store.snapshot()).let { rows -> rows.keys().asSequence().any { rows.getJSONObject(it).optString("status") in listOf("QUEUED","RETRYING","UPLOADING","PENDING") } }
@@ -94,6 +94,8 @@ class CloudSyncWorker(context: Context,params: WorkerParameters): Worker(context
     }
     companion object {
         fun schedule(context: Context) {
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork("guardian-cloud-reconcile",ExistingPeriodicWorkPolicy.KEEP,
+                PeriodicWorkRequestBuilder<CloudSyncWorker>(15,TimeUnit.MINUTES).setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build())
             val request=OneTimeWorkRequestBuilder<CloudSyncWorker>().setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL,30,TimeUnit.SECONDS).build()
             WorkManager.getInstance(context).enqueueUniqueWork("guardian-cloud",ExistingWorkPolicy.KEEP,request)
