@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         binding.txtVersion.text = getString(R.string.version_format, versionName)
         updateThemeLabel()
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) { runCatching { com.nexvary.recorder.delivery.MailWorker.reconcile(this@MainActivity) } }
+            withContext(Dispatchers.IO) { runCatching { com.nexvary.recorder.delivery.MailWorker.reconcile(this@MainActivity) };runCatching { com.nexvary.recorder.family.SafetyCheckManager(this@MainActivity).evaluate(true) } }
         }
 
         binding.btnThemePicker.setOnClickListener { view ->
@@ -125,7 +125,8 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.camera_title),
             getString(R.string.call_title),
             getString(R.string.safety_title),
-            getString(R.string.rescue_title)
+            getString(R.string.rescue_title),
+            getString(R.string.fs_title)
         )
 
         MaterialAlertDialogBuilder(this)
@@ -140,6 +141,7 @@ class MainActivity : AppCompatActivity() {
                     5 -> startActivity(Intent(this, CallRecorderActivity::class.java))
                     6 -> startActivity(Intent(this, SafetyCaptureActivity::class.java))
                     7 -> startActivity(Intent(this, QuickRescueActivity::class.java))
+                    8 -> startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java))
                 }
             }
             .setNegativeButton(R.string.cancel, null)

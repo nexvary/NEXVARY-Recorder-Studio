@@ -12,8 +12,8 @@ android {
         applicationId = "com.nexvary.recorder"
         minSdk = 29
         targetSdk = 35
-        versionCode = 14
-        versionName = "0.8.2"
+        versionCode = 15
+        versionName = "0.9.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -29,6 +29,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     compileOptions {
@@ -67,6 +68,7 @@ dependencies {
     implementation("androidx.documentfile:documentfile:1.0.1")
     implementation("com.github.pedroSG94.RootEncoder:library:2.8.1")
 
+    implementation("com.android.billingclient:billing:8.3.0")
     implementation("androidx.work:work-runtime-ktx:2.11.2")
     implementation("org.eclipse.angus:jakarta.mail:2.0.5")
     implementation("org.eclipse.angus:angus-activation:2.0.2")

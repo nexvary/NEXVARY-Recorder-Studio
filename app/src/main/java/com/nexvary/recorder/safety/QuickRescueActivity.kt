@@ -27,7 +27,7 @@ import org.json.JSONObject
 
 /** No SEND_SMS permission: every message is confirmed and composed in an external app. */
 class QuickRescueActivity : AppCompatActivity() {
-    private val store by lazy { getSharedPreferences("sos_cards", MODE_PRIVATE) }
+    private val store by lazy { com.nexvary.recorder.family.RescueCardsStore(this) }
     private val cards = mutableListOf<JSONObject>()
     private lateinit var binding: ActivityQuickRescueBinding
     private var pendingIndex: Int? = null
@@ -53,7 +53,7 @@ class QuickRescueActivity : AppCompatActivity() {
         binding = ActivityQuickRescueBinding.inflate(layoutInflater)
         setContentView(binding.root)
         UiInsets.apply(binding.root)
-        val saved = runCatching { JSONArray(store.getString("cards", "[]")) }.getOrDefault(JSONArray())
+        val saved = store.read()
         for (i in 0 until saved.length()) saved.optJSONObject(i)?.let(cards::add)
         pendingIndex = savedInstanceState?.getInt("pending", -1)?.takeIf { it >= 0 }
         binding.btnBack.setOnClickListener { finish() }
@@ -67,6 +67,7 @@ class QuickRescueActivity : AppCompatActivity() {
                 }
                 .setNegativeButton(R.string.cancel, null).show()
         }
+        com.nexvary.recorder.delivery.DeliveryUi.button(binding.contactList.parent as LinearLayout, R.string.fs_title, R.id.fsOpenDashboard) { startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java)) }
         render()
         savedInstanceState?.getString("draft")?.let { draft ->
             val index = savedInstanceState.getInt("editor_index", -1).takeIf { it >= 0 }
@@ -89,7 +90,7 @@ class QuickRescueActivity : AppCompatActivity() {
     }
 
     private fun persist() {
-        store.edit().putString("cards", JSONArray().apply { cards.forEach { put(it) } }.toString()).apply()
+        store.write(JSONArray().apply { cards.forEach { put(it) } })
     }
 
     private fun draft(): JSONObject {

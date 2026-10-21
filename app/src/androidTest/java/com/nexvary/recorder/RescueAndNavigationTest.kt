@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RescueAndNavigationTest {
     @Before fun clearContacts() {
-        InstrumentationRegistry.getInstrumentation().targetContext.getSharedPreferences("sos_cards", 0).edit().clear().commit()
+        com.nexvary.recorder.family.RescueCardsStore(InstrumentationRegistry.getInstrumentation().targetContext).clear()
     }
 
     @Test fun additionalDashboardDestinationsAndBack() {

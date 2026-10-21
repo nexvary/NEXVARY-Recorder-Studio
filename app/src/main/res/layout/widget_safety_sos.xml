@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_metal_card">
+    <Button android:id="@+id/fsWidgetSos" android:layout_width="match_parent" android:layout_height="match_parent" android:minHeight="64dp" android:text="@string/fs_sos" android:textSize="24sp" android:textColor="#FFFFFF" android:background="@drawable/bg_sos_button" />
+</LinearLayout>

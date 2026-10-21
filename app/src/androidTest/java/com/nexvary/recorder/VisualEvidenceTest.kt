@@ -23,7 +23,7 @@ class VisualEvidenceTest {
             } else AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ar"))
         }
         val context = instrumentation.targetContext
-        context.getSharedPreferences("sos_cards", 0).edit().clear().commit()
+        com.nexvary.recorder.family.RescueCardsStore(context).clear()
         val pages = listOf(
             Triple(MainActivity::class.java, R.id.cardScreen, "dashboard-ar"),
             Triple(com.nexvary.recorder.safety.QuickRescueActivity::class.java, R.id.btnAddContact, "sos-ar"),
@@ -72,7 +72,7 @@ class VisualEvidenceTest {
             onView(withText(R.string.rescue_delete)).perform(reveal()).check(matches(isDisplayed()))
             capture(it, "sos-contact-ar")
         }
-        } finally { context.getSharedPreferences("sos_cards", 0).edit().clear().commit(); sample.delete(); com.nexvary.recorder.ui.ThemeManager.select(context, 0) }
+        } finally { com.nexvary.recorder.family.RescueCardsStore(context).clear(); sample.delete(); com.nexvary.recorder.ui.ThemeManager.select(context, 0) }
     }
 
     private fun capture(scenario: ActivityScenario<out android.app.Activity>, name: String) {

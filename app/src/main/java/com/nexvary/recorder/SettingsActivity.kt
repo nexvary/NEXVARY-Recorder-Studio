@@ -13,6 +13,7 @@ class SettingsActivity : AppCompatActivity() {
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
         val root = StudioPage.install(this, R.string.settings_title)
+        com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.fs_title, R.id.fsOpenDashboard) { startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java)) }
         com.nexvary.recorder.delivery.DeliveryUi.button(root, R.string.smtp_title, R.id.openSmtp) {
             startActivity(Intent(this, com.nexvary.recorder.delivery.SmtpSettingsActivity::class.java))
         }

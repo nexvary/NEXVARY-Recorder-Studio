@@ -24,6 +24,9 @@ class BackgroundCameraService : Service() {
         const val EXTRA_DURATION = "duration_ms"
         const val EXTRA_RECIPIENT = "email_recipient"
         const val EXTRA_QUALITY = "quality"
+        const val EXTRA_EVIDENCE_EVENT = "evidence_event"
+        @Volatile var activeEvidenceEvent: String? = null
+            private set
         @Volatile var activeOutputPath: String? = null
             private set
         enum class Stage { IDLE, STARTING, RECORDING, SAVING, SAVED, ERROR }
@@ -57,6 +60,7 @@ class BackgroundCameraService : Service() {
         if (intent?.action != ACTION_START || requested) return START_NOT_STICKY
         duration = intent.getLongExtra(EXTRA_DURATION, 0)
         quality = CameraQuality.fromKey(intent.getStringExtra(EXTRA_QUALITY))
+        activeEvidenceEvent = intent.getStringExtra(EXTRA_EVIDENCE_EVENT)?.takeIf { runCatching { java.util.UUID.fromString(it) }.isSuccess }
         recipient = intent.getStringExtra(EXTRA_RECIPIENT).orEmpty().trim()
         if (!DeliveryPolicy.validDuration(duration) || (recipient.isNotBlank() && !DeliveryPolicy.email(recipient)) ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -171,6 +175,10 @@ class BackgroundCameraService : Service() {
             } finally { metadata.release() }
         }.getOrDefault(false)
         var queued = false
+        if (valid && file != null) activeEvidenceEvent?.let { event ->
+            runCatching { com.nexvary.recorder.family.EvidenceManager.finalized(this,file,event) }
+                .onFailure { runCatching { com.nexvary.recorder.family.FamilyStore(this).update { it.put("evidenceAction","FAILED") } } }
+        }
         if (valid && file != null && recipient.isNotBlank()) queued = runCatching {
             val profile = SmtpSettings(this).load()
             val job = MailQueue(this).enqueue(file, recipient, profile?.limitMiB ?: 25)
@@ -181,6 +189,7 @@ class BackgroundCameraService : Service() {
         val finished = if (valid && file != null) CaptureState(Stage.SAVED, name = file.name, mailQueued = queued, mailRequested = recipient.isNotBlank()) else CaptureState(Stage.ERROR)
         finalState = finished
         activeOutputPath = null
+        activeEvidenceEvent = null
         if (destroyed) state = finished
         main.post { stopForeground(STOP_FOREGROUND_REMOVE); stopSelf() }
     }

@@ -53,6 +53,33 @@ class SmtpSender(private val subject: String, private val body: String,
             connection.connect(profile.host, profile.port, profile.username, profile.password)
         } finally { close() }
     }
+    /** Structured safety alerts share the same mandatory TLS/auth transport; never request SMS. */
+    fun sendAlert(profile: SmtpProfile, id: String, recipient: String, payload: String, beforeData: () -> Unit) {
+        require(DeliveryPolicy.email(recipient)); java.util.UUID.fromString(id)
+        val bytes = payload.toByteArray(Charsets.UTF_8)
+        if (!DeliveryPolicy.fits(bytes.size.toLong()*2,profile.limitMiB)) throw MessageTooLarge()
+        val session = session(profile)
+        val message = object : MimeMessage(session) {
+            override fun updateMessageID() { setHeader("Message-ID", "<$id@safety.nexvary.invalid>") }
+        }.apply {
+            setFrom(InternetAddress(profile.from,true)); setRecipient(Message.RecipientType.TO,InternetAddress(recipient,true))
+            setSubject(subject,"UTF-8"); sentDate = Date()
+            setContent(MimeMultipart().apply {
+                addBodyPart(MimeBodyPart().apply { setText(body + "\n\n" + payload,"UTF-8") })
+                addBodyPart(MimeBodyPart().apply {
+                    dataHandler = DataHandler(jakarta.mail.util.ByteArrayDataSource(bytes,"application/json; charset=UTF-8"))
+                    fileName = "emergency-event.json"; disposition = "attachment"
+                })
+            }); saveChanges()
+        }
+        try {
+            val connection = session.getTransport("smtp"); transport = connection
+            connection.connect(profile.host,profile.port,profile.username,profile.password)
+            val limit = (connection as? SMTPTransport)?.getExtensionParameter("SIZE")?.trim()?.toLongOrNull()
+            if(limit != null && limit > 0 && DeliveryPolicy.messageBytes(bytes.size.toLong()*2) > limit) throw MessageTooLarge()
+            beforeData(); connection.sendMessage(message,message.allRecipients)
+        } finally { close() }
+    }
     override fun send(profile: SmtpProfile, job: MailQueue.Job, file: File, beforeData: () -> Unit) {
         require(DeliveryPolicy.email(job.recipient) && file.isFile && file.length() > 0)
         if (!DeliveryPolicy.fits(file.length(), profile.limitMiB)) throw MessageTooLarge()

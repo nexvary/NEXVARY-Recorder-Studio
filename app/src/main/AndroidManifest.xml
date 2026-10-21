@@ -16,11 +16,16 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
     <queries>
         <package android:name="com.kitsumed.shizucallrecorder" />
         <package android:name="moe.shizuku.privileged.api" />
     </queries>
     <application
+        android:name=".family.RecorderApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -35,6 +40,33 @@
             android:multiprocess="false"
             android:exported="true"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+        <activity android:name=".family.FamilyDashboardActivity" android:exported="false" />
+        <activity android:name=".family.FamilySettingsActivity" android:exported="false" />
+        <activity android:name=".family.TrustedContactsActivity" android:exported="false" />
+        <activity android:name=".family.EmergencyProfileActivity" android:exported="false" />
+        <activity android:name=".family.ParentSettingsActivity" android:exported="false" />
+        <activity android:name=".family.SafetyQueueActivity" android:exported="false" />
+        <activity android:name=".family.SafetyHistoryActivity" android:exported="false" />
+        <activity android:name=".family.EvidenceActivity" android:exported="false" />
+        <activity android:name=".family.PrivacyCenterActivity" android:exported="false" />
+        <activity android:name=".billing.SubscriptionActivity" android:exported="false" />
+        <service android:name=".family.AudioEvidenceService" android:exported="false" android:foregroundServiceType="microphone" />
+        <service android:name=".family.SafetyLocationService" android:exported="false" android:foregroundServiceType="location" />
+        <receiver android:name=".family.SafetyActionReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".family.SafetySosTile" android:exported="true" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" android:icon="@drawable/ic_feature_screen" android:label="@string/fs_sos">
+            <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
+        </service>
+        <receiver android:name=".family.SafetySosWidget" android:exported="false" android:label="@string/fs_sos">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/safety_widget" />
+        </receiver>
         <activity android:name=".safety.QuickRescueActivity" android:exported="false" />
         <activity android:name=".safety.SafetyCaptureActivity" android:exported="false" />
         <activity android:name=".calls.CallRecorderActivity" android:exported="false" />
