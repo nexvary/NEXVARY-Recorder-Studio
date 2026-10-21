@@ -32,8 +32,8 @@ class RecordingsLibraryActivity : AppCompatActivity() {
     private var started = false
     private var generation = 0
     private var player: VideoView? = null
-    private var playbackController: MediaController? = null
-    private var playerDialog: androidx.appcompat.app.AlertDialog? = null
+    private lateinit var playbackHost: LinearLayout
+    private val playbackHandler = android.os.Handler(android.os.Looper.getMainLooper())
     private var prompt: androidx.appcompat.app.AlertDialog? = null
     private val playbackDir by lazy { File(cacheDir, "vault_playback").apply { mkdirs() } }
     private data class Recording(val name: String, val uri: Uri, val mime: String, val file: File? = null)
@@ -51,6 +51,8 @@ class RecordingsLibraryActivity : AppCompatActivity() {
             setOnClickListener { if (!working) { if (session == null) askPin() else { lock(); load() } } }
         }
         root.addView(vaultButton)
+        playbackHost = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; visibility = android.view.View.GONE }
+        root.addView(playbackHost)
         list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(list)
     }
@@ -60,7 +62,7 @@ class RecordingsLibraryActivity : AppCompatActivity() {
         load()
     }
     override fun onPause() {
-        // Close the floating controller/dialog before Android 13 transfers window focus during recreation.
+        // Private playback and decrypted bytes never survive leaving or recreating this screen.
         lock()
         super.onPause()
     }
@@ -76,15 +78,24 @@ class RecordingsLibraryActivity : AppCompatActivity() {
     }
     private fun lock() {
         session = null; generation++
-        runCatching { playbackController?.hide() };playbackController=null
-        val oldPlayer=player;player=null
-        runCatching { oldPlayer?.setMediaController(null);oldPlayer?.stopPlayback() }
-        val oldDialog=playerDialog;playerDialog=null
-        oldDialog?.dismiss()
-        playbackDir.listFiles()?.forEach { it.delete() }
+        closePlayback()
         if (::list.isInitialized) list.removeAllViews()
         if (::vaultButton.isInitialized) vaultButton.setText(R.string.vault_open)
         // FLAG_SECURE stays until onStart to prevent a private recents snapshot.
+    }
+    private fun closePlayback() {
+        playbackHandler.removeCallbacksAndMessages(null)
+        val previous = player
+        player = null
+        previous?.setOnPreparedListener(null)
+        previous?.setOnCompletionListener(null)
+        previous?.setOnErrorListener(null)
+        runCatching { previous?.stopPlayback() }
+        if (::playbackHost.isInitialized) {
+            playbackHost.removeAllViews()
+            playbackHost.visibility = android.view.View.GONE
+        }
+        playbackDir.listFiles()?.forEach { it.delete() }
     }
     private fun toast(res: Int) = Toast.makeText(this, res, Toast.LENGTH_LONG).show()
     private fun askPin(after: (() -> Unit)? = null) {
@@ -228,6 +239,7 @@ class RecordingsLibraryActivity : AppCompatActivity() {
     private fun playPrivate(entry: VaultStore.Entry) {
         val access = session ?: return
         if (working) return
+        closePlayback()
         working = true
         lifecycleScope.launch {
             val result = withContext(Dispatchers.IO) {
@@ -243,21 +255,52 @@ class RecordingsLibraryActivity : AppCompatActivity() {
             if (temp == null) { toast(R.string.open_media_failed); return@launch }
             val video = VideoView(this@RecordingsLibraryActivity)
             player = video
-            val controller=MediaController(this@RecordingsLibraryActivity).apply { setAnchorView(video) }
-            playbackController=controller
-            video.setMediaController(controller)
-            video.setOnErrorListener { _, _, _ -> if(player===video) { toast(R.string.open_media_failed);playerDialog?.dismiss() };true }
-            video.setVideoPath(temp.absolutePath)
-            playerDialog = MaterialAlertDialogBuilder(this@RecordingsLibraryActivity).setTitle(entry.name).setView(video)
-                .setNegativeButton(R.string.back, null).create().apply {
-                    setOnDismissListener {
-                        runCatching { controller.hide() };video.setMediaController(null);video.stopPlayback();temp.delete()
-                        if(player===video) { player=null;playbackController=null;playerDialog=null }
-                    }
-                    show(); window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            playbackHost.removeAllViews()
+            playbackHost.visibility = android.view.View.VISIBLE
+            playbackHost.addView(TextView(this@RecordingsLibraryActivity).apply { text = entry.name })
+            playbackHost.addView(video, LinearLayout.LayoutParams(-1, (240 * resources.displayMetrics.density).toInt()))
+            val seek = SeekBar(this@RecordingsLibraryActivity)
+            playbackHost.addView(seek)
+            val toggle = Button(this@RecordingsLibraryActivity).apply {
+                setText(R.string.pause_recording)
+                setOnClickListener {
+                    if (video.isPlaying) { video.pause(); setText(R.string.library_play) }
+                    else { video.start(); setText(R.string.pause_recording) }
                 }
-            video.layoutParams = android.widget.FrameLayout.LayoutParams(-1, (300 * resources.displayMetrics.density).toInt())
-            video.start()
+            }
+            playbackHost.addView(toggle)
+            playbackHost.addView(Button(this@RecordingsLibraryActivity).apply {
+                setText(R.string.vault_close_player)
+                setOnClickListener { closePlayback() }
+            })
+            seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(bar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    if (fromUser && player === video) video.seekTo(progress)
+                }
+                override fun onStartTrackingTouch(bar: SeekBar?) = Unit
+                override fun onStopTrackingTouch(bar: SeekBar?) = Unit
+            })
+            val progress = object : Runnable {
+                override fun run() {
+                    if (player !== video || !started) return
+                    seek.progress = video.currentPosition
+                    playbackHandler.postDelayed(this, 500)
+                }
+            }
+            video.setOnPreparedListener {
+                if (player === video && started) {
+                    seek.max = video.duration
+                    video.start()
+                    playbackHandler.post(progress)
+                }
+            }
+            video.setOnCompletionListener { if (player === video) toggle.setText(R.string.library_play) }
+            video.setOnErrorListener { _, _, _ ->
+                if (player === video) { closePlayback(); toast(R.string.open_media_failed) }
+                true
+            }
+            video.setVideoPath(temp.absolutePath)
+            playbackHost.post { if (player === video) playbackHost.requestRectangleOnScreen(android.graphics.Rect(0, 0, playbackHost.width, playbackHost.height), false) }
         }
     }
     private fun readRecordings(): List<Recording> {
