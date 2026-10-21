@@ -4,7 +4,8 @@ import android.content.Intent
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.Espresso.*
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
