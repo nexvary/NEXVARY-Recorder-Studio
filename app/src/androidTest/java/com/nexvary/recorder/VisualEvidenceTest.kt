@@ -23,6 +23,7 @@ class VisualEvidenceTest {
             } else AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ar"))
         }
         val context = instrumentation.targetContext
+        check(com.nexvary.recorder.guardian.CloudApi.config(context).optString("idToken").isBlank()) { "Screenshots are allowed only with synthetic test data" }
         com.nexvary.recorder.family.RescueCardsStore(context).clear()
         val pages = listOf(
             Triple(MainActivity::class.java, R.id.cardScreen, "dashboard-ar"),
@@ -93,7 +94,11 @@ class VisualEvidenceTest {
                 instrumentation.waitForIdleSync()
                 // Espresso visibility can precede the SurfaceFlinger first presented frame.
                 val frameCommitted = java.util.concurrent.CountDownLatch(1)
+                var secure=false
                 scenario.onActivity { activity ->
+                    secure=activity.window.attributes.flags and android.view.WindowManager.LayoutParams.FLAG_SECURE!=0
+                    // Instrumentation-only capture with empty/synthetic data; production flags are preserved.
+                    if(secure) activity.window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
                     val decor = activity.window.decorView
                     decor.viewTreeObserver.registerFrameCommitCallback { frameCommitted.countDown() }
                     decor.invalidate()
@@ -107,7 +112,8 @@ class VisualEvidenceTest {
                 repeat(10) {
                     if (captured == null) {
                         instrumentation.uiAutomation.waitForIdle(300, 5_000)
-                        val candidate = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
+                        val candidate = instrumentation.uiAutomation.takeScreenshot()
+                        if(candidate==null) { android.os.SystemClock.sleep(150);return@repeat }
                         val readable = checkNotNull(candidate.copy(Bitmap.Config.ARGB_8888, false))
                         var dark = 0
                         var sampled = 0
@@ -136,5 +142,6 @@ class VisualEvidenceTest {
                     put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
                 }, null, null)
                 screenshot.recycle()
+                if(secure) scenario.onActivity { it.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE) }
     }
 }

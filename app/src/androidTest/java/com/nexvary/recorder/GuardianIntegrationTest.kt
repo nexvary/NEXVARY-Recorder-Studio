@@ -26,13 +26,28 @@ import java.util.UUID
 class GuardianIntegrationTest {
     private val instrumentation get()=InstrumentationRegistry.getInstrumentation()
     private val context get()=instrumentation.targetContext
+    private var ownedEvent: String?=null
     @Before fun setup() {
+        ownedEvent=null
         GuardianGate.lock()
         context.getSharedPreferences("guardian_mode",0).edit().clear().commit()
         FamilyStore(context).update { root -> root.keys().asSequence().toList().forEach(root::remove) }
     }
     @After fun cleanup() {
         EvidenceManager.stopOwned(context,null);runCatching { SafetyCheckManager(context).resolve(null,true) }
+        val stopDeadline=SystemClock.elapsedRealtime()+10_000
+        while(BackgroundCameraService.activeOutputPath!=null && SystemClock.elapsedRealtime()<stopDeadline) SystemClock.sleep(50)
+        ownedEvent?.let { event ->
+            val deadline=SystemClock.elapsedRealtime()+10_000
+            while(FamilyStore(context).snapshot().optJSONObject("evidenceActions")?.optString(event) in listOf("RECORDING","STARTING") && SystemClock.elapsedRealtime()<deadline) SystemClock.sleep(50)
+            val rows=FamilyStore(context).snapshot().optJSONObject("evidence") ?: JSONObject()
+            rows.keys().asSequence().map { rows.getJSONObject(it) }.filter { it.optString("eventId")==event }.forEach { manifest ->
+                val name=manifest.getString("fileName")
+                check(name==File(name).name)
+                File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES),name).delete()
+            }
+            File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES),"${event}_evidence_manifest.json").delete()
+        }
         GuardianGate.lock();context.getSharedPreferences("guardian_mode",0).edit().clear().commit()
         FamilyStore(context).update { root -> root.keys().asSequence().toList().forEach(root::remove) }
     }
@@ -71,7 +86,7 @@ class GuardianIntegrationTest {
     @Test fun videoRolloverClosesAndHashesSegmentsBeforeSessionEnds() {
         instrumentation.uiAutomation.grantRuntimePermission(context.packageName,Manifest.permission.CAMERA)
         instrumentation.uiAutomation.grantRuntimePermission(context.packageName,Manifest.permission.RECORD_AUDIO)
-        val event=UUID.randomUUID().toString()
+        val event=UUID.randomUUID().toString();ownedEvent=event
         ActivityScenario.launch(FamilyDashboardActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
                 ContextCompat.startForegroundService(activity,Intent(activity,BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_START)
