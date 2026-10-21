@@ -205,6 +205,8 @@ class RecordingDeliveryTest {
                     assertTrue("duration=$duration", duration in 55_000..66_000)
                     assertEquals("yes", metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO))
                     assertEquals("yes", metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO))
+                    val frame = metadata.getFrameAtTime(1_000_000, android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                    assertNotNull("An actual H.264 frame must decode", frame); frame?.recycle()
                 } finally { metadata.release() }
                 val extractor = android.media.MediaExtractor()
                 var width = 0; var height = 0; var audioTracks = 0
@@ -218,14 +220,25 @@ class RecordingDeliveryTest {
                         }
                     }
                 } finally { extractor.release() }
-                assertTrue(width > 0 && height > 0 && maxOf(width,height) <= 640 && minOf(width,height) <= 480)
+                assertTrue(width > 0 && height > 0 && maxOf(width,height) <= 320 && minOf(width,height) <= 240)
                 assertEquals(1, audioTracks)
                 assertTrue("Actual minute bytes=${video.length()}", video.length() in 1..4_500_000)
                 assertEquals(before, MailQueue(context).jobs().size)
-                File(context.getExternalFilesDir(null), "quality-measurements.json").writeText(org.json.JSONObject()
-                    .put("profile", "compact").put("durationMs", duration).put("bytes", video.length())
+                val measurement = org.json.JSONObject().put("profile", "compact").put("durationMs", duration).put("bytes", video.length())
                     .put("width", width).put("height", height).put("audioTracks", audioTracks)
-                    .put("mimeMessageBytes", DeliveryPolicy.messageBytes(video.length())).toString(2))
+                    .put("estimatedMimeMessageBytes", DeliveryPolicy.messageBytes(video.length()))
+                // Gradle uninstalls the app after the suite; publish test evidence outside app-private storage.
+                val resolver = context.contentResolver
+                val evidence = checkNotNull(resolver.insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                    android.content.ContentValues().apply {
+                        put(android.provider.MediaStore.Downloads.DISPLAY_NAME, "quality-measurements.json")
+                        put(android.provider.MediaStore.Downloads.MIME_TYPE, "application/json")
+                        put(android.provider.MediaStore.Downloads.RELATIVE_PATH, "Download/NEXVARYTestEvidence")
+                        put(android.provider.MediaStore.Downloads.IS_PENDING, 1)
+                    }))
+                checkNotNull(resolver.openOutputStream(evidence)).bufferedWriter().use { it.write(measurement.toString(2)) }
+                resolver.update(evidence, android.content.ContentValues().apply { put(android.provider.MediaStore.Downloads.IS_PENDING, 0) }, null, null)
+                android.util.Log.i("NexvaryQualityTest", measurement.toString())
             }
         } finally {
             context.stopService(Intent(context, BackgroundCameraService::class.java))

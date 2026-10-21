@@ -5,9 +5,9 @@ import com.nexvary.recorder.delivery.DeliveryPolicy
 /** Targets, not guaranteed file sizes: Android encoders may adjust the requested bitrate. */
 enum class CameraQuality(val key: String, val longEdge: Int, val shortEdge: Int, val fps: Int,
     val videoBitrate: Int, val audioBitrate: Int, val audioSampleRate: Int) {
-    COMPACT("compact", 640, 480, 15, 320_000, 32_000, 16_000),
-    BALANCED("balanced", 1280, 720, 24, 1_200_000, 64_000, 32_000),
-    HIGH("high", 1920, 1080, 30, 5_000_000, 128_000, 44_100);
+    COMPACT("compact", 320, 240, 15, 320_000, 32_000, 16_000),
+    BALANCED("balanced", 1280, 720, 24, 2_800_000, 64_000, 32_000),
+    HIGH("high", 1920, 1080, 30, 6_500_000, 128_000, 44_100);
 
     data class FrameSize(val width: Int, val height: Int) {
         val area get() = width.toLong() * height

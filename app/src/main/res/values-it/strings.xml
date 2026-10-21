@@ -360,7 +360,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="smtp_error_auth">[AUTH] The server rejected SMTP login. Check the full username, password or app password, and whether SMTP authentication is enabled for the account.</string>
     <string name="smtp_error_starttls">[STARTTLS] This port did not offer required STARTTLS. Check server settings or use the direct TLS port specified by your provider.</string>
     <string name="camera_quality_title">Recording quality and file size</string>
-    <string name="camera_quality_compact">Small file — up to 480p, recommended for email</string>
+    <string name="camera_quality_compact">Small file — up to 240p, recommended for email</string>
     <string name="camera_quality_balanced">Balanced — up to 720p</string>
     <string name="camera_quality_high">High quality — up to 1080p, large files</string>
     <string name="camera_quality_estimate">Approximate targets: %1$s MB/minute · %2$s MB/5 minutes.\nFive-minute email message after attachment encoding: about %3$s MB.</string>

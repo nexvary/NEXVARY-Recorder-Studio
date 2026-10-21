@@ -12,7 +12,7 @@ class CameraQualityTest {
     }
     @Test fun resolutionRespectsPresetWithoutCroppingOrUpscaling() {
         val sizes = listOf(CameraQuality.FrameSize(1920,1080), CameraQuality.FrameSize(1280,720), CameraQuality.FrameSize(640,480), CameraQuality.FrameSize(320,240))
-        assertEquals(CameraQuality.FrameSize(640,480), CameraQuality.COMPACT.chooseSize(sizes))
+        assertEquals(CameraQuality.FrameSize(320,240), CameraQuality.COMPACT.chooseSize(sizes))
         assertEquals(CameraQuality.FrameSize(1280,720), CameraQuality.BALANCED.chooseSize(sizes))
         assertEquals(CameraQuality.FrameSize(1920,1080), CameraQuality.HIGH.chooseSize(sizes))
         assertEquals(CameraQuality.FrameSize(480,640), CameraQuality.COMPACT.chooseSize(listOf(CameraQuality.FrameSize(480,640))))

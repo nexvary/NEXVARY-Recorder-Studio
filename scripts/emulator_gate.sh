@@ -19,7 +19,9 @@ adb shell dumpsys activity lastanr > diagnostics/last-anr.txt
 adb shell dumpsys activity activities > diagnostics/activities.txt
 adb shell dumpsys window windows > diagnostics/windows.txt
 adb pull /sdcard/Pictures/NEXVARYVisualEvidence/. screenshots/ || true
-adb pull /sdcard/Android/data/com.nexvary.recorder/files/quality-measurements.json diagnostics/quality-measurements.json || true
+if [ "$status" -eq 0 ]; then
+  adb pull /sdcard/Download/NEXVARYTestEvidence/quality-measurements.json diagnostics/quality-measurements.json
+fi
 # A screenshot is evidence only when the instrumentation gate succeeds.
 if [ "$status" -ne 0 ]; then
   cp -r screenshots diagnostics/unapproved-screenshots
