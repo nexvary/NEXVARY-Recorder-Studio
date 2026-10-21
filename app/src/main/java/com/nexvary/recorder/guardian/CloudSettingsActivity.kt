@@ -19,7 +19,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
     override fun build() {
         status=DeliveryUi.text(root,R.string.guardian_cloud_unconfigured)
         accountForm=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
-        DeliveryUi.text(root,R.string.service_setup_note)
+        DeliveryUi.text(root,R.string.settings_account_note)
         val institution=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
         val institutionUrl=FamilyUi.field(institution,R.string.service_institution_address,R.id.guardianInstitutionUrl,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
         fun connect(address: String, expected: String) {

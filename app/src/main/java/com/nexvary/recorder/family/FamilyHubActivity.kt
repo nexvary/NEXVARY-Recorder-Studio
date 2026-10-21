@@ -19,7 +19,7 @@ class FamilyHubActivity: AppCompatActivity() {
         FeatureCards.add(root,R.drawable.asset_info,R.string.fs_profile) { startActivity(Intent(this,EmergencyProfileActivity::class.java)) }
         FeatureCards.add(root,R.drawable.asset_camera,R.string.fs_evidence) { startActivity(Intent(this,GuardianEmergencyActivity::class.java)) }
         FeatureCards.add(root,R.drawable.asset_library,R.string.fs_history) { startActivity(Intent(this,SafetyHistoryActivity::class.java)) }
-        DeliveryUi.button(root,R.string.guardian_usage) { startActivity(Intent(this,CloudSettingsActivity::class.java)) }
+        DeliveryUi.button(root,R.string.settings_account) { startActivity(Intent(this,CloudSettingsActivity::class.java)) }
         FeatureCards.add(root,R.drawable.asset_settings,R.string.settings_safety) { startActivity(Intent(this,FamilySettingsActivity::class.java)) }
         DeliveryUi.button(root,R.string.guardian_child_mode) { ChildMode.activate(this) }
     }

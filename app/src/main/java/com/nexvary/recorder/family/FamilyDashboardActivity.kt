@@ -63,6 +63,7 @@ class FamilyDashboardActivity: AppCompatActivity() {
                 .setPositiveButton(R.string.fs_cancel) { _,_ -> val id=FamilyStore.state(snapshot)?.id;FamilyUi.io(this,{ SafetyCheckManager(this).resolve(id,true) }) { refresh() } }.show()
         }
         val panel=DeliveryUi.section(root,R.string.fs_check_start)
+        (panel.getChildAt(0) as TextView).apply { setTextColor(StudioSpinner.GREEN);setTag(R.id.studioStyled,true) }
         val choices=StudioSpinner.add(panel,resources.getStringArray(R.array.fs_durations).toList(),R.id.fsPresets,saved?.getInt("preset",0) ?: 0)
         duration=FamilyUi.field(panel,R.string.fs_minutes,R.id.fsMinutes,saved?.getString("minutes") ?: "15",android.text.InputType.TYPE_CLASS_NUMBER)
         val timerOptions=SettingsSections.add(panel,R.string.settings_timer_options,R.id.timerOptions)
