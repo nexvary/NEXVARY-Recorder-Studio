@@ -54,13 +54,16 @@ class ChildHomeActivity: AppCompatActivity() {
 class GuardianEmergencyActivity: AppCompatActivity() {
     private lateinit var status: TextView
     private val cameraPermissions=registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()) { result ->
-        if(result[android.Manifest.permission.CAMERA]==true) recordEvidence()
+        if(result[android.Manifest.permission.CAMERA]==true) beginEvidence()
         else status.setText(R.string.camera_permission_denied)
     }
     private fun recordEvidence() {
-        val permissions=listOf(android.Manifest.permission.CAMERA,android.Manifest.permission.RECORD_AUDIO)
-        val missing=permissions.filter { androidx.core.content.ContextCompat.checkSelfPermission(this,it)!=android.content.pm.PackageManager.PERMISSION_GRANTED }
-        if(missing.isNotEmpty()) { cameraPermissions.launch(missing.toTypedArray());return }
+        if(androidx.core.content.ContextCompat.checkSelfPermission(this,android.Manifest.permission.CAMERA)!=android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            cameraPermissions.launch(arrayOf(android.Manifest.permission.CAMERA,android.Manifest.permission.RECORD_AUDIO));return
+        }
+        beginEvidence()
+    }
+    private fun beginEvidence() {
         FamilyUi.io(this,{ SafetyCheckManager(this).sos(true).id }) { event ->
             if(com.nexvary.recorder.camera.BackgroundCameraService.activeOutputPath!=null) { status.setText(R.string.fs_recording_busy);return@io }
             runCatching {
@@ -68,7 +71,7 @@ class GuardianEmergencyActivity: AppCompatActivity() {
                     .setAction(com.nexvary.recorder.camera.BackgroundCameraService.ACTION_START)
                     .putExtra(com.nexvary.recorder.camera.BackgroundCameraService.EXTRA_EVIDENCE_EVENT,event)
                     .putExtra(com.nexvary.recorder.camera.BackgroundCameraService.EXTRA_QUALITY,"emergency")
-                    .putExtra(com.nexvary.recorder.camera.BackgroundCameraService.EXTRA_AUDIO,true))
+                    .putExtra(com.nexvary.recorder.camera.BackgroundCameraService.EXTRA_AUDIO,androidx.core.content.ContextCompat.checkSelfPermission(this,android.Manifest.permission.RECORD_AUDIO)==android.content.pm.PackageManager.PERMISSION_GRANTED))
             }.onSuccess { status.setText(R.string.fs_evidence_started) }.onFailure { status.setText(R.string.camera_failed) }
         }
     }
@@ -89,7 +92,13 @@ class GuardianEmergencyActivity: AppCompatActivity() {
     private fun trigger(silent: Boolean) {
         FamilyUi.io(this,{
             SafetyCheckManager(this).sos(true,if(silent) "SILENT_SOS" else "SOS")
-        }) { state -> status.text=getString(R.string.fs_sos_active)+"\n"+state.id+"\n"+getString(R.string.guardian_local_always) }
+        }) { state ->
+            status.text=getString(R.string.fs_sos_active)+"\n"+state.id+"\n"+getString(R.string.guardian_local_always)
+            FamilyUi.io(this,{ FamilyStore.config(FamilyStore(this).snapshot()).optBoolean("location") }) { consent ->
+                if(consent && (androidx.core.content.ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION)==android.content.pm.PackageManager.PERMISSION_GRANTED || androidx.core.content.ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_FINE_LOCATION)==android.content.pm.PackageManager.PERMISSION_GRANTED))
+                    runCatching { androidx.core.content.ContextCompat.startForegroundService(this,Intent(this,SafetyLocationService::class.java)) }
+            }
+        }
     }
     private fun manualShare(sms: Boolean) {
         FamilyUi.io(this,{ FamilyStore(this).snapshot() }) { data ->

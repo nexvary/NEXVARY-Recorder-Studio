@@ -53,7 +53,10 @@ class BackgroundCameraService : Service() {
     private var recipient = ""
     private var duration = 0L
     private var quality = CameraQuality.COMPACT
-    private var nextOutput: File? = null
+    private var captureFront=false
+    private var captureAudio=false
+    private var rotating=false
+    private var evidenceDeadline=0L
     private var segmentIndex = 0
     private val finalizer = java.util.concurrent.Executors.newSingleThreadExecutor()
     private fun finalizeSegment(file: File, event: String, index: Int, terminal: Boolean) {
@@ -75,6 +78,7 @@ class BackgroundCameraService : Service() {
         requested = true; state = CaptureState(Stage.STARTING)
         val audio = intent.getBooleanExtra(EXTRA_AUDIO, false) && ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
         val front = intent.getBooleanExtra(EXTRA_FRONT, false)
+        captureFront=front;captureAudio=audio
         val channel = NotificationChannel(CHANNEL, getString(R.string.camera_title), NotificationManager.IMPORTANCE_LOW)
         getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         try {
@@ -125,24 +129,16 @@ class BackgroundCameraService : Service() {
             media.setOrientationHint(characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0)
             media.setOutputFile(file.absolutePath)
             // Enforced by Android's recorder, including while the activity is stopped / screen is off.
-            if (duration > 0) media.setMaxDuration(duration.toInt())
-            if (activeEvidenceEvent != null) media.setMaxFileSize(quality.estimatedBytes(30_000, audio))
-            media.setOnInfoListener { _, what, _ ->
-                if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_APPROACHING && activeEvidenceEvent != null) handler.post {
-                    if (!closing && nextOutput == null) runCatching {
-                        val next = File(getExternalFilesDir(Environment.DIRECTORY_MOVIES), "NEXVARY_${System.currentTimeMillis()}_part${segmentIndex+1}.mp4")
-                        media.setNextOutputFile(next); nextOutput = next
-                    }
+            val evidence=activeEvidenceEvent!=null
+            if(evidence && duration>0 && evidenceDeadline==0L) evidenceDeadline=SystemClock.elapsedRealtime()+duration
+            val remaining=if(evidenceDeadline>0) (evidenceDeadline-SystemClock.elapsedRealtime()).coerceAtLeast(1000L) else 30_000L
+            if(evidence) { media.setMaxDuration(minOf(30_000L,remaining).toInt());media.setMaxFileSize(12L*1024*1024) }
+            else if(duration>0) media.setMaxDuration(duration.toInt())
+            media.setOnInfoListener { _,what,_ ->
+                if(what==MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED || what==MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) handler.post {
+                    if(activeEvidenceEvent!=null && (evidenceDeadline==0L || SystemClock.elapsedRealtime()<evidenceDeadline-500)) rotateEvidence()
+                    else finishRecording()
                 }
-                if (what == MediaRecorder.MEDIA_RECORDER_INFO_NEXT_OUTPUT_FILE_STARTED) handler.post {
-                    val previous = output; val next = nextOutput
-                    if (!closing && previous != null && next != null) {
-                        val index = segmentIndex++
-                        output = next; activeOutputPath = next.absolutePath; nextOutput = null
-                        activeEvidenceEvent?.let { finalizeSegment(previous,it,index,false) }
-                    }
-                }
-                if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED || what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) handler.post { finishRecording() }
             }
             media.setOnErrorListener { _, _, _ -> handler.post { finishRecording() } }
             media.prepare()
@@ -166,17 +162,40 @@ class BackgroundCameraService : Service() {
                                     }.build()
                                     capture.setRepeatingRequest(request, null, handler); media.start(); started = true
                                     activeEvidenceEvent?.let { event -> runCatching { com.nexvary.recorder.family.FamilyStore(this@BackgroundCameraService).update { com.nexvary.recorder.family.EvidenceManager.started(it,event) } } }
-                                    state = CaptureState(Stage.RECORDING, if (duration > 0) SystemClock.elapsedRealtime() + duration else 0)
+                                    state = CaptureState(Stage.RECORDING,if(activeEvidenceEvent!=null) evidenceDeadline else if(duration>0) SystemClock.elapsedRealtime()+duration else 0)
                                 } catch (_: Exception) { finishRecording() }
                             }
                             override fun onConfigureFailed(capture: CameraCaptureSession) { capture.close(); finishRecording() }
                         }, handler)
                     } catch (_: Exception) { finishRecording() }
                 }
+                override fun onClosed(camera: CameraDevice) {
+                    if(rotating && !closing) { rotating=false;openCamera(captureFront,captureAudio) }
+                }
                 override fun onDisconnected(camera: CameraDevice) { openPending = false; camera.close(); finishRecording(); if (destroyed) thread.quitSafely() }
                 override fun onError(camera: CameraDevice, error: Int) { openPending = false; camera.close(); finishRecording(); if (destroyed) thread.quitSafely() }
             }, handler)
         } catch (_: Exception) { finishRecording() }
+    }
+    /** MediaRecorder time-based rollover; the service stays foreground. Camera restart may introduce a short gap. */
+    private fun rotateEvidence() {
+        if(closing || rotating) return
+        val event=activeEvidenceEvent ?: return
+        val file=output ?: return
+        rotating=true;state=state.copy(stage=Stage.SAVING)
+        runCatching { session?.stopRepeating() };runCatching { session?.close() };session=null
+        val wasStarted=started
+        if(started) runCatching { recorder?.stop() }
+        runCatching { recorder?.reset();recorder?.release() };recorder=null;started=false
+        val saved=wasStarted && file.isFile && file.length()>0 && runCatching {
+            val metadata=MediaMetadataRetriever()
+            try { metadata.setDataSource(file.absolutePath);(metadata.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0)>0 }
+            finally { metadata.release() }
+        }.getOrDefault(false)
+        if(saved) finalizeSegment(file,event,segmentIndex++,false) else file.delete()
+        output=null
+        val previous=device;device=null
+        if(previous!=null) previous.close() else { rotating=false;openCamera(captureFront,captureAudio) }
     }
     private fun finishRecording() {
         if (closing) return
@@ -210,7 +229,12 @@ class BackgroundCameraService : Service() {
             file?.delete()
             activeEvidenceEvent?.let { event -> runCatching { com.nexvary.recorder.family.FamilyStore(this).update { com.nexvary.recorder.family.EvidenceManager.action(it,event,"FAILED") } } }
         }
-        nextOutput?.delete(); nextOutput = null
+        if(!valid && segmentIndex>0 && file==null) activeEvidenceEvent?.let { event ->
+            finalizer.execute {
+                runCatching { com.nexvary.recorder.family.FamilyStore(this).update { com.nexvary.recorder.family.EvidenceManager.action(it,event,"SAVED") } }
+                runCatching { com.nexvary.recorder.guardian.CloudSyncWorker.schedule(this) }
+            }
+        }
         val finished = if (valid && file != null) CaptureState(Stage.SAVED, name = file.name, mailQueued = queued, mailRequested = recipient.isNotBlank()) else CaptureState(Stage.ERROR)
         finalState = finished
         activeOutputPath = null

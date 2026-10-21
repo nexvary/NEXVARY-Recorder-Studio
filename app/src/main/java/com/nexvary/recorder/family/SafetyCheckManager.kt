@@ -41,7 +41,9 @@ class SafetyCheckManager(private val context: Context) {
                     val markers=root.optJSONArray("sosMarkers") ?: org.json.JSONArray().also { root.put("sosMarkers",it) }
                     if(markers.length()<1000) markers.put(JSONObject().put("eventId",existing.id).put("timestamp",System.currentTimeMillis()).put("location",location))
                 }
-                return@update existing
+                val continued=if(reason=="SILENT_SOS") existing.copy(reason="SILENT_SOS") else existing
+                FamilyStore.putState(root,continued)
+                return@update continued
             }
             if(existing?.phase == SafetyPhase.COUNTDOWN && !immediate) return@update existing
             if(existing?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN)) {
