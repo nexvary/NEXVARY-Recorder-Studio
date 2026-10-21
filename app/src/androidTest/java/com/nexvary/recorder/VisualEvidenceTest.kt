@@ -38,6 +38,7 @@ class VisualEvidenceTest {
             Triple(com.nexvary.recorder.safety.QuickRescueActivity::class.java, R.id.btnAddContact, "sos-ar"),
             Triple(com.nexvary.recorder.camera.BackgroundCameraActivity::class.java, R.id.btnBack, "camera-ar"),
             Triple(SettingsActivity::class.java, R.id.btnBack, "settings-ar"),
+            Triple(com.nexvary.recorder.family.FamilySettingsActivity::class.java,R.id.btnBack,"safety-settings-ar"),
             Triple(com.nexvary.recorder.delivery.MailOutboxActivity::class.java, R.id.btnBack, "outbox-ar"),
             Triple(com.nexvary.recorder.media.RecordingsLibraryActivity::class.java, R.id.btnBack, "library-ar")
         )
@@ -71,6 +72,9 @@ class VisualEvidenceTest {
                     capture(it, "camera-delivery-ar")
                 }
                 if(page == com.nexvary.recorder.family.FamilyDashboardActivity::class.java) {
+                    onView(withId(R.id.fsPresets)).perform(reveal(),androidx.test.espresso.action.ViewActions.click())
+                    capture(it,"timer-presets-ar")
+                    androidx.test.espresso.Espresso.onData(org.hamcrest.Matchers.anything()).atPosition(0).perform(androidx.test.espresso.action.ViewActions.click())
                     com.nexvary.recorder.family.SafetyCheckManager(context).sos(false)
                     awaitUi(org.hamcrest.Matchers.allOf(withId(R.id.fsStatus),withText(org.hamcrest.Matchers.startsWith(context.getString(R.string.fs_are_safe)))))
                     capture(it,"family-sos-countdown-ar")
@@ -91,6 +95,9 @@ class VisualEvidenceTest {
                 }
 
             }
+        }
+        ActivityScenario.launch<com.nexvary.recorder.family.FamilySettingsActivity>(android.content.Intent(context,com.nexvary.recorder.family.FamilySettingsActivity::class.java).putExtra("section","sharing")).use {
+            awaitUi(withId(R.id.fsDisplayName));capture(it,"sharing-settings-ar")
         }
         // A synthetic contact is shown for border review; no send or location action runs.
         val contact = org.json.JSONObject().put("name", "جهة اختبار")

@@ -648,4 +648,22 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="service_legacy_note">Yalnızca mevcut AWS bağlantıları. Normal hesaplarda bu alanlar gerekmez. AWS veya SES gizli anahtarı girmeyin.</string>
     <string name="service_account_note">Hesap oluşturun, e-posta kodunu doğrulayın ve giriş yapın. Kurum kayıtları kısıtlayabilir.</string>
     <string name="service_busy">Hizmet yoğun; bulut gönderimi gecikebilir. Yerel SOS kullanılabilir.</string>
+    <string name="settings_intro">Neyi ayarlamak istediğinizi seçin. Yerel kayıt için hesap gerekmez.</string>
+    <string name="settings_safety">Aile güvenliğini ayarla</string>
+    <string name="settings_safety_note">Güvenilir bir kişiyle başlayın, paylaşılacakları seçin ve ayarları PIN ile koruyun.</string>
+    <string name="settings_appearance">Dil ve görünüm</string>
+    <string name="settings_appearance_note">Dili ve temayı değiştirin.</string>
+    <string name="settings_account">Hesap ve gönderim</string>
+    <string name="settings_account_note">İsteğe bağlı: kişisel veya kurum hizmetine bağlanın.</string>
+    <string name="settings_advanced">Diğer seçenekler</string>
+    <string name="settings_advanced_note">Gönderim tanılama ve sorun giderme araçları.</string>
+    <string name="settings_sharing">Acil durumda ne paylaşılır?</string>
+    <string name="settings_sharing_note">Ad, mesaj ve paylaşım izinlerini seçin. Gönderim için yapılandırılmış hizmet gerekir.</string>
+    <string name="settings_evidence">Kanıt kaydı ve testler</string>
+    <string name="settings_evidence_note">Kayıt türünü seçin veya yerel test yapın. Bu seçenekleri açmak kayıt başlatmaz.</string>
+    <string name="settings_device">Cihaz ve otomatik uyarılar</string>
+    <string name="settings_device_note">Pil, hareket ve düğme seçenekleri.</string>
+    <string name="settings_pin">Veli PIN kodu</string>
+    <string name="settings_timer_options">Zamanlayıcı seçenekleri</string>
+    <string name="timer_remaining">Kalan süre: %1$d:%2$02d</string>
 </resources>

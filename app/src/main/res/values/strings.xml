@@ -648,4 +648,22 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="service_legacy_note">Existing AWS connections only. Ordinary accounts do not need these fields. Never enter AWS or SES secret keys here.</string>
     <string name="service_account_note">Create an account, confirm your email code, then sign in. Your institution may restrict enrollment.</string>
     <string name="service_busy">The service is busy. Cloud delivery may be delayed; local SOS remains available.</string>
+    <string name="settings_intro">Choose what you want to set up. Local recording works without an account.</string>
+    <string name="settings_safety">Set up family safety</string>
+    <string name="settings_safety_note">Start with a trusted contact, choose what to share, then protect settings with a PIN.</string>
+    <string name="settings_appearance">Language and appearance</string>
+    <string name="settings_appearance_note">Change language and theme.</string>
+    <string name="settings_account">Account and sending</string>
+    <string name="settings_account_note">Optional: connect a personal or institution service.</string>
+    <string name="settings_advanced">More options</string>
+    <string name="settings_advanced_note">Delivery diagnostics and tools for troubleshooting.</string>
+    <string name="settings_sharing">What to share in an emergency</string>
+    <string name="settings_sharing_note">Choose your name, message and sharing permissions. Sending requires a configured service.</string>
+    <string name="settings_evidence">Evidence recording and tests</string>
+    <string name="settings_evidence_note">Choose evidence recording or run a local test. These options do not start recording by themselves.</string>
+    <string name="settings_device">Device and automatic alerts</string>
+    <string name="settings_device_note">Optional battery, motion and button-trigger settings.</string>
+    <string name="settings_pin">Guardian PIN</string>
+    <string name="settings_timer_options">Timer options</string>
+    <string name="timer_remaining">Time remaining: %1$d:%2$02d</string>
 </resources>

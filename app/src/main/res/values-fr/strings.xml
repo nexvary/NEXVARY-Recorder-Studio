@@ -648,4 +648,22 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="service_legacy_note">Connexions AWS existantes uniquement. Ces champs sont inutiles pour un compte ordinaire. Aucun secret AWS ou SES ici.</string>
     <string name="service_account_note">Créez un compte, confirmez le code reçu puis connectez-vous. L’établissement peut limiter les inscriptions.</string>
     <string name="service_busy">Service occupé : l’envoi cloud peut être retardé. Le SOS local reste disponible.</string>
+    <string name="settings_intro">Choisissez un réglage. Les enregistrements locaux fonctionnent sans compte.</string>
+    <string name="settings_safety">Configurer la sécurité familiale</string>
+    <string name="settings_safety_note">Commencez par un contact de confiance, choisissez le partage puis protégez les réglages par un code.</string>
+    <string name="settings_appearance">Langue et apparence</string>
+    <string name="settings_appearance_note">Changer la langue et le thème.</string>
+    <string name="settings_account">Compte et envoi</string>
+    <string name="settings_account_note">Facultatif : connecter un service personnel ou institutionnel.</string>
+    <string name="settings_advanced">Autres options</string>
+    <string name="settings_advanced_note">Diagnostic des envois et dépannage.</string>
+    <string name="settings_sharing">Que partager en urgence ?</string>
+    <string name="settings_sharing_note">Choisissez le nom, le message et les autorisations. Un service configuré est requis pour envoyer.</string>
+    <string name="settings_evidence">Enregistrement des preuves et tests</string>
+    <string name="settings_evidence_note">Choisissez le mode ou effectuez un test local. Ouvrir ces options ne lance aucun enregistrement.</string>
+    <string name="settings_device">Appareil et alertes automatiques</string>
+    <string name="settings_device_note">Options de batterie, de mouvement et des boutons.</string>
+    <string name="settings_pin">Code du responsable</string>
+    <string name="settings_timer_options">Options du minuteur</string>
+    <string name="timer_remaining">Temps restant : %1$d:%2$02d</string>
 </resources>

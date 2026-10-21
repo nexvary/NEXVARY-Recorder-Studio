@@ -648,4 +648,22 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="service_legacy_note">Nur bestehende AWS-Verbindungen. Normale Konten benötigen diese Felder nicht. Keine geheimen AWS- oder SES-Schlüssel eingeben.</string>
     <string name="service_account_note">Konto erstellen, E-Mail-Code bestätigen und anmelden. Die Einrichtung kann die Registrierung einschränken.</string>
     <string name="service_busy">Dienst ausgelastet: Cloud-Versand kann sich verzögern. Lokales SOS bleibt verfügbar.</string>
+    <string name="settings_intro">Wählen Sie einen Bereich. Lokale Aufnahmen benötigen kein Konto.</string>
+    <string name="settings_safety">Familienschutz einrichten</string>
+    <string name="settings_safety_note">Beginnen Sie mit einer Vertrauensperson, wählen Sie Freigaben und schützen Sie die Einstellungen mit einer PIN.</string>
+    <string name="settings_appearance">Sprache und Darstellung</string>
+    <string name="settings_appearance_note">Sprache und Design ändern.</string>
+    <string name="settings_account">Konto und Versand</string>
+    <string name="settings_account_note">Optional: privaten oder institutionellen Dienst verbinden.</string>
+    <string name="settings_advanced">Weitere Optionen</string>
+    <string name="settings_advanced_note">Versanddiagnose und Fehlerbehebung.</string>
+    <string name="settings_sharing">Freigaben im Notfall</string>
+    <string name="settings_sharing_note">Name, Nachricht und Freigaben wählen. Versand benötigt einen eingerichteten Dienst.</string>
+    <string name="settings_evidence">Beweisaufnahme und Tests</string>
+    <string name="settings_evidence_note">Aufnahmeart wählen oder lokal testen. Das Öffnen startet keine Aufnahme.</string>
+    <string name="settings_device">Gerät und automatische Warnungen</string>
+    <string name="settings_device_note">Optionen für Akku, Bewegung und Tastenauslösung.</string>
+    <string name="settings_pin">Eltern-PIN</string>
+    <string name="settings_timer_options">Timeroptionen</string>
+    <string name="timer_remaining">Verbleibend: %1$d:%2$02d</string>
 </resources>

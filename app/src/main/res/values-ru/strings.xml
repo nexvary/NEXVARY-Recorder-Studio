@@ -648,4 +648,22 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="service_legacy_note">Только существующие подключения AWS. Обычным аккаунтам эти поля не нужны. Не вводите секретные ключи AWS или SES.</string>
     <string name="service_account_note">Создайте аккаунт, подтвердите код из письма и войдите. Организация может ограничить регистрацию.</string>
     <string name="service_busy">Сервис занят: облачная отправка может задержаться. Локальный SOS доступен.</string>
+    <string name="settings_intro">Выберите раздел. Локальная запись работает без аккаунта.</string>
+    <string name="settings_safety">Настроить безопасность семьи</string>
+    <string name="settings_safety_note">Добавьте доверенное лицо, выберите данные для передачи и защитите настройки PIN-кодом.</string>
+    <string name="settings_appearance">Язык и оформление</string>
+    <string name="settings_appearance_note">Изменить язык и тему.</string>
+    <string name="settings_account">Аккаунт и отправка</string>
+    <string name="settings_account_note">Необязательно: подключить личный сервис или сервис организации.</string>
+    <string name="settings_advanced">Другие параметры</string>
+    <string name="settings_advanced_note">Диагностика отправки и устранение неполадок.</string>
+    <string name="settings_sharing">Что передавать в экстренной ситуации</string>
+    <string name="settings_sharing_note">Укажите имя, сообщение и разрешения. Для отправки требуется настроенный сервис.</string>
+    <string name="settings_evidence">Запись доказательств и тесты</string>
+    <string name="settings_evidence_note">Выберите режим или выполните локальный тест. Открытие параметров не запускает запись.</string>
+    <string name="settings_device">Устройство и автоматические оповещения</string>
+    <string name="settings_device_note">Параметры батареи, движения и кнопок.</string>
+    <string name="settings_pin">PIN родителя</string>
+    <string name="settings_timer_options">Параметры таймера</string>
+    <string name="timer_remaining">Осталось: %1$d:%2$02d</string>
 </resources>

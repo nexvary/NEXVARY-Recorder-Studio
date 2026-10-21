@@ -648,4 +648,22 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="service_legacy_note">صرف موجودہ AWS کنکشن کے لیے۔ عام اکاؤنٹ کو ان خانوں کی ضرورت نہیں۔ AWS یا SES کی خفیہ کلید نہ لکھیں۔</string>
     <string name="service_account_note">اکاؤنٹ بنائیں، ای میل کوڈ کی تصدیق کریں اور لاگ ان ہوں۔ ادارہ رجسٹریشن محدود کر سکتا ہے۔</string>
     <string name="service_busy">سروس مصروف ہے؛ کلاؤڈ ارسال میں تاخیر ہو سکتی ہے۔ مقامی SOS دستیاب ہے۔</string>
+    <string name="settings_intro">اپنی مطلوبہ ترتیب منتخب کریں۔ مقامی ریکارڈنگ اکاؤنٹ کے بغیر چلتی ہے۔</string>
+    <string name="settings_safety">خاندانی حفاظت کی ترتیب</string>
+    <string name="settings_safety_note">قابل اعتماد رابطے سے شروع کریں، اشتراک منتخب کریں اور ترتیبات کو پن سے محفوظ کریں۔</string>
+    <string name="settings_appearance">زبان اور ظاہری شکل</string>
+    <string name="settings_appearance_note">زبان اور تھیم تبدیل کریں۔</string>
+    <string name="settings_account">اکاؤنٹ اور ارسال</string>
+    <string name="settings_account_note">اختیاری: ذاتی یا ادارے کی سروس سے رابطہ کریں۔</string>
+    <string name="settings_advanced">مزید اختیارات</string>
+    <string name="settings_advanced_note">ارسال کی تشخیص اور مسائل کا حل۔</string>
+    <string name="settings_sharing">ہنگامی حالت میں کیا شیئر کریں؟</string>
+    <string name="settings_sharing_note">نام، پیغام اور اشتراک کی اجازت منتخب کریں۔ ارسال کے لیے تیار سروس ضروری ہے۔</string>
+    <string name="settings_evidence">ثبوت کی ریکارڈنگ اور جانچ</string>
+    <string name="settings_evidence_note">ریکارڈنگ منتخب کریں یا مقامی جانچ کریں۔ اختیارات کھولنے سے ریکارڈنگ شروع نہیں ہوتی۔</string>
+    <string name="settings_device">آلہ اور خودکار انتباہات</string>
+    <string name="settings_device_note">بیٹری، حرکت اور بٹن کے اختیاری انتظامات۔</string>
+    <string name="settings_pin">سرپرست کا پن</string>
+    <string name="settings_timer_options">ٹائمر کے اختیارات</string>
+    <string name="timer_remaining">باقی وقت: %1$d:%2$02d</string>
 </resources>

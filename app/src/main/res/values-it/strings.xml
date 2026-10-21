@@ -648,4 +648,22 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="service_legacy_note">Solo connessioni AWS esistenti. Gli account normali non richiedono questi campi. Non inserire chiavi segrete AWS o SES.</string>
     <string name="service_account_note">Crea un account, conferma il codice email e accedi. L’istituto può limitare le iscrizioni.</string>
     <string name="service_busy">Servizio occupato: l’invio cloud può ritardare. SOS locale disponibile.</string>
+    <string name="settings_intro">Scegli cosa configurare. Le registrazioni locali funzionano senza account.</string>
+    <string name="settings_safety">Configura sicurezza familiare</string>
+    <string name="settings_safety_note">Inizia da un contatto fidato, scegli cosa condividere e proteggi le impostazioni con un PIN.</string>
+    <string name="settings_appearance">Lingua e aspetto</string>
+    <string name="settings_appearance_note">Cambia lingua e tema.</string>
+    <string name="settings_account">Account e invio</string>
+    <string name="settings_account_note">Facoltativo: collega un servizio personale o istituzionale.</string>
+    <string name="settings_advanced">Altre opzioni</string>
+    <string name="settings_advanced_note">Diagnostica degli invii e risoluzione dei problemi.</string>
+    <string name="settings_sharing">Cosa condividere in emergenza</string>
+    <string name="settings_sharing_note">Scegli nome, messaggio e permessi. Per inviare serve un servizio configurato.</string>
+    <string name="settings_evidence">Registrazione delle prove e test</string>
+    <string name="settings_evidence_note">Scegli il tipo o esegui un test locale. Aprire queste opzioni non avvia registrazioni.</string>
+    <string name="settings_device">Dispositivo e avvisi automatici</string>
+    <string name="settings_device_note">Opzioni di batteria, movimento e pulsanti.</string>
+    <string name="settings_pin">PIN del tutore</string>
+    <string name="settings_timer_options">Opzioni del timer</string>
+    <string name="timer_remaining">Tempo rimanente: %1$d:%2$02d</string>
 </resources>

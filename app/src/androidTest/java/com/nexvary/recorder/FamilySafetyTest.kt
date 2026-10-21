@@ -2,6 +2,7 @@ package com.nexvary.recorder
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Environment
@@ -96,7 +97,7 @@ class FamilySafetyTest {
     @Test fun safetyStateSurvivesActivityRecreationAndStaleCancelCannotStopNewSession() {
         val manager=SafetyCheckManager(context);val first=manager.start(15,60)
         ActivityScenario.launch(FamilyDashboardActivity::class.java).use { scenario ->
-            awaitUi(withId(R.id.fsSafe));onView(withId(R.id.fsMinutes)).perform(reveal(),replaceText("80"),closeSoftKeyboard())
+            awaitUi(withId(R.id.fsSafe));scenario.onActivity { it.findViewById<android.widget.Spinner>(R.id.fsPresets).setSelection(4) };onView(withId(R.id.fsMinutes)).perform(reveal(),replaceText("80"),closeSoftKeyboard())
             scenario.recreate();awaitUi(withId(R.id.fsSafe));onView(withId(R.id.fsMinutes)).perform(reveal()).check(matches(withText("80")))
             assertEquals(first.id,FamilyStore.state(FamilyStore(context).snapshot())!!.id)
             onView(withId(R.id.fsSafe)).perform(reveal(),click())
@@ -199,12 +200,11 @@ class FamilySafetyTest {
         RescueCardsStore(context).clear()
     }
     @Test fun settingsContactsAndProfileHaveRealPersistenceAndReturnNavigation() {
-        ActivityScenario.launch(FamilySettingsActivity::class.java).use {
+        ActivityScenario.launch<FamilySettingsActivity>(Intent(context,FamilySettingsActivity::class.java).putExtra("section","sharing")).use {
             awaitUi(withId(R.id.fsDisplayName))
             onView(withId(R.id.fsDisplayName)).perform(reveal(),replaceText("Local test name"),closeSoftKeyboard())
             onView(withId(R.id.fsSaveSettings)).perform(reveal(),click());onView(withId(android.R.id.button1)).perform(click())
             await { FamilyStore.config(FamilyStore(context).snapshot()).optString("displayName")=="Local test name" }
-            onView(withId(R.id.btnBack)).perform(reveal(),click())
         }
         ActivityScenario.launch(TrustedContactsActivity::class.java).use {
             awaitUi(withId(R.id.fsAddContact));onView(withId(R.id.fsAddContact)).perform(reveal(),click())

@@ -58,8 +58,9 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
         ))
         DeliveryUi.button(institution,R.string.service_connect,R.id.guardianConnectInstitution) { connect(institutionUrl.text.toString(),"INSTITUTION") }
         root.addView(institution)
+        val connectionTools=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL }
         val advanced=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
-        DeliveryUi.button(root,R.string.service_advanced,R.id.guardianAdvancedConnection) {
+        DeliveryUi.button(connectionTools,R.string.service_advanced,R.id.guardianAdvancedConnection) {
             advanced.visibility=if(advanced.visibility==android.view.View.VISIBLE) android.view.View.GONE else android.view.View.VISIBLE
         }
         DeliveryUi.text(advanced,R.string.service_legacy_note)
@@ -83,28 +84,71 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
                 status.setText(R.string.guardian_settings_saved);accountForm.visibility=android.view.View.VISIBLE
             }
         }
-        root.addView(advanced)
+        connectionTools.addView(advanced)
         root.addView(accountForm)
-        DeliveryUi.text(accountForm,R.string.service_account_note)
-        val email=FamilyUi.field(accountForm,R.string.guardian_email,R.id.guardianEmail,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
-        val password=FamilyUi.field(accountForm,R.string.smtp_password,R.id.guardianPassword,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
-        val code=FamilyUi.field(accountForm,R.string.guardian_code,R.id.guardianCode,type=InputType.TYPE_CLASS_NUMBER)
-        fun auth(action: () -> Unit) { FamilyUi.io(this,{ runCatching(action) }) { result -> password.text.clear();status.setText(if(result.isSuccess) R.string.guardian_auth_ok else R.string.guardian_auth_failed);if(result.isSuccess && CloudApi.config(this).optString("idToken").isNotBlank()) { CloudOutbox.retry(this);refresh() } } }
-        DeliveryUi.button(accountForm,R.string.guardian_signup) { val e=email.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).signup(e,p) } }
-        DeliveryUi.button(accountForm,R.string.guardian_confirm) { val e=email.text.toString();val c=code.text.toString();auth { CloudApi(this).confirm(e,c) } }
-        DeliveryUi.button(accountForm,R.string.guardian_login) { val e=email.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).authenticate(e,p) } }
-        DeliveryUi.button(accountForm,R.string.guardian_forgot) { val e=email.text.toString();auth { CloudApi(this).forgot(e) } }
-        DeliveryUi.button(accountForm,R.string.guardian_reset_password) { val e=email.text.toString();val c=code.text.toString();val p=password.text.toString();password.text.clear();auth { CloudApi(this).reset(e,c,p) } }
-        DeliveryUi.button(accountForm,R.string.guardian_invite) { val e=email.text.toString();auth { val result=CloudApi(this).request("POST","/contacts/invite",JSONObject().put("email",e));FamilyStore(this).update { it.put("cloudInvitation",result.getString("invitation")) } } }
-        DeliveryUi.button(accountForm,R.string.guardian_confirm_contact) { val c=code.text.toString();auth { val id=FamilyStore(this).snapshot().optString("cloudInvitation");CloudApi(this).request("POST","/contacts/confirm",JSONObject().put("invitation",id).put("code",c)) } }
-        DeliveryUi.button(accountForm,R.string.guardian_usage) { refresh() }
-        DeliveryUi.button(accountForm,R.string.mail_retry) { FamilyUi.io(this,{ CloudOutbox.retry(this,manual=true) }) { refresh() } }
-        DeliveryUi.button(accountForm,R.string.guardian_logout) { FamilyUi.io(this,{ CloudApi(this).logout() }) { status.setText(R.string.guardian_login_required) } }
-        DeliveryUi.button(accountForm,R.string.guardian_delete_account,red=true) {
+        val credentials=DeliveryUi.section(accountForm,R.string.guardian_login)
+        val email=FamilyUi.field(credentials,R.string.guardian_email,R.id.guardianEmail,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+        val password=FamilyUi.field(credentials,R.string.smtp_password,R.id.guardianPassword,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
+        val code=FamilyUi.field(credentials,R.string.guardian_code,R.id.guardianCode,type=InputType.TYPE_CLASS_NUMBER)
+        val manage=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE;accountForm.addView(this) }
+        var mode="LOGIN"
+        lateinit var submit: androidx.appcompat.widget.AppCompatButton
+        lateinit var signup: androidx.appcompat.widget.AppCompatButton
+        lateinit var forgot: androidx.appcompat.widget.AppCompatButton
+        lateinit var login: androidx.appcompat.widget.AppCompatButton
+        fun visible(view: android.view.View,show: Boolean) { view.visibility=if(show) android.view.View.VISIBLE else android.view.View.GONE }
+        fun fieldVisible(view: EditText,show: Boolean) {
+            visible(view,show);val parent=view.parent as LinearLayout;visible(parent.getChildAt(parent.indexOfChild(view)-1),show)
+        }
+        fun renderAuth(signedIn: Boolean=false) {
+            visible(credentials,!signedIn);visible(manage,signedIn)
+            fieldVisible(password,mode in listOf("LOGIN","SIGNUP","RESET"));fieldVisible(code,mode in listOf("CONFIRM","RESET"))
+            submit.setText(when(mode) { "SIGNUP" -> R.string.guardian_signup;"CONFIRM" -> R.string.guardian_confirm;"FORGOT" -> R.string.guardian_forgot;"RESET" -> R.string.guardian_reset_password;else -> R.string.guardian_login })
+            (credentials.getChildAt(0) as TextView).text=submit.text
+            visible(signup,mode=="LOGIN");visible(forgot,mode=="LOGIN");visible(login,mode!="LOGIN")
+        }
+        submit=DeliveryUi.button(credentials,R.string.guardian_login,R.id.guardianAuthSubmit) {
+            val action=mode;val e=email.text.toString();val p=password.text.toString();val c=code.text.toString();password.text.clear();submit.isEnabled=false
+            FamilyUi.io(this,{ runCatching { when(action) {
+                "SIGNUP" -> CloudApi(this).signup(e,p)
+                "CONFIRM" -> CloudApi(this).confirm(e,c)
+                "FORGOT" -> CloudApi(this).forgot(e)
+                "RESET" -> CloudApi(this).reset(e,c,p)
+                else -> CloudApi(this).authenticate(e,p)
+            } } }) { result ->
+                submit.isEnabled=true;status.setText(if(result.isSuccess) R.string.guardian_auth_ok else R.string.guardian_auth_failed)
+                if(result.isSuccess) {
+                    mode=when(action) { "SIGNUP" -> "CONFIRM";"FORGOT" -> "RESET";else -> "LOGIN" }
+                    code.text.clear()
+                }
+                val signedIn=CloudApi.config(this).optString("idToken").isNotBlank();renderAuth(signedIn)
+                if(result.isSuccess && signedIn) { CloudOutbox.retry(this);refresh() }
+            }
+        }
+        signup=DeliveryUi.button(credentials,R.string.guardian_signup) { mode="SIGNUP";renderAuth() }
+        forgot=DeliveryUi.button(credentials,R.string.guardian_forgot) { mode="FORGOT";renderAuth() }
+        login=DeliveryUi.button(credentials,R.string.guardian_login) { mode="LOGIN";renderAuth() }
+        renderAuth()
+        FamilyUi.io(this,{ CloudApi.config(this).optString("idToken").isNotBlank() }) { renderAuth(it) }
+        DeliveryUi.button(manage,R.string.guardian_usage) { refresh() }
+        DeliveryUi.button(manage,R.string.mail_retry) { FamilyUi.io(this,{ CloudOutbox.retry(this,manual=true) }) { refresh() } }
+        val contacts=com.nexvary.recorder.ui.SettingsSections.add(manage,R.string.fs_contacts)
+        val contactEmail=FamilyUi.field(contacts,R.string.fs_email,R.id.guardianContactEmail,type=InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+        val contactCode=FamilyUi.field(contacts,R.string.guardian_code,R.id.guardianContactCode,type=InputType.TYPE_CLASS_NUMBER)
+        fun contactAction(action: () -> Unit) { FamilyUi.io(this,{ runCatching(action) }) { status.setText(if(it.isSuccess) R.string.guardian_auth_ok else R.string.guardian_auth_failed) } }
+        DeliveryUi.button(contacts,R.string.guardian_invite) { val e=contactEmail.text.toString();contactAction { val result=CloudApi(this).request("POST","/contacts/invite",JSONObject().put("email",e));FamilyStore(this).update { it.put("cloudInvitation",result.getString("invitation")) } } }
+        DeliveryUi.button(contacts,R.string.guardian_confirm_contact) { val c=contactCode.text.toString();contactAction { val id=FamilyStore(this).snapshot().optString("cloudInvitation");CloudApi(this).request("POST","/contacts/confirm",JSONObject().put("invitation",id).put("code",c)) } }
+        DeliveryUi.button(manage,R.string.guardian_logout) { FamilyUi.io(this,{ CloudApi(this).logout() }) { mode="LOGIN";renderAuth();status.setText(R.string.guardian_login_required) } }
+        val deletion=com.nexvary.recorder.ui.SettingsSections.add(manage,R.string.guardian_delete_account)
+        DeliveryUi.button(deletion,R.string.guardian_delete_account,red=true) {
             MaterialAlertDialogBuilder(this).setMessage(R.string.guardian_delete_note).setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.guardian_delete_account) { _,_ ->
-                FamilyUi.io(this,{ runCatching { CloudApi(this).request("DELETE","/account");FamilyStore(this).update { it.remove("cloud");it.remove("cloudUsage");it.remove("cloudEvents");it.remove("verifiedEntitlement") } } }) { result -> status.setText(if(result.isSuccess) R.string.guardian_deleted else R.string.guardian_auth_failed) }
+                FamilyUi.io(this,{ runCatching { CloudApi(this).request("DELETE","/account");FamilyStore(this).update { it.remove("cloud");it.remove("cloudUsage");it.remove("cloudEvents");it.remove("verifiedEntitlement") } } }) { result ->
+                    status.setText(if(result.isSuccess) R.string.guardian_deleted else R.string.guardian_auth_failed)
+                    if(result.isSuccess) { renderAuth();accountForm.visibility=android.view.View.GONE }
+                }
             }.show()
         }
+        root.addView(connectionTools)
         events=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;root.addView(this) }
         renderCached()
     }

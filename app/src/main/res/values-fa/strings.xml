@@ -648,4 +648,22 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="service_legacy_note">فقط اتصال‌های قبلی AWS. حساب عادی به این فیلدها نیاز ندارد. کلید محرمانه AWS یا SES وارد نکنید.</string>
     <string name="service_account_note">حساب بسازید، کد ایمیل را تأیید و وارد شوید. مؤسسه ممکن است ثبت‌نام را محدود کند.</string>
     <string name="service_busy">سرویس شلوغ است؛ ارسال ابری ممکن است تأخیر داشته باشد. SOS محلی در دسترس است.</string>
+    <string name="settings_intro">بخش مورد نظر را انتخاب کنید. ضبط محلی بدون حساب کار می‌کند.</string>
+    <string name="settings_safety">تنظیم ایمنی خانواده</string>
+    <string name="settings_safety_note">با یک مخاطب مطمئن شروع کنید، داده‌های اشتراکی را انتخاب کنید و تنظیمات را با رمز محافظت کنید.</string>
+    <string name="settings_appearance">زبان و ظاهر</string>
+    <string name="settings_appearance_note">تغییر زبان و پوسته.</string>
+    <string name="settings_account">حساب و ارسال</string>
+    <string name="settings_account_note">اختیاری: اتصال به سرویس شخصی یا سازمانی.</string>
+    <string name="settings_advanced">گزینه‌های بیشتر</string>
+    <string name="settings_advanced_note">عیب‌یابی ارسال و رفع مشکل.</string>
+    <string name="settings_sharing">در وضعیت اضطراری چه چیزی به اشتراک بگذاریم؟</string>
+    <string name="settings_sharing_note">نام، پیام و اجازه‌های اشتراک را انتخاب کنید. ارسال به سرویس پیکربندی‌شده نیاز دارد.</string>
+    <string name="settings_evidence">ضبط مدرک و آزمایش</string>
+    <string name="settings_evidence_note">نوع ضبط را انتخاب کنید یا آزمایش محلی انجام دهید. باز کردن گزینه‌ها ضبط را آغاز نمی‌کند.</string>
+    <string name="settings_device">دستگاه و هشدارهای خودکار</string>
+    <string name="settings_device_note">گزینه‌های اختیاری باتری، حرکت و دکمه‌ها.</string>
+    <string name="settings_pin">رمز سرپرست</string>
+    <string name="settings_timer_options">گزینه‌های زمان‌سنج</string>
+    <string name="timer_remaining">زمان باقی‌مانده: %1$d:%2$02d</string>
 </resources>
