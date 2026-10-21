@@ -20,8 +20,9 @@ class SafetyCheckManager(private val context: Context) {
     fun start(minutes: Long, graceSeconds: Int, journey: JSONObject? = null): SafetyState {
         require(SafetyPolicy.validMinutes(minutes) && SafetyPolicy.validGrace(graceSeconds))
         if(journey!=null) check(com.nexvary.recorder.billing.EntitlementManager(context).canUse(com.nexvary.recorder.billing.SafetyFeature.JOURNEY))
+        if(journey!=null) require(FamilyStore.contacts(store.snapshot()).let { contacts -> (0 until contacts.length()).any { contacts.getJSONObject(it).optString("id")==journey.optString("contactId") } })
         val state = SafetyState(UUID.randomUUID().toString(),SafetyPhase.ARMED,
-            SafetyDeadline(System.currentTimeMillis()+minutes*60_000,SystemClock.elapsedRealtime()+minutes*60_000,boot()),graceSeconds)
+            SafetyDeadline(System.currentTimeMillis()+minutes*60_000,SystemClock.elapsedRealtime()+minutes*60_000,boot()),graceSeconds,if(journey==null) "CHECK_IN" else "JOURNEY_TIMEOUT")
         store.update { root ->
             check(FamilyStore.state(root)?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE))
             FamilyStore.putState(root,state); root.remove("alertPrepared");root.remove("batterySent");root.remove("arrivalCandidate");root.remove("reminderSent");root.remove("batterySaverActive")
@@ -30,11 +31,15 @@ class SafetyCheckManager(private val context: Context) {
         }
         schedule();notifyState(state);return state
     }
-    fun sos(immediate: Boolean = false, reason: String = "SOS"): SafetyState {
+    fun sos(immediate: Boolean = false, reason: String = "SOS", expectedId: String? = null): SafetyState {
         val state = store.update { root ->
             val existing = FamilyStore.state(root)
+            if(expectedId!=null) check(existing!=null && existing.id==expectedId && existing.phase in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE))
             if(existing?.phase == SafetyPhase.SOS_ACTIVE) return@update existing
             if(existing?.phase == SafetyPhase.COUNTDOWN && !immediate) return@update existing
+            if(existing?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN)) {
+                root.remove("journey");root.remove("batterySent");root.remove("batterySaverActive");root.remove("locationAlertFor");root.remove("reminderSent")
+            }
             val state = SafetyState(existing?.takeIf { it.phase in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN) }?.id ?: UUID.randomUUID().toString(),
                 if(immediate) SafetyPhase.SOS_ACTIVE else SafetyPhase.COUNTDOWN,
                 SafetyDeadline(System.currentTimeMillis()+20_000,SystemClock.elapsedRealtime()+20_000,boot()),20,reason)
@@ -44,21 +49,29 @@ class SafetyCheckManager(private val context: Context) {
         if(state.phase == SafetyPhase.SOS_ACTIVE) prepareEmergency()
         schedule();notifyState(state);return state
     }
-    fun resolve(expectedId: String?, cancelled: Boolean = false): Boolean {
+    fun resolve(expectedId: String?, cancelled: Boolean = false, journeyArrival: Boolean = false): Boolean {
         val changed = store.update { root ->
             val old = FamilyStore.state(root) ?: return@update false
             if(expectedId != null && old.id != expectedId) return@update false
             if(old.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)) return@update false
+            if(journeyArrival) {
+                if(!SafetyPolicy.arrivalAllowed(old)) return@update false
+                val payload=AlertPayload.create(context,root,"SAFE_ARRIVAL",UUID.randomUUID().toString())
+                EmergencyQueue.enqueue(root,payload);FamilyStore.event(root,"JOURNEY_COMPLETED")
+            }
             FamilyStore.putState(root,old.copy(phase=if(cancelled) SafetyPhase.CANCELLED else SafetyPhase.RESOLVED))
             FamilyStore.event(root,if(cancelled) "SOS_CANCELLED" else "CHECK_CONFIRMED")
-            if(cancelled) FamilyStore.jobs(root).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { if(it.optString("status") !in listOf("SENT","SENDING")) it.put("status","CANCELLED") } } }
+            FamilyStore.jobs(root).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { job ->
+                val payload=job.optJSONObject("payload")
+                if(payload?.optString("sessionId")==old.id && payload.optString("eventType") !in listOf("SAFE_ARRIVAL","TEST_ALERT") && job.optString("status") !in listOf("SENT","SENDING")) job.put("status","CANCELLED")
+            } } }
             true
         }
         if(changed) {
             context.stopService(Intent(context,SafetyLocationService::class.java))
             EvidenceManager.stopOwned(context,expectedId)
             context.getSystemService(NotificationManager::class.java).cancel(NOTIFICATION)
-            schedule()
+            schedule();if(journeyArrival) SafetyAlertWorker.reconcile(context)
         }
         return changed
     }
@@ -105,6 +118,7 @@ class SafetyCheckManager(private val context: Context) {
     }
     fun emit(type: String, manual: Boolean = false, test: Boolean = false) {
         store.update { root ->
+            if(!manual && !test && FamilyStore.state(root)?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)) return@update
             val payload = AlertPayload.create(context,root,type,UUID.randomUUID().toString(),test)
             root.put("lastAlert",payload);EmergencyQueue.enqueue(root,payload,manual)
             FamilyStore.event(root,if(test) "TEST_ALERT_QUEUED" else type)
@@ -163,7 +177,7 @@ class SafetyActionReceiver: BroadcastReceiver() {
                 when(intent.action) {
                     "SAFE" -> manager.resolve(intent.getStringExtra("id"))
                     "EXTEND" -> manager.extend(intent.getStringExtra("id"))
-                    "TRIGGER_SOS" -> if(FamilyStore.state(FamilyStore(context).snapshot())?.id == intent.getStringExtra("id")) manager.sos()
+                    "TRIGGER_SOS" -> if(FamilyStore.state(FamilyStore(context).snapshot())?.id == intent.getStringExtra("id")) manager.sos(expectedId=intent.getStringExtra("id"))
                     else -> manager.evaluate(true)
                 }
             } catch(_: Exception) { WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<SafetyTickWorker>().build()) }

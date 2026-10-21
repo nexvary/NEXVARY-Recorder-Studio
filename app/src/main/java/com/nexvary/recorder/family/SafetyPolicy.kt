@@ -22,6 +22,7 @@ object SafetyPolicy {
     }
     fun batteryCrossings(previous: Int, current: Int, already: Set<Int>) =
         listOf(15,10,5).filter { current in 0..it && previous > it && it !in already }
+    fun arrivalAllowed(state: SafetyState?)=state?.reason=="JOURNEY_TIMEOUT" && state.phase in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN)
     fun arrived(distanceMeters: Float, accuracyMeters: Float, ageMs: Long, radiusMeters: Float = 100f) =
         distanceMeters.isFinite() && distanceMeters >= 0 && accuracyMeters in 0f..100f &&
             ageMs in 0..120_000 && distanceMeters + accuracyMeters <= radiusMeters

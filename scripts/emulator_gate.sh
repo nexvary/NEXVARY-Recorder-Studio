@@ -21,6 +21,7 @@ adb shell dumpsys window windows > diagnostics/windows.txt
 adb pull /sdcard/Pictures/NEXVARYVisualEvidence/. screenshots/ || true
 if [ "$status" -eq 0 ]; then
   adb pull /sdcard/Download/NEXVARYTestEvidence/quality-measurements.json diagnostics/quality-measurements.json
+  adb pull /sdcard/Download/NEXVARYTestEvidence/family-evidence-measurements.json diagnostics/family-evidence-measurements.json
 fi
 # A screenshot is evidence only when the instrumentation gate succeeds.
 if [ "$status" -ne 0 ]; then

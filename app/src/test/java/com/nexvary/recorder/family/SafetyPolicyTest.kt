@@ -34,6 +34,13 @@ class SafetyPolicyTest {
         assertFalse(SafetyPolicy.arrived(30f,101f,1000));assertFalse(SafetyPolicy.arrived(30f,20f,180_000))
         assertFalse(SafetyPolicy.arrived(95f,20f,1000))
     }
+    @Test fun arrivalNeverAutomaticallyResolvesAnActiveOrManualSos() {
+        val journey=SafetyState("journey",SafetyPhase.ARMED,SafetyDeadline(0,0,0),reason="JOURNEY_TIMEOUT")
+        assertTrue(SafetyPolicy.arrivalAllowed(journey));assertTrue(SafetyPolicy.arrivalAllowed(journey.copy(phase=SafetyPhase.COUNTDOWN)))
+        assertFalse(SafetyPolicy.arrivalAllowed(journey.copy(phase=SafetyPhase.SOS_ACTIVE)))
+        assertFalse(SafetyPolicy.arrivalAllowed(journey.copy(reason="SOS",phase=SafetyPhase.COUNTDOWN)))
+        assertFalse(SafetyPolicy.arrivalAllowed(null))
+    }
     @Test fun motionSignalsAreHeuristicAndHaveACooldown() {
         val detector=MotionDetector(1)
         assertNull(detector.sample(0f,0f,9.8f,0))

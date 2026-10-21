@@ -19,6 +19,7 @@ class AudioEvidenceService: Service() {
     private var recorder: MediaRecorder?=null
     private var file: File?=null
     private var started=false
+    private var closing=false
     private var requested=false
     private var event=""
     override fun onBind(intent: Intent?)=null
@@ -57,6 +58,7 @@ class AudioEvidenceService: Service() {
         return START_NOT_STICKY
     }
     private fun close() {
+        if(closing) return;closing=true
         val media=recorder ?: run { runCatching { FamilyStore(this).update { EvidenceManager.action(it,event,"FAILED") } };stopSelf();return };recorder=null
         val valid=started && runCatching { media.stop() }.isSuccess
         runCatching { media.release() }

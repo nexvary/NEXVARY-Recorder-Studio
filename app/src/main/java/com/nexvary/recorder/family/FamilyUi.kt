@@ -21,6 +21,7 @@ object FamilyUi {
         }
     }
     fun field(root: LinearLayout,label: Int,id: Int,value: String="",type: Int=InputType.TYPE_CLASS_TEXT) = DeliveryUi.field(root,label,id,value,type).apply {
+        isSaveEnabled=false
         if(type==InputType.TYPE_CLASS_TEXT) textDirection=android.view.View.TEXT_DIRECTION_LOCALE
         if(type and InputType.TYPE_NUMBER_VARIATION_PASSWORD != 0 && type and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_NUMBER) {
             transformationMethod=android.text.method.PasswordTransformationMethod.getInstance();importantForAutofill=android.view.View.IMPORTANT_FOR_AUTOFILL_NO

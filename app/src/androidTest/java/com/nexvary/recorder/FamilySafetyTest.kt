@@ -84,7 +84,7 @@ class FamilySafetyTest {
         LocalSmtpFixture(assets.open("smtp-test-key.b64").use { it.readBytes() },assets.open("smtp-test-cert.b64").use { it.readBytes() },true).use { server ->
             val sender=SmtpSender("TEST ALERT — local fixture","No external recipient",server.factory)
             try {
-                sender.sendAlert(SmtpProfile("127.0.0.1",server.port,true,"fixture","fixture-password","sender@example.invalid",25),UUID.randomUUID().toString(),"guardian@example.invalid",JSONObject().put("eventType","TEST_ALERT").toString()) { }
+                sender.sendAlert(SmtpProfile("127.0.0.1",server.port,true,"fixture-user","fixture-password","sender@example.invalid",25),UUID.randomUUID().toString(),"guardian@example.invalid",JSONObject().put("eventType","TEST_ALERT").toString()) { }
                 val mime=jakarta.mail.internet.MimeMessage(jakarta.mail.Session.getInstance(java.util.Properties()),server.received.inputStream())
                 assertTrue(mime.subject.contains("TEST ALERT"))
                 val parts=mime.content as jakarta.mail.internet.MimeMultipart
@@ -95,7 +95,8 @@ class FamilySafetyTest {
     @Test fun safetyStateSurvivesActivityRecreationAndStaleCancelCannotStopNewSession() {
         val manager=SafetyCheckManager(context);val first=manager.start(15,60)
         ActivityScenario.launch(FamilyDashboardActivity::class.java).use { scenario ->
-            awaitUi(withId(R.id.fsSafe));scenario.recreate();awaitUi(withId(R.id.fsSafe))
+            awaitUi(withId(R.id.fsSafe));onView(withId(R.id.fsMinutes)).perform(reveal(),replaceText("80"),closeSoftKeyboard())
+            scenario.recreate();awaitUi(withId(R.id.fsSafe));onView(withId(R.id.fsMinutes)).perform(reveal()).check(matches(withText("80")))
             assertEquals(first.id,FamilyStore.state(FamilyStore(context).snapshot())!!.id)
             onView(withId(R.id.fsSafe)).perform(reveal(),click())
             await { FamilyStore.state(FamilyStore(context).snapshot())?.phase==SafetyPhase.RESOLVED }
@@ -140,12 +141,15 @@ class FamilySafetyTest {
                 await(30_000) { manifest=findManifest(id);manifest!=null }
                 assertTrue(manifest!!.getLong("durationMs") in 8_000..14_000)
                 assertTrue(EvidenceManager.verify(context,manifest!!));assertTrue(EmergencyQueue(context).all().isEmpty())
+                val file=File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES),manifest!!.getString("fileName"))
+                file.appendBytes(byteArrayOf(1));assertFalse(EvidenceManager.verify(context,manifest!!))
             }
         } finally { context.stopService(Intent(context,AudioEvidenceService::class.java));manifest?.let { File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES),it.getString("fileName")).delete() } }
     }
     @Test fun actualTenSecondEmergencyVideoHasManifestAndNoExternalUpload() {
         instrumentation.uiAutomation.grantRuntimePermission(context.packageName,Manifest.permission.CAMERA)
         val id=UUID.randomUUID().toString();var manifest: JSONObject?=null
+        val cpuBefore=android.os.Process.getElapsedCpuTime();val wallBefore=SystemClock.elapsedRealtime()
         try {
             ActivityScenario.launch(FamilyDashboardActivity::class.java).use { scenario ->
                 awaitUi(withId(R.id.fsSafe))
@@ -155,6 +159,19 @@ class FamilySafetyTest {
                 assertTrue(manifest!!.getLong("durationMs") in 8_000..14_000)
                 assertTrue(EvidenceManager.verify(context,manifest!!));assertTrue(EmergencyQueue(context).all().isEmpty())
                 assertTrue("Emergency size budget",manifest!!.getLong("fileSize")<2_500_000)
+                val memory=android.os.Debug.MemoryInfo();android.os.Debug.getMemoryInfo(memory)
+                val measurement=JSONObject().put("source","Instrumented smoke sample; not battery/thermal endurance certification")
+                    .put("api",android.os.Build.VERSION.SDK_INT).put("model",android.os.Build.MODEL).put("profile","emergency")
+                    .put("durationMs",manifest!!.getLong("durationMs")).put("bytes",manifest!!.getLong("fileSize")).put("sha256",manifest!!.getString("sha256"))
+                    .put("sampleWallMs",SystemClock.elapsedRealtime()-wallBefore).put("processCpuMsDelta",android.os.Process.getElapsedCpuTime()-cpuBefore)
+                    .put("totalPssKB",memory.totalPss).put("nativePssKB",memory.nativePss)
+                    .put("thermalStatus",context.getSystemService(android.os.PowerManager::class.java).currentThermalStatus).put("availableStorageBytes",EvidenceManager.storageBytes(context))
+                val uri=checkNotNull(context.contentResolver.insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,android.content.ContentValues().apply {
+                    put(android.provider.MediaStore.Downloads.DISPLAY_NAME,"family-evidence-measurements.json");put(android.provider.MediaStore.Downloads.MIME_TYPE,"application/json")
+                    put(android.provider.MediaStore.Downloads.RELATIVE_PATH,"Download/NEXVARYTestEvidence");put(android.provider.MediaStore.Downloads.IS_PENDING,1)
+                }))
+                checkNotNull(context.contentResolver.openOutputStream(uri)).bufferedWriter().use { it.write(measurement.toString(2)) }
+                context.contentResolver.update(uri,android.content.ContentValues().apply { put(android.provider.MediaStore.Downloads.IS_PENDING,0) },null,null)
             }
         } finally { context.stopService(Intent(context,BackgroundCameraService::class.java));manifest?.let { File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES),it.getString("fileName")).delete() } }
     }
@@ -201,6 +218,32 @@ class FamilySafetyTest {
             ActivityScenario.launch(page).use { awaitUi(withId(R.id.btnBack));onView(withId(R.id.btnBack)).perform(reveal(),click()) }
         }
         assertTrue(EmergencyQueue(context).all().isEmpty())
+    }
+    @Test fun smtpDiagnosticStoresOnlyFixedCategoryAndInvalidatesChangedCredentials()=isolated { app ->
+        SmtpDiagnostics.record(app,profile,"OK")
+        assertEquals("OK",SmtpDiagnostics.last(app,profile)!!.getString("result"))
+        assertNull(SmtpDiagnostics.last(app,profile.copy(password="different fixture")))
+        val diagnostic=FamilyStore(app).snapshot().getJSONObject("smtpDiagnostic").toString()
+        assertFalse(diagnostic.contains(profile.password));assertFalse(diagnostic.contains(profile.username));assertFalse(diagnostic.contains(profile.host))
+    }
+    @Test fun newManualSosClearsOldJourneyAndResolutionCancelsOnlyOwnQueuedAlerts() {
+        val guardian=contact();TrustedContactsRepository(context).save(guardian)
+        val store=FamilyStore(context);store.update { it.put("config",JSONObject().put("autoShare",true)) }
+        val manager=SafetyCheckManager(context)
+        val journey=manager.start(15,60,JSONObject().put("latitude",12.0).put("longitude",34.0).put("contactId",guardian.getString("id")))
+        manager.resolve(journey.id,true)
+        val sos=manager.sos(false)
+        assertFalse(store.snapshot().has("journey"))
+        store.update { root ->
+            EmergencyQueue.enqueue(root,AlertPayload.create(context,root,"SOS",UUID.randomUUID().toString()))
+            EmergencyQueue.enqueue(root,AlertPayload.create(context,root,"TEST_ALERT",UUID.randomUUID().toString(),true),true)
+        }
+        store.update { it.getJSONObject("config").put("autoShare",false) }
+        manager.resolve(sos.id)
+        val jobs=EmergencyQueue(context).all()
+        assertEquals("CANCELLED",jobs.first { it.getJSONObject("payload").getString("eventType")=="SOS" }.getString("status"))
+        assertTrue(jobs.any { it.getJSONObject("payload").getString("eventType")=="TEST_ALERT" })
+        // No reconciliation is performed: these synthetic jobs never reach SMTP.
     }
     private fun findManifest(id: String): JSONObject? = FamilyStore(context).snapshot().optJSONObject("evidence")?.let { rows -> rows.keys().asSequence().map { rows.getJSONObject(it) }.firstOrNull { it.optString("eventId")==id } }
     private fun await(timeout: Long=10_000,predicate: () -> Boolean) {

@@ -23,6 +23,7 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
             val immediate=FamilyUi.check(root,R.string.fs_immediate_consent,config.optBoolean("immediate"))
             val audible=FamilyUi.check(root,R.string.fs_audible,config.optBoolean("audible"))
             val device=FamilyUi.check(root,R.string.fs_share_device,config.optBoolean("shareDevice"))
+            DeliveryUi.text(root,R.string.fs_monitor_note)
             val battery=FamilyUi.check(root,R.string.fs_battery_alerts,config.optBoolean("batteryAlerts"))
             val saver=FamilyUi.check(root,R.string.fs_battery_saver,config.optBoolean("batterySaver"))
             val motion=FamilyUi.check(root,R.string.fs_motion_consent,config.optBoolean("motion"))
@@ -40,6 +41,12 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
             val lat=FamilyUi.field(destination,R.string.fs_latitude,R.id.fsLatitude,dest.optString("latitude"),InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
             val lon=FamilyUi.field(destination,R.string.fs_longitude,R.id.fsLongitude,dest.optString("longitude"),InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
             DeliveryUi.text(destination,R.string.fs_journey_note)
+            DeliveryUi.text(destination,R.string.fs_journey_guardian)
+            val guardians=FamilyStore.contacts(data).let { contacts -> (0 until contacts.length()).map { contacts.getJSONObject(it) } }
+            val guardian=Spinner(this).apply {
+                adapter=ArrayAdapter(this@FamilySettingsActivity,android.R.layout.simple_spinner_dropdown_item,if(guardians.isEmpty()) listOf(getString(R.string.fs_none)) else guardians.map { it.optString("name") })
+                setSelection(guardians.indexOfFirst { it.optString("id")==dest.optString("contactId") }.coerceAtLeast(0));destination.addView(this)
+            }
             DeliveryUi.button(root,R.string.rescue_save,R.id.fsSaveSettings) {
                 val latitude=DeliveryPolicy.digits(lat.text.toString()).replace('٫','.').toDoubleOrNull()
                 val longitude=DeliveryPolicy.digits(lon.text.toString()).replace('٫','.').toDoubleOrNull()
@@ -53,7 +60,7 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
                     .put("motion",motion.isChecked).put("sensitivity",sensitivity.selectedItemPosition).put("volumeTrigger",volume.isChecked)
                     .put("evidence",listOf("NONE","AUDIO","VIDEO","PHOTO")[evidence.selectedItemPosition]).put("autoEvidence",autoEvidence.isChecked)
                     .put("videoMic",videoMic.isChecked).put("showMedical",config.optBoolean("showMedical")).put("shareMedical",config.optBoolean("shareMedical"))
-                if(destName.text.isNotBlank()) value.put("destination",JSONObject().put("name",destName.text.toString().take(120)).put("latitude",latitude).put("longitude",longitude))
+                if(destName.text.isNotBlank()) value.put("destination",JSONObject().put("name",destName.text.toString().take(120)).put("latitude",latitude).put("longitude",longitude).put("contactId",guardians.getOrNull(guardian.selectedItemPosition)?.optString("id").orEmpty()))
                 MaterialAlertDialogBuilder(this).setTitle(R.string.fs_consent_review)
                     .setMessage(getString(if(share.isChecked) R.string.fs_sharing_review else R.string.fs_local_only))
                     .setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.rescue_save) { _,_ ->
@@ -63,7 +70,7 @@ class FamilySettingsActivity: ProtectedFamilyPage() {
                                 if(!value.optBoolean("autoShare")) FamilyStore.jobs(state).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { if(!it.optBoolean("manual") && it.optString("status") !in listOf("SENT","SENDING")) it.put("status","CANCELLED") } } }
                                 FamilyStore.event(state,"CONFIGURATION_UPDATED")
                             }
-                            if(!value.optBoolean("location")) stopService(Intent(this,SafetyLocationService::class.java))
+                            stopService(Intent(this,SafetyLocationService::class.java)) // Resume visibly with the new consent/settings.
                         }) { Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show() }
                     }.show()
             }
@@ -77,6 +84,18 @@ class TrustedContactsActivity: ProtectedFamilyPage() {
     override fun build() {
         DeliveryUi.text(root,R.string.fs_contacts_note)
         DeliveryUi.button(root,R.string.rescue_add,R.id.fsAddContact) { edit(null) }
+        DeliveryUi.button(root,R.string.fs_import_rescue) {
+            MaterialAlertDialogBuilder(this).setMessage(R.string.fs_import_note).setNegativeButton(R.string.cancel,null)
+                .setPositiveButton(R.string.rescue_continue) { _,_ -> FamilyUi.io(this,{
+                    val repository=TrustedContactsRepository(this);val old=RescueCardsStore(this).read();var count=0
+                    for(i in 0 until old.length()) {
+                        val item=old.getJSONObject(i);val phone=com.nexvary.recorder.safety.RescuePolicy.normalizePhone(item.optString("phone"))
+                        if(repository.all().none { it.optString("phone")==phone } && com.nexvary.recorder.safety.RescuePolicy.validPhone(phone)) {
+                            repository.save(JSONObject().put("name",item.optString("name")).put("phone",phone).put("channel","SMS").put("role","EMERGENCY").put("relationship",""));count++
+                        }
+                    };count
+                }) { count -> Toast.makeText(this,getString(R.string.fs_import_count,count),Toast.LENGTH_LONG).show();render() } }.show()
+        }
         rows=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;root.addView(this) };render()
     }
     private fun render() {
@@ -130,7 +149,7 @@ class EmergencyProfileActivity: ProtectedFamilyPage() {
             val fields=listOf("name" to R.string.fs_full_name,"age" to R.string.fs_age,"blood" to R.string.fs_blood,
                 "allergies" to R.string.fs_allergies,"medications" to R.string.fs_medications,"notes" to R.string.fs_medical_notes,
                 "guardian" to R.string.fs_guardian,"phone" to R.string.fs_emergency_phone,"secondary" to R.string.fs_secondary_phone)
-            val editors=fields.map { (key,label) -> key to FamilyUi.field(root,label,View.generateViewId(),profile.optString(key)) }
+            val editors=fields.map { (key,label) -> key to FamilyUi.field(root,label,View.generateViewId(),profile.optString(key),if(key in listOf("phone","secondary")) InputType.TYPE_CLASS_PHONE else if(key=="age") InputType.TYPE_CLASS_NUMBER else InputType.TYPE_CLASS_TEXT) }
             val show=FamilyUi.check(root,R.string.fs_show_medical,FamilyStore.config(data).optBoolean("showMedical"))
             val share=FamilyUi.check(root,R.string.fs_share_medical,FamilyStore.config(data).optBoolean("shareMedical"))
             DeliveryUi.button(root,R.string.rescue_save,R.id.fsSaveProfile) {

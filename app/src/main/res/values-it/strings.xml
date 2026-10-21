@@ -397,7 +397,7 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="fs_journey_configure">Configure a destination in guardian settings and enable active-session location permission first.</string>
     <string name="fs_distance">Distance to destination: about %1$d m</string>
     <string name="fs_none">Not selected</string>
-    <string name="fs_dashboard_status">Remaining: %1$d:%2$02d\nGuardian: %3$s\nBattery: %4$d%% · Network: %5$s</string>
+    <string name="fs_dashboard_status">Remaining: %1$d:%2$02d\nGuardian: %3$s\nBattery: %4$s · Network: %5$s</string>
     <string name="fs_local_only">Local alerts only. Automatic sharing with guardians is off.</string>
     <string name="fs_sharing_on">Automatic alerts may be sent to your saved trusted contacts using the consented channels.</string>
     <string name="fs_limits_note">Emergency assistance tools help you check in and record evidence. Delivery and exact timing depend on the device, permissions and network. Physical OPPO/Samsung/Pixel verification is pending.</string>
@@ -520,4 +520,12 @@ You must confirm sending in the messaging app. With an image, choose an app and 
     <string name="fs_location_available">Location snapshot saved — see its timestamp in the alert</string>
     <string name="fs_storage_minutes">Emergency video estimate: ~%1$d minutes available</string>
     <string name="fs_storage_low">Storage is low. Save or export existing recordings.</string>
+    <string name="fs_monitor_note">Battery, connectivity and motion monitoring run with the active-session location service. The timer and queued email still work without location.</string>
+    <string name="fs_journey_guardian">Trusted contact for arrival and overdue alerts</string>
+    <string name="fs_import_rescue">Import Quick Rescue contacts</string>
+    <string name="fs_import_note">Import saved Quick Rescue phone contacts into Family Circle as manual SMS contacts? Sharing remains opt-in.</string>
+    <string name="fs_import_count">Contacts imported: %1$d</string>
+    <string name="fs_smtp_test_time">Last connection/authentication test: %1$s</string>
+    <string name="fs_emergency_size">Emergency video: up to 480p, ~%1$.1f MB/min with audio. Actual size varies by device.</string>
+    <string name="fs_evidence_action_required">Start evidence from this screen after granting camera/microphone permission. Background capture is not started automatically.</string>
 </resources>

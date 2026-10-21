@@ -38,6 +38,7 @@ object AlertPayload {
             else (now-it.optLong("timestamp",0)).takeIf { value -> value>=0 }
         }
         return JSONObject().put("schemaVersion",1).put("eventId",id).put("eventType",if(test) "TEST_ALERT" else type)
+            .put("sessionId",if(test) JSONObject.NULL else FamilyStore.state(root)?.id ?: JSONObject.NULL)
             .put("timestamp",Instant.ofEpochMilli(now).toString()).put("timezone",ZoneId.systemDefault().id)
             .put("displayName",config.optString("displayName"))
             .put("location",if(age != null && age <= 120_000 && last?.optInt("boot",-2)==boot && boot>=0) last else JSONObject.NULL)

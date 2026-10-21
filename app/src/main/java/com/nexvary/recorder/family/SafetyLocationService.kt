@@ -89,8 +89,9 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
         if(!fix.hasAccuracy() || !fix.latitude.isFinite() || !fix.longitude.isFinite()) return
         val age=(SystemClock.elapsedRealtimeNanos()-fix.elapsedRealtimeNanos)/1_000_000
         if(age !in 0..120_000) return
-        var arrived=false;var locationAlert=false
+        var arrived=false;var arrivalSession: String?=null;var locationAlert=false
         store.update { root ->
+            if(!FamilyStore.config(root).optBoolean("location")) return@update
             if(FamilyStore.state(root)?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)) return@update
             val snapshot=JSONObject().put("latitude",fix.latitude).put("longitude",fix.longitude).put("accuracy",fix.accuracy)
                 .put("timestamp",fix.time).put("elapsed",fix.elapsedRealtimeNanos/1_000_000).put("boot",android.provider.Settings.Global.getInt(contentResolver,android.provider.Settings.Global.BOOT_COUNT,-1)).put("source","ACTIVE_SAFETY_SESSION")
@@ -103,30 +104,36 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
             val trail=root.optJSONArray("trail") ?: JSONArray();val next=JSONArray()
             for(i in maxOf(0,trail.length()-719) until trail.length()) next.put(trail.get(i))
             next.put(snapshot);root.put("trail",next)
-            root.optJSONObject("journey")?.let { journey ->
+            root.optJSONObject("journey")?.takeIf {
+                SafetyPolicy.arrivalAllowed(FamilyStore.state(root))
+            }?.let { journey ->
                 val result=FloatArray(1)
                 Location.distanceBetween(fix.latitude,fix.longitude,journey.getDouble("latitude"),journey.getDouble("longitude"),result)
                 journey.put("distanceMeters",result[0])
                 if(SafetyPolicy.arrived(result[0],fix.accuracy,age)) {
                     if(arrivalCandidate == 0L) arrivalCandidate=SystemClock.elapsedRealtime()
                     arrived=SystemClock.elapsedRealtime()-arrivalCandidate >= 10_000
+                    if(arrived) arrivalSession=FamilyStore.state(root)?.id
                 } else arrivalCandidate=0
             }
         }
         if(locationAlert) runCatching { SafetyAlertWorker.reconcile(this) }
         if(arrived) {
-            SafetyCheckManager(this).emit("SAFE_ARRIVAL")
-            val state=FamilyStore.state(store.snapshot());SafetyCheckManager(this).resolve(state?.id)
-            store.update { FamilyStore.event(it,"JOURNEY_COMPLETED") }
+            arrivalSession?.let { SafetyCheckManager(this).resolve(it,journeyArrival=true) }
         }
     }
     private fun batteryChanged(level: Int) {
         if(level !in 0..100) return
-        val config=FamilyStore.config(store.snapshot())
+        val root=store.snapshot()
+        if(FamilyStore.state(root)?.phase !in listOf(SafetyPhase.ARMED,SafetyPhase.COUNTDOWN,SafetyPhase.SOS_ACTIVE)) return
+        val config=FamilyStore.config(root)
         val sent=store.snapshot().optJSONArray("batterySent")?.let { arr -> (0 until arr.length()).map { arr.getInt(it) }.toSet() } ?: emptySet()
-        if(config.optBoolean("batteryAlerts")) SafetyPolicy.batteryCrossings(previousBattery,level,sent).forEach { threshold ->
-            store.update { root -> val rows=root.optJSONArray("batterySent") ?: JSONArray();rows.put(threshold);root.put("batterySent",rows) }
-            SafetyCheckManager(this).emit("LOW_BATTERY_$threshold")
+        if(config.optBoolean("batteryAlerts")) {
+            val crossed=SafetyPolicy.batteryCrossings(previousBattery,level,sent)
+            if(crossed.isNotEmpty()) {
+                store.update { root -> val rows=root.optJSONArray("batterySent") ?: JSONArray();crossed.forEach { rows.put(it) };root.put("batterySent",rows) }
+                SafetyCheckManager(this).emit("LOW_BATTERY_${crossed.last()}")
+            }
         }
         if(level <= 5 && config.optBoolean("batterySaver") && !critical) {
             critical=true;registerLocations(300_000);sensors.unregisterListener(this)
@@ -146,8 +153,11 @@ class SafetyLocationService: Service(), LocationListener, SensorEventListener {
         if(event.sensor.type != Sensor.TYPE_ACCELEROMETER || event.values.size < 3) return
         motion?.sample(event.values[0],event.values[1],event.values[2],SystemClock.elapsedRealtime())?.let { g ->
             runCatching {
+                val root=store.snapshot()
+                if(!FamilyStore.config(root).optBoolean("motion")) return@runCatching
+                val state=FamilyStore.state(root) ?: return@runCatching
                 store.update { root -> root.put("lastImpact",JSONObject().put("g",g.toDouble()).put("timestamp",System.currentTimeMillis()));FamilyStore.event(root,"POSSIBLE_IMPACT") }
-                SafetyCheckManager(this).sos(false,"POSSIBLE_IMPACT")
+                SafetyCheckManager(this).sos(false,"POSSIBLE_IMPACT",expectedId=state.id)
             }
         }
     }

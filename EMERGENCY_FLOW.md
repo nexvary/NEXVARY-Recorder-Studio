@@ -4,7 +4,7 @@
 
 `IDLE → ARMED → COUNTDOWN → SOS_ACTIVE → RESOLVED/CANCELLED`
 
-Manual SOS normally enters a 20-second cancellable countdown; prior explicit Immediate Silent SOS consent may skip it. Check-in enters a configurable 20–600-second grace period after expiry. Overdue recovery starts a fresh prompt rather than silently sending on boot. Safe, Extend and Start SOS are available in the app and notification. Repeated countdown triggers do not restart its deadline. A stale notification UUID cannot resolve a newer session.
+Manual SOS normally enters a 20-second cancellable countdown; prior explicit Immediate Silent SOS consent may skip it. Check-in enters a configurable 20–600-second grace period after expiry. Overdue recovery starts a fresh prompt rather than silently sending on boot. Safe, Extend and Start SOS are available in the app and notification. Repeated countdown triggers do not restart its deadline. A stale notification UUID cannot resolve a newer session. Resolution cancels queued actions for that session while preserving a safe-arrival notification and unrelated test messages. Arrival never automatically resolves an active SOS.
 
 The core state is separate from concurrent action states: evidence `USER_ACTION_REQUIRED / STARTING / RECORDING / SAVED / FAILED`, email `QUEUED / SENDING / SENT / RETRY / AUTH / TLS / CONFIG / LIMIT / FAILED / UNCERTAIN / CANCELLED`, and SMS `WAITING_USER / OPENED`. This avoids pretending that evidence, email and future uploads occur in one linear sequence. `UPLOADING` is not reported when no uploader exists.
 

@@ -20,6 +20,7 @@ class SubscriptionActivity: ProtectedFamilyPage() {
         manager.connect()
     }
     private fun render() {
+        if(isFinishing || isDestroyed) return
         status.setText(if(manager.ready) R.string.fs_billing_verifier_missing else R.string.fs_billing_unavailable)
         offers.removeAllViews()
         manager.products.forEach { product ->

@@ -29,6 +29,7 @@ class EmergencyQueue(private val context: Context) {
             val contacts = FamilyStore.contacts(root)
             for(i in 0 until contacts.length()) {
                 val contact = contacts.getJSONObject(i)
+                if(payload.optString("eventType") in listOf("SAFE_ARRIVAL","JOURNEY_TIMEOUT") && root.optJSONObject("journey")?.optString("contactId")!=contact.optString("id")) continue
                 if(jobs.keys().asSequence().any { jobs.getJSONObject(it).let { it.optString("eventId") == payload.optString("eventId") && it.optString("contactId") == contact.optString("id") } }) continue
                 val id = UUID.randomUUID().toString()
                 jobs.put(id,JSONObject().put("id",id).put("eventId",payload.getString("eventId")).put("created",System.currentTimeMillis())

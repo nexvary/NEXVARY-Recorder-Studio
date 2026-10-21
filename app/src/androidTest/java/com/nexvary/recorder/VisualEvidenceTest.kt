@@ -50,9 +50,7 @@ class VisualEvidenceTest {
                 }
                 if(page == com.nexvary.recorder.family.FamilyDashboardActivity::class.java) {
                     com.nexvary.recorder.family.SafetyCheckManager(context).sos(false)
-                    val until=android.os.SystemClock.uptimeMillis()+5000
-                    while(android.os.SystemClock.uptimeMillis()<until && !com.nexvary.recorder.family.FamilyStore(context).snapshot().has("state")) android.os.SystemClock.sleep(50)
-                    androidx.test.espresso.Espresso.onIdle()
+                    awaitUi(org.hamcrest.Matchers.allOf(withId(R.id.fsStatus),withText(org.hamcrest.Matchers.startsWith(context.getString(R.string.fs_are_safe)))))
                     capture(it,"family-sos-countdown-ar")
                     com.nexvary.recorder.family.SafetyCheckManager(context).resolve(null,true)
                 }

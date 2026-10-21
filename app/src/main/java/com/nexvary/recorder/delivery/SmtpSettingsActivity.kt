@@ -50,6 +50,13 @@ class SmtpSettingsActivity : com.nexvary.recorder.family.GuardianProtectedActivi
         val from = DeliveryUi.field(form, R.string.smtp_from, R.id.smtpFrom, existing?.from.orEmpty(), InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
         val limit = DeliveryUi.field(form, R.string.smtp_limit, R.id.smtpLimit, (existing?.limitMiB ?: 25).toString(), InputType.TYPE_CLASS_NUMBER)
         val status = DeliveryUi.text(root, R.string.smtp_not_tested).apply { id = R.id.smtpStatus; accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE }
+        lifecycleScope.launch {
+            val last=withContext(Dispatchers.IO) { runCatching { SmtpDiagnostics.last(this@SmtpSettingsActivity,existing) }.getOrNull() }
+            if(last!=null && status.text.toString()==getString(R.string.smtp_not_tested)) {
+                val label=if(last.optString("result")=="OK") R.string.smtp_test_ok else runCatching { failureLabel(SmtpFailure.valueOf(last.getString("result"))) }.getOrDefault(R.string.smtp_test_failed)
+                status.text=getString(label)+"\n"+getString(R.string.fs_smtp_test_time,java.text.DateFormat.getDateTimeInstance().format(java.util.Date(last.optLong("testedAt"))))
+            }
+        }
         fun profile(): SmtpProfile? {
             if (!DeliveryPolicy.validHost(host.text.toString().trim())) {
                 host.error = getString(R.string.smtp_host_invalid)
@@ -95,7 +102,13 @@ class SmtpSettingsActivity : com.nexvary.recorder.family.GuardianProtectedActivi
                 setBusy(true); status.setText(R.string.smtp_testing)
                 lifecycleScope.launch {
                     val result = withContext(Dispatchers.IO) {
-                        SmtpSetup({ SmtpSender("", "").test(it) }, { store.save(it) }).testAndSave(value)
+                        val result=SmtpSetup({ SmtpSender("", "").test(it) }, { store.save(it) }).testAndSave(value)
+                        runCatching { when(result) {
+                            SmtpSetup.Result.Saved -> SmtpDiagnostics.record(this@SmtpSettingsActivity,value,"OK")
+                            is SmtpSetup.Result.Failed -> SmtpDiagnostics.record(this@SmtpSettingsActivity,value,result.reason.name)
+                            else -> Unit
+                        } }
+                        result
                     }
                     when (result) {
                         is SmtpSetup.Result.Failed -> status.setText(failureLabel(result.reason))

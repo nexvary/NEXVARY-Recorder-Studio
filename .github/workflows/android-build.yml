@@ -103,6 +103,7 @@ jobs:
           path: |
             diagnostics/
             app/build/reports/androidTests/
+            app/build/outputs/androidTest-results/connected/
   publish-preview:
     if: false # Hold publishing during the family safety implementation and review
     needs: [build-and-static-gate, emulator-ui-smoke]

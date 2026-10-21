@@ -8,6 +8,7 @@
     "schemaVersion": {"const": 1},
     "eventId": {"type": "string", "format": "uuid"},
     "eventType": {"type": "string", "minLength": 1},
+    "sessionId": {"type": ["string", "null"], "format": "uuid"},
     "timestamp": {"type": "string", "format": "date-time"},
     "timezone": {"type": "string"},
     "displayName": {"type": "string"},

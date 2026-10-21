@@ -397,7 +397,7 @@
     <string name="fs_journey_configure">اضبط الوجهة في إعدادات ولي الأمر وفعّل إذن الموقع أثناء جلسة الأمان أولًا.</string>
     <string name="fs_distance">المسافة إلى الوجهة: نحو %1$d متر</string>
     <string name="fs_none">لم تُحدد</string>
-    <string name="fs_dashboard_status">المتبقي: %1$d:%2$02d\nجهة الثقة: %3$s\nالبطارية: %4$d%% · الشبكة: %5$s</string>
+    <string name="fs_dashboard_status">المتبقي: %1$d:%2$02d\nجهة الثقة: %3$s\nالبطارية: %4$s · الشبكة: %5$s</string>
     <string name="fs_local_only">التنبيهات محلية فقط. المشاركة التلقائية مع جهات الثقة متوقفة.</string>
     <string name="fs_sharing_on">قد تُرسل التنبيهات تلقائيًا إلى جهات الثقة المحفوظة عبر القنوات الموافق عليها.</string>
     <string name="fs_limits_note">أدوات مساعدة للاطمئنان وتوثيق الأحداث. وصول التنبيه ودقة التوقيت يعتمدان على الهاتف والأذونات والشبكة. لم يُجرَ تحقق على هواتف OPPO أو Samsung أو Pixel فعلية بعد.</string>
@@ -520,4 +520,12 @@
     <string name="fs_location_available">تم حفظ موقع — راجع وقته في التنبيه</string>
     <string name="fs_storage_minutes">تقدير فيديو الطوارئ: حوالي %1$d دقيقة متاحة</string>
     <string name="fs_storage_low">مساحة التخزين منخفضة. احفظ التسجيلات الحالية أو صدّرها.</string>
+    <string name="fs_monitor_note">تعمل مراقبة البطارية والاتصال والحركة مع خدمة الموقع أثناء جلسة الأمان. يعمل المؤقت والبريد المعلّق دون الموقع.</string>
+    <string name="fs_journey_guardian">جهة الثقة لتنبيهات الوصول والتأخر</string>
+    <string name="fs_import_rescue">استيراد جهات الإنقاذ السريع</string>
+    <string name="fs_import_note">استيراد أرقام جهات الإنقاذ السريع إلى دائرة الأسرة كجهات SMS يدوية؟ تظل المشاركة بموافقتك.</string>
+    <string name="fs_import_count">جهات الاتصال المستوردة: %1$d</string>
+    <string name="fs_smtp_test_time">آخر اختبار اتصال ومصادقة: %1$s</string>
+    <string name="fs_emergency_size">فيديو الطوارئ: حتى 480p، نحو %1$.1f ميجابايت/دقيقة مع الصوت. الحجم الفعلي يختلف حسب الجهاز.</string>
+    <string name="fs_evidence_action_required">ابدأ التوثيق من هذه الشاشة بعد منح إذن الكاميرا أو الميكروفون. لا يبدأ الالتقاط تلقائيًا من الخلفية.</string>
 </resources>
