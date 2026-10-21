@@ -10,6 +10,7 @@ object ThemeManager {
     private const val KEY_THEME = "theme_index"
 
     private val themes = intArrayOf(
+        R.style.Theme_NexvaryRecorder_PianoBlack,
         R.style.Theme_NexvaryRecorder_Blue,
         R.style.Theme_NexvaryRecorder_Emerald,
         R.style.Theme_NexvaryRecorder_Purple,
@@ -25,6 +26,7 @@ object ThemeManager {
     )
 
     private val themeNames = intArrayOf(
+        R.string.theme_piano_black,
         R.string.theme_electric_blue,
         R.string.theme_emerald,
         R.string.theme_purple,

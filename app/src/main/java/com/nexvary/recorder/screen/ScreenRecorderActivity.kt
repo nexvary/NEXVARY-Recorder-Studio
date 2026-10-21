@@ -30,6 +30,7 @@ class ScreenRecorderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScreenRecorderBinding
     private lateinit var projectionManager: MediaProjectionManager
 
+    private var countdownJob: kotlinx.coroutines.Job? = null
     private var pendingResultCode: Int? = null
     private var pendingResultData: Intent? = null
 
@@ -207,6 +208,12 @@ class ScreenRecorderActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
+        if (countdownJob?.isActive == true) {
+            countdownJob?.cancel()
+            pendingResultCode = null
+            pendingResultData = null
+            setIdleUi()
+        }
         runCatching { unregisterReceiver(statusReceiver) }
         super.onStop()
     }
@@ -417,7 +424,8 @@ class ScreenRecorderActivity : AppCompatActivity() {
             return
         }
 
-        lifecycleScope.launch {
+        countdownJob?.cancel()
+        countdownJob = lifecycleScope.launch {
             for (i in seconds downTo 1) {
                 binding.txtStatus.text =
                     getString(
@@ -431,6 +439,12 @@ class ScreenRecorderActivity : AppCompatActivity() {
     }
 
     private fun startRecordingService() {
+        if (!lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED)) {
+            pendingResultCode = null
+            pendingResultData = null
+            setIdleUi()
+            return
+        }
         val resultCode =
             pendingResultCode
                 ?: return showError(

@@ -1,6 +1,13 @@
 <resources>
     <style name="Theme.NexvaryRecorder.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:fontFamily">sans</item>
+        <item name="android:colorBackground">#0A0A0A</item>
+        <item name="android:textColorPrimary">@color/studio_text_primary</item>
+        <item name="android:textColorSecondary">@color/studio_text_secondary</item>
+        <item name="android:editTextColor">@color/studio_text_primary</item>
+        <item name="colorSurface">#11151A</item>
+        <item name="colorOnSurface">#F5F7FA</item>
+        <item name="colorError">#FF7A85</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowActionModeOverlay">true</item>
         <item name="colorOnPrimary">#FFFFFF</item>
@@ -91,5 +98,19 @@
         <item name="nexvaryAccent">#CBD5E1</item><item name="nexvaryText">#F8FAFC</item><item name="nexvaryMuted">#AAB4C0</item>
     </style>
 
-    <style name="Theme.NexvaryRecorder" parent="Theme.NexvaryRecorder.Blue" />
+    <style name="Theme.NexvaryRecorder.PianoBlack" parent="Theme.NexvaryRecorder.Base">
+        <item name="colorOnPrimary">#080A0C</item>
+        <item name="colorPrimary">#C8D4E8</item>
+        <item name="colorSecondary">#4285FF</item>
+        <item name="android:statusBarColor">#0A0A0A</item>
+        <item name="android:navigationBarColor">#0A0A0A</item>
+        <item name="android:windowBackground">#0A0A0A</item>
+        <item name="nexvaryBackground">#0A0A0A</item>
+        <item name="nexvarySurface">#131313</item>
+        <item name="nexvarySurfaceStrong">#1C1C1C</item>
+        <item name="nexvaryAccent">#DCE5F2</item>
+        <item name="nexvaryText">#FFFFFF</item>
+        <item name="nexvaryMuted">#BFC3CC</item>
+    </style>
+    <style name="Theme.NexvaryRecorder" parent="Theme.NexvaryRecorder.PianoBlack" />
 </resources>

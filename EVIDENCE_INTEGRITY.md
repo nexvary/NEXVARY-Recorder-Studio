@@ -1,0 +1,13 @@
+# Evidence Integrity
+
+Audio evidence uses AAC mono 16kHz/32kbps in M4A. Video evidence reuses the Camera2/MediaRecorder foreground service with the Emergency profile: H.264, at most 640×480, 15fps, 1Mbps video and optional AAC mono 32kbps audio. A device may choose a smaller supported frame size. Ordinary camera Compact remains 320×240/320kbps after the measured Android minimum-quality-floor investigation; Balanced is 720p/2.8Mbps and High 1080p/6.5Mbps.
+
+Nominal MB/min = `(video bitrate + enabled audio bitrate) × 60 / 8 / 1,000,000`, plus container overhead. Emergency with audio is approximately 7.8MB/min; encoder targets are estimates, not hard size guarantees. A storage estimate is derived from this actual profile. Less than 20MB prevents starting evidence; less than 100MB is shown as a warning. MIME/base64 expands email sizes, so the existing SMTP queue retains separate attachment/server limits.
+
+A media file is saved locally before metadata is generated. Only closed, non-empty, readable recordings receive a manifest. The manifest records version, event UUID, filename, byte size, SHA-256, close timestamp, device wall time, timezone, duration, device information and optional location snapshot. Metadata is encrypted independently of the local recording. Each evidence event has its own action status to avoid an older clip overwriting a newer SOS state.
+
+The Integrity screen can re-hash the exact local file and compare its size/hash, or explicitly export an `evidence.json` through the Android document picker. Export warns that the manifest may contain sensitive information. Deleting, hiding, renaming or modifying the source may make verification fail; it never fabricates a match. The manifest is not digitally signed, does not establish creation provenance, and is **not a legal chain of custody or court-proof evidence**.
+
+Test Evidence records a real local ten-second video and shows size/duration/hash. It does not send the clip or contact real guardians. Instrumentation separately exercises ten-second audio and video capture and verification.
+
+`ProgressiveEvidenceUpload` and `ProgressiveUploadEngine` specify HTTPS completion links, exact acknowledged byte offsets, per-chunk SHA-256, resume from the server offset, and whole-file revalidation. The test-only mock injects a disconnect and verifies byte-for-byte resumption. There is no production backend, automatic live segmentation or cloud upload worker in this preview. SMTP currently sends existing finalized files through its existing private send-copy queue; alert JSON may include evidence metadata, not an invented downloadable cloud link.

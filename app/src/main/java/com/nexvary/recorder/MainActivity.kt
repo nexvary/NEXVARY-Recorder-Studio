@@ -3,8 +3,16 @@ package com.nexvary.recorder
 import android.content.Intent
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.nexvary.recorder.safety.QuickRescueActivity
+import com.nexvary.recorder.safety.SafetyCaptureActivity
+import com.nexvary.recorder.calls.CallRecorderActivity
+import com.nexvary.recorder.camera.BackgroundCameraActivity
 import com.nexvary.recorder.audio.VoiceRecorderActivity
 import com.nexvary.recorder.databinding.ActivityMainBinding
 import com.nexvary.recorder.live.LiveBroadcastActivity
@@ -12,11 +20,14 @@ import com.nexvary.recorder.media.MediaToolsActivity
 import com.nexvary.recorder.screen.ScreenRecorderActivity
 import com.nexvary.recorder.ui.ThemeManager
 import com.nexvary.recorder.ui.UiInsets
+import com.nexvary.recorder.media.RecordingsLibraryActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var appliedTheme = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        appliedTheme = ThemeManager.currentIndex(this)
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
 
@@ -27,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         val versionName = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
         binding.txtVersion.text = getString(R.string.version_format, versionName)
         updateThemeLabel()
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) { runCatching { com.nexvary.recorder.delivery.MailWorker.reconcile(this@MainActivity) };runCatching { com.nexvary.recorder.family.SafetyCheckManager(this@MainActivity).evaluate(true) } }
+        }
 
         binding.btnThemePicker.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
@@ -37,6 +51,20 @@ class MainActivity : AppCompatActivity() {
         binding.cardVoice.setOnClickListener { openVoiceStudio() }
         binding.cardReplace.setOnClickListener { openMediaTools() }
         binding.cardLive.setOnClickListener { openLiveBroadcast() }
+        binding.cardCamera.setOnClickListener { startActivity(Intent(this, BackgroundCameraActivity::class.java)) }
+        binding.cardRescue.setOnClickListener { startActivity(Intent(this, QuickRescueActivity::class.java)) }
+        binding.cardLibrary.setOnClickListener { startActivity(Intent(this, RecordingsLibraryActivity::class.java)) }
+        binding.cardSettings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
+        binding.cardAbout.setOnClickListener { startActivity(Intent(this, AboutActivity::class.java)) }
+        binding.bottomNav.itemIconTintList = null
+        // Labels are always visible. Suppress duplicate long-press tooltips so a
+        // slow/held tap can still activate a tab rather than consuming its click.
+        for (id in listOf(R.id.navHome, R.id.navScreen, R.id.navVoice, R.id.navLive, R.id.navMore)) {
+            binding.bottomNav.findViewById<android.view.View>(id)?.let { tab ->
+                androidx.appcompat.widget.TooltipCompat.setTooltipText(tab, null)
+                tab.isLongClickable = false
+            }
+        }
 
         binding.bottomNav.selectedItemId = R.id.navHome
         binding.bottomNav.setOnItemSelectedListener { item ->
@@ -65,6 +93,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (appliedTheme != ThemeManager.currentIndex(this)) { recreate(); return }
         if (::binding.isInitialized) {
             binding.bottomNav.menu.findItem(R.id.navHome)?.isChecked = true
             updateThemeLabel()
@@ -92,7 +121,12 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.media_tools_title),
             getString(R.string.language_title),
             getString(R.string.about_title),
-            getString(R.string.choose_theme)
+            getString(R.string.choose_theme),
+            getString(R.string.camera_title),
+            getString(R.string.call_title),
+            getString(R.string.safety_title),
+            getString(R.string.rescue_title),
+            getString(R.string.fs_title)
         )
 
         MaterialAlertDialogBuilder(this)
@@ -103,6 +137,11 @@ class MainActivity : AppCompatActivity() {
                     1 -> startActivity(Intent(this, LanguageActivity::class.java))
                     2 -> startActivity(Intent(this, AboutActivity::class.java))
                     3 -> showThemePicker()
+                    4 -> startActivity(Intent(this, BackgroundCameraActivity::class.java))
+                    5 -> startActivity(Intent(this, CallRecorderActivity::class.java))
+                    6 -> startActivity(Intent(this, SafetyCaptureActivity::class.java))
+                    7 -> startActivity(Intent(this, QuickRescueActivity::class.java))
+                    8 -> startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java))
                 }
             }
             .setNegativeButton(R.string.cancel, null)
