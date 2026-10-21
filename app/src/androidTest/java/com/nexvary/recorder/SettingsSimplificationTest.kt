@@ -80,6 +80,9 @@ class SettingsSimplificationTest {
             onView(withText(R.string.guardian_signup)).perform(reveal(),click())
             onView(withId(R.id.guardianAuthSubmit)).perform(reveal()).check(matches(withText(R.string.guardian_signup)))
             onView(withId(R.id.guardianCode)).check(matches(withEffectiveVisibility(Visibility.GONE)))
+            onView(withText(R.string.guardian_confirm)).perform(reveal(),click())
+            onView(withId(R.id.guardianCode)).perform(reveal()).check(matches(isDisplayed()))
+            onView(withId(R.id.guardianPassword)).check(matches(withEffectiveVisibility(Visibility.GONE)))
         }
         assertNull(FamilyStore.state(FamilyStore(context).snapshot()))
     }

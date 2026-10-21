@@ -16,6 +16,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
     private lateinit var status: TextView
     private lateinit var events: LinearLayout
     private lateinit var accountForm: LinearLayout
+    private var authUi: (Boolean) -> Unit = {}
     override fun build() {
         status=DeliveryUi.text(root,R.string.guardian_cloud_unconfigured)
         accountForm=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;visibility=android.view.View.GONE }
@@ -42,7 +43,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
                             val service=result.getOrThrow().getJSONObject("service")
                             status.text=getString(R.string.service_connected,service.getString("name"))
                             if(!service.optBoolean("remoteSos") || !service.optBoolean("evidenceUpload")) status.append("\n"+getString(R.string.service_remote_off))
-                            accountForm.visibility=android.view.View.VISIBLE
+                            accountForm.visibility=android.view.View.VISIBLE;authUi(false)
                         } else status.setText(R.string.service_connect_failed)
                     }
                 }.show()
@@ -81,7 +82,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
             val area=region.text.toString().trim();val id=client.text.toString().trim()
             if(address==null || !area.matches(Regex("[a-z]{2}-[a-z]+-\\d")) || !id.matches(Regex("[a-zA-Z0-9]{10,128}"))) { status.setText(R.string.guardian_invalid_config);return@button }
             FamilyUi.io(this,{ FamilyStore(this).update { CloudSessionState.logout(it);it.put("cloud",JSONObject().put("baseUrl",address).put("region",area).put("clientId",id)) } }) {
-                status.setText(R.string.guardian_settings_saved);accountForm.visibility=android.view.View.VISIBLE
+                status.setText(R.string.guardian_settings_saved);accountForm.visibility=android.view.View.VISIBLE;authUi(false)
             }
         }
         connectionTools.addView(advanced)
@@ -96,6 +97,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
         lateinit var signup: androidx.appcompat.widget.AppCompatButton
         lateinit var forgot: androidx.appcompat.widget.AppCompatButton
         lateinit var login: androidx.appcompat.widget.AppCompatButton
+        lateinit var confirm: androidx.appcompat.widget.AppCompatButton
         fun visible(view: android.view.View,show: Boolean) { view.visibility=if(show) android.view.View.VISIBLE else android.view.View.GONE }
         fun fieldVisible(view: EditText,show: Boolean) {
             visible(view,show);val parent=view.parent as LinearLayout;visible(parent.getChildAt(parent.indexOfChild(view)-1),show)
@@ -105,7 +107,7 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
             fieldVisible(password,mode in listOf("LOGIN","SIGNUP","RESET"));fieldVisible(code,mode in listOf("CONFIRM","RESET"))
             submit.setText(when(mode) { "SIGNUP" -> R.string.guardian_signup;"CONFIRM" -> R.string.guardian_confirm;"FORGOT" -> R.string.guardian_forgot;"RESET" -> R.string.guardian_reset_password;else -> R.string.guardian_login })
             (credentials.getChildAt(0) as TextView).text=submit.text
-            visible(signup,mode=="LOGIN");visible(forgot,mode=="LOGIN");visible(login,mode!="LOGIN")
+            visible(signup,mode=="LOGIN");visible(forgot,mode=="LOGIN");visible(login,mode!="LOGIN");visible(confirm,mode in listOf("LOGIN","SIGNUP"))
         }
         submit=DeliveryUi.button(credentials,R.string.guardian_login,R.id.guardianAuthSubmit) {
             val action=mode;val e=email.text.toString();val p=password.text.toString();val c=code.text.toString();password.text.clear();submit.isEnabled=false
@@ -128,6 +130,8 @@ class CloudSettingsActivity: ProtectedFamilyPage() {
         signup=DeliveryUi.button(credentials,R.string.guardian_signup) { mode="SIGNUP";renderAuth() }
         forgot=DeliveryUi.button(credentials,R.string.guardian_forgot) { mode="FORGOT";renderAuth() }
         login=DeliveryUi.button(credentials,R.string.guardian_login) { mode="LOGIN";renderAuth() }
+        confirm=DeliveryUi.button(credentials,R.string.guardian_confirm) { mode="CONFIRM";renderAuth() }
+        authUi={ renderAuth(it) }
         renderAuth()
         FamilyUi.io(this,{ CloudApi.config(this).optString("idToken").isNotBlank() }) { renderAuth(it) }
         DeliveryUi.button(manage,R.string.guardian_usage) { refresh() }
