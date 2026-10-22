@@ -1,0 +1,26 @@
+name: Guardian signed delivery recovery
+on:
+  push:
+    branches: [ops/guardian-0111-signing-recovery]
+    paths: [.github/workflows/guardian-signing-recovery.yml, recovery/remote_sign.cjs]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  recover-signed-delivery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install pyzipper==0.3.6
+      - name: Recover private signing identity and prepare verified release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node recovery/remote_sign.cjs
