@@ -1,0 +1,12 @@
+{
+  "runId": "39710956317",
+  "source": "302719bc74638d0fa54c02d5814542fd823090c2",
+  "completed": [
+    {
+      "name": "NEXVARY-Guardian-Studio-0.11.1-release-signed.apk",
+      "bytes": 16217889,
+      "sha256": "a554ba7c0f4300eb8df817d34c9ffaede7d1da2735f82baec7fd5994f300b239",
+      "status": 201
+    }
+  ]
+}
