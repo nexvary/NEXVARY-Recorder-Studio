@@ -25,6 +25,12 @@
       "bytes": 7262461,
       "sha256": "4e113bbb9a0e992b86d9970040b3815dad54250971006d8ee7d2b79c9abe041c",
       "status": 201
+    },
+    {
+      "name": "timer-presets-ar.png",
+      "bytes": 208386,
+      "sha256": "38fea9efa5f886fd85ab08223cd677a849d95f620c3137f6399e3f07284b5cf2",
+      "status": 201
     }
   ]
 }
