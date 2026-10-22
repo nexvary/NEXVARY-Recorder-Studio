@@ -7,6 +7,12 @@
       "bytes": 16217889,
       "sha256": "a554ba7c0f4300eb8df817d34c9ffaede7d1da2735f82baec7fd5994f300b239",
       "status": 201
+    },
+    {
+      "name": "NEXVARY-Guardian-Studio-0.11.1-release-signed.aab",
+      "bytes": 15083064,
+      "sha256": "b5f8dcc88cca1a037979d836fdab597ff4bed38af57d5c80de01ea07bf48c144",
+      "status": 201
     }
   ]
 }
