@@ -1,0 +1,114 @@
+{
+  "status": "awaiting_release_approval",
+  "runId": "39710956317",
+  "source": "302719bc74638d0fa54c02d5814542fd823090c2",
+  "tag": "guardian-studio-v0.11.1-39710956317",
+  "releaseId": 420249313,
+  "releaseUrl": "https://github.com/nexvary/NEXVARY-Recorder-Studio/releases/tag/untagged-00adb4c9b2700c3cac4a",
+  "assets": [
+    {
+      "name": "NEXVARY-Guardian-Studio-0.11.1-release-signed.apk",
+      "bytes": 16217889,
+      "sha256": "a554ba7c0f4300eb8df817d34c9ffaede7d1da2735f82baec7fd5994f300b239",
+      "url": "https://github.com/nexvary/NEXVARY-Recorder-Studio/releases/download/untagged-00adb4c9b2700c3cac4a/NEXVARY-Guardian-Studio-0.11.1-release-signed.apk"
+    },
+    {
+      "name": "NEXVARY-Guardian-Studio-0.11.1-release-signed.aab",
+      "bytes": 15083064,
+      "sha256": "b5f8dcc88cca1a037979d836fdab597ff4bed38af57d5c80de01ea07bf48c144",
+      "url": "https://github.com/nexvary/NEXVARY-Recorder-Studio/releases/download/untagged-00adb4c9b2700c3cac4a/NEXVARY-Guardian-Studio-0.11.1-release-signed.aab"
+    },
+    {
+      "name": "Guardian-0.11.1-Changes-AR.md",
+      "bytes": 2467,
+      "sha256": "0483d2cbac0fcc9094a97f3fe77be297c059e4728c2a1b1830ea00fea1624d9a",
+      "url": "https://github.com/nexvary/NEXVARY-Recorder-Studio/releases/download/untagged-00adb4c9b2700c3cac4a/Guardian-0.11.1-Changes-AR.md"
+    },
+    {
+      "name": "Guardian-0.11.1-Screenshots-and-Verification.zip",
+      "bytes": 7262461,
+      "sha256": "4e113bbb9a0e992b86d9970040b3815dad54250971006d8ee7d2b79c9abe041c",
+      "url": "https://github.com/nexvary/NEXVARY-Recorder-Studio/releases/download/untagged-00adb4c9b2700c3cac4a/Guardian-0.11.1-Screenshots-and-Verification.zip"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 232,
+      "sha256": "5a1375fe757d809237feb3ecc4e0063ac56bedad83377c0119e8635f877a92ac",
+      "url": "https://github.com/nexvary/NEXVARY-Recorder-Studio/releases/download/untagged-00adb4c9b2700c3cac4a/SHA256SUMS.txt"
+    }
+  ],
+  "previews": {
+    "timer-presets-ar.png": {
+      "chunks": [
+        "recovery/previews/timer-presets-ar.png-0.txt",
+        "recovery/previews/timer-presets-ar.png-1.txt",
+        "recovery/previews/timer-presets-ar.png-2.txt",
+        "recovery/previews/timer-presets-ar.png-3.txt",
+        "recovery/previews/timer-presets-ar.png-4.txt",
+        "recovery/previews/timer-presets-ar.png-5.txt"
+      ],
+      "sha512": "74f12d790fd6d385a0421833bdaf462e21d8ac9957566d29af43a2d9510f6f9cbc1ae4ca3c2f75204797b3e37be922a6f03e14e22ffffa6756ce675b94b5aaa7",
+      "bytes": 208386
+    },
+    "settings-ar.png": {
+      "chunks": [
+        "recovery/previews/settings-ar.png-0.txt",
+        "recovery/previews/settings-ar.png-1.txt",
+        "recovery/previews/settings-ar.png-2.txt",
+        "recovery/previews/settings-ar.png-3.txt",
+        "recovery/previews/settings-ar.png-4.txt",
+        "recovery/previews/settings-ar.png-5.txt",
+        "recovery/previews/settings-ar.png-6.txt",
+        "recovery/previews/settings-ar.png-7.txt",
+        "recovery/previews/settings-ar.png-8.txt",
+        "recovery/previews/settings-ar.png-9.txt"
+      ],
+      "sha512": "dd156fc71d327eb0e99a454b6bbcea66a4add2335e9cb89a4c9a0c680258f2837b4e415adfd471170a1a246562071f0ccd520f6383d4c3a2d0b77b0a5c1f2b1f",
+      "bytes": 345046
+    }
+  },
+  "libraryFiles": [
+    {
+      "name": "NEXVARY-Guardian-Studio-0.11.1-release-signed.apk",
+      "bytes": 16217889,
+      "sha256": "a554ba7c0f4300eb8df817d34c9ffaede7d1da2735f82baec7fd5994f300b239",
+      "mimeType": "application/vnd.android.package-archive",
+      "artifactType": "other"
+    },
+    {
+      "name": "NEXVARY-Guardian-Studio-0.11.1-release-signed.aab",
+      "bytes": 15083064,
+      "sha256": "b5f8dcc88cca1a037979d836fdab597ff4bed38af57d5c80de01ea07bf48c144",
+      "mimeType": "application/octet-stream",
+      "artifactType": "other"
+    },
+    {
+      "name": "Guardian-0.11.1-Changes-AR.md",
+      "bytes": 2467,
+      "sha256": "0483d2cbac0fcc9094a97f3fe77be297c059e4728c2a1b1830ea00fea1624d9a",
+      "mimeType": "text/markdown",
+      "artifactType": "report"
+    },
+    {
+      "name": "Guardian-0.11.1-Screenshots-and-Verification.zip",
+      "bytes": 7262461,
+      "sha256": "4e113bbb9a0e992b86d9970040b3815dad54250971006d8ee7d2b79c9abe041c",
+      "mimeType": "application/zip",
+      "artifactType": "other"
+    },
+    {
+      "name": "timer-presets-ar.png",
+      "bytes": 208386,
+      "sha256": "38fea9efa5f886fd85ab08223cd677a849d95f620c3137f6399e3f07284b5cf2",
+      "mimeType": "image/png",
+      "artifactType": "image"
+    },
+    {
+      "name": "settings-ar.png",
+      "bytes": 345046,
+      "sha256": "ccdd8e280307554140e545acff3274efb891e944fae4360d21ecde3e1f0cac69",
+      "mimeType": "image/png",
+      "artifactType": "image"
+    }
+  ]
+}
