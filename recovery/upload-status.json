@@ -31,6 +31,12 @@
       "bytes": 208386,
       "sha256": "38fea9efa5f886fd85ab08223cd677a849d95f620c3137f6399e3f07284b5cf2",
       "status": 201
+    },
+    {
+      "name": "settings-ar.png",
+      "bytes": 345046,
+      "sha256": "ccdd8e280307554140e545acff3274efb891e944fae4360d21ecde3e1f0cac69",
+      "status": 201
     }
   ]
 }
