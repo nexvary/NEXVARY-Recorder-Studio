@@ -19,6 +19,12 @@
       "bytes": 2467,
       "sha256": "0483d2cbac0fcc9094a97f3fe77be297c059e4728c2a1b1830ea00fea1624d9a",
       "status": 201
+    },
+    {
+      "name": "Guardian-0.11.1-Screenshots-and-Verification.zip",
+      "bytes": 7262461,
+      "sha256": "4e113bbb9a0e992b86d9970040b3815dad54250971006d8ee7d2b79c9abe041c",
+      "status": 201
     }
   ]
 }
