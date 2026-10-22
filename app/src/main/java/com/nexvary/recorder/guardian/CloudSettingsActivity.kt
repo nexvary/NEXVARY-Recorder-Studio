@@ -12,6 +12,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class CloudSettingsActivity: ProtectedFamilyPage() {
+    override val screenshotsAllowed = true
     override val title=R.string.guardian_cloud
     private lateinit var status: TextView
     private lateinit var events: LinearLayout

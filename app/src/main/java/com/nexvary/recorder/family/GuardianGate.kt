@@ -70,7 +70,14 @@ object GuardianGate {
 }
 
 open class GuardianProtectedActivity: AppCompatActivity() {
+    // Ordinary settings can be captured for support, but only after the PIN gate.
+    protected open val screenshotsAllowed: Boolean = false
     private var prompt=false
+    private fun showAuthorizedContent(content: View) {
+        if (screenshotsAllowed) window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        else window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        content.visibility=View.VISIBLE
+    }
     override fun onStart() {
         super.onStart()
         if(prompt) return
@@ -82,8 +89,8 @@ open class GuardianProtectedActivity: AppCompatActivity() {
             if(required && !GuardianGate.unlocked() && !isFinishing) {
                 prompt=true;content.visibility=View.INVISIBLE
                 window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-                GuardianGate.prompt(this@GuardianProtectedActivity) { prompt=false;content.visibility=View.VISIBLE }
-            } else content.visibility=View.VISIBLE
+                GuardianGate.prompt(this@GuardianProtectedActivity) { prompt=false;showAuthorizedContent(content) }
+            } else showAuthorizedContent(content)
         }
     }
 }

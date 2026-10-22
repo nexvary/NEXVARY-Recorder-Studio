@@ -11,6 +11,7 @@ import com.nexvary.recorder.ui.*
 import org.json.JSONObject
 
 class FamilySettingsActivity: ProtectedFamilyPage() {
+    override val screenshotsAllowed = true
     private val section get()=intent.getStringExtra("section").orEmpty()
     override val title get()=when(section) {
         "sharing" -> R.string.settings_sharing

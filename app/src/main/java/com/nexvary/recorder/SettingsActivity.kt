@@ -8,6 +8,7 @@ import com.nexvary.recorder.family.*
 import com.nexvary.recorder.ui.*
 
 class SettingsActivity : GuardianProtectedActivity() {
+    override val screenshotsAllowed = true
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.apply(this); super.onCreate(savedInstanceState)
         val appearance = intent.getBooleanExtra("appearance", false)
