@@ -1,10 +1,10 @@
 {
-  "status": "awaiting_release_approval",
+  "status": "completed",
   "runId": "39710956317",
   "source": "302719bc74638d0fa54c02d5814542fd823090c2",
   "tag": "guardian-studio-v0.11.1-39710956317",
-  "releaseId": 420249313,
   "releaseUrl": "https://github.com/nexvary/NEXVARY-Recorder-Studio/releases/tag/untagged-00adb4c9b2700c3cac4a",
+  "draft": true,
   "assets": [
     {
       "name": "NEXVARY-Guardian-Studio-0.11.1-release-signed.apk",
