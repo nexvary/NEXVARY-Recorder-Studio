@@ -214,6 +214,8 @@ class EmergencyProfileActivity: ProtectedFamilyPage() {
                 val showValue=show.isChecked;val shareValue=share.isChecked
                 FamilyUi.io(this,{ FamilyStore(this).update { state ->
                     state.put("medical",value);val cfg=FamilyStore.config(state);cfg.put("showMedical",showValue).put("shareMedical",shareValue);state.put("config",cfg)
+                    state.optJSONObject("guardianProfile")?.put("name", value.optString("guardian"))?.put("phone", value.optString("phone"))
+                    state.optJSONObject("childProfile")?.takeIf { it.optBoolean("enabled") }?.put("name", value.optString("name"))?.put("age", value.optString("age"))
                     FamilyStore.event(state,"EMERGENCY_PROFILE_UPDATED")
                     if (intent.getBooleanExtra(GuidedSetupProgress.EXTRA_GUIDED, false)) GuidedSetupProgress.healthSaved(state)
                 } }) {

@@ -101,14 +101,14 @@ class GuidedSetupActivity : ProtectedFamilyPage() {
             val n = name.text.toString().trim(); val p = phone.text.toString().trim(); val e = email.text.toString().trim()
             if (n.isBlank()) { name.error = getString(R.string.setup_name_required); return@button }
             if (e.isNotBlank() && !android.util.Patterns.EMAIL_ADDRESS.matcher(e).matches()) { email.error = getString(R.string.smtp_invalid); return@button }
-            save {
+            save(clearDraft = true) {
                 it.put("guardianProfile", JSONObject().put("name", n.take(120)).put("phone", p.take(80)).put("email", e.take(254)))
                 val profile = it.optJSONObject("medical") ?: JSONObject()
                 it.put("medical", profile.put("guardian", n.take(120)).put("phone", p.take(80)))
                 GuidedSetupProgress.move(it, 2)
             }
         }
-        DeliveryUi.button(body, R.string.setup_personal, R.id.setupSkip) { save { GuidedSetupProgress.move(it, 2) } }
+        DeliveryUi.button(body, R.string.setup_personal, R.id.setupSkip) { personalUse() }
     }
     private fun child(data: JSONObject) {
         DeliveryUi.text(body, R.string.setup_child_note)
@@ -120,24 +120,26 @@ class GuidedSetupActivity : ProtectedFamilyPage() {
             val n = name.text.toString().trim(); val a = com.nexvary.recorder.delivery.DeliveryPolicy.digits(age.text.toString())
             if (n.isBlank()) { name.error = getString(R.string.setup_name_required); return@button }
             if (a.isNotBlank() && (a.toIntOrNull() ?: -1) !in 0..120) { age.error = getString(R.string.setup_age_invalid); return@button }
-            save {
+            save(clearDraft = true) {
                 it.put("childProfile", JSONObject().put("enabled", true).put("name", n.take(120)).put("age", a))
                 val profile = it.optJSONObject("medical") ?: JSONObject()
                 it.put("medical", profile.put("name", n.take(120)).put("age", a))
                 GuidedSetupProgress.move(it, 3)
             }
         }
-        DeliveryUi.button(body, R.string.setup_personal, R.id.setupSkip) {
-            save { val profile = it.optJSONObject("childProfile") ?: JSONObject(); it.put("childProfile", profile.put("enabled", false)); GuidedSetupProgress.move(it, 3) }
-        }
+        DeliveryUi.button(body, R.string.setup_personal, R.id.setupSkip) { personalUse() }
+    }
+    private fun personalUse() = save(clearDraft = true) {
+        val profile = it.optJSONObject("childProfile") ?: JSONObject()
+        it.put("childProfile", profile.put("enabled", false)); GuidedSetupProgress.move(it, 3)
     }
     private fun next(target: Int) { DeliveryUi.button(body, R.string.setup_next, R.id.setupNext) { save { GuidedSetupProgress.move(it, target) } } }
-    private fun save(finish: Boolean = false, action: (JSONObject) -> Unit) {
+    private fun save(finish: Boolean = false, clearDraft: Boolean = false, action: (JSONObject) -> Unit) {
         if (busy) return
         busy = true
         FamilyUi.io(this, { runCatching { FamilyStore(this).update { action(it) } } }) { result ->
             busy = false
-            if (result.isSuccess) { if (finish) this.finish() else refresh() }
+            if (result.isSuccess) { if (clearDraft) draft.fields.clear(); if (finish) this.finish() else refresh() }
             else Toast.makeText(this, R.string.fs_storage_error, Toast.LENGTH_LONG).show()
         }
     }

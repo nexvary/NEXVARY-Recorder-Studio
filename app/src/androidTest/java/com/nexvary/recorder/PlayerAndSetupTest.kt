@@ -151,4 +151,21 @@ class PlayerAndSetupTest {
             pressBack()
         }
     }
+    @Test fun personalUseSkipsChildAccountAndRetainsSavedHealthData() {
+        FamilyStore(context).update {
+            it.put("medical", JSONObject().put("allergies", "retained"))
+            GuidedSetupProgress.move(it, 1)
+        }
+        ActivityScenario.launch(GuidedSetupActivity::class.java).use { scenario ->
+            awaitUi(withId(R.id.setupSkip))
+            onView(withId(R.id.setupSkip)).perform(reveal(), click())
+            awaitUi(withId(R.id.setupCamera))
+            scenario.recreate(); awaitUi(withId(R.id.setupCamera))
+            val data = FamilyStore(context).snapshot()
+            assertEquals(3, GuidedSetupProgress.data(data).getInt("step"))
+            assertFalse(data.getJSONObject("childProfile").getBoolean("enabled"))
+            assertEquals("retained", data.getJSONObject("medical").getString("allergies"))
+            assertFalse(data.has("cloud"))
+        }
+    }
 }
