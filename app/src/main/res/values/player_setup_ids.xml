@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="internalPlayer" />
+    <item type="id" name="playerName" />
+    <item type="id" name="playerStatus" />
+    <item type="id" name="playerFullscreen" />
+    <item type="id" name="playerSpeed" />
+    <item type="id" name="playerChoose" />
+    <item type="id" name="setupProgress" />
+    <item type="id" name="setupNext" />
+    <item type="id" name="setupSkip" />
+    <item type="id" name="setupPrevious" />
+    <item type="id" name="setupRecordNow" />
+    <item type="id" name="setupGuardianName" />
+    <item type="id" name="setupGuardianPhone" />
+    <item type="id" name="setupGuardianEmail" />
+    <item type="id" name="setupChildName" />
+    <item type="id" name="setupChildAge" />
+    <item type="id" name="setupCamera" />
+    <item type="id" name="setupScreen" />
+    <item type="id" name="setupAudio" />
+    <item type="id" name="setupLibrary" />
+    <item type="id" name="setupChildMode" />
+    <item type="id" name="setupCloud" />
+    <item type="id" name="setupDone" />
+    <item type="id" name="setupStart" />
+</resources>

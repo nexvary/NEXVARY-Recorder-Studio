@@ -41,6 +41,9 @@ class MainActivity : AppCompatActivity() {
         val versionName = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
         binding.txtVersion.text = getString(R.string.version_format, versionName)
         updateThemeLabel()
+        com.nexvary.recorder.ui.FeatureCards.add(binding.setupEntry, R.drawable.asset_family, R.string.setup_title) {
+            startActivity(Intent(this, com.nexvary.recorder.family.GuidedSetupActivity::class.java))
+        }
         lifecycleScope.launch {
             withContext(Dispatchers.IO) { runCatching { com.nexvary.recorder.delivery.MailWorker.reconcile(this@MainActivity) };runCatching { com.nexvary.recorder.family.SafetyCheckManager(this@MainActivity).evaluate(true) } }
         }

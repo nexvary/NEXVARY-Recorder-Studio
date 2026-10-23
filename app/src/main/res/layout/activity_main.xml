@@ -12,6 +12,7 @@
   </LinearLayout>
   <ImageButton android:id="@+id/btnThemePicker" android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/asset_settings" android:padding="8dp" android:scaleType="fitCenter" android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/choose_theme"/>
  </LinearLayout>
+ <LinearLayout android:id="@+id/setupEntry" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
  <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:baselineAligned="false">
 <LinearLayout android:id="@+id/cardCamera" android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:minHeight="156dp" android:layout_margin="4dp" android:orientation="vertical" android:gravity="center" android:padding="8dp" android:background="@drawable/bg_metal_card" android:clickable="true" android:focusable="true" android:elevation="3dp">
 <ImageView android:layout_width="64dp" android:layout_height="64dp" android:src="@drawable/asset_camera" android:scaleType="fitCenter" android:importantForAccessibility="no"/>

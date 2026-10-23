@@ -13,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /** Captures only actual windows from this installed APK. Never sends messages or starts recording. */
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @RunWith(AndroidJUnit4::class)
 class VisualEvidenceTest {
     @Test fun captureApprovedArabicScreens() {
@@ -27,6 +28,8 @@ class VisualEvidenceTest {
         com.nexvary.recorder.family.RescueCardsStore(context).clear()
         val pages = listOf(
             Triple(MainActivity::class.java, R.id.cardScreen, "dashboard-ar"),
+            Triple(com.nexvary.recorder.family.GuidedSetupActivity::class.java,R.id.setupProgress,"setup-health-ar"),
+            Triple(com.nexvary.recorder.media.InternalPlayerActivity::class.java,R.id.internalPlayer,"player-video-ar"),
             Triple(MoreActivity::class.java, R.id.moreGuide, "more-cards-ar"),
             Triple(GuideActivity::class.java, R.id.guideSearch, "guide-ar"),
             Triple(com.nexvary.recorder.media.MediaCenterActivity::class.java,R.id.btnBack,"media-center-ar"),
@@ -47,9 +50,28 @@ class VisualEvidenceTest {
         instrumentation.context.assets.open("qa-sample.mp4").use { input -> sample.outputStream().use { input.copyTo(it) } }
         try {
         for ((page, visibleId, name) in pages) {
-            ActivityScenario.launch(page).use {
+            val launch = android.content.Intent(context, page)
+            if (page == com.nexvary.recorder.media.InternalPlayerActivity::class.java) {
+                launch.data = androidx.core.content.FileProvider.getUriForFile(context, "${context.packageName}.files", sample)
+                launch.putExtra("name", "تسجيل تجريبي")
+            }
+            ActivityScenario.launch<android.app.Activity>(launch).use {
                 awaitUi(org.hamcrest.Matchers.allOf(withId(visibleId),isDisplayed()))
+                if (page == com.nexvary.recorder.media.InternalPlayerActivity::class.java) {
+                    awaitUi(org.hamcrest.Matchers.allOf(withId(R.id.playerStatus),org.hamcrest.Matchers.anyOf(withText(R.string.player_ready),withText(R.string.player_finished))))
+                }
                 capture(it, name)
+                if (page == com.nexvary.recorder.family.GuidedSetupActivity::class.java) {
+                    for ((step, id, shot) in listOf(
+                        Triple(1,R.id.setupGuardianName,"setup-guardian-ar"),
+                        Triple(2,R.id.setupChildName,"setup-child-ar"),
+                        Triple(3,R.id.setupCamera,"setup-recording-ar"),
+                        Triple(4,R.id.setupProgress,"setup-review-ar"))) {
+                        com.nexvary.recorder.family.FamilyStore(context).update { state -> com.nexvary.recorder.family.GuidedSetupProgress.move(state,step) }
+                        it.recreate();awaitUi(org.hamcrest.Matchers.allOf(withId(id),isDisplayed()));capture(it,shot)
+                    }
+                    com.nexvary.recorder.family.FamilyStore(context).update { state -> state.remove("guidedSetup") }
+                }
                 if (page == MoreActivity::class.java) {
                     onView(withId(R.id.moreAbout)).perform(reveal()).check(matches(isDisplayed()))
                     capture(it, "more-cards-bottom-ar")

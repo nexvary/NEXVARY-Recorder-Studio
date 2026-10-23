@@ -25,6 +25,7 @@ class SettingsActivity : GuardianProtectedActivity() {
             return
         }
         DeliveryUi.text(root, R.string.settings_intro)
+        DeliveryUi.button(root, R.string.setup_title, R.id.setupStart) { page(GuidedSetupActivity::class.java) }
         FeatureCards.grid(root, listOf(
             FeatureCards.Item(R.id.settingsSafety, R.drawable.asset_family, R.string.settings_safety, R.string.settings_safety_note) { page(FamilySettingsActivity::class.java) },
             FeatureCards.Item(R.id.settingsAppearance, R.drawable.asset_settings, R.string.settings_appearance, R.string.settings_appearance_note) { startActivity(Intent(this, SettingsActivity::class.java).putExtra("appearance", true)) },

@@ -215,7 +215,11 @@ class EmergencyProfileActivity: ProtectedFamilyPage() {
                 FamilyUi.io(this,{ FamilyStore(this).update { state ->
                     state.put("medical",value);val cfg=FamilyStore.config(state);cfg.put("showMedical",showValue).put("shareMedical",shareValue);state.put("config",cfg)
                     FamilyStore.event(state,"EMERGENCY_PROFILE_UPDATED")
-                } }) { Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show() }
+                    if (intent.getBooleanExtra(GuidedSetupProgress.EXTRA_GUIDED, false)) GuidedSetupProgress.healthSaved(state)
+                } }) {
+                    Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show()
+                    if (intent.getBooleanExtra(GuidedSetupProgress.EXTRA_GUIDED, false)) finish()
+                }
             }
         }
     }

@@ -180,7 +180,7 @@ class RecordingsLibraryActivity : AppCompatActivity() {
     private fun publicRow(recording: Recording) {
         panel(recording.name).apply {
             action(R.string.library_play) {
-                runCatching { startActivity(Intent(Intent.ACTION_VIEW).setDataAndType(recording.uri, recording.mime).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)) }
+                runCatching { startActivity(InternalPlayerActivity.intent(this@RecordingsLibraryActivity, recording.uri, recording.name)) }
                     .onFailure { toast(R.string.open_media_failed) }
             }
             action(R.string.guardian_share_export) {

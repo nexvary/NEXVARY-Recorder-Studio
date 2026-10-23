@@ -13,6 +13,7 @@ class FamilyHubActivity: AppCompatActivity() {
     override fun onCreate(saved: Bundle?) {
         ThemeManager.apply(this);super.onCreate(saved)
         val root=StudioPage.install(this,R.string.fs_title)
+        FeatureCards.add(root,R.drawable.asset_family,R.string.setup_title) { startActivity(Intent(this,GuidedSetupActivity::class.java)) }
         FeatureCards.add(root,R.drawable.asset_family,R.string.fs_check_start) { startActivity(Intent(this,FamilyDashboardActivity::class.java)) }
         FeatureCards.add(root,R.drawable.asset_family,R.string.fs_contacts) { startActivity(Intent(this,TrustedContactsActivity::class.java)) }
         FeatureCards.add(root,R.drawable.asset_family,R.string.fs_journey_start) { startActivity(Intent(this,FamilyDashboardActivity::class.java)) }

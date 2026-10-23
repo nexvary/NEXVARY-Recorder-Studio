@@ -123,6 +123,8 @@
         <activity android:name=".delivery.MailOutboxActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false"/>
         <activity android:name=".media.RecordingsLibraryActivity" android:exported="false"/>
+        <activity android:name=".media.InternalPlayerActivity" android:exported="false" />
+        <activity android:name=".family.GuidedSetupActivity" android:exported="false" />
         <activity android:name=".MoreActivity" android:exported="false" />
         <activity android:name=".GuideActivity" android:exported="false" />
         <activity

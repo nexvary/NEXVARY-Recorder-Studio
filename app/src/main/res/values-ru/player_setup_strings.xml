@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_title">Встроенный проигрыватель записей</string>
+    <string name="player_choose">Выбрать видео или аудио</string>
+    <string name="player_loading">Загрузка записи…</string>
+    <string name="player_ready">Готово — используйте управление</string>
+    <string name="player_finished">Воспроизведение завершено</string>
+    <string name="player_error">Файл отсутствует, повреждён или не поддерживается. Выберите другой.</string>
+    <string name="player_fullscreen">Альбомная / книжная</string>
+    <string name="player_speed">Скорость воспроизведения</string>
+    <string name="player_speed_value">Скорость: %1$s×</string>
+    <string name="player_local_note">Локальное воспроизведение работает без сети и приостанавливается при выходе. У сейфа отдельный защищённый проигрыватель.</string>
+    <string name="setup_title">Пошаговая настройка</string>
+    <string name="setup_intro">Здоровье → опекун → ребёнок → запись → проверка. Прогресс сохраняется; запись и SOS доступны всегда.</string>
+    <string name="setup_progress">Шаг %1$d из %2$d — %3$s</string>
+    <string name="setup_health">Медицинский и экстренный профиль</string>
+    <string name="setup_health_note">Необязательные медицинские данные пользователя телефона. Отображение и передача остаются на ваш выбор.</string>
+    <string name="setup_guardian">Профиль опекуна</string>
+    <string name="setup_child">Профиль ребёнка</string>
+    <string name="setup_recording">Запись и воспроизведение</string>
+    <string name="setup_finish">Проверка и безопасность</string>
+    <string name="setup_next">Далее</string>
+    <string name="setup_previous">Предыдущий шаг</string>
+    <string name="setup_save_next">Сохранить и продолжить</string>
+    <string name="setup_skip_health">Пока пропустить медицинские данные</string>
+    <string name="setup_personal">Личное использование — без профиля ребёнка</string>
+    <string name="setup_profiles_note">Профили зашифрованы на этом телефоне. Онлайн-аккаунты и связь с другим устройством не создаются.</string>
+    <string name="setup_guardian_note">Телефон и почта необязательны и не активируют оповещения. Добавьте и подтвердите доверенные контакты в конце.</string>
+    <string name="setup_child_note">Имя и возраст ребёнка также используются в медпрофиле. Заметки и согласия сохраняются. Детский режим включается отдельно с PIN опекуна.</string>
+    <string name="setup_name_required">Введите имя или выберите личное использование.</string>
+    <string name="setup_age_invalid">Возраст от 0 до 120 или пустое поле.</string>
+    <string name="setup_recording_note">Выберите камеру, экран или звук. Разрешения запрашиваются по необходимости. Просмотр в библиотеке записей.</string>
+    <string name="setup_player_note">Смотреть и слушать в приложении</string>
+    <string name="setup_record_now">Открыть запись с камеры</string>
+    <string name="setup_local_ready">Проверьте настройки и добавьте контакты, прежде чем полагаться на оповещения.</string>
+    <string name="setup_summary">Локальные профили</string>
+    <string name="setup_summary_value">Пользователь: %1$s\nОпекун: %2$s\nИспользование: %3$s</string>
+    <string name="setup_not_set">Не задано</string>
+    <string name="setup_cloud_note">Онлайн-аккаунтам и удалённой отправке нужен активный сервис. Эта настройка не включает почту, загрузку и удалённое наблюдение.</string>
+    <string name="setup_done">Завершить локальную настройку</string>
+</resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_title">ریکارڈنگ کا اندرونی پلیئر</string>
+    <string name="player_choose">ویڈیو یا آڈیو منتخب کریں</string>
+    <string name="player_loading">ریکارڈنگ لوڈ ہو رہی ہے…</string>
+    <string name="player_ready">تیار — پلے کنٹرول استعمال کریں</string>
+    <string name="player_finished">پلے بیک مکمل</string>
+    <string name="player_error">فائل غائب، نامکمل یا غیر معاون ہے۔ دوسری فائل منتخب کریں۔</string>
+    <string name="player_fullscreen">افقی / عمودی</string>
+    <string name="player_speed">پلے بیک کی رفتار</string>
+    <string name="player_speed_value">رفتار: %1$s×</string>
+    <string name="player_local_note">مقامی پلے بیک بغیر انٹرنیٹ چلتا اور باہر جانے پر رک جاتا ہے۔ والٹ کا محفوظ پلیئر الگ ہے۔</string>
+    <string name="setup_title">مرحلہ وار سیٹ اپ</string>
+    <string name="setup_intro">صحت، سرپرست، بچہ، ریکارڈنگ، پھر جائزہ۔ پیش رفت محفوظ ہے؛ ریکارڈنگ اور SOS دستیاب رہتے ہیں۔</string>
+    <string name="setup_progress">مرحلہ %1$d از %2$d — %3$s</string>
+    <string name="setup_health">صحت اور ہنگامی پروفائل</string>
+    <string name="setup_health_note">فون استعمال کرنے والے کی اختیاری صحت کی معلومات۔ دکھانا اور شیئر کرنا آپ کی مرضی ہے۔</string>
+    <string name="setup_guardian">سرپرست کا پروفائل</string>
+    <string name="setup_child">بچے کا پروفائل</string>
+    <string name="setup_recording">ریکارڈنگ اور پلے بیک</string>
+    <string name="setup_finish">جائزہ اور حفاظت</string>
+    <string name="setup_next">اگلا</string>
+    <string name="setup_previous">پچھلا مرحلہ</string>
+    <string name="setup_save_next">محفوظ کریں اور جاری رکھیں</string>
+    <string name="setup_skip_health">صحت کی معلومات ابھی چھوڑیں</string>
+    <string name="setup_personal">ذاتی استعمال — بچے کا پروفائل نہیں</string>
+    <string name="setup_profiles_note">پروفائل اس فون پر خفیہ محفوظ ہیں۔ آن لائن اکاؤنٹ یا دوسرے فون سے رابطہ نہیں بنتا۔</string>
+    <string name="setup_guardian_note">فون اور ای میل اختیاری ہیں؛ محفوظ کرنے سے الرٹس فعال نہیں ہوتے۔ آخر میں قابل اعتماد رابطے شامل اور تصدیق کریں۔</string>
+    <string name="setup_child_note">بچے کا نام اور عمر صحت کے پروفائل میں بھی استعمال ہوتے ہیں۔ نوٹس اور رضامندیاں محفوظ رہتی ہیں۔ چائلڈ موڈ الگ سے سرپرست PIN کے ساتھ فعال کریں۔</string>
+    <string name="setup_name_required">نام لکھیں یا ذاتی استعمال منتخب کریں۔</string>
+    <string name="setup_age_invalid">عمر 0 تا 120 لکھیں یا خالی چھوڑیں۔</string>
+    <string name="setup_recording_note">کیمرہ، اسکرین یا آواز منتخب کریں۔ اجازت ضرورت کے وقت لی جاتی ہے۔ فائلیں لائبریری میں چلتی ہیں۔</string>
+    <string name="setup_player_note">ایپ میں دیکھیں اور سنیں</string>
+    <string name="setup_record_now">کیمرہ ریکارڈنگ ابھی کھولیں</string>
+    <string name="setup_local_ready">الرٹس پر انحصار سے پہلے مقامی ترتیبات دیکھیں اور رابطے شامل کریں۔</string>
+    <string name="setup_summary">مقامی پروفائل</string>
+    <string name="setup_summary_value">فون صارف: %1$s\nسرپرست: %2$s\nاستعمال: %3$s</string>
+    <string name="setup_not_set">مقرر نہیں</string>
+    <string name="setup_cloud_note">آن لائن اکاؤنٹ اور ریموٹ ارسال کے لیے فعال سروس چاہیے۔ یہ سیٹ اپ ای میل، اپ لوڈ یا ریموٹ نگرانی فعال نہیں کرتا۔</string>
+    <string name="setup_done">مقامی سیٹ اپ مکمل کریں</string>
+</resources>

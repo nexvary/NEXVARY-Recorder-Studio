@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_title">Dahili kayıt oynatıcı</string>
+    <string name="player_choose">Video veya ses seç</string>
+    <string name="player_loading">Kayıt yükleniyor…</string>
+    <string name="player_ready">Hazır — oynatma kontrollerini kullanın</string>
+    <string name="player_finished">Oynatma tamamlandı</string>
+    <string name="player_error">Dosya eksik, tamamlanmamış veya desteklenmiyor. Başka dosya seçin.</string>
+    <string name="player_fullscreen">Yatay / dikey</string>
+    <string name="player_speed">Oynatma hızı</string>
+    <string name="player_speed_value">Oynatma hızı: %1$s×</string>
+    <string name="player_local_note">Yerel oynatma çevrimdışı çalışır ve çıkınca duraklar. Kasa dosyaları korumalı oynatıcıda açılır.</string>
+    <string name="setup_title">Adım adım kurulum</string>
+    <string name="setup_intro">Sağlık → veli → çocuk → kayıt → inceleme. İlerleme kaydedilir; kayıt ve SOS kullanılabilir kalır.</string>
+    <string name="setup_progress">Adım %1$d / %2$d — %3$s</string>
+    <string name="setup_health">Sağlık ve acil durum profili</string>
+    <string name="setup_health_note">Bu telefonu kullanan kişinin isteğe bağlı sağlık bilgileri. Görüntüleme ve paylaşım sizin seçiminizdir.</string>
+    <string name="setup_guardian">Veli profili</string>
+    <string name="setup_child">Çocuk profili</string>
+    <string name="setup_recording">Kayıt ve oynatma</string>
+    <string name="setup_finish">İnceleme ve güvenlik</string>
+    <string name="setup_next">İleri</string>
+    <string name="setup_previous">Önceki adım</string>
+    <string name="setup_save_next">Kaydet ve devam et</string>
+    <string name="setup_skip_health">Sağlık bilgilerini şimdilik atla</string>
+    <string name="setup_personal">Kişisel kullanım — çocuk profili yok</string>
+    <string name="setup_profiles_note">Profiller bu telefonda şifrelenir. Çevrimiçi hesap veya başka cihaz bağlantısı oluşturmaz.</string>
+    <string name="setup_guardian_note">Telefon ve e-posta isteğe bağlıdır; kaydetmek uyarıları açmaz. Güvenilir kişileri son adımda ekleyip doğrulayın.</string>
+    <string name="setup_child_note">Çocuğun adı ve yaşı sağlık profilinde de kullanılır. Notlar ve izinler korunur. Çocuk Modunu veli PIN koduyla ayrıca açın.</string>
+    <string name="setup_name_required">Ad girin veya kişisel kullanımı seçin.</string>
+    <string name="setup_age_invalid">0–120 yaş girin veya boş bırakın.</string>
+    <string name="setup_recording_note">Kamera, ekran veya ses seçin. İzinler gerektiğinde istenir. Dosyaları kayıt kitaplığında oynatın.</string>
+    <string name="setup_player_note">Uygulamada izleyin ve dinleyin</string>
+    <string name="setup_record_now">Kamera kaydını şimdi aç</string>
+    <string name="setup_local_ready">Uyarılara güvenmeden önce yerel ayarları inceleyip güvenilir kişileri ekleyin.</string>
+    <string name="setup_summary">Yerel profiller</string>
+    <string name="setup_summary_value">Telefon kullanıcısı: %1$s\nVeli: %2$s\nKullanım: %3$s</string>
+    <string name="setup_not_set">Ayarlanmadı</string>
+    <string name="setup_cloud_note">Çevrimiçi hesap ve uzaktan gönderim etkin hizmet gerektirir. Bu kurulum e-posta, yükleme veya uzaktan izlemeyi açmaz.</string>
+    <string name="setup_done">Yerel kurulumu tamamla</string>
+</resources>
