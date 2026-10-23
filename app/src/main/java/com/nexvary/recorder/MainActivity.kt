@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
         ThemeManager.apply(this)
         super.onCreate(savedInstanceState)
 
+        if (com.nexvary.recorder.guardian.ChildMode.enabled(this)) {
+            startActivity(Intent(this, com.nexvary.recorder.guardian.ChildHomeActivity::class.java)); finish(); return
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         UiInsets.applyWithBottomBar(binding.root, binding.bottomNav)
@@ -38,28 +41,31 @@ class MainActivity : AppCompatActivity() {
         val versionName = packageManager.getPackageInfo(packageName, 0).versionName.orEmpty()
         binding.txtVersion.text = getString(R.string.version_format, versionName)
         updateThemeLabel()
+        com.nexvary.recorder.ui.FeatureCards.add(binding.setupEntry, R.drawable.asset_family, R.string.setup_title) {
+            startActivity(Intent(this, com.nexvary.recorder.family.GuidedSetupActivity::class.java))
+        }
         lifecycleScope.launch {
             withContext(Dispatchers.IO) { runCatching { com.nexvary.recorder.delivery.MailWorker.reconcile(this@MainActivity) };runCatching { com.nexvary.recorder.family.SafetyCheckManager(this@MainActivity).evaluate(true) } }
         }
 
         binding.btnThemePicker.setOnClickListener { view ->
             view.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
-            showThemePicker()
+            com.nexvary.recorder.family.GuardianGate.action(this) { showThemePicker() }
         }
 
         binding.cardScreen.setOnClickListener { openScreenRecorder() }
-        binding.cardVoice.setOnClickListener { openVoiceStudio() }
+        binding.cardFamily.setOnClickListener { openFamilySafety() }
         binding.cardReplace.setOnClickListener { openMediaTools() }
         binding.cardLive.setOnClickListener { openLiveBroadcast() }
         binding.cardCamera.setOnClickListener { startActivity(Intent(this, BackgroundCameraActivity::class.java)) }
-        binding.cardRescue.setOnClickListener { startActivity(Intent(this, QuickRescueActivity::class.java)) }
+        binding.cardRescue.setOnClickListener { startActivity(Intent(this, com.nexvary.recorder.guardian.GuardianEmergencyActivity::class.java)) }
         binding.cardLibrary.setOnClickListener { startActivity(Intent(this, RecordingsLibraryActivity::class.java)) }
         binding.cardSettings.setOnClickListener { startActivity(Intent(this, SettingsActivity::class.java)) }
         binding.cardAbout.setOnClickListener { startActivity(Intent(this, AboutActivity::class.java)) }
         binding.bottomNav.itemIconTintList = null
         // Labels are always visible. Suppress duplicate long-press tooltips so a
         // slow/held tap can still activate a tab rather than consuming its click.
-        for (id in listOf(R.id.navHome, R.id.navScreen, R.id.navVoice, R.id.navLive, R.id.navMore)) {
+        for (id in listOf(R.id.navHome, R.id.navScreen, R.id.navSafety, R.id.navLive, R.id.navMore)) {
             binding.bottomNav.findViewById<android.view.View>(id)?.let { tab ->
                 androidx.appcompat.widget.TooltipCompat.setTooltipText(tab, null)
                 tab.isLongClickable = false
@@ -74,8 +80,8 @@ class MainActivity : AppCompatActivity() {
                     openScreenRecorder()
                     false
                 }
-                R.id.navVoice -> {
-                    openVoiceStudio()
+                R.id.navSafety -> {
+                    openFamilySafety()
                     false
                 }
                 R.id.navLive -> {
@@ -83,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                     false
                 }
                 R.id.navMore -> {
-                    showMoreMenu()
+                    startActivity(Intent(this, MoreActivity::class.java))
                     false
                 }
                 else -> false
@@ -104,48 +110,20 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, ScreenRecorderActivity::class.java))
     }
 
+    private fun openFamilySafety() {
+        startActivity(Intent(this, com.nexvary.recorder.family.FamilyHubActivity::class.java))
+    }
+
     private fun openVoiceStudio() {
         startActivity(Intent(this, VoiceRecorderActivity::class.java))
     }
 
     private fun openMediaTools() {
-        startActivity(Intent(this, MediaToolsActivity::class.java))
+        startActivity(Intent(this, com.nexvary.recorder.media.MediaCenterActivity::class.java))
     }
 
     private fun openLiveBroadcast() {
         startActivity(Intent(this, LiveBroadcastActivity::class.java))
-    }
-
-    private fun showMoreMenu() {
-        val labels = arrayOf(
-            getString(R.string.media_tools_title),
-            getString(R.string.language_title),
-            getString(R.string.about_title),
-            getString(R.string.choose_theme),
-            getString(R.string.camera_title),
-            getString(R.string.call_title),
-            getString(R.string.safety_title),
-            getString(R.string.rescue_title),
-            getString(R.string.fs_title)
-        )
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.nav_more)
-            .setItems(labels) { _, which ->
-                when (which) {
-                    0 -> openMediaTools()
-                    1 -> startActivity(Intent(this, LanguageActivity::class.java))
-                    2 -> startActivity(Intent(this, AboutActivity::class.java))
-                    3 -> showThemePicker()
-                    4 -> startActivity(Intent(this, BackgroundCameraActivity::class.java))
-                    5 -> startActivity(Intent(this, CallRecorderActivity::class.java))
-                    6 -> startActivity(Intent(this, SafetyCaptureActivity::class.java))
-                    7 -> startActivity(Intent(this, QuickRescueActivity::class.java))
-                    8 -> startActivity(Intent(this, com.nexvary.recorder.family.FamilyDashboardActivity::class.java))
-                }
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
     }
 
     private fun showThemePicker() {

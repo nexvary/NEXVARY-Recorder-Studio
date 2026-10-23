@@ -46,9 +46,11 @@ class ReportedIssuesTest {
         try {
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
                 onView(withId(R.id.cardSettings)).perform(reveal(), click())
-                onView(withText(R.string.choose_theme)).perform(click())
+                onView(withId(R.id.settingsAppearance)).perform(reveal(), click())
+                onView(withText(R.string.choose_theme)).perform(reveal(), click())
                 onView(withText(R.string.theme_purple)).perform(click())
-                onView(withId(R.id.btnBack)).perform(click())
+                onView(withId(R.id.btnBack)).perform(reveal(), click())
+                onView(withId(R.id.btnBack)).perform(reveal(), click())
                 await(withId(R.id.cardScreen))
                 scenario.onActivity { activity ->
                     val value = android.util.TypedValue()
@@ -112,10 +114,10 @@ class ReportedIssuesTest {
         try {
             ActivityScenario.launch(RecordingsLibraryActivity::class.java).use {
                 await(withText(name))
-                onView(withText(R.string.library_delete)).perform(reveal(), click())
+                onView(org.hamcrest.Matchers.allOf(withText(R.string.library_delete),withParent(hasDescendant(withText(name))))).perform(reveal(), click())
                 onView(withId(android.R.id.button2)).perform(click())
                 assertTrue(fixture.exists())
-                onView(withText(R.string.library_hide)).perform(reveal(), click())
+                onView(org.hamcrest.Matchers.allOf(withText(R.string.library_hide),withParent(hasDescendant(withText(name))))).perform(reveal(), click())
                 onView(withId(R.id.vaultPin)).perform(replaceText("638291"))
                 onView(withId(R.id.vaultConfirmPin)).perform(replaceText("638291"), androidx.test.espresso.action.ViewActions.closeSoftKeyboard())
                 onView(withId(android.R.id.button1)).perform(click())
@@ -124,7 +126,8 @@ class ReportedIssuesTest {
                 await(withText(R.string.vault_restore))
                 assertFalse(fixture.exists())
                 onView(withId(R.id.openVault)).perform(reveal(), click())
-                await(withText(R.string.library_empty))
+                await(org.hamcrest.Matchers.allOf(withId(android.R.id.content),org.hamcrest.Matchers.not(hasDescendant(withText(name)))))
+                onView(withText(name)).check(androidx.test.espresso.assertion.ViewAssertions.doesNotExist())
                 onView(withId(R.id.openVault)).perform(reveal(), click())
                 onView(withId(R.id.vaultPin)).perform(replaceText("000000"), androidx.test.espresso.action.ViewActions.closeSoftKeyboard())
                 onView(withId(android.R.id.button1)).perform(click())
@@ -140,9 +143,10 @@ class ReportedIssuesTest {
                 // Check restored bytes, then exercise the actual delete button and confirmation.
                 val uri = restoredUri(name)
                 assertArrayEquals(data, context.contentResolver.openInputStream(uri)!!.use { it.readBytes() })
-                onView(withText(R.string.library_delete)).perform(reveal(), click())
+                onView(org.hamcrest.Matchers.allOf(withText(R.string.library_delete),withParent(hasDescendant(withText(name))))).perform(reveal(), click())
                 onView(withId(android.R.id.button1)).perform(click())
-                await(withText(R.string.library_empty))
+                await(org.hamcrest.Matchers.allOf(withId(android.R.id.content),org.hamcrest.Matchers.not(hasDescendant(withText(name)))))
+                onView(withText(name)).check(androidx.test.espresso.assertion.ViewAssertions.doesNotExist())
                 assertNull(findRestored(name))
             }
         } finally {
@@ -171,7 +175,8 @@ class ReportedIssuesTest {
                 }
                 await(playable)
                 scenario.recreate()
-                await(withText(R.string.library_empty))
+                await(withId(R.id.openVault))
+                onView(withText("private-qa.mp4")).check(androidx.test.espresso.assertion.ViewAssertions.doesNotExist())
                 assertTrue(File(context.cacheDir, "vault_playback").listFiles().orEmpty().isEmpty())
                 onView(withId(R.id.openVault)).perform(reveal(), click())
                 onView(withId(R.id.vaultPin)).check(matches(isDisplayed()))

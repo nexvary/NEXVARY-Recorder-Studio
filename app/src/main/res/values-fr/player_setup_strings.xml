@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_title">Lecteur intégré des enregistrements</string>
+    <string name="player_choose">Choisir une vidéo ou un audio</string>
+    <string name="player_loading">Chargement…</string>
+    <string name="player_ready">Prêt — utilisez les commandes</string>
+    <string name="player_finished">Lecture terminée</string>
+    <string name="player_error">Fichier absent, incomplet ou non pris en charge. Choisissez un autre fichier.</string>
+    <string name="player_fullscreen">Paysage / portrait</string>
+    <string name="player_speed">Vitesse de lecture</string>
+    <string name="player_speed_value">Vitesse : %1$s×</string>
+    <string name="player_local_note">La lecture locale fonctionne hors ligne et se met en pause en quittant. Les fichiers du coffre gardent leur lecteur protégé.</string>
+    <string name="setup_title">Configuration étape par étape</string>
+    <string name="setup_intro">Santé → responsable → enfant → enregistrement → vérification. Progression enregistrée ; enregistrement et SOS restent accessibles.</string>
+    <string name="setup_progress">Étape %1$d sur %2$d — %3$s</string>
+    <string name="setup_health">Profil médical et urgence</string>
+    <string name="setup_health_note">Données médicales facultatives de la personne utilisant ce téléphone. Affichage et partage restent votre choix.</string>
+    <string name="setup_guardian">Profil du responsable</string>
+    <string name="setup_child">Profil de l’enfant</string>
+    <string name="setup_recording">Enregistrement et lecture</string>
+    <string name="setup_finish">Vérification et sécurité</string>
+    <string name="setup_next">Suivant</string>
+    <string name="setup_previous">Étape précédente</string>
+    <string name="setup_save_next">Enregistrer et continuer</string>
+    <string name="setup_skip_health">Ignorer les données médicales pour le moment</string>
+    <string name="setup_personal">Usage personnel — sans profil enfant</string>
+    <string name="setup_profiles_note">Profils chiffrés sur ce téléphone. Aucun compte en ligne ni association avec un autre appareil.</string>
+    <string name="setup_guardian_note">Téléphone et e-mail facultatifs, sans activation des alertes. Ajoutez et vérifiez les contacts de confiance à la dernière étape.</string>
+    <string name="setup_child_note">Nom et âge de l’enfant identifient aussi son profil médical. Notes et consentements sont conservés. Activez séparément le mode enfant avec le PIN parental.</string>
+    <string name="setup_name_required">Saisissez un nom ou choisissez l’usage personnel.</string>
+    <string name="setup_age_invalid">Âge de 0 à 120, ou laissez vide.</string>
+    <string name="setup_recording_note">Choisissez caméra, écran ou audio. Les autorisations sont demandées au besoin. Lecture dans la bibliothèque.</string>
+    <string name="setup_player_note">Regarder et écouter dans l’application</string>
+    <string name="setup_record_now">Ouvrir la caméra maintenant</string>
+    <string name="setup_local_ready">Vérifiez les réglages locaux et ajoutez des contacts avant de compter sur les alertes.</string>
+    <string name="setup_summary">Profils locaux</string>
+    <string name="setup_summary_value">Utilisateur : %1$s\nResponsable : %2$s\nUsage : %3$s</string>
+    <string name="setup_not_set">Non défini</string>
+    <string name="setup_cloud_note">Comptes en ligne et envoi distant nécessitent un service activé. Cette configuration n’active ni e-mail, ni transfert, ni surveillance distante.</string>
+    <string name="setup_done">Terminer la configuration locale</string>
+</resources>

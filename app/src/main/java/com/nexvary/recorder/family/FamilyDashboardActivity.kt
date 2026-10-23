@@ -26,6 +26,7 @@ import java.util.UUID
 class FamilyDashboardActivity: AppCompatActivity() {
     private lateinit var status: TextView
     private lateinit var medical: TextView
+    private lateinit var details: TextView
     private lateinit var duration: EditText
     private lateinit var grace: EditText
     private var snapshot=JSONObject()
@@ -62,37 +63,39 @@ class FamilyDashboardActivity: AppCompatActivity() {
                 .setPositiveButton(R.string.fs_cancel) { _,_ -> val id=FamilyStore.state(snapshot)?.id;FamilyUi.io(this,{ SafetyCheckManager(this).resolve(id,true) }) { refresh() } }.show()
         }
         val panel=DeliveryUi.section(root,R.string.fs_check_start)
-        val choices=Spinner(this).apply { id=R.id.fsPresets;adapter=ArrayAdapter(this@FamilyDashboardActivity,android.R.layout.simple_spinner_dropdown_item,resources.getStringArray(R.array.fs_durations));panel.addView(this) }
+        (panel.getChildAt(0) as TextView).apply { setTextColor(StudioSpinner.GREEN);setTag(R.id.studioStyled,true) }
+        val choices=StudioSpinner.add(panel,resources.getStringArray(R.array.fs_durations).toList(),R.id.fsPresets,saved?.getInt("preset",0) ?: 0)
         duration=FamilyUi.field(panel,R.string.fs_minutes,R.id.fsMinutes,saved?.getString("minutes") ?: "15",android.text.InputType.TYPE_CLASS_NUMBER)
-        grace=FamilyUi.field(panel,R.string.fs_grace,R.id.fsGrace,saved?.getString("grace") ?: "60",android.text.InputType.TYPE_CLASS_NUMBER)
-        choices.setSelection(saved?.getInt("preset",0) ?: 0)
+        val timerOptions=SettingsSections.add(panel,R.string.settings_timer_options,R.id.timerOptions)
+        grace=FamilyUi.field(timerOptions,R.string.fs_grace,R.id.fsGrace,saved?.getString("grace") ?: "60",android.text.InputType.TYPE_CLASS_NUMBER)
+        duration.visibility=if(choices.selectedItemPosition==4) View.VISIBLE else View.GONE
+        (duration.parent as ViewGroup).let { it.getChildAt(it.indexOfChild(duration)-1).visibility=duration.visibility }
         var restoringPreset=saved!=null
         choices.onItemSelectedListener=object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) { }
-            override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long) { if(restoringPreset) { restoringPreset=false;return };listOf("15","30","60","120").getOrNull(position)?.let { duration.setText(it) } }
+            override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long) {
+                duration.visibility=if(position==4) View.VISIBLE else View.GONE
+                (duration.parent as ViewGroup).let { it.getChildAt(it.indexOfChild(duration)-1).visibility=duration.visibility }
+                if(restoringPreset) { restoringPreset=false;return };listOf("15","30","60","120").getOrNull(position)?.let { duration.setText(it) } }
         }
         DeliveryUi.button(panel,R.string.fs_check_start,R.id.fsStart) { start(false) }
         DeliveryUi.button(root,R.string.fs_journey_start,R.id.fsJourney) { start(true) }
-        DeliveryUi.text(root,R.string.fs_emergency_size).also { label ->
+        FeatureCards.add(root,R.drawable.asset_settings,R.string.settings_safety) { startActivity(Intent(this,FamilySettingsActivity::class.java)) }
+        FeatureCards.add(root,R.drawable.asset_library,R.string.fs_history) { startActivity(Intent(this,SafetyHistoryActivity::class.java)) }
+        val extra=SettingsSections.add(root,R.string.settings_evidence,R.id.timerEvidenceOptions)
+        details=DeliveryUi.text(extra,R.string.fs_ready)
+        DeliveryUi.text(extra,R.string.fs_emergency_size).also { label ->
             label.text=getString(R.string.fs_emergency_size,com.nexvary.recorder.camera.CameraQuality.EMERGENCY.estimatedBytes(60_000,true)/1_000_000.0)
         }
-        DeliveryUi.button(root,R.string.fs_evidence,R.id.fsEvidence) { evidence(false) }
-        DeliveryUi.button(root,R.string.fs_test_evidence,R.id.fsTestEvidence) { evidence(true) }
-        DeliveryUi.button(root,R.string.fs_stop_evidence,R.id.fsStopEvidence,true) { FamilyUi.io(this,{ EvidenceManager.stopOwned(this,null) }) { refresh() } }
-        DeliveryUi.button(root,R.string.fs_test_alert,R.id.fsTestAlert) {
+        DeliveryUi.button(extra,R.string.fs_evidence,R.id.fsEvidence) { evidence(false) }
+        DeliveryUi.button(extra,R.string.fs_test_evidence,R.id.fsTestEvidence) { evidence(true) }
+        DeliveryUi.button(extra,R.string.fs_stop_evidence,R.id.fsStopEvidence,true) { FamilyUi.io(this,{ EvidenceManager.stopOwned(this,null) }) { refresh() } }
+        DeliveryUi.button(extra,R.string.fs_test_alert,R.id.fsTestAlert) {
             MaterialAlertDialogBuilder(this).setTitle(R.string.fs_test_alert).setMessage(R.string.fs_test_alert_note)
                 .setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.fs_test_alert) { _,_ ->
                     FamilyUi.io(this,{ SafetyCheckManager(this).emit("TEST_ALERT",manual=true,test=true) }) { refresh() }
                 }.show()
         }
-        listOf(R.string.fs_contacts to TrustedContactsActivity::class.java,R.string.fs_settings to FamilySettingsActivity::class.java,
-            R.string.fs_profile to EmergencyProfileActivity::class.java,R.string.fs_queue to SafetyQueueActivity::class.java,
-            R.string.fs_history to SafetyHistoryActivity::class.java,R.string.fs_integrity to EvidenceActivity::class.java,
-            R.string.fs_privacy to PrivacyCenterActivity::class.java,R.string.fs_parent_mode to ParentSettingsActivity::class.java,
-            R.string.fs_subscriptions to com.nexvary.recorder.billing.SubscriptionActivity::class.java).forEach { (label,page) ->
-            DeliveryUi.button(root,label) { startActivity(Intent(this,page)) }
-        }
-        DeliveryUi.text(root,R.string.fs_limits_note)
         if(saved==null && intent.getBooleanExtra("trigger",false)) handler.post { triggerSos() }
     }
     override fun onStart() { super.onStart();locationRequested=false;handler.post(tick);FamilyUi.io(this,{ SafetyCheckManager(this).evaluate(true) }) }
@@ -121,9 +124,12 @@ class FamilyDashboardActivity: AppCompatActivity() {
             val remaining=state?.deadline?.remaining(System.currentTimeMillis(),SystemClock.elapsedRealtime(),Settings.Global.getInt(contentResolver,Settings.Global.BOOT_COUNT,-1)) ?: 0
             val first=FamilyStore.contacts(root).let { rows -> (0 until rows.length()).map { rows.getJSONObject(it) }.firstOrNull { it.optString("role")=="PRIMARY" } ?: rows.optJSONObject(0) }?.optString("name").orEmpty()
             val battery=getSystemService(BatteryManager::class.java).getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-            status.text=getString(FamilyUi.state(state?.phase))+"\n"+getString(R.string.fs_dashboard_status,remaining/60_000,(remaining/1000)%60,first.ifEmpty { getString(R.string.fs_none) },(if(battery in 0..100) "$battery%" else getString(R.string.fs_none)),AlertPayload.network(this))+
+            details.text=getString(FamilyUi.state(state?.phase))+"\n"+getString(R.string.fs_dashboard_status,remaining/60_000,(remaining/1000)%60,first.ifEmpty { getString(R.string.fs_none) },(if(battery in 0..100) "$battery%" else getString(R.string.fs_none)),AlertPayload.network(this))+
                 "\n"+getString(if(config.optBoolean("autoShare")) R.string.fs_sharing_on else R.string.fs_local_only)
-            status.append("\n"+getString(if(root.has("lastLocation")) R.string.fs_location_available else R.string.fs_location_unavailable)+"\n"+getString(if(exact()) R.string.fs_exact_on else R.string.fs_inexact))
+            details.append("\n"+getString(if(root.has("lastLocation")) R.string.fs_location_available else R.string.fs_location_unavailable)+"\n"+getString(if(exact()) R.string.fs_exact_on else R.string.fs_inexact))
+            status.text=getString(FamilyUi.state(state?.phase))+
+                (if(active) "\n"+getString(R.string.timer_remaining,remaining/60_000,(remaining/1000)%60) else "")+
+                "\n"+getString(if(config.optBoolean("autoShare")) R.string.fs_sharing_on else R.string.fs_local_only)
             val evidenceAction=state?.let { root.optJSONObject("evidenceActions")?.optString(it.id) }.orEmpty()
             if(evidenceAction.isNotEmpty()) status.append("\n"+getString(when(evidenceAction) {
                 "RECORDING","STARTING" -> R.string.fs_evidence_started

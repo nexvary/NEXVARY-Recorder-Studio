@@ -79,6 +79,8 @@ class BackgroundCameraActivity : AppCompatActivity() {
         recipient = DeliveryUi.field(delivery, R.string.camera_recipient, R.id.cameraRecipient,
             savedInstanceState?.getString("recipient") ?: prefs.getString("recipient", "").orEmpty(), InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
         recipient.isEnabled = email.isChecked
+        if(!com.nexvary.recorder.BuildConfig.DEBUG) { delivery.visibility=android.view.View.GONE;email.isChecked=false }
+
         DeliveryUi.text(delivery, R.string.camera_email_note)
         DeliveryUi.button(delivery, R.string.smtp_title, R.id.openSmtp) { startActivity(Intent(this, SmtpSettingsActivity::class.java)) }
         DeliveryUi.button(delivery, R.string.mail_outbox, R.id.mailOutbox) { startActivity(Intent(this, MailOutboxActivity::class.java)) }

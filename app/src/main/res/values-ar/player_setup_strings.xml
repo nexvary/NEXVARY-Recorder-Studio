@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_title">مشغّل التسجيلات المدمج</string>
+    <string name="player_choose">اختيار فيديو أو صوت</string>
+    <string name="player_loading">جارٍ تحميل التسجيل…</string>
+    <string name="player_ready">جاهز — استخدم أزرار التشغيل</string>
+    <string name="player_finished">انتهى تشغيل التسجيل</string>
+    <string name="player_error">تعذّر تشغيل الملف. قد يكون محذوفًا أو غير مكتمل أو غير مدعوم. اختر ملفًا آخر.</string>
+    <string name="player_fullscreen">عرض أفقي / رأسي</string>
+    <string name="player_speed">سرعة التشغيل</string>
+    <string name="player_speed_value">سرعة التشغيل: %1$s×</string>
+    <string name="player_local_note">التشغيل المحلي يعمل دون إنترنت ويتوقف مؤقتًا عند المغادرة. ملفات الخزنة تُعرض في مشغّلها المحمي.</string>
+    <string name="setup_title">إعداد التطبيق خطوة بخطوة</string>
+    <string name="setup_intro">الملف الصحي، وليّ الأمر، الطفل، التسجيل، ثم المراجعة. نحفظ تقدّمك، ويظل التسجيل وSOS متاحين.</string>
+    <string name="setup_progress">الخطوة %1$d من %2$d — %3$s</string>
+    <string name="setup_health">الملف الصحي والطوارئ</string>
+    <string name="setup_health_note">بيانات صحية اختيارية للشخص الذي يستخدم هذا الهاتف. إظهارها ومشاركتها يظلان باختيارك.</string>
+    <string name="setup_guardian">ملف وليّ الأمر</string>
+    <string name="setup_child">ملف الطفل</string>
+    <string name="setup_recording">التسجيل وتشغيل الملفات</string>
+    <string name="setup_finish">المراجعة وإعدادات الأمان</string>
+    <string name="setup_next">التالي</string>
+    <string name="setup_previous">الخطوة السابقة</string>
+    <string name="setup_save_next">حفظ ومتابعة</string>
+    <string name="setup_skip_health">تخطي البيانات الصحية حاليًا</string>
+    <string name="setup_personal">استخدام شخصي — دون ملف طفل</string>
+    <string name="setup_profiles_note">تُحفظ الملفات مشفّرة على هذا الهاتف. لا تنشئ حسابات على الإنترنت ولا تربط هاتفًا آخر.</string>
+    <string name="setup_guardian_note">الهاتف والبريد اختياريان. حفظهما لا يفعّل التنبيهات. أضف جهات الاتصال الموثوقة وتحقق منها في الخطوة الأخيرة.</string>
+    <string name="setup_child_note">اسم الطفل وعمره يحددان ملفه الصحي على هذا الهاتف أيضًا. تبقى الملاحظات الصحية والموافقات محفوظة. فعّل وضع الطفل بصورة مستقلة باستخدام PIN لوليّ الأمر.</string>
+    <string name="setup_name_required">أدخل الاسم أو اختر الاستخدام الشخصي.</string>
+    <string name="setup_age_invalid">أدخل عمرًا من 0 إلى 120 أو اتركه فارغًا.</string>
+    <string name="setup_recording_note">اختر تسجيل الكاميرا أو الشاشة أو الصوت. تُطلب الأذونات عند الحاجة. شغّل الملفات داخل مكتبة التسجيلات.</string>
+    <string name="setup_player_note">شاهد واستمع داخل التطبيق</string>
+    <string name="setup_record_now">فتح تسجيل الكاميرا الآن</string>
+    <string name="setup_local_ready">راجع الإعداد المحلي وأضف جهات الاتصال الموثوقة قبل الاعتماد على التنبيهات.</string>
+    <string name="setup_summary">الملفات المحلية</string>
+    <string name="setup_summary_value">مستخدم الهاتف: %1$s\nوليّ الأمر: %2$s\nالاستخدام: %3$s</string>
+    <string name="setup_not_set">غير محدد</string>
+    <string name="setup_cloud_note">الحساب عبر الإنترنت والإرسال عن بُعد يحتاجان خدمة مفعّلة. هذا الإعداد لا يفعّل البريد أو الرفع أو المتابعة من هاتف آخر.</string>
+    <string name="setup_done">إنهاء الإعداد المحلي</string>
+</resources>

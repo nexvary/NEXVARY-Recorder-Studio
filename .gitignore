@@ -6,3 +6,13 @@ local.properties
 screenshots/
 diagnostics/
 .kotlin/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.aws-sam/
+
+*.sqlite3
+*.env
+!*.env.example
+backend/portable/.venv/
+dist/

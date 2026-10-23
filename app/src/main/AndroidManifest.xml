@@ -72,6 +72,12 @@
         <activity android:name=".calls.CallRecorderActivity" android:exported="false" />
         <activity android:name=".camera.BackgroundCameraActivity" android:exported="false" />
         <service android:name=".camera.BackgroundCameraService" android:exported="false" android:foregroundServiceType="camera|microphone" />
+        <activity android:name=".guardian.CloudSettingsActivity" android:exported="false" />
+        <activity android:name=".guardian.ChildHomeActivity" android:exported="false" />
+        <activity android:name=".guardian.GuardianEmergencyActivity" android:exported="false" />
+        <activity android:name=".family.FamilyHubActivity" android:exported="false" />
+        <activity android:name=".media.VideoCompressionActivity" android:exported="false" />
+        <activity android:name=".media.MediaCenterActivity" android:exported="false" />
         <activity android:name=".AboutActivity" android:exported="false" />
         <activity android:name=".LanguageActivity" android:exported="false" />
         <activity android:name=".live.LiveBroadcastActivity" android:exported="false" />
@@ -117,6 +123,10 @@
         <activity android:name=".delivery.MailOutboxActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false"/>
         <activity android:name=".media.RecordingsLibraryActivity" android:exported="false"/>
+        <activity android:name=".media.InternalPlayerActivity" android:exported="false" />
+        <activity android:name=".family.GuidedSetupActivity" android:exported="false" />
+        <activity android:name=".MoreActivity" android:exported="false" />
+        <activity android:name=".GuideActivity" android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

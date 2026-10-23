@@ -15,19 +15,22 @@ class SubscriptionActivity: ProtectedFamilyPage() {
         DeliveryUi.text(root,if(com.nexvary.recorder.BuildConfig.DEBUG) R.string.fs_billing_preview else R.string.fs_billing_note)
         status=DeliveryUi.text(root,R.string.fs_billing_loading)
         offers=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;root.addView(this) }
-        manager=BillingManager(this) { runOnUiThread { render() } }
+        val cloud=com.nexvary.recorder.guardian.CloudApi.config(this)
+        val purchasable=com.nexvary.recorder.guardian.CloudApi.configured(this) && (!com.nexvary.recorder.guardian.CloudApi.portable(cloud) ||
+            (cloud.optJSONObject("service")?.optBoolean("billing")==true && cloud.optJSONObject("service")?.optString("edition")=="MANAGED"))
+        manager=BillingManager(this,if(purchasable) CloudPurchaseVerifier(this) else null) { runOnUiThread { render() } }
         DeliveryUi.button(root,R.string.fs_restore) { manager.restore() }
         manager.connect()
     }
     private fun render() {
         if(isFinishing || isDestroyed) return
-        status.setText(if(manager.ready) R.string.fs_billing_verifier_missing else R.string.fs_billing_unavailable)
+        status.setText(if(manager.canPurchase) R.string.fs_billing_note else if(manager.ready) R.string.fs_billing_verifier_missing else R.string.fs_billing_unavailable)
         offers.removeAllViews()
         manager.products.forEach { product ->
             product.subscriptionOfferDetails?.forEach { offer ->
                 offers.addView(TextView(this).apply { text=product.name+"\n"+offer.pricingPhases.pricingPhaseList.joinToString("\n") { it.formattedPrice+" · "+it.billingPeriod } })
             }
-            if(manager.canPurchase) DeliveryUi.button(offers,R.string.fs_subscribe) { manager.launch(this,product) }
+            if(manager.canPurchase) DeliveryUi.button(offers,R.string.fs_subscribe) { if(!manager.launch(this,product)) status.setText(R.string.guardian_login_required) }
         }
     }
     override fun onDestroy() { if(::manager.isInitialized) manager.close();super.onDestroy() }

@@ -12,8 +12,11 @@ android {
         applicationId = "com.nexvary.recorder"
         minSdk = 29
         targetSdk = 35
-        versionCode = 15
-        versionName = "0.9.0"
+        versionCode = 21
+        versionName = "0.12.0"
+        val serviceOrigin = providers.gradleProperty("guardianServiceUrl").orElse(providers.environmentVariable("GUARDIAN_PUBLIC_API_URL")).getOrElse("").trim().trimEnd('/')
+        require(serviceOrigin.isEmpty() || serviceOrigin.matches(Regex("https://[A-Za-z0-9.-]+(:[0-9]{1,5})?")))
+        buildConfigField("String", "GUARDIAN_PUBLIC_API_URL", "\"$serviceOrigin\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -58,6 +61,10 @@ android {
 }
 
 dependencies {
+    implementation("androidx.media3:media3-exoplayer:1.8.0")
+    implementation("androidx.media3:media3-ui:1.8.0")
+    implementation("androidx.media3:media3-transformer:1.8.0")
+    implementation("androidx.media3:media3-effect:1.8.0")
     implementation("dev.rikka.shizuku:api:13.1.5")
     implementation("dev.rikka.shizuku:provider:13.1.5")
     implementation("androidx.core:core-ktx:1.17.0")

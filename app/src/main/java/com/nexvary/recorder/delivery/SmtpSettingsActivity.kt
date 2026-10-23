@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SmtpSettingsActivity : com.nexvary.recorder.family.GuardianProtectedActivity() {
+    override val screenshotsAllowed = true
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.apply(this); super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)

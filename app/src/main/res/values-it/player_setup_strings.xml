@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_title">Lettore di registrazioni integrato</string>
+    <string name="player_choose">Scegli video o audio</string>
+    <string name="player_loading">Caricamento registrazione…</string>
+    <string name="player_ready">Pronto — usa i comandi</string>
+    <string name="player_finished">Riproduzione terminata</string>
+    <string name="player_error">File assente, incompleto o non supportato. Scegli un altro file.</string>
+    <string name="player_fullscreen">Orizzontale / verticale</string>
+    <string name="player_speed">Velocità di riproduzione</string>
+    <string name="player_speed_value">Velocità: %1$s×</string>
+    <string name="player_local_note">Riproduzione locale anche offline, in pausa quando esci. I file della cassaforte usano il lettore protetto.</string>
+    <string name="setup_title">Configurazione passo per passo</string>
+    <string name="setup_intro">Salute → tutore → bambino → registrazione → verifica. Progressi salvati; registrazione e SOS sempre accessibili.</string>
+    <string name="setup_progress">Passaggio %1$d di %2$d — %3$s</string>
+    <string name="setup_health">Profilo sanitario e di emergenza</string>
+    <string name="setup_health_note">Dati sanitari facoltativi della persona che usa il telefono. Visualizzazione e condivisione restano una scelta.</string>
+    <string name="setup_guardian">Profilo del tutore</string>
+    <string name="setup_child">Profilo del bambino</string>
+    <string name="setup_recording">Registrazione e riproduzione</string>
+    <string name="setup_finish">Verifica e sicurezza</string>
+    <string name="setup_next">Avanti</string>
+    <string name="setup_previous">Passaggio precedente</string>
+    <string name="setup_save_next">Salva e continua</string>
+    <string name="setup_skip_health">Salta i dati sanitari per ora</string>
+    <string name="setup_personal">Uso personale — senza profilo bambino</string>
+    <string name="setup_profiles_note">Profili cifrati su questo telefono. Non creano account online e non collegano altri dispositivi.</string>
+    <string name="setup_guardian_note">Telefono ed e-mail facoltativi; salvarli non attiva avvisi. Aggiungi e verifica i contatti fidati alla fine.</string>
+    <string name="setup_child_note">Nome ed età del bambino identificano anche il profilo sanitario. Note e consensi sono conservati. Attiva separatamente la modalità bambino con il PIN del tutore.</string>
+    <string name="setup_name_required">Inserisci un nome o scegli uso personale.</string>
+    <string name="setup_age_invalid">Età da 0 a 120, oppure lascia vuoto.</string>
+    <string name="setup_recording_note">Scegli fotocamera, schermo o audio. Permessi richiesti quando servono. Riproduci i file nella raccolta.</string>
+    <string name="setup_player_note">Guarda e ascolta nella app</string>
+    <string name="setup_record_now">Apri registrazione fotocamera</string>
+    <string name="setup_local_ready">Verifica le impostazioni locali e aggiungi contatti prima di affidarti agli avvisi.</string>
+    <string name="setup_summary">Profili locali</string>
+    <string name="setup_summary_value">Utente: %1$s\nTutore: %2$s\nUso: %3$s</string>
+    <string name="setup_not_set">Non impostato</string>
+    <string name="setup_cloud_note">Account online e invio remoto richiedono un servizio attivo. Questa procedura non attiva e-mail, caricamento o monitoraggio remoto.</string>
+    <string name="setup_done">Termina configurazione locale</string>
+</resources>

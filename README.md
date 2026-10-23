@@ -1,3 +1,7 @@
+# NEXVARY Guardian Studio — 0.11.0 candidate
+
+Recorder Studio is being extended with Media Center, Family Safety, Child Mode and private emergency evidence. Package `com.nexvary.recorder` is preserved. Portable service: [Namecheap deployment](NAMECHEAP_DEPLOYMENT.md), [institution edition](INSTITUTION_DEPLOYMENT.md), [hosting research](HOSTING_RESEARCH_2026-10-21.md). A shared-host-only service sends text/location alerts and keeps video local; verified external storage enables full evidence packages. No service is activated automatically. See [implementation status](GUARDIAN_IMPLEMENTATION_STATUS.md), [AWS deployment](AWS_BACKEND_ARCHITECTURE.md), [SES setup](AWS_SES_SETUP.md), [quotas](FREE_PREMIUM_QUOTAS.md) and [storage](EVIDENCE_STORAGE.md). Cloud service and Play subscriptions require operator configuration; physical Android 15 verification remains separate from CI.
+
 # NEXVARY Recorder Studio
 
 ## v0.2.0 Android 15 recorder rebuild
@@ -26,7 +30,7 @@ A prerecorded file is the source of the live transport. Facebook can therefore p
 
 ## Privacy
 
-The recording, audio enhancement, WAV-to-AAC conversion and audio replacement operations are local to the Android device. The only network operation in the current source is the RTMP/RTMPS broadcast selected by the user.
+The recording, audio enhancement, WAV-to-AAC conversion and audio replacement operations are local to the Android device. Network operations also include explicitly configured account/authentication, consented alert delivery, private evidence upload and Play purchase verification. The app never ships SMTP/storage/AWS secret keys. See the deployment and privacy documents for each service operator.
 
 ## Android target
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_title">Integrierter Aufnahmeplayer</string>
+    <string name="player_choose">Video oder Audio wählen</string>
+    <string name="player_loading">Aufnahme wird geladen…</string>
+    <string name="player_ready">Bereit — Wiedergabe steuern</string>
+    <string name="player_finished">Wiedergabe beendet</string>
+    <string name="player_error">Datei fehlt, ist unvollständig oder nicht unterstützt. Bitte andere Datei wählen.</string>
+    <string name="player_fullscreen">Querformat / Hochformat</string>
+    <string name="player_speed">Wiedergabegeschwindigkeit</string>
+    <string name="player_speed_value">Geschwindigkeit: %1$s×</string>
+    <string name="player_local_note">Lokale Wiedergabe funktioniert offline und pausiert beim Verlassen. Tresordateien bleiben im geschützten Player.</string>
+    <string name="setup_title">Schrittweise Einrichtung</string>
+    <string name="setup_intro">Gesundheit → Elternteil → Kind → Aufnahme → Prüfung. Fortschritt wird gespeichert; Aufnahme und SOS bleiben verfügbar.</string>
+    <string name="setup_progress">Schritt %1$d von %2$d — %3$s</string>
+    <string name="setup_health">Gesundheits- und Notfallprofil</string>
+    <string name="setup_health_note">Optionale Gesundheitsdaten der Person am Telefon. Anzeige und Weitergabe bleiben Ihre Entscheidung.</string>
+    <string name="setup_guardian">Elternprofil</string>
+    <string name="setup_child">Kinderprofil</string>
+    <string name="setup_recording">Aufnahme und Wiedergabe</string>
+    <string name="setup_finish">Prüfung und Sicherheit</string>
+    <string name="setup_next">Weiter</string>
+    <string name="setup_previous">Vorheriger Schritt</string>
+    <string name="setup_save_next">Speichern und weiter</string>
+    <string name="setup_skip_health">Gesundheitsdaten vorerst überspringen</string>
+    <string name="setup_personal">Persönliche Nutzung — ohne Kinderprofil</string>
+    <string name="setup_profiles_note">Profile werden verschlüsselt auf diesem Telefon gespeichert. Keine Onlinekonten oder Geräteverknüpfung.</string>
+    <string name="setup_guardian_note">Telefon und E-Mail sind optional und aktivieren keine Warnungen. Vertrauenskontakte im letzten Schritt hinzufügen und bestätigen.</string>
+    <string name="setup_child_note">Name und Alter des Kindes gelten auch im Gesundheitsprofil. Notizen und Einwilligungen bleiben erhalten. Kindermodus separat mit Eltern-PIN aktivieren.</string>
+    <string name="setup_name_required">Namen eingeben oder persönliche Nutzung wählen.</string>
+    <string name="setup_age_invalid">Alter 0–120 eingeben oder leer lassen.</string>
+    <string name="setup_recording_note">Kamera, Bildschirm oder Audio wählen. Berechtigungen werden bei Bedarf angefragt. Dateien in der Aufnahmebibliothek abspielen.</string>
+    <string name="setup_player_note">Im Programm ansehen und anhören</string>
+    <string name="setup_record_now">Kameraaufnahme jetzt öffnen</string>
+    <string name="setup_local_ready">Lokale Einrichtung prüfen und Vertrauenskontakte vor Nutzung der Warnungen hinzufügen.</string>
+    <string name="setup_summary">Lokale Profile</string>
+    <string name="setup_summary_value">Telefonnutzer: %1$s\nElternteil: %2$s\nNutzung: %3$s</string>
+    <string name="setup_not_set">Nicht festgelegt</string>
+    <string name="setup_cloud_note">Onlinekonten und Fernversand brauchen einen aktivierten Dienst. Diese Einrichtung aktiviert weder E-Mail, Upload noch Fernüberwachung.</string>
+    <string name="setup_done">Lokale Einrichtung abschließen</string>
+</resources>

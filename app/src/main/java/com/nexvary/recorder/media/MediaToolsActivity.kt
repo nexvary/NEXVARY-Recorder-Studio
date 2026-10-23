@@ -67,6 +67,10 @@ class MediaToolsActivity : AppCompatActivity() {
         UiInsets.apply(binding.root)
 
         configureSpinners()
+        binding.root.post {
+            val target=when(intent.getStringExtra("tool")) { "audio" -> binding.btnChooseAudio; "trim" -> binding.btnTrimVideo; "convert" -> binding.btnChooseVideo;else -> null }
+            target?.let { view -> val rect=android.graphics.Rect();view.getDrawingRect(rect);view.requestRectangleOnScreen(rect,false) }
+        }
 
         binding.btnBack.setOnClickListener { finish() }
         binding.btnReplaceAudio.setOnClickListener {

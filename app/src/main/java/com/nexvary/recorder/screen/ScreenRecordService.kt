@@ -406,23 +406,7 @@ class ScreenRecordService : Service() {
             runCatching { outputPfd?.close() }
             outputPfd = null
 
-            val uri = outputUri
-            if (uri != null) {
-                if (hadStarted && outputIsMediaStore) {
-                    runCatching {
-                        contentResolver.update(
-                            uri,
-                            ContentValues().apply {
-                                put(MediaStore.Video.Media.IS_PENDING, 0)
-                            },
-                            null,
-                            null
-                        )
-                    }
-                } else if (!hadStarted) {
-                    runCatching { contentResolver.delete(uri, null, null) }
-                }
-            }
+            val saved = outputUri?.let { ScreenRecordingOutput.publish(this, it, outputIsMediaStore, hadStarted) } == true
 
             outputUri = null
             outputIsMediaStore = true
@@ -431,12 +415,12 @@ class ScreenRecordService : Service() {
 
             sendStatus(
                 STATE_STOPPED,
-                if (userInitiated && hadStarted) {
+                if (userInitiated && saved) {
                     getString(R.string.screen_stopped_saved)
-                } else if (hadStarted) {
+                } else if (saved) {
                     getString(R.string.screen_session_ended_saved)
                 } else {
-                    getString(R.string.screen_session_stopped)
+                    getString(if (hadStarted) R.string.recording_failed else R.string.screen_session_stopped)
                 }
             )
 

@@ -242,7 +242,7 @@ for path in layout_files:
 
 # All nine home destinations must consume independent bundled raster assets.
 main_layout = (layout_dir / "activity_main.xml").read_text()
-for asset in ["screen", "camera", "audio", "tools", "live", "sos", "library", "settings", "info", "launcher"]:
+for asset in ["screen", "camera", "family", "tools", "live", "sos", "library", "settings", "info", "launcher"]:
     path = RES / "drawable-nodpi" / f"asset_{asset}.png"
     if not path.exists() or path.stat().st_size < 1000:
         errors.append(f"Missing professional raster asset: {asset}")

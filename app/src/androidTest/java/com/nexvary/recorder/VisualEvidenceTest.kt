@@ -13,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /** Captures only actual windows from this installed APK. Never sends messages or starts recording. */
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @RunWith(AndroidJUnit4::class)
 class VisualEvidenceTest {
     @Test fun captureApprovedArabicScreens() {
@@ -23,14 +24,24 @@ class VisualEvidenceTest {
             } else AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ar"))
         }
         val context = instrumentation.targetContext
+        check(com.nexvary.recorder.guardian.CloudApi.config(context).optString("idToken").isBlank()) { "Screenshots are allowed only with synthetic test data" }
         com.nexvary.recorder.family.RescueCardsStore(context).clear()
         val pages = listOf(
             Triple(MainActivity::class.java, R.id.cardScreen, "dashboard-ar"),
+            Triple(com.nexvary.recorder.family.GuidedSetupActivity::class.java,R.id.setupProgress,"setup-health-ar"),
+            Triple(com.nexvary.recorder.media.InternalPlayerActivity::class.java,R.id.internalPlayer,"player-video-ar"),
+            Triple(MoreActivity::class.java, R.id.moreGuide, "more-cards-ar"),
+            Triple(GuideActivity::class.java, R.id.guideSearch, "guide-ar"),
+            Triple(com.nexvary.recorder.media.MediaCenterActivity::class.java,R.id.btnBack,"media-center-ar"),
+            Triple(com.nexvary.recorder.family.FamilyHubActivity::class.java,R.id.btnBack,"family-hub-ar"),
+            Triple(com.nexvary.recorder.guardian.GuardianEmergencyActivity::class.java,R.id.btnBack,"guardian-sos-ar"),
+            Triple(com.nexvary.recorder.guardian.CloudSettingsActivity::class.java,R.id.btnBack,"cloud-usage-ar"),
             Triple(com.nexvary.recorder.family.FamilyDashboardActivity::class.java,R.id.fsSafe,"family-dashboard-ar"),
             Triple(com.nexvary.recorder.family.PrivacyCenterActivity::class.java,R.id.btnBack,"privacy-center-ar"),
             Triple(com.nexvary.recorder.safety.QuickRescueActivity::class.java, R.id.btnAddContact, "sos-ar"),
             Triple(com.nexvary.recorder.camera.BackgroundCameraActivity::class.java, R.id.btnBack, "camera-ar"),
             Triple(SettingsActivity::class.java, R.id.btnBack, "settings-ar"),
+            Triple(com.nexvary.recorder.family.FamilySettingsActivity::class.java,R.id.btnBack,"safety-settings-ar"),
             Triple(com.nexvary.recorder.delivery.MailOutboxActivity::class.java, R.id.btnBack, "outbox-ar"),
             Triple(com.nexvary.recorder.media.RecordingsLibraryActivity::class.java, R.id.btnBack, "library-ar")
         )
@@ -39,9 +50,43 @@ class VisualEvidenceTest {
         instrumentation.context.assets.open("qa-sample.mp4").use { input -> sample.outputStream().use { input.copyTo(it) } }
         try {
         for ((page, visibleId, name) in pages) {
-            ActivityScenario.launch(page).use {
-                onView(withId(visibleId)).check(matches(isDisplayed()))
+            val launch = android.content.Intent(context, page)
+            if (page == com.nexvary.recorder.media.InternalPlayerActivity::class.java) {
+                launch.data = androidx.core.content.FileProvider.getUriForFile(context, "${context.packageName}.files", sample)
+                launch.putExtra("name", "تسجيل تجريبي")
+            }
+            ActivityScenario.launch<android.app.Activity>(launch).use {
+                awaitUi(org.hamcrest.Matchers.allOf(withId(visibleId),isDisplayed()))
+                if (page == com.nexvary.recorder.media.InternalPlayerActivity::class.java) {
+                    awaitUi(org.hamcrest.Matchers.allOf(withId(R.id.playerStatus),org.hamcrest.Matchers.anyOf(withText(R.string.player_ready),withText(R.string.player_finished))))
+                }
                 capture(it, name)
+                if (page == com.nexvary.recorder.family.GuidedSetupActivity::class.java) {
+                    for ((step, id, shot) in listOf(
+                        Triple(1,R.id.setupGuardianName,"setup-guardian-ar"),
+                        Triple(2,R.id.setupChildName,"setup-child-ar"),
+                        Triple(3,R.id.setupCamera,"setup-recording-ar"),
+                        Triple(4,R.id.setupProgress,"setup-review-ar"))) {
+                        com.nexvary.recorder.family.FamilyStore(context).update { state -> com.nexvary.recorder.family.GuidedSetupProgress.move(state,step) }
+                        it.recreate();awaitUi(org.hamcrest.Matchers.allOf(withId(id),isDisplayed()));capture(it,shot)
+                    }
+                    com.nexvary.recorder.family.FamilyStore(context).update { state -> state.remove("guidedSetup") }
+                }
+                if (page == MoreActivity::class.java) {
+                    onView(withId(R.id.moreAbout)).perform(reveal()).check(matches(isDisplayed()))
+                    capture(it, "more-cards-bottom-ar")
+                }
+                if (page == com.nexvary.recorder.guardian.CloudSettingsActivity::class.java) {
+                    onView(withId(R.id.guardianInstitutionService)).perform(reveal(), androidx.test.espresso.action.ViewActions.click())
+                    onView(withId(R.id.guardianInstitutionUrl)).perform(reveal()).check(matches(isDisplayed()))
+                    androidx.test.espresso.Espresso.closeSoftKeyboard()
+                    capture(it, "institution-connect-ar")
+                }
+                if (page == GuideActivity::class.java) {
+                    onView(withId(R.id.guideSearch)).perform(reveal(), androidx.test.espresso.action.ViewActions.replaceText(context.getString(R.string.guide_q_free)), androidx.test.espresso.action.ViewActions.closeSoftKeyboard())
+                    awaitUi(withId(R.id.guideFaqFree))
+                    capture(it, "guide-search-ar")
+                }
                 if (page == com.nexvary.recorder.camera.BackgroundCameraActivity::class.java) {
                     onView(withId(R.id.cameraQualityGroup)).perform(reveal()).check(matches(isDisplayed()))
                     capture(it, "camera-quality-ar")
@@ -49,6 +94,11 @@ class VisualEvidenceTest {
                     capture(it, "camera-delivery-ar")
                 }
                 if(page == com.nexvary.recorder.family.FamilyDashboardActivity::class.java) {
+                    onView(withId(R.id.fsPresets)).perform(reveal(),androidx.test.espresso.action.ViewActions.click())
+                    androidx.test.espresso.Espresso.onData(org.hamcrest.Matchers.anything()).atPosition(0).check(matches(isDisplayed()))
+                    capture(it,"timer-presets-ar")
+                    androidx.test.espresso.Espresso.onData(org.hamcrest.Matchers.anything()).atPosition(0).perform(androidx.test.espresso.action.ViewActions.click())
+                    onView(withId(R.id.fsStatus)).perform(reveal())
                     com.nexvary.recorder.family.SafetyCheckManager(context).sos(false)
                     awaitUi(org.hamcrest.Matchers.allOf(withId(R.id.fsStatus),withText(org.hamcrest.Matchers.startsWith(context.getString(R.string.fs_are_safe)))))
                     capture(it,"family-sos-countdown-ar")
@@ -70,6 +120,9 @@ class VisualEvidenceTest {
 
             }
         }
+        ActivityScenario.launch<com.nexvary.recorder.family.FamilySettingsActivity>(android.content.Intent(context,com.nexvary.recorder.family.FamilySettingsActivity::class.java).putExtra("section","sharing")).use {
+            awaitUi(withId(R.id.fsDisplayName));capture(it,"sharing-settings-ar")
+        }
         // A synthetic contact is shown for border review; no send or location action runs.
         val contact = org.json.JSONObject().put("name", "جهة اختبار")
             .put("phone", "+201000000000").put("message", "رسالة تجريبية للمراجعة فقط")
@@ -89,7 +142,11 @@ class VisualEvidenceTest {
                 instrumentation.waitForIdleSync()
                 // Espresso visibility can precede the SurfaceFlinger first presented frame.
                 val frameCommitted = java.util.concurrent.CountDownLatch(1)
+                var secure=false
                 scenario.onActivity { activity ->
+                    secure=activity.window.attributes.flags and android.view.WindowManager.LayoutParams.FLAG_SECURE!=0
+                    // Instrumentation-only capture with empty/synthetic data; production flags are preserved.
+                    if(secure) activity.window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
                     val decor = activity.window.decorView
                     decor.viewTreeObserver.registerFrameCommitCallback { frameCommitted.countDown() }
                     decor.invalidate()
@@ -103,7 +160,8 @@ class VisualEvidenceTest {
                 repeat(10) {
                     if (captured == null) {
                         instrumentation.uiAutomation.waitForIdle(300, 5_000)
-                        val candidate = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
+                        val candidate = instrumentation.uiAutomation.takeScreenshot()
+                        if(candidate==null) { android.os.SystemClock.sleep(150);return@repeat }
                         val readable = checkNotNull(candidate.copy(Bitmap.Config.ARGB_8888, false))
                         var dark = 0
                         var sampled = 0
@@ -132,5 +190,6 @@ class VisualEvidenceTest {
                     put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
                 }, null, null)
                 screenshot.recycle()
+                if(secure) scenario.onActivity { it.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE) }
     }
 }

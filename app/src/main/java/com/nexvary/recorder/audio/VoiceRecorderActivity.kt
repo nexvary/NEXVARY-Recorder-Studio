@@ -52,7 +52,7 @@ class VoiceRecorderActivity : AppCompatActivity() {
     private fun begin() {
         if (recorder != null || saving) return
         try {
-            recorder = ProfessionalAudioRecorder(this).also { it.start() }
+            recorder = ProfessionalAudioRecorder(this) { runOnUiThread { if (recorder != null) finishRecording() } }.also { it.start() }
             binding.btnRecord.isEnabled = false
             binding.btnStop.isEnabled = true
             binding.txtStatus.text = getString(R.string.voice_recording)
@@ -68,8 +68,9 @@ class VoiceRecorderActivity : AppCompatActivity() {
         binding.btnStop.isEnabled = false
         binding.txtStatus.text = getString(R.string.voice_enhancing)
         thread {
+            val temp = File(cacheDir, "enhanced_${System.currentTimeMillis()}.wav")
+            var pending: android.net.Uri? = null
             try {
-                val temp = File(cacheDir, "enhanced_${System.currentTimeMillis()}.wav")
                 worker.stopAndEnhance(temp)
                 val name = "voice_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())}.wav"
                 val values = ContentValues().apply {
@@ -80,20 +81,23 @@ class VoiceRecorderActivity : AppCompatActivity() {
                 }
                 val uri = contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values)
                     ?: error("Unable to create output")
-                contentResolver.openOutputStream(uri)?.use { out -> temp.inputStream().use { it.copyTo(out) } }
-                contentResolver.update(uri, ContentValues().apply { put(MediaStore.Audio.Media.IS_PENDING, 0) }, null, null)
-                temp.delete()
+                pending = uri
+                checkNotNull(contentResolver.openOutputStream(uri)).use { out -> temp.inputStream().use { it.copyTo(out) } }
+                check(contentResolver.update(uri, ContentValues().apply { put(MediaStore.Audio.Media.IS_PENDING, 0) }, null, null) == 1)
+                pending = null
                 runOnUiThread {
                     binding.btnRecord.isEnabled = true
-                    binding.txtStatus.text = getString(R.string.voice_complete)
+                    binding.txtStatus.text = getString(if (worker.captureFailed) R.string.voice_partial_saved else R.string.voice_complete)
                     binding.txtOutput.text = getString(R.string.voice_saved_format, name)
                 }
             } catch (e: Exception) {
+                pending?.let { runCatching { contentResolver.delete(it, null, null) } }
                 runOnUiThread {
                     binding.btnRecord.isEnabled = true
                     binding.txtStatus.text = getString(R.string.voice_save_failed_format, e.message.orEmpty())
                 }
             } finally {
+                temp.delete()
                 runOnUiThread { saving = false }
             }
         }

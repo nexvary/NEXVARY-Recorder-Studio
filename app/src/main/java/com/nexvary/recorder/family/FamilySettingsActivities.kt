@@ -1,79 +1,136 @@
 package com.nexvary.recorder.family
 
 import android.content.Intent
-import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.widget.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.nexvary.recorder.R
 import com.nexvary.recorder.delivery.*
+import com.nexvary.recorder.ui.*
 import org.json.JSONObject
 
 class FamilySettingsActivity: ProtectedFamilyPage() {
-    override val title=R.string.fs_settings
+    override val screenshotsAllowed = true
+    private val section get()=intent.getStringExtra("section").orEmpty()
+    override val title get()=when(section) {
+        "sharing" -> R.string.settings_sharing
+        "evidence" -> R.string.settings_evidence
+        "journey" -> R.string.fs_destination
+        "device" -> R.string.settings_device
+        else -> R.string.settings_safety
+    }
     override fun build() {
-        FamilyUi.io(this,{ FamilyStore(this).snapshot() }) { data ->
-            val config=FamilyStore.config(data)
-            DeliveryUi.text(root,R.string.fs_settings_note)
-            val name=FamilyUi.field(root,R.string.fs_display_name,R.id.fsDisplayName,config.optString("displayName"))
-            val note=FamilyUi.field(root,R.string.fs_note,R.id.fsNote,config.optString("note"))
-            val share=FamilyUi.check(root,R.string.fs_auto_share_consent,config.optBoolean("autoShare"),R.id.fsAutoShare)
-            val location=FamilyUi.check(root,R.string.fs_location_consent,config.optBoolean("location"),R.id.fsLocation)
-            val immediate=FamilyUi.check(root,R.string.fs_immediate_consent,config.optBoolean("immediate"))
-            val audible=FamilyUi.check(root,R.string.fs_audible,config.optBoolean("audible"))
-            val device=FamilyUi.check(root,R.string.fs_share_device,config.optBoolean("shareDevice"))
-            DeliveryUi.text(root,R.string.fs_monitor_note)
-            val battery=FamilyUi.check(root,R.string.fs_battery_alerts,config.optBoolean("batteryAlerts"))
-            val saver=FamilyUi.check(root,R.string.fs_battery_saver,config.optBoolean("batterySaver"))
-            val motion=FamilyUi.check(root,R.string.fs_motion_consent,config.optBoolean("motion"))
-            DeliveryUi.text(root,R.string.fs_motion_note)
-            val sensitivity=Spinner(this).apply { adapter=ArrayAdapter(this@FamilySettingsActivity,android.R.layout.simple_spinner_dropdown_item,resources.getStringArray(R.array.fs_sensitivities));setSelection(config.optInt("sensitivity",1).coerceIn(0,2));root.addView(this) }
-            val volume=FamilyUi.check(root,R.string.fs_volume_trigger,config.optBoolean("volumeTrigger"))
-            DeliveryUi.text(root,R.string.fs_evidence_mode)
-            val evidence=Spinner(this).apply { id=R.id.fsEvidenceMode;adapter=ArrayAdapter(this@FamilySettingsActivity,android.R.layout.simple_spinner_dropdown_item,resources.getStringArray(R.array.fs_evidence_modes));setSelection(listOf("NONE","AUDIO","VIDEO","PHOTO").indexOf(config.optString("evidence","NONE")).coerceAtLeast(0));root.addView(this) }
-            val videoMic=FamilyUi.check(root,R.string.fs_video_mic,config.optBoolean("videoMic"))
-            val autoEvidence=FamilyUi.check(root,R.string.fs_auto_evidence,config.optBoolean("autoEvidence"))
-            DeliveryUi.text(root,R.string.fs_upload_unconfigured)
-            val destination=DeliveryUi.section(root,R.string.fs_destination)
-            val dest=config.optJSONObject("destination") ?: JSONObject()
-            val destName=FamilyUi.field(destination,R.string.fs_destination_name,R.id.fsDestination,dest.optString("name"))
-            val lat=FamilyUi.field(destination,R.string.fs_latitude,R.id.fsLatitude,dest.optString("latitude"),InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
-            val lon=FamilyUi.field(destination,R.string.fs_longitude,R.id.fsLongitude,dest.optString("longitude"),InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
-            DeliveryUi.text(destination,R.string.fs_journey_note)
-            DeliveryUi.text(destination,R.string.fs_journey_guardian)
-            val guardians=FamilyStore.contacts(data).let { contacts -> (0 until contacts.length()).map { contacts.getJSONObject(it) } }
-            val guardian=Spinner(this).apply {
-                adapter=ArrayAdapter(this@FamilySettingsActivity,android.R.layout.simple_spinner_dropdown_item,if(guardians.isEmpty()) listOf(getString(R.string.fs_none)) else guardians.map { it.optString("name") })
-                setSelection(guardians.indexOfFirst { it.optString("id")==dest.optString("contactId") }.coerceAtLeast(0));destination.addView(this)
+        if(section !in listOf("sharing","evidence","journey","device")) { hub();return }
+        FamilyUi.io(this,{ FamilyStore(this).snapshot() }) { data -> editor(data) }
+    }
+    private fun hub() {
+        DeliveryUi.text(root,R.string.settings_safety_note)
+        fun page(type: Class<out android.app.Activity>)=startActivity(Intent(this,type))
+        fun section(name: String)=startActivity(Intent(this,FamilySettingsActivity::class.java).putExtra("section",name))
+        FeatureCards.add(root,R.drawable.asset_family,R.string.fs_contacts) { page(TrustedContactsActivity::class.java) }
+        FeatureCards.add(root,R.drawable.asset_sos,R.string.settings_sharing) { section("sharing") }
+        FeatureCards.add(root,R.drawable.asset_info,R.string.fs_profile) { page(EmergencyProfileActivity::class.java) }
+        FeatureCards.add(root,R.drawable.asset_settings,R.string.settings_pin) { page(ParentSettingsActivity::class.java) }
+        FeatureCards.add(root,R.drawable.asset_family,R.string.guardian_child_mode) { com.nexvary.recorder.guardian.ChildMode.activate(this) }
+        val optional=SettingsSections.add(root,R.string.settings_advanced,R.id.settingsAdvanced)
+        FeatureCards.add(optional,R.drawable.asset_camera,R.string.settings_evidence) { section("evidence") }
+        FeatureCards.add(optional,R.drawable.asset_family,R.string.fs_destination) { section("journey") }
+        FeatureCards.add(optional,R.drawable.asset_settings,R.string.settings_device) { section("device") }
+        FeatureCards.add(optional,R.drawable.asset_library,R.string.fs_history) { page(SafetyHistoryActivity::class.java) }
+        FeatureCards.add(optional,R.drawable.asset_info,R.string.fs_privacy) { page(PrivacyCenterActivity::class.java) }
+        FeatureCards.add(optional,R.drawable.asset_launcher,R.string.fs_subscriptions) { page(com.nexvary.recorder.billing.SubscriptionActivity::class.java) }
+    }
+    private fun editor(data: JSONObject) {
+        val config=FamilyStore.config(data)
+        val edits=mutableListOf<(JSONObject)->Unit>()
+        var validate: () -> Boolean={ true }
+        fun text(key: String,label: Int,id: Int=View.generateViewId()): EditText {
+            val field=FamilyUi.field(root,label,id,config.optString(key))
+            edits.add { it.put(key,field.text.toString().take(if(key=="note") 2000 else 120)) };return field
+        }
+        fun check(key: String,label: Int,id: Int=View.NO_ID): androidx.appcompat.widget.SwitchCompat {
+            val field=FamilyUi.check(root,label,config.optBoolean(key),id)
+            edits.add { it.put(key,field.isChecked) };return field
+        }
+        when(section) {
+            "sharing" -> {
+                DeliveryUi.text(root,R.string.settings_sharing_note)
+                text("displayName",R.string.fs_display_name,R.id.fsDisplayName)
+                text("note",R.string.fs_note,R.id.fsNote)
+                check("autoShare",R.string.fs_auto_share_consent,R.id.fsAutoShare)
+                check("location",R.string.fs_location_consent,R.id.fsLocation)
+                check("shareDevice",R.string.fs_share_device)
+                FeatureCards.add(root,R.drawable.asset_library,R.string.settings_account) { startActivity(Intent(this,com.nexvary.recorder.guardian.CloudSettingsActivity::class.java)) }
             }
-            DeliveryUi.button(root,R.string.rescue_save,R.id.fsSaveSettings) {
-                val latitude=DeliveryPolicy.digits(lat.text.toString()).replace('٫','.').toDoubleOrNull()
-                val longitude=DeliveryPolicy.digits(lon.text.toString()).replace('٫','.').toDoubleOrNull()
-                if(destName.text.isNotBlank() && (latitude==null || longitude==null || latitude !in -90.0..90.0 || longitude !in -180.0..180.0)) { lat.error=getString(R.string.fs_coordinates_invalid);return@button }
-                if(motion.isChecked && !location.isChecked) { Toast.makeText(this,R.string.fs_location_consent,Toast.LENGTH_LONG).show();return@button }
-                val entitlements=com.nexvary.recorder.billing.EntitlementManager(this)
-                if((motion.isChecked && !entitlements.canUse(com.nexvary.recorder.billing.SafetyFeature.MOTION)) || (autoEvidence.isChecked && !entitlements.canUse(com.nexvary.recorder.billing.SafetyFeature.ADVANCED_EVIDENCE))) { Toast.makeText(this,R.string.fs_billing_verifier_missing,Toast.LENGTH_LONG).show();return@button }
-                val value=JSONObject().put("displayName",name.text.toString().take(120)).put("note",note.text.toString().take(2000))
-                    .put("autoShare",share.isChecked).put("location",location.isChecked).put("immediate",immediate.isChecked).put("audible",audible.isChecked)
-                    .put("shareDevice",device.isChecked).put("batteryAlerts",battery.isChecked).put("batterySaver",saver.isChecked)
-                    .put("motion",motion.isChecked).put("sensitivity",sensitivity.selectedItemPosition).put("volumeTrigger",volume.isChecked)
-                    .put("evidence",listOf("NONE","AUDIO","VIDEO","PHOTO")[evidence.selectedItemPosition]).put("autoEvidence",autoEvidence.isChecked)
-                    .put("videoMic",videoMic.isChecked).put("showMedical",config.optBoolean("showMedical")).put("shareMedical",config.optBoolean("shareMedical"))
-                if(destName.text.isNotBlank()) value.put("destination",JSONObject().put("name",destName.text.toString().take(120)).put("latitude",latitude).put("longitude",longitude).put("contactId",guardians.getOrNull(guardian.selectedItemPosition)?.optString("id").orEmpty()))
-                MaterialAlertDialogBuilder(this).setTitle(R.string.fs_consent_review)
-                    .setMessage(getString(if(share.isChecked) R.string.fs_sharing_review else R.string.fs_local_only))
-                    .setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.rescue_save) { _,_ ->
-                        FamilyUi.io(this,{
-                            FamilyStore(this).update { state ->
-                                state.put("config",value)
-                                if(!value.optBoolean("autoShare")) FamilyStore.jobs(state).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { if(!it.optBoolean("manual") && it.optString("status") !in listOf("SENT","SENDING")) it.put("status","CANCELLED") } } }
-                                FamilyStore.event(state,"CONFIGURATION_UPDATED")
-                            }
-                            stopService(Intent(this,SafetyLocationService::class.java)) // Resume visibly with the new consent/settings.
-                        }) { Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show() }
-                    }.show()
+            "evidence" -> {
+                DeliveryUi.text(root,R.string.settings_evidence_note)
+                DeliveryUi.text(root,R.string.fs_evidence_mode)
+                val modes=listOf("NONE","AUDIO","VIDEO","PHOTO")
+                val evidence=StudioSpinner.add(root,resources.getStringArray(R.array.fs_evidence_modes).toList(),R.id.fsEvidenceMode,modes.indexOf(config.optString("evidence","NONE")).coerceAtLeast(0))
+                edits.add { it.put("evidence",modes[evidence.selectedItemPosition]) }
+                check("videoMic",R.string.fs_video_mic)
+                val auto=check("autoEvidence",R.string.fs_auto_evidence)
+                validate={ !auto.isChecked || com.nexvary.recorder.billing.EntitlementManager(this).canUse(com.nexvary.recorder.billing.SafetyFeature.ADVANCED_EVIDENCE).also { if(!it) Toast.makeText(this,R.string.fs_billing_verifier_missing,Toast.LENGTH_LONG).show() } }
             }
+            "device" -> {
+                DeliveryUi.text(root,R.string.settings_device_note)
+                check("immediate",R.string.fs_immediate_consent)
+                check("audible",R.string.fs_audible)
+                check("batteryAlerts",R.string.fs_battery_alerts)
+                check("batterySaver",R.string.fs_battery_saver)
+                val motion=check("motion",R.string.fs_motion_consent)
+                DeliveryUi.text(root,R.string.fs_motion_note)
+                val sensitivity=StudioSpinner.add(root,resources.getStringArray(R.array.fs_sensitivities).toList(),selected=config.optInt("sensitivity",1).coerceIn(0,2))
+                edits.add { it.put("sensitivity",sensitivity.selectedItemPosition) }
+                check("volumeTrigger",R.string.fs_volume_trigger)
+                validate={
+                    when {
+                        motion.isChecked && !config.optBoolean("location") -> { Toast.makeText(this,R.string.fs_location_consent,Toast.LENGTH_LONG).show();false }
+                        motion.isChecked && !com.nexvary.recorder.billing.EntitlementManager(this).canUse(com.nexvary.recorder.billing.SafetyFeature.MOTION) -> { Toast.makeText(this,R.string.fs_billing_verifier_missing,Toast.LENGTH_LONG).show();false }
+                        else -> true
+                    }
+                }
+            }
+            "journey" -> {
+                DeliveryUi.text(root,R.string.fs_journey_note)
+                val dest=config.optJSONObject("destination") ?: JSONObject()
+                val name=FamilyUi.field(root,R.string.fs_destination_name,R.id.fsDestination,dest.optString("name"))
+                val lat=FamilyUi.field(root,R.string.fs_latitude,R.id.fsLatitude,dest.optString("latitude"),InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
+                val lon=FamilyUi.field(root,R.string.fs_longitude,R.id.fsLongitude,dest.optString("longitude"),InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI)
+                DeliveryUi.text(root,R.string.fs_journey_guardian)
+                val guardians=FamilyStore.contacts(data).let { c -> (0 until c.length()).map { c.getJSONObject(it) } }
+                val guardian=StudioSpinner.add(root,if(guardians.isEmpty()) listOf(getString(R.string.fs_none)) else guardians.map { it.optString("name") },selected=guardians.indexOfFirst { it.optString("id")==dest.optString("contactId") }.coerceAtLeast(0))
+                fun coordinate(field: EditText)=DeliveryPolicy.digits(field.text.toString()).replace('٫','.').toDoubleOrNull()
+                validate={
+                    val a=coordinate(lat);val b=coordinate(lon)
+                    if(name.text.isNotBlank() && (a==null || b==null || a !in -90.0..90.0 || b !in -180.0..180.0)) { lat.error=getString(R.string.fs_coordinates_invalid);false } else true
+                }
+                edits.add { value ->
+                    if(name.text.isBlank()) value.remove("destination")
+                    else value.put("destination",JSONObject().put("name",name.text.toString().take(120)).put("latitude",coordinate(lat)).put("longitude",coordinate(lon)).put("contactId",guardians.getOrNull(guardian.selectedItemPosition)?.optString("id").orEmpty()))
+                }
+            }
+        }
+        DeliveryUi.button(root,R.string.rescue_save,R.id.fsSaveSettings) {
+            if(!validate()) return@button
+            // Capture on the UI thread, merge only this section into the latest stored configuration.
+            val patch=JSONObject();edits.forEach { it(patch) }
+            MaterialAlertDialogBuilder(this).setTitle(R.string.fs_consent_review)
+                .setMessage(getString(if(patch.optBoolean("autoShare",config.optBoolean("autoShare"))) R.string.fs_sharing_review else R.string.fs_local_only))
+                .setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.rescue_save) { _,_ ->
+                    FamilyUi.io(this,{
+                        FamilyStore(this).update { state ->
+                            val current=FamilyStore.config(state)
+                            patch.keys().forEach { current.put(it,patch.get(it)) }
+                            if(section=="journey" && !patch.has("destination")) current.remove("destination")
+                            state.put("config",current)
+                            if(!current.optBoolean("autoShare")) FamilyStore.jobs(state).let { jobs -> jobs.keys().forEach { id -> jobs.getJSONObject(id).let { if(!it.optBoolean("manual") && it.optString("status") !in listOf("SENT","SENDING")) it.put("status","CANCELLED") } } }
+                            FamilyStore.event(state,"CONFIGURATION_UPDATED")
+                        }
+                        stopService(Intent(this,SafetyLocationService::class.java))
+                    }) { Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show();finish() }
+                }.show()
         }
     }
 }
@@ -120,9 +177,9 @@ class TrustedContactsActivity: ProtectedFamilyPage() {
         val email=FamilyUi.field(form,R.string.fs_email,R.id.fsContactEmail,original?.optString("email").orEmpty(),InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
         val relation=FamilyUi.field(form,R.string.fs_relationship,R.id.fsRelationship,original?.optString("relationship").orEmpty())
         DeliveryUi.text(form,R.string.fs_guardian_role)
-        val role=Spinner(this).apply { adapter=ArrayAdapter(this@TrustedContactsActivity,android.R.layout.simple_spinner_dropdown_item,resources.getStringArray(R.array.fs_roles));setSelection(listOf("PRIMARY","SECONDARY","EMERGENCY").indexOf(original?.optString("role")).coerceAtLeast(0));form.addView(this) }
+        val role=StudioSpinner.add(form,resources.getStringArray(R.array.fs_roles).toList(),selected=listOf("PRIMARY","SECONDARY","EMERGENCY").indexOf(original?.optString("role")).coerceAtLeast(0))
         DeliveryUi.text(form,R.string.fs_channel)
-        val channel=Spinner(this).apply { adapter=ArrayAdapter(this@TrustedContactsActivity,android.R.layout.simple_spinner_dropdown_item,resources.getStringArray(R.array.fs_channels));setSelection(if(original?.optString("channel")=="SMS") 1 else 0);form.addView(this) }
+        val channel=StudioSpinner.add(form,resources.getStringArray(R.array.fs_channels).toList(),selected=if(original?.optString("channel")=="SMS") 1 else 0)
         val dialog=MaterialAlertDialogBuilder(this).setTitle(R.string.fs_contact).setView(ScrollView(this).apply { addView(form) })
             .setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.rescue_save,null).create()
         dialog.setOnShowListener {
@@ -157,15 +214,21 @@ class EmergencyProfileActivity: ProtectedFamilyPage() {
                 val showValue=show.isChecked;val shareValue=share.isChecked
                 FamilyUi.io(this,{ FamilyStore(this).update { state ->
                     state.put("medical",value);val cfg=FamilyStore.config(state);cfg.put("showMedical",showValue).put("shareMedical",shareValue);state.put("config",cfg)
+                    state.optJSONObject("guardianProfile")?.put("name", value.optString("guardian"))?.put("phone", value.optString("phone"))
+                    state.optJSONObject("childProfile")?.takeIf { it.optBoolean("enabled") }?.put("name", value.optString("name"))?.put("age", value.optString("age"))
                     FamilyStore.event(state,"EMERGENCY_PROFILE_UPDATED")
-                } }) { Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show() }
+                    if (intent.getBooleanExtra(GuidedSetupProgress.EXTRA_GUIDED, false)) GuidedSetupProgress.healthSaved(state)
+                } }) {
+                    Toast.makeText(this,R.string.smtp_saved,Toast.LENGTH_LONG).show()
+                    if (intent.getBooleanExtra(GuidedSetupProgress.EXTRA_GUIDED, false)) finish()
+                }
             }
         }
     }
 }
 
 class ParentSettingsActivity: ProtectedFamilyPage() {
-    override val title=R.string.fs_parent_mode
+    override val title=R.string.settings_pin
     override fun build() {
         DeliveryUi.text(root,R.string.fs_parent_gate_note)
         val pin=FamilyUi.field(root,R.string.fs_parent_pin,R.id.fsNewPin,type=InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD).apply { isSaveEnabled=false }

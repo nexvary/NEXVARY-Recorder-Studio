@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_title">پخش‌کننده داخلی ضبط‌ها</string>
+    <string name="player_choose">انتخاب ویدیو یا صدا</string>
+    <string name="player_loading">در حال بارگذاری ضبط…</string>
+    <string name="player_ready">آماده — از کنترل‌های پخش استفاده کنید</string>
+    <string name="player_finished">پخش تمام شد</string>
+    <string name="player_error">فایل موجود نیست، ناقص است یا پشتیبانی نمی‌شود. فایل دیگری انتخاب کنید.</string>
+    <string name="player_fullscreen">افقی / عمودی</string>
+    <string name="player_speed">سرعت پخش</string>
+    <string name="player_speed_value">سرعت پخش: %1$s×</string>
+    <string name="player_local_note">پخش محلی بدون اینترنت کار می‌کند و هنگام خروج مکث می‌شود. فایل‌های گاوصندوق پخش‌کننده محافظت‌شده دارند.</string>
+    <string name="setup_title">راه‌اندازی گام‌به‌گام</string>
+    <string name="setup_intro">سلامت، سرپرست، کودک، ضبط و بازبینی. پیشرفت ذخیره می‌شود؛ ضبط و SOS همیشه در دسترس‌اند.</string>
+    <string name="setup_progress">گام %1$d از %2$d — %3$s</string>
+    <string name="setup_health">پرونده سلامت و اضطراری</string>
+    <string name="setup_health_note">اطلاعات سلامت اختیاری برای کاربر این تلفن. نمایش و اشتراک‌گذاری به انتخاب شماست.</string>
+    <string name="setup_guardian">پرونده سرپرست</string>
+    <string name="setup_child">پرونده کودک</string>
+    <string name="setup_recording">ضبط و پخش</string>
+    <string name="setup_finish">بازبینی و ایمنی</string>
+    <string name="setup_next">بعدی</string>
+    <string name="setup_previous">گام قبلی</string>
+    <string name="setup_save_next">ذخیره و ادامه</string>
+    <string name="setup_skip_health">فعلاً رد کردن اطلاعات سلامت</string>
+    <string name="setup_personal">استفاده شخصی — بدون پرونده کودک</string>
+    <string name="setup_profiles_note">پرونده‌ها روی این تلفن رمزگذاری می‌شوند؛ حساب آنلاین یا اتصال دستگاه دیگر ایجاد نمی‌کنند.</string>
+    <string name="setup_guardian_note">تلفن و ایمیل اختیاری‌اند؛ ذخیره آن‌ها هشدار را فعال نمی‌کند. مخاطبان مورد اعتماد را در پایان اضافه و تأیید کنید.</string>
+    <string name="setup_child_note">نام و سن کودک در پرونده سلامت هم استفاده می‌شود. یادداشت‌ها و رضایت‌ها حفظ می‌شوند. حالت کودک را جداگانه با PIN سرپرست فعال کنید.</string>
+    <string name="setup_name_required">نام وارد کنید یا استفاده شخصی را انتخاب کنید.</string>
+    <string name="setup_age_invalid">سن ۰ تا ۱۲۰ یا خالی.</string>
+    <string name="setup_recording_note">دوربین، صفحه یا صدا را انتخاب کنید. مجوز هنگام نیاز درخواست می‌شود. فایل‌ها در کتابخانه پخش می‌شوند.</string>
+    <string name="setup_player_note">تماشا و شنیدن در برنامه</string>
+    <string name="setup_record_now">باز کردن ضبط دوربین</string>
+    <string name="setup_local_ready">پیش از اتکا به هشدارها، تنظیمات محلی را بررسی و مخاطبان را اضافه کنید.</string>
+    <string name="setup_summary">پرونده‌های محلی</string>
+    <string name="setup_summary_value">کاربر تلفن: %1$s\nسرپرست: %2$s\nاستفاده: %3$s</string>
+    <string name="setup_not_set">تعیین نشده</string>
+    <string name="setup_cloud_note">حساب آنلاین و ارسال راه دور به سرویس فعال نیاز دارند. این راه‌اندازی ایمیل، بارگذاری یا نظارت راه دور را فعال نمی‌کند.</string>
+    <string name="setup_done">پایان راه‌اندازی محلی</string>
+</resources>

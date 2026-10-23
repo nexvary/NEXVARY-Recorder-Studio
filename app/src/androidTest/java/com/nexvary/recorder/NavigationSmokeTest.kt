@@ -21,7 +21,7 @@ class NavigationSmokeTest {
     fun everyDashboardPageOpensAndBackReturnsHome() {
         ActivityScenario.launch(MainActivity::class.java).use {
             openAndReturn(R.id.cardScreen)
-            openAndReturn(R.id.cardVoice)
+            openAndReturn(R.id.cardFamily)
             openAndReturn(R.id.cardReplace)
             openAndReturn(R.id.cardLive)
         }
@@ -34,7 +34,7 @@ class NavigationSmokeTest {
             awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
-            onView(withId(R.id.navVoice)).perform(click())
+            onView(withId(R.id.navSafety)).perform(click())
             awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
@@ -42,20 +42,16 @@ class NavigationSmokeTest {
             awaitUi(withId(R.id.btnBack))
             onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
 
-            onView(withId(R.id.navMore)).perform(click())
-            onView(withText(R.string.language_title)).check(matches(isDisplayed())).perform(click())
-            awaitUi(withId(R.id.btnBack))
-            onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
-
-            onView(withId(R.id.navMore)).perform(click())
-            onView(withText(R.string.about_title)).check(matches(isDisplayed())).perform(click())
-            awaitUi(withId(R.id.btnBack))
-            onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
-
-            onView(withId(R.id.navMore)).perform(click())
-            onView(withText(R.string.media_tools_title)).check(matches(isDisplayed())).perform(click())
-            awaitUi(withId(R.id.btnBack))
-            onView(withId(R.id.btnBack)).check(matches(isDisplayed())).perform(click())
+            for (card in listOf(R.id.moreLanguage, R.id.moreAbout, R.id.moreMedia)) {
+                onView(withId(R.id.navMore)).perform(click())
+                awaitUi(withId(R.id.moreGuide))
+                onView(withId(card)).perform(reveal(), click())
+                awaitUi(withId(R.id.btnBack))
+                onView(withId(R.id.btnBack)).perform(click())
+                awaitUi(withId(R.id.moreGuide))
+                onView(withId(R.id.btnBack)).perform(reveal(), click())
+                awaitUi(withId(R.id.cardScreen))
+            }
         }
     }
 
