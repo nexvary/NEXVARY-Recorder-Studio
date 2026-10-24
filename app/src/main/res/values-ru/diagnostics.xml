@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="device_diagnostics_title">Диагностика устройства</string>
+    <string name="device_diagnostics_note">Необязательные сведения и диагностика устройства. Shizuku нужен только для дополнительной диагностики.</string>
+</resources>

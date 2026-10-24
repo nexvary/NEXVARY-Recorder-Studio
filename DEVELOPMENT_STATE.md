@@ -1,3 +1,30 @@
+# Guardian signed delivery correction — 2026-10-25
+
+Branch: fix/guardian-signed-delivery. Parent: 7ba1ef1d2fccbc5a9af3319d3f9b521644d74f06
+(PR #13); inspect git log -1 for the current checkpoint commit.
+
+Candidate 0.12.1/versionCode 22; package com.nexvary.recorder retained.
+The reported installation conflict led to checking the actual artifacts:
+previous owner release ca4640c7…91be7f6; NPSE debug delivery 6b0f84e5…81cbf76.
+These signatures differ. The installed phone certificate was not read, so this
+is evidence of an incompatible delivery pair, not a claimed phone error code.
+
+Implemented: raised version; optional Device diagnostics More entry in all ten
+locales; separated Guardian installation instructions from MR helper testing;
+explicit signed-owner-delivery process. Original release key recovered privately
+from the existing encrypted backup, never added to git. See docs/SIGNED_DELIVERY.md.
+
+Local UI/review/dependency gates and git diff --check: PASS.
+CURRENT BUILD/LINT/UNIT/EMULATOR/SIGNED DELIVERY: PENDING. Do not distribute this
+candidate until its current CI and signature checks have been accepted.
+Next: accept current CI; sign its unsigned AAB using the original key; verify
+APK/AAB certificate/package/non-debuggable; deliver Guardian only.
+Physical OPPO update preservation and precise installer diagnosis remain pending.
+
+Previous accepted baseline follows; its results are not current-candidate tests.
+
+---
+
 # Guardian NPSE accepted alpha checkpoint — 2026-10-24
 
 Branch: feature/npse-integration; PR #13. Last tested implementation commit:

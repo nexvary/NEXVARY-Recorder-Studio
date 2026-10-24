@@ -1,4 +1,4 @@
-# NEXVARY Guardian Studio — 0.11.0 candidate
+# NEXVARY Guardian Studio — 0.12.1 candidate
 
 Recorder Studio is being extended with Media Center, Family Safety, Child Mode and private emergency evidence. Package `com.nexvary.recorder` is preserved. Portable service: [Namecheap deployment](NAMECHEAP_DEPLOYMENT.md), [institution edition](INSTITUTION_DEPLOYMENT.md), [hosting research](HOSTING_RESEARCH_2026-10-21.md). A shared-host-only service sends text/location alerts and keeps video local; verified external storage enables full evidence packages. No service is activated automatically. See [implementation status](GUARDIAN_IMPLEMENTATION_STATUS.md), [AWS deployment](AWS_BACKEND_ARCHITECTURE.md), [SES setup](AWS_SES_SETUP.md), [quotas](FREE_PREMIUM_QUOTAS.md) and [storage](EVIDENCE_STORAGE.md). Cloud service and Play subscriptions require operator configuration; physical Android 15 verification remains separate from CI.
 
@@ -39,9 +39,16 @@ The recording, audio enhancement, WAV-to-AAC conversion and audio replacement op
 - Kotlin/JVM 17
 - RootEncoder 2.8.1
 
+## Installable owner delivery
+
+Use the release-signed Guardian APK verified against the existing Guardian certificate;
+see [signed delivery](docs/SIGNED_DELIVERY.md). Debug APKs use a different public
+test certificate and are not updates for release installations. Guardian does not
+require the NEXVARY-MR Android helper. Device diagnostics and Shizuku are optional.
+
 ## Build
 
-The project includes a GitHub Actions workflow. After pushing to GitHub, run **Android Build** and download the `NEXVARY-Recorder-Studio-debug` artifact.
+The **Android Release Gate** workflow builds test APKs and an unsigned release AAB. Owner installation uses the separately verified release-signed APK described above.
 
 Local build with a suitable Android SDK and Gradle 9.7.1:
 
