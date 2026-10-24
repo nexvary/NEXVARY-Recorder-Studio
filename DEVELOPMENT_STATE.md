@@ -1,3 +1,21 @@
+# NPSE integration checkpoint — 2026-10-24
+
+Branch: feature/npse-integration; base feature/guardian-studio at
+bde1110629f0295b026848b8cd2651c69fa0f5e8. Current commit: inspect git log -1.
+
+Implemented: reviewed shared NPSE Maven dependency, internal More entry with
+existing PIN gate, Standard-first control center, shared call-preflight backend
+policy and disabled automatic Sui initialization. No capture bypass. Read
+`docs/NPSE_INTEGRATION.md` and `third_party/npse/README.md`.
+
+Source dependency: MR 0908a3363401b2ccba4292fa82a27062ab6c908f; upstream build,
+unit/lint and missing-manager emulators API33–36 passed in run 40113664208.
+Current host verification pending CI: dependency/UI/review scripts; Gradle lint,
+unit/APK/test-APK build; native NpseIntegrationTest and existing recorder suite.
+Physical OPPO/ColorOS/manager pairing/restart/reboot remain pending.
+
+---
+
 # Guardian Studio development checkpoint
 
 Current candidate: 0.12.0 (versionCode 21), package `com.nexvary.recorder`.

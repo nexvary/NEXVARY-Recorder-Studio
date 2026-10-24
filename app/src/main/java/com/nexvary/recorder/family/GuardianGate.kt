@@ -99,6 +99,10 @@ class RecorderApplication: Application(),Application.ActivityLifecycleCallbacks 
     private var started=0
     private val handler=Handler(Looper.getMainLooper())
     private val lock=Runnable { if(started==0) GuardianGate.lock() }
+    override fun attachBaseContext(base: android.content.Context) {
+        super.attachBaseContext(base)
+        rikka.shizuku.ShizukuProvider.disableAutomaticSuiInitialization()
+    }
     override fun onCreate() { super.onCreate();registerActivityLifecycleCallbacks(this) }
     override fun onActivityStarted(activity: Activity) { started++;handler.removeCallbacks(lock) }
     override fun onActivityStopped(activity: Activity) { started--;if(started==0 && !activity.isChangingConfigurations) handler.postDelayed(lock,400) }

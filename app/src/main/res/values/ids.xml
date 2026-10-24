@@ -3,4 +3,4 @@
     <item name="guardianInstitutionService" type="id" />
     <item name="guardianConnectInstitution" type="id" />
     <item name="guardianAdvancedConnection" type="id" />
-<item type="id" name="settingsSafety"/><item type="id" name="settingsAppearance"/><item type="id" name="settingsAccount"/><item type="id" name="settingsHelp"/><item type="id" name="settingsAdvanced"/><item type="id" name="timerOptions"/><item type="id" name="timerEvidenceOptions"/><item type="id" name="guardianAuthSubmit"/><item type="id" name="guardianContactEmail"/><item type="id" name="guardianContactCode"/></resources>
+<item type="id" name="settingsSafety"/><item type="id" name="settingsAppearance"/><item type="id" name="settingsAccount"/><item type="id" name="settingsHelp"/><item type="id" name="settingsAdvanced"/><item type="id" name="timerOptions"/><item type="id" name="timerEvidenceOptions"/><item type="id" name="guardianAuthSubmit"/><item type="id" name="guardianContactEmail"/><item type="id" name="guardianContactCode"/><item type="id" name="morePrivileged"/></resources>

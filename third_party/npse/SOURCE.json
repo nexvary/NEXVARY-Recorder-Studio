@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "version": "0.1.0-alpha01",
+  "sourceRepository": "https://github.com/nexvary/NEXVARY-MR",
+  "sourceCommit": "0908a3363401b2ccba4292fa82a27062ab6c908f",
+  "sourceRun": 40113664208,
+  "sourceArtifactId": 12567877281,
+  "sourceArtifactZipSha256": "8d0f895be27cf5928d4917cc94a69354a4fc0857b5f4e460f29f32bfa0c26977",
+  "files": {
+    "maven/com/nexvary/npse/npse-android/0.1.0-alpha01/npse-android-0.1.0-alpha01.aar": "dc88d37c4e5a10c2bf2efb2e1b09d25af913e475811d9e05fe0828a29b63b950",
+    "maven/com/nexvary/npse/npse-android/0.1.0-alpha01/npse-android-0.1.0-alpha01.pom": "e47c02206042dc5aa6a7f82b85e25602ccce1384f3be254c40612a28b640dd46",
+    "maven/com/nexvary/npse/npse-core/0.1.0-alpha01/npse-core-0.1.0-alpha01.jar": "3eeffb167db2c8e514db7c72898b49d56b8c5ed6bce8591dd59fc8f74a82bd61",
+    "maven/com/nexvary/npse/npse-core/0.1.0-alpha01/npse-core-0.1.0-alpha01.pom": "dae8c563548b4b70a8e2f87f00cc6094266c4f3c3ef550292878dc0dc6e7c09b"
+  }
+}

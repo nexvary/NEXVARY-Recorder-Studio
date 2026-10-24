@@ -61,6 +61,7 @@ android {
 }
 
 dependencies {
+    implementation("com.nexvary.npse:npse-android:0.1.0-alpha01")
     implementation("androidx.media3:media3-exoplayer:1.8.0")
     implementation("androidx.media3:media3-ui:1.8.0")
     implementation("androidx.media3:media3-transformer:1.8.0")
