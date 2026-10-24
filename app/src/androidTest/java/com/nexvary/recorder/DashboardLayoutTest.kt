@@ -42,6 +42,8 @@ class DashboardLayoutTest {
         val size = Regex("Override size: (\\d+x\\d+)").find(shell("wm size"))?.groupValues?.get(1)
         val density = Regex("Override density: (\\d+)").find(shell("wm density"))?.groupValues?.get(1)
         val font = Settings.System.getFloat(context.contentResolver, "font_scale", 1f)
+        val originalDensity = context.resources.configuration.densityDpi
+        val originalWidth = context.resources.configuration.screenWidthDp
         val locales = context.getSystemService(LocaleManager::class.java).applicationLocales
         val theme = ThemeManager.currentIndex(context)
         try {
@@ -49,15 +51,26 @@ class DashboardLayoutTest {
             ThemeManager.select(context, 0)
             shell("wm size 720x1600"); shell("wm density 320")
             shell("settings put system font_scale $scale")
+            awaitProfile(scale, 320, 360)
             body()
         } finally {
             shell("wm size ${size ?: "reset"}"); shell("wm density ${density ?: "reset"}")
             shell("settings put system font_scale $font")
+            awaitProfile(font, originalDensity, originalWidth)
             instrumentation.runOnMainSync {
                 context.getSystemService(LocaleManager::class.java).applicationLocales = locales
             }
             ThemeManager.select(context, theme)
         }
+    }
+    private fun awaitProfile(font: Float, density: Int, width: Int) {
+        val deadline = SystemClock.elapsedRealtime() + 10_000
+        while (SystemClock.elapsedRealtime() < deadline) {
+            val config = context.resources.configuration
+            if (kotlin.math.abs(config.fontScale - font) < 0.05f && config.densityDpi == density && config.screenWidthDp == width) return
+            SystemClock.sleep(50)
+        }
+        fail("Emulator display configuration did not settle")
     }
     private fun language(tag: String) = instrumentation.runOnMainSync {
         context.getSystemService(LocaleManager::class.java).applicationLocales = LocaleList.forLanguageTags(tag)
