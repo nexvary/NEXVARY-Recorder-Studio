@@ -1,3 +1,28 @@
+# Guardian NPSE accepted alpha checkpoint — 2026-10-24
+
+Branch: feature/npse-integration; PR #13. Last tested implementation commit:
+`7f324204e2f60ab1aa42136668856676157e45b6`; base guardian-studio bde1110.
+The documentation checkpoint containing this file is later; inspect git log -1.
+
+Implemented: shared reviewed NPSE Maven library; internal More control-center
+entry respecting configured PIN; shared shell-only call preflight; disabled
+automatic Sui initialization. No engine copy, capture bypass or package/signing
+identity change. Read docs/NPSE_INTEGRATION.md and third_party/npse/README.md.
+
+VERIFIED run 40126176694: dependency/UI/review gates, Gradle lint/unit/APK/test-APK/
+AAB build, pinned debug signature, AWS/SQLite/MySQL backend checks; API33/34/35
+each 80 passing UI cases with no failures/skips. Both new NpseIntegrationTest
+cases passed on each API. Real Arabic More-card screenshots inspected.
+Shared engine official/Next consent/Binder-death tests passed on API35 in MR
+run 40126853544; these are not host-specific physical Guardian tests.
+
+PENDING: owner's OPPO/ColorOS, actual Guardian manager use, pairing, revocation,
+reboot and battery behavior; no device is connected. APK remains a debug preview.
+No main merge, production release or Google Play publication. Continue physical
+acceptance when a device is available; do not repeat this completed adoption.
+
+---
+
 # Guardian Studio development checkpoint
 
 Current candidate: 0.12.0 (versionCode 21), package `com.nexvary.recorder`.
