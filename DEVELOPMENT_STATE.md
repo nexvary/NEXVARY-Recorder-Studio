@@ -1,29 +1,54 @@
-# Guardian signed delivery correction — 2026-10-25
+# Guardian 0.12.1 signed delivery — accepted checkpoint, 2026-10-25
 
-Branch: fix/guardian-signed-delivery. Parent: 7ba1ef1d2fccbc5a9af3319d3f9b521644d74f06
-(PR #13); inspect git log -1 for the current checkpoint commit.
+Branch: fix/guardian-signed-delivery; PR #14 (base feature/npse-integration).
+Last tested implementation: 4492685768a29145607a1862b1ca9575892a8331.
+This final evidence checkpoint is documentation only; inspect git log -1 for its
+commit. No production code changed after the accepted source.
 
-Candidate 0.12.1/versionCode 22; package com.nexvary.recorder retained.
-The reported installation conflict led to checking the actual artifacts:
-previous owner release ca4640c7…91be7f6; NPSE debug delivery 6b0f84e5…81cbf76.
-These signatures differ. The installed phone certificate was not read, so this
-is evidence of an incompatible delivery pair, not a claimed phone error code.
+Implemented: versionCode 22/versionName 0.12.1, retaining com.nexvary.recorder;
+optional Device diagnostics More card in all ten locales; explicit independent
+Guardian delivery instructions; scripts/verify_owner_apk.py refuses wrong keys,
+debuggable APKs, source-version mismatches and non-increasing updates.
+Guardian does not require the MR Android helper or a Shizuku installation.
 
-Implemented: raised version; optional Device diagnostics More entry in all ten
-locales; separated Guardian installation instructions from MR helper testing;
-explicit signed-owner-delivery process. Original release key recovered privately
-from the existing encrypted backup, never added to git. See docs/SIGNED_DELIVERY.md.
+VERIFIED: Android Release Gate 40138155110 SUCCESS on the tested source.
+- UI/review/dependency gates, Gradle lint, 43 unit tests (zero failures/skips),
+  APK/test APK/unsigned AAB and all three backend jobs passed.
+- Lint: zero errors, 159 warnings retained in the actual quality artifact.
+- APIs33/34/35: 80 UI tests EACH; zero failures/errors/skips. Downloaded XMLs
+  confirm both NPSE host cases including Standard mode with no manager.
+- Actual API35 Arabic More screenshot visually inspected: optional diagnostics
+  copy is readable, RTL correct, inspected cards have no clipped text.
+- Universal Release APK generated from this run's hash-verified AAB; APK and
+  AAB signed externally using the original recovered Guardian key. APK v3 and
+  AAB JAR verification passed; non-debuggable, correct package and higher code.
+  The original release APK and current APK both have certificate SHA-256
+  ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6.
+- Current APK SHA-256: 93d5e76ce4157dd0377005730795b0a91d835a41c653f9a77b26b415890513ee.
+  Saved deliverable: NEXVARY-Guardian-Studio-0.12.1-release-signed.apk (16767546 bytes).
+  Temporary decrypted key/unlock copy removed. No secrets added to git/logs.
 
-Local UI/review/dependency gates and git diff --check: PASS.
-CURRENT BUILD/LINT/UNIT/EMULATOR/SIGNED DELIVERY: PENDING. Do not distribute this
-candidate until its current CI and signature checks have been accepted.
-Next: accept current CI; sign its unsigned AAB using the original key; verify
-APK/AAB certificate/package/non-debuggable; deliver Guardian only.
-Physical OPPO update preservation and precise installer diagnosis remain pending.
+The previous NPSE Debug delivery used a different certificate (6b0f84e5…81cbf76).
+The verifier correctly rejects it as an owner release. The phone's installed
+certificate/error code has not been read; no definitive phone diagnosis claimed.
 
-Previous accepted baseline follows; its results are not current-candidate tests.
+PENDING: physical OPPO/ColorOS installation, retained recordings/settings,
+actual Guardian manager use, pairing, permission revocation, reboot and battery
+behavior. UI instrumentation used Debug from the same source; this is not a
+physical signed-Release runtime pass. No connected device is available.
+
+Next: owner installs ONLY the release-signed Guardian APK as an update, without
+uninstall/data clear. If rejected, inspect the actual PackageInstaller reason
+and installed certificate before changing signing or package identity. Do not
+repeat accepted source tests without a new change/failure. No main merge,
+production/store publication, cloud activation or MR product changes performed.
+
+See docs/SIGNED_DELIVERY.md, docs/TEST_RESULTS_0.12.1.md and
+ docs/release-evidence/0.12.1/VALIDATION.json.
 
 ---
+
+Historical checkpoints below are superseded by the accepted checkpoint above.
 
 # Guardian NPSE accepted alpha checkpoint — 2026-10-24
 

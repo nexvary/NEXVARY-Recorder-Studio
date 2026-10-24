@@ -50,3 +50,28 @@ not publish a release or store listing automatically. Physical OPPO install and
 retained recordings/settings are pending until observed on that device.
 
 See DEVELOPMENT_STATE.md for the current source and accepted results.
+
+## Accepted correction
+
+Tested source 4492685768a29145607a1862b1ca9575892a8331, successful run:
+https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/40138155110
+
+The signed 0.12.1 APK has versionCode 22, is non-debuggable, and has the same
+pinned release certificate as the earlier signed 0.12.0 APK (code21). Official
+APK v3 signature and AAB JAR signature verification passed. The compiled
+manifest has Guardian-scoped providers and no MR helper components. The
+owner-delivery verifier passed on the new/old release pair and rejected the
+previous Debug APK and an old version as current delivery.
+
+Run the verification before each owner handoff:
+
+```sh
+python scripts/verify_owner_apk.py CURRENT.apk --previous PREVIOUS_RELEASE.apk \
+  --apksigner /path/to/android-sdk/build-tools/VERSION/apksigner \
+  --aapt2 /path/to/android-sdk/build-tools/VERSION/aapt2
+```
+
+The release key was recovered from the existing encrypted backup solely for
+this signing operation. Temporary decrypted material was deleted afterward.
+The installed phone identity and physical upgrade/data preservation remain
+pending. Do not infer an observed phone installation from matching signatures.

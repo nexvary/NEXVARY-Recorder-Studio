@@ -1,0 +1,1 @@
+PASS: owner-delivery verifier rejected the previously delivered Debug APK due to different certificate.
