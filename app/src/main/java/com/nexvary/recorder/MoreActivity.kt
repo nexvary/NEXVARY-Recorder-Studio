@@ -24,7 +24,7 @@ class MoreActivity : AppCompatActivity() {
         FeatureCards.grid(root, listOf(
             FeatureCards.Item(R.id.moreGuide, R.drawable.asset_info, R.string.guide_title, R.string.more_guide_note) { page(GuideActivity::class.java) },
             FeatureCards.Item(R.id.moreSettings, R.drawable.asset_settings, R.string.settings_title, R.string.more_settings_note) { page(SettingsActivity::class.java) },
-            FeatureCards.Item(R.id.morePrivileged, R.drawable.asset_tools, com.nexvary.npse.R.string.npse_title, com.nexvary.npse.R.string.npse_scope) {
+            FeatureCards.Item(R.id.morePrivileged, R.drawable.asset_tools, R.string.device_diagnostics_title, R.string.device_diagnostics_note) {
                 GuardianGate.action(this) { page(com.nexvary.npse.ControlCenterActivity::class.java) }
             },
             FeatureCards.Item(R.id.moreMedia, R.drawable.asset_tools, R.string.media_tools_title, R.string.more_media_note) { page(com.nexvary.recorder.media.MediaCenterActivity::class.java) },

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="device_diagnostics_title">تشخيص الجهاز</string>
+    <string name="device_diagnostics_note">معلومات الجهاز والتشخيص اختياريان. يلزم Shizuku فقط للتشخيص الإضافي.</string>
+</resources>

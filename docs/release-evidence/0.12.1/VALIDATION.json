@@ -1,0 +1,80 @@
+{
+  "sourceCommit": "4492685768a29145607a1862b1ca9575892a8331",
+  "run": 40138155110,
+  "unsignedAabArtifact": 12577508670,
+  "unsignedAabArchiveSha256": "38d894552cbdb166c57dd1f435283596132fa8fa5fa10d3dc36e1f75e27a6dcc",
+  "unit": {
+    "tests": 43,
+    "failures": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 159
+  },
+  "apkVerification": {
+    "current": {
+      "package": "com.nexvary.recorder",
+      "versionCode": 22,
+      "versionName": "0.12.1",
+      "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+      "debuggable": false,
+      "sha256": "93d5e76ce4157dd0377005730795b0a91d835a41c653f9a77b26b415890513ee"
+    },
+    "previous": {
+      "package": "com.nexvary.recorder",
+      "versionCode": 21,
+      "versionName": "0.12.0",
+      "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+      "debuggable": false,
+      "sha256": "ebf44d0df639da0a307266841521246d44d60b5b155a5ccc1b5c82e0d3e77ab6"
+    },
+    "sameSigningIdentity": true,
+    "physicalInstall": "PENDING"
+  },
+  "manifestChecks": {
+    "noMrComponents": true,
+    "guardianScopedProviders": true,
+    "npseActivityInternal": true
+  },
+  "emulatorMatrix": [
+    {
+      "api": 33,
+      "tests": 80,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "guardianNpseCasesVerified": true
+    },
+    {
+      "api": 34,
+      "tests": 80,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "guardianNpseCasesVerified": true
+    },
+    {
+      "api": 35,
+      "tests": 80,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "guardianNpseCasesVerified": true
+    }
+  ],
+  "physicalOppo": "PENDING: no connected device",
+  "runConclusion": "success",
+  "signedReleaseRuntime": "PENDING physical device; instrumentation ran Debug from the same source",
+  "visualQa": {
+    "api": 35,
+    "file": "more-cards-ar.png",
+    "result": "PASS: Device diagnostics title/optional note readable, Arabic RTL, no clipped text in inspected cards",
+    "artifact": 12577034361,
+    "archiveSha256": "ad6d8a2cd4556ddc8fecbf5c590d6dd89790e6fbce74950746209324dd3ea559"
+  },
+  "negativeDeliveryChecks": [
+    "previous Debug certificate rejected",
+    "old release version rejected for current reviewed source"
+  ]
+}

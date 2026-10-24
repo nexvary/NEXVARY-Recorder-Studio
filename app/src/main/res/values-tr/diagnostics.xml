@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="device_diagnostics_title">Cihaz tanılama</string>
+    <string name="device_diagnostics_note">İsteğe bağlı cihaz bilgileri ve tanılama. Shizuku yalnızca ek tanılama için gereklidir.</string>
+</resources>

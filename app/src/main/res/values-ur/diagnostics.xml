@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="device_diagnostics_title">ڈیوائس کی تشخیص</string>
+    <string name="device_diagnostics_note">ڈیوائس کی معلومات اور تشخیص اختیاری ہیں۔ Shizuku صرف اضافی تشخیص کے لیے ضروری ہے۔</string>
+</resources>
