@@ -24,3 +24,13 @@ Validation: scripts/verify_npse_dependency.py, existing UI/review gates, full
 Gradle lint/unit/APK/test-APK build and NpseIntegrationTest. Actual results are
 recorded in DEVELOPMENT_STATE.md/Actions; adding a test is not a pass. Physical
 OPPO/ColorOS and official/Next Binder/reboot acceptance remain pending.
+
+## Acceptance evidence
+
+Source 7f324204e2f60ab1aa42136668856676157e45b6, run 40126176694:
+build/lint/unit/signature/backend checks passed; API33/34/35 each 80 UI tests,
+0 failures/errors/skips. XML reports confirm both new host cases (internal activity
++ Standard report without manager; configured PIN at More entry). Actual Arabic
+More screenshots show the NPSE card. Host real-manager/OEM acceptance is pending;
+the same shared engine passed official/Next UID-2000/Binder-death tests in the MR
+host, source 514afe8 / run 40126853544. No root, release promotion or privacy bypass.

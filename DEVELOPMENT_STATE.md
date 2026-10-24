@@ -1,18 +1,25 @@
-# NPSE integration checkpoint — 2026-10-24
+# Guardian NPSE accepted alpha checkpoint — 2026-10-24
 
-Branch: feature/npse-integration; base feature/guardian-studio at
-bde1110629f0295b026848b8cd2651c69fa0f5e8. Current commit: inspect git log -1.
+Branch: feature/npse-integration; PR #13. Last tested implementation commit:
+`7f324204e2f60ab1aa42136668856676157e45b6`; base guardian-studio bde1110.
+The documentation checkpoint containing this file is later; inspect git log -1.
 
-Implemented: reviewed shared NPSE Maven dependency, internal More entry with
-existing PIN gate, Standard-first control center, shared call-preflight backend
-policy and disabled automatic Sui initialization. No capture bypass. Read
-`docs/NPSE_INTEGRATION.md` and `third_party/npse/README.md`.
+Implemented: shared reviewed NPSE Maven library; internal More control-center
+entry respecting configured PIN; shared shell-only call preflight; disabled
+automatic Sui initialization. No engine copy, capture bypass or package/signing
+identity change. Read docs/NPSE_INTEGRATION.md and third_party/npse/README.md.
 
-Source dependency: MR 0908a3363401b2ccba4292fa82a27062ab6c908f; upstream build,
-unit/lint and missing-manager emulators API33–36 passed in run 40113664208.
-Current host verification pending CI: dependency/UI/review scripts; Gradle lint,
-unit/APK/test-APK build; native NpseIntegrationTest and existing recorder suite.
-Physical OPPO/ColorOS/manager pairing/restart/reboot remain pending.
+VERIFIED run 40126176694: dependency/UI/review gates, Gradle lint/unit/APK/test-APK/
+AAB build, pinned debug signature, AWS/SQLite/MySQL backend checks; API33/34/35
+each 80 passing UI cases with no failures/skips. Both new NpseIntegrationTest
+cases passed on each API. Real Arabic More-card screenshots inspected.
+Shared engine official/Next consent/Binder-death tests passed on API35 in MR
+run 40126853544; these are not host-specific physical Guardian tests.
+
+PENDING: owner's OPPO/ColorOS, actual Guardian manager use, pairing, revocation,
+reboot and battery behavior; no device is connected. APK remains a debug preview.
+No main merge, production release or Google Play publication. Continue physical
+acceptance when a device is available; do not repeat this completed adoption.
 
 ---
 
