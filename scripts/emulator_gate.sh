@@ -20,6 +20,7 @@ adb shell dumpsys activity activities > diagnostics/activities.txt
 adb shell dumpsys window windows > diagnostics/windows.txt
 adb pull /sdcard/Pictures/NEXVARYVisualEvidence/. screenshots/ || true
 if [ "$status" -eq 0 ]; then
+  adb pull /sdcard/Download/NEXVARYTestEvidence/dashboard-compact-measurements.json diagnostics/dashboard-compact-measurements.json
   adb pull /sdcard/Download/NEXVARYTestEvidence/quality-measurements.json diagnostics/quality-measurements.json
   adb pull /sdcard/Download/NEXVARYTestEvidence/family-evidence-measurements.json diagnostics/family-evidence-measurements.json
 fi
@@ -29,7 +30,7 @@ if [ "$status" -ne 0 ]; then
   rm -f screenshots/*.png
   exit "$status"
 fi
-for screen in setup-health-ar setup-guardian-ar setup-child-ar setup-recording-ar setup-review-ar player-video-ar timer-presets-ar safety-settings-ar sharing-settings-ar institution-connect-ar more-cards-ar more-cards-bottom-ar guide-ar guide-search-ar family-dashboard-ar family-sos-countdown-ar privacy-center-ar dashboard-ar dashboard-purple-ar sos-ar sos-editor-ar sos-contact-ar camera-ar camera-quality-ar camera-delivery-ar outbox-ar settings-ar library-ar; do
+for screen in dashboard-compact-ar dashboard-compact-en dashboard-compact-large-text-ar setup-health-ar setup-guardian-ar setup-child-ar setup-recording-ar setup-review-ar player-video-ar timer-presets-ar safety-settings-ar sharing-settings-ar institution-connect-ar more-cards-ar more-cards-bottom-ar guide-ar guide-search-ar family-dashboard-ar family-sos-countdown-ar privacy-center-ar dashboard-ar dashboard-purple-ar sos-ar sos-editor-ar sos-contact-ar camera-ar camera-quality-ar camera-delivery-ar outbox-ar settings-ar library-ar; do
   test -s "screenshots/$screen.png"
 done
 if grep -E 'ANR in com.nexvary.recorder|ANR in com.google.android.apps.nexuslauncher|ANR in com.android.launcher3|FATAL EXCEPTION:' diagnostics/logcat.txt; then

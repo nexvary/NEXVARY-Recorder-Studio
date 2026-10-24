@@ -62,15 +62,26 @@ object FeatureCards {
         }
     }
 
-    fun add(root: LinearLayout,asset: Int,label: Int,action: () -> Unit) {
+    /** A compact, still 48dp-tall entry for the dashboard; normal pages keep their size. */
+    fun add(root: LinearLayout,asset: Int,label: Int,compact: Boolean = false,action: () -> Unit) {
         val density=root.resources.displayMetrics.density
+        val horizontal = if (compact) 12 else 16
+        val vertical = if (compact) 8 else 12
+        val icon = if (compact) 32 else 56
         root.addView(LinearLayout(root.context).apply {
             orientation=LinearLayout.HORIZONTAL;gravity=Gravity.CENTER_VERTICAL
-            setPadding((16*density).toInt(),(12*density).toInt(),(16*density).toInt(),(12*density).toInt())
+            setPadding((horizontal*density).toInt(),(vertical*density).toInt(),(horizontal*density).toInt(),(vertical*density).toInt())
+            minimumHeight = (48 * density).toInt()
             setBackgroundResource(R.drawable.bg_metal_card)
-            layoutParams=LinearLayout.LayoutParams(-1,-2).apply { bottomMargin=(12*density).toInt() }
-            addView(ImageView(context).apply { setImageResource(asset);importantForAccessibility=android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO },LinearLayout.LayoutParams((56*density).toInt(),(56*density).toInt()))
-            addView(TextView(context).apply { setText(label);textSize=18f;setPadding((16*density).toInt(),0,0,0) },LinearLayout.LayoutParams(0,-2,1f))
+            layoutParams=LinearLayout.LayoutParams(-1,-2).apply { bottomMargin=((if (compact) 8 else 12)*density).toInt() }
+            addView(ImageView(context).apply { setImageResource(asset);importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO },LinearLayout.LayoutParams((icon*density).toInt(),(icon*density).toInt()))
+            addView(TextView(context).apply {
+                setText(label);textSize=if (compact) 16f else 18f
+                if (compact) {
+                    setTextColor(com.google.android.material.color.MaterialColors.getColor(this, R.attr.nexvaryText))
+                    setPaddingRelative((12*density).toInt(),0,0,0)
+                } else setPadding((16*density).toInt(),0,0,0)
+            },LinearLayout.LayoutParams(0,-2,1f))
             isClickable=true;isFocusable=true;contentDescription=context.getString(label);setOnClickListener { action() }
         })
     }

@@ -1,4 +1,4 @@
-# NEXVARY Guardian Studio — 0.12.1 candidate
+# NEXVARY Guardian Studio — 0.12.2 candidate
 
 Recorder Studio is being extended with Media Center, Family Safety, Child Mode and private emergency evidence. Package `com.nexvary.recorder` is preserved. Portable service: [Namecheap deployment](NAMECHEAP_DEPLOYMENT.md), [institution edition](INSTITUTION_DEPLOYMENT.md), [hosting research](HOSTING_RESEARCH_2026-10-21.md). A shared-host-only service sends text/location alerts and keeps video local; verified external storage enables full evidence packages. No service is activated automatically. See [implementation status](GUARDIAN_IMPLEMENTATION_STATUS.md), [AWS deployment](AWS_BACKEND_ARCHITECTURE.md), [SES setup](AWS_SES_SETUP.md), [quotas](FREE_PREMIUM_QUOTAS.md) and [storage](EVIDENCE_STORAGE.md). Cloud service and Play subscriptions require operator configuration; physical Android 15 verification remains separate from CI.
 

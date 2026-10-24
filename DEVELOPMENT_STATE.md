@@ -1,3 +1,29 @@
+# Guardian compact dashboard candidate — 2026-10-25
+
+Branch fix/guardian-compact-dashboard; parent 2e954cc4a4738e5e5a5eef164fab385ea31f4eb4.
+Candidate 0.12.2/code23; original package/release key retained. Source HEAD: inspect git log -1.
+
+Owner screenshot showed an oversized setup entry and dashboard icons, with the
+last row only partly visible. Implemented home-only compact setup entry (32dp
+icon, at least48dp touch target, themed readable text), 52dp grid icons, 128dp
+minimum cards, tighter header spacing and 26dp bottom icons/64dp bar. Other
+pages retain their default entry sizes. Text can grow and the page still scrolls.
+
+Added two real emulator regression cases: all nine cards fully visible above
+navigation at 360x800dp/1.0 font in Arabic and English, and reachable/unclipped
+last row at 1.5 font. Actual screenshots/measurement JSON required by CI.
+Display changes are emulator-only and restored in finally; these are not OPPO
+hardware results. Existing source UI/review/Maven gates passed locally.
+
+PENDING current Gradle/lint/unit/runtime/visual acceptance and original-key
+release signing. Next: accept CI, inspect actual profile screenshots, sign the
+accepted AAB, verify update against the 0.12.1 release, save owner APK/evidence.
+Do not deliver until current results are recorded. No data clear/package rename.
+
+---
+
+Previous accepted checkpoint (historical, not current-candidate results):
+
 # Guardian 0.12.1 signed delivery — accepted checkpoint, 2026-10-25
 
 Branch: fix/guardian-signed-delivery; PR #14 (base feature/npse-integration).
