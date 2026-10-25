@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_recipients_label">E-Mail-Adressen der Empfänger (bis zu 10)</string>
+    <string name="camera_recipients_invalid">1–10 gültige Adressen eingeben, durch Kommas oder Zeilen getrennt.</string>
+    <string name="camera_recipients_hint">Eine Adresse pro Zeile oder durch Kommas/Semikolons getrennt. Doppelte Adressen werden entfernt; andere Empfänger bleiben verborgen.</string>
+    <string name="camera_multi_policy">Optional für diese Aufnahme. Eigenes SMTP-Konto einrichten. Lehnt der Server eine Adresse ab, wird nichts gesendet. Liste im Postausgang prüfen. Serverannahme bestätigt keinen Posteingang.</string>
+    <string name="camera_mail_review_title">Automatische E-Mail prüfen</string>
+    <string name="camera_mail_review">Nach dem Speichern diese Videoaufnahme senden an:\n%1$s\n\nDas Original bleibt auf dem Telefon. Der Versand kann auf Netzwerk oder Android-Hintergrundplanung warten.</string>
+    <string name="camera_mail_confirm">Bestätigen und aufnehmen</string>
+    <string name="mail_server_accepted">Vom Mailserver angenommen; Zustellung unbestätigt</string>
+    <string name="mail_approval_needed">Empfänger dieser älteren Nachricht vor dem Versand prüfen</string>
+    <string name="mail_retry_recipient_review">Empfänger vor der Freigabe prüfen oder ändern. Adressen durch Kommas oder Zeilen trennen.</string>
+</resources>

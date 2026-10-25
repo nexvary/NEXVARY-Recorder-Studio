@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit
 class MailWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
     private val sender = SmtpSender(context.getString(R.string.mail_subject), context.getString(R.string.mail_body))
     override fun doWork(): Result {
-        if (!com.nexvary.recorder.BuildConfig.DEBUG) return Result.failure()
         val id = inputData.getString("job") ?: return Result.failure()
         val queue = MailQueue(applicationContext)
         return try {

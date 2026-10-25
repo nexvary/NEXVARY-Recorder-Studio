@@ -1,0 +1,80 @@
+{
+  "sourceCommit": "8ded2a73cacde2cf0c91750f02208c8f45a7b9f9",
+  "baseCommit": "9bccfa1060696142023fd3164e58f84bfd7e05b5",
+  "branch": "feat/camera-multi-recipient-mail",
+  "pullRequest": 16,
+  "version": "0.12.3",
+  "versionCode": 24,
+  "normalRun": 40168288269,
+  "releaseMailRun": 40168288246,
+  "unit": {
+    "passed": 49,
+    "failed": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 164
+  },
+  "releaseInstrumentation": {
+    "api": 35,
+    "passed": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "debuggable": false,
+    "signing": "public fixture certificate for instrumentation only"
+  },
+  "standardInstrumentation": [
+    {
+      "api": 33,
+      "tests": 86,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed"
+    },
+    {
+      "api": 34,
+      "tests": 86,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed"
+    },
+    {
+      "api": 35,
+      "tests": 86,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed"
+    }
+  ],
+  "physicalOPPO": "PENDING",
+  "android16": "PENDING",
+  "externalSMTP": "PENDING",
+  "realInboxDelivery": "PENDING",
+  "artifacts": [
+    {
+      "name": "Guardian-0.12.3-camera-mail-AR.png",
+      "bytes": 279460,
+      "sha256": "2dea7eb5178c1666885c87280e97c631d2144337e5fd3778cf84d58318f92cb5"
+    },
+    {
+      "name": "Guardian-0.12.3-mail-review-AR.png",
+      "bytes": 218539,
+      "sha256": "05a461c941601453b3843d417e57e6c8b9fa49cb2777b575858fcaad31273e96"
+    },
+    {
+      "name": "NEXVARY-Guardian-Studio-0.12.3-release-signed.apk",
+      "bytes": 16792122,
+      "sha256": "af8d4e279af4c6d51e992c5f8ae7ae7c6a0ed398354ce6b389db76c957f03dc3"
+    }
+  ],
+  "ownerBundleSource": "918ed35ce8dc36ae3a75c47231fef65e937254b1",
+  "initialFailedRun": 40167163403,
+  "temporaryDecryptedSigningFiles": "REMOVED",
+  "normalRunConclusion": "success",
+  "releaseMailRunConclusion": "success"
+}

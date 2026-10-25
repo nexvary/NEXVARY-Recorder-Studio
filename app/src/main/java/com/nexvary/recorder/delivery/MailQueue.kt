@@ -11,9 +11,9 @@ import java.util.UUID
 /** Private send copies survive deletion/moving of the library original. Originals are never deleted here. */
 class MailQueue(private val context: Context) {
     private val dir = File(context.noBackupFilesDir, "mail_outbox").apply { check(isDirectory || mkdirs() || isDirectory) }
-    enum class State { QUEUED, SENDING, RETRY, SENT, CONFIG, AUTH, TLS, LIMIT, MISSING, COPY_FAILED, FAILED, UNCERTAIN, CANCELLED }
+    enum class State { QUEUED, SENDING, RETRY, SENT, CONFIG, AUTH, TLS, LIMIT, MISSING, COPY_FAILED, FAILED, UNCERTAIN, CANCELLED, REVIEW }
     data class Job(val id: String, val name: String, val recipient: String, val original: String,
-        val created: Long, val state: State, val attempts: Int = 0, val digest: String = "")
+        val created: Long, val state: State, val attempts: Int = 0, val digest: String = "", val approved: Boolean = true)
     private fun file(id: String, extension: String): File {
         require(UUID.fromString(id).toString() == id)
         return File(dir, "$id.$extension")
@@ -23,22 +23,26 @@ class MailQueue(private val context: Context) {
     fun jobs(): List<Job> = synchronized(LOCK) { dir.listFiles().orEmpty().filter { it.extension == "json" }.mapNotNull(::read).sortedByDescending { it.created } }
     private fun read(file: File): Job? = runCatching {
         val j = JSONObject(AtomicFile(file).readFully().toString(Charsets.UTF_8))
+        val approved = j.optBoolean("approved", false)
+        val savedState = State.valueOf(j.getString("state"))
+        val state = if (!approved && savedState == State.SENDING) State.UNCERTAIN
+            else if (!approved && savedState in listOf(State.QUEUED, State.RETRY)) State.REVIEW else savedState
         Job(j.getString("id"), j.getString("name"), j.getString("recipient"), j.getString("original"),
-            j.getLong("created"), State.valueOf(j.getString("state")), j.optInt("attempts"), j.optString("digest"))
+            j.getLong("created"), state, j.optInt("attempts"), j.optString("digest"), approved)
     }.getOrNull()
     private fun write(job: Job) {
         val json = JSONObject().put("id", job.id).put("name", job.name).put("recipient", job.recipient)
             .put("original", job.original).put("created", job.created).put("state", job.state.name)
-            .put("attempts", job.attempts).put("digest", job.digest).toString()
+            .put("attempts", job.attempts).put("digest", job.digest).put("approved", job.approved).toString()
         val atom = AtomicFile(file(job.id, "json")); val out = atom.startWrite()
         try { out.write(json.toByteArray(Charsets.UTF_8)); atom.finishWrite(out) }
         catch (e: Exception) { atom.failWrite(out); throw e }
     }
     fun enqueue(source: File, recipient: String, limitMiB: Int): Job = synchronized(LOCK) {
-        require(DeliveryPolicy.email(recipient))
+        val canonical = requireNotNull(MailRecipients.canonical(recipient))
         val allowed = File(context.getExternalFilesDir(android.os.Environment.DIRECTORY_MOVIES)!!, source.name)
         require(source.canonicalFile == allowed.canonicalFile && source.isFile)
-        val job = Job(UUID.randomUUID().toString(), source.name, recipient, source.canonicalPath,
+        val job = Job(UUID.randomUUID().toString(), source.name, canonical, source.canonicalPath,
             System.currentTimeMillis(), State.QUEUED)
         prepare(job, limitMiB).also(::write)
     }
@@ -69,14 +73,15 @@ class MailQueue(private val context: Context) {
         } catch (_: Exception) { job.copy(state = State.COPY_FAILED) }
         finally { temp.delete() }
     }
-    fun retry(id: String, limit: Int): Job? = synchronized(LOCK) {
+    fun retry(id: String, limit: Int, recipients: String? = null): Job? = synchronized(LOCK) {
         val job = get(id) ?: return@synchronized null
         if (job.state in listOf(State.SENT, State.SENDING, State.CANCELLED, State.QUEUED, State.RETRY)) return@synchronized null
-        prepare(job.copy(attempts = 0), limit).also(::write)
+        val canonical = requireNotNull(MailRecipients.canonical(recipients ?: job.recipient))
+        prepare(job.copy(attempts = 0, recipient = canonical, approved = true), limit).also(::write)
     }
     fun claim(id: String): Job? = synchronized(LOCK) {
         val job = get(id) ?: return@synchronized null
-        if (job.state !in listOf(State.QUEUED, State.RETRY)) return@synchronized null
+        if (!job.approved || job.state !in listOf(State.QUEUED, State.RETRY)) return@synchronized null
         job.copy(state = State.SENDING, attempts = job.attempts + 1).also(::write)
     }
     fun finish(id: String, state: State) = synchronized(LOCK) {

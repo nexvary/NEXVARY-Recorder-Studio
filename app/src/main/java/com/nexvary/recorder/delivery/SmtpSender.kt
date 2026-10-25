@@ -29,6 +29,8 @@ class SmtpSender(private val subject: String, private val body: String,
         require(profile.valid())
         val props = Properties().apply {
             setProperty("mail.smtp.auth", "true")
+            setProperty("mail.smtp.sendpartial", "false")
+            setProperty("mail.smtp.reportsuccess", "false")
             setProperty("mail.smtp.auth.mechanisms", "LOGIN PLAIN")
             setProperty("mail.smtp.ssl.enable", profile.directTls.toString())
             setProperty("mail.smtp.starttls.enable", (!profile.directTls).toString())
@@ -81,14 +83,19 @@ class SmtpSender(private val subject: String, private val body: String,
         } finally { close() }
     }
     override fun send(profile: SmtpProfile, job: MailQueue.Job, file: File, beforeData: () -> Unit) {
-        require(DeliveryPolicy.email(job.recipient) && file.isFile && file.length() > 0)
+        val recipients = requireNotNull(MailRecipients.parse(job.recipient)).map { InternetAddress(it, true) }.toTypedArray()
+        require(file.isFile && file.length() > 0)
         if (!DeliveryPolicy.fits(file.length(), profile.limitMiB)) throw MessageTooLarge()
         val session = session(profile)
         val message = object : MimeMessage(session) {
             override fun updateMessageID() { setHeader("Message-ID", "<${job.id}@recordings.nexvary.invalid>") }
         }.apply {
             setFrom(InternetAddress(profile.from, true))
-            setRecipient(Message.RecipientType.TO, InternetAddress(job.recipient, true))
+            if (recipients.size == 1) setRecipient(Message.RecipientType.TO, recipients.single())
+            else {
+                setRecipients(Message.RecipientType.BCC, recipients)
+                setHeader("To", "undisclosed-recipients:;")
+            }
             setSubject(subject, "UTF-8")
             sentDate = Date(job.created)
             setContent(MimeMultipart().apply {
@@ -109,7 +116,7 @@ class SmtpSender(private val subject: String, private val body: String,
             val serverLimit = (connection as? SMTPTransport)?.getExtensionParameter("SIZE")?.trim()?.toLongOrNull()
             if (serverLimit != null && serverLimit > 0 && DeliveryPolicy.messageBytes(file.length()) > serverLimit) throw MessageTooLarge()
             beforeData()
-            connection.sendMessage(message, message.allRecipients)
+            connection.sendMessage(message, recipients)
             // sendMessage returning means the SMTP server accepted DATA, not inbox delivery.
         } finally { close() }
     }

@@ -149,7 +149,7 @@ class RecordingDeliveryTest {
             onView(withId(R.id.cameraEmail)).perform(reveal(), click())
             onView(withId(R.id.cameraRecipient)).perform(reveal(), replaceText("bad"), closeSoftKeyboard())
             onView(withId(R.id.cameraStart)).perform(reveal(), click())
-            onView(withId(R.id.cameraStatus)).perform(reveal()).check(matches(withText(R.string.camera_recipient_invalid)))
+            onView(withId(R.id.cameraStatus)).perform(reveal()).check(matches(withText(R.string.camera_recipients_invalid)))
             onView(withId(R.id.cameraRecipient)).perform(reveal(), replaceText("qa@example.invalid"), closeSoftKeyboard())
             scenario.recreate(); awaitUi(withId(R.id.cameraRecipient))
             onView(withId(R.id.cameraRecipient)).perform(reveal()).check(matches(withText("qa@example.invalid")))

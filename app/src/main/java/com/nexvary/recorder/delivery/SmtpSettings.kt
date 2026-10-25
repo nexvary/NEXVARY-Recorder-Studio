@@ -34,14 +34,14 @@ class SmtpSettings(context: Context) {
             try {
                 val json = JSONObject(plain.toString(Charsets.UTF_8))
                 SmtpProfile(json.getString("host"), json.getInt("port"), json.getBoolean("tls"),
-                    json.getString("user"), json.getString("password"), json.getString("from"), json.getInt("limit")).also { require(it.valid()) }
+                    json.getString("user"), json.getString("password"), json.getString("from"), json.getInt("limit"), json.optString("cameraRecipients")).also { require(it.valid()) }
             } finally { plain.fill(0) }
         }.getOrNull()
     }
     fun save(profile: SmtpProfile) = synchronized(LOCK) {
         require(profile.valid())
         val plain = JSONObject().put("host", profile.host).put("port", profile.port).put("tls", profile.directTls)
-            .put("user", profile.username).put("password", profile.password).put("from", profile.from).put("limit", profile.limitMiB)
+            .put("user", profile.username).put("password", profile.password).put("from", profile.from).put("limit", profile.limitMiB).put("cameraRecipients", profile.cameraRecipients)
             .toString().toByteArray(Charsets.UTF_8)
         try {
             val cipher = Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.ENCRYPT_MODE, key()) }

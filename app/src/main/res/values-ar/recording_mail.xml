@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_recipients_label">عناوين بريد المستلمين (حتى 10)</string>
+    <string name="camera_recipients_invalid">أدخل من عنوان إلى 10 عناوين صحيحة، وافصل بينها بفواصل أو أسطر.</string>
+    <string name="camera_recipients_hint">عنوان في كل سطر، أو افصل بفاصلة أو فاصلة منقوطة. تُحذف العناوين المكررة، ولا يرى المستلم عناوين الآخرين.</string>
+    <string name="camera_multi_policy">اختياري لهذا التسجيل. اضبط حساب SMTP الخاص بك. إذا رفض الخادم أحد العناوين فلن تُرسل الرسالة لأي مستلم؛ راجع القائمة أو عدّلها من قائمة الإرسال. قبول الخادم لا يثبت الوصول إلى صندوق الوارد.</string>
+    <string name="camera_mail_review_title">مراجعة الإرسال التلقائي</string>
+    <string name="camera_mail_review">بعد حفظ هذا التسجيل، يُرسل الفيديو إلى:\n%1$s\n\nتبقى النسخة الأصلية على الهاتف. قد ينتظر الإرسال توفر الشبكة أو سماح Android بالعمل في الخلفية.</string>
+    <string name="camera_mail_confirm">تأكيد وبدء التسجيل</string>
+    <string name="mail_server_accepted">قبلها خادم البريد؛ الوصول إلى الوارد غير مؤكد</string>
+    <string name="mail_approval_needed">راجع المستلمين قبل إرسال هذه الرسالة القديمة المنتظرة</string>
+    <string name="mail_retry_recipient_review">راجع عناوين المستلمين أو عدّلها قبل الموافقة على الإرسال. افصل بينها بفواصل أو أسطر.</string>
+</resources>

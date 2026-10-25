@@ -7,13 +7,15 @@ plugins {
 android {
     namespace = "com.nexvary.recorder"
     compileSdk = 36
+    val mailReleaseTest = providers.gradleProperty("guardianMailReleaseTest").orNull == "true"
+    testBuildType = if (mailReleaseTest) "release" else "debug"
 
     defaultConfig {
         applicationId = "com.nexvary.recorder"
         minSdk = 29
         targetSdk = 35
-        versionCode = 23
-        versionName = "0.12.2"
+        versionCode = 24
+        versionName = "0.12.3"
         val serviceOrigin = providers.gradleProperty("guardianServiceUrl").orElse(providers.environmentVariable("GUARDIAN_PUBLIC_API_URL")).getOrElse("").trim().trimEnd('/')
         require(serviceOrigin.isEmpty() || serviceOrigin.matches(Regex("https://[A-Za-z0-9.-]+(:[0-9]{1,5})?")))
         buildConfigField("String", "GUARDIAN_PUBLIC_API_URL", "\"$serviceOrigin\"")
@@ -30,6 +32,10 @@ android {
         keyPassword = "android"
     }
 
+    buildTypes {
+        getByName("release") { if (mailReleaseTest) signingConfig = signingConfigs.getByName("debug") }
+    }
+
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -43,6 +49,7 @@ android {
     sourceSets {
         getByName("test").kotlin.srcDir("src/testSupport/java")
         getByName("androidTest").kotlin.srcDir("src/testSupport/java")
+        if (mailReleaseTest) getByName("androidTest").kotlin.srcDir("src/releaseMailTest/java")
     }
 
     testOptions {

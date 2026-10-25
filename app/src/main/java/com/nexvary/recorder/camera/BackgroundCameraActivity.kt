@@ -14,6 +14,9 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.nexvary.recorder.R
 import com.nexvary.recorder.delivery.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.nexvary.recorder.family.GuardianGate
+import androidx.lifecycle.Lifecycle
 import com.nexvary.recorder.ui.ThemeManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +35,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
     private lateinit var qualityGroup: RadioGroup
     private lateinit var qualityEstimate: TextView
     private var smtpLimitMiB: Int? = null
+    private var reviewingMail = false
     private fun selectedQuality() = when (qualityGroup.checkedRadioButtonId) {
         R.id.cameraQualityBalanced -> CameraQuality.BALANCED
         R.id.cameraQualityHigh -> CameraQuality.HIGH
@@ -76,12 +80,18 @@ class BackgroundCameraActivity : AppCompatActivity() {
         DeliveryUi.text(timing, R.string.camera_timer_note)
         val delivery = DeliveryUi.section(root, R.string.camera_email_title)
         email = switch(delivery, R.string.camera_email_enable, R.id.cameraEmail, "email")
-        recipient = DeliveryUi.field(delivery, R.string.camera_recipient, R.id.cameraRecipient,
-            savedInstanceState?.getString("recipient") ?: prefs.getString("recipient", "").orEmpty(), InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+        recipient = DeliveryUi.field(delivery, R.string.camera_recipients_label, R.id.cameraRecipient,
+            savedInstanceState?.getString("recipient") ?: prefs.getString("recipient", "").orEmpty(), InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS or InputType.TYPE_TEXT_FLAG_MULTI_LINE).apply {
+            setSingleLine(false); minLines = 2; maxLines = 6
+            textDirection = View.TEXT_DIRECTION_LTR
+            filters = arrayOf(android.text.InputFilter.LengthFilter(MailRecipients.MAX_INPUT))
+            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
+        }
         recipient.isEnabled = email.isChecked
-        if(!com.nexvary.recorder.BuildConfig.DEBUG) { delivery.visibility=android.view.View.GONE;email.isChecked=false }
+        DeliveryUi.text(delivery, R.string.camera_recipients_hint)
 
         DeliveryUi.text(delivery, R.string.camera_email_note)
+        DeliveryUi.text(delivery, R.string.camera_multi_policy)
         DeliveryUi.button(delivery, R.string.smtp_title, R.id.openSmtp) { startActivity(Intent(this, SmtpSettingsActivity::class.java)) }
         DeliveryUi.button(delivery, R.string.mail_outbox, R.id.mailOutbox) { startActivity(Intent(this, MailOutboxActivity::class.java)) }
         status = DeliveryUi.text(root, R.string.camera_ready).apply { id = R.id.cameraStatus; accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE }
@@ -101,10 +111,12 @@ class BackgroundCameraActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart(); handler.post(tick)
         lifecycleScope.launch {
-            smtpLimitMiB = withContext(Dispatchers.IO) {
+            val profile = withContext(Dispatchers.IO) {
                 runCatching { MailWorker.reconcile(this@BackgroundCameraActivity) }
-                SmtpSettings(this@BackgroundCameraActivity).load()?.limitMiB
+                SmtpSettings(this@BackgroundCameraActivity).load()
             }
+            smtpLimitMiB = profile?.limitMiB
+            if (recipient.text.isBlank() && !profile?.cameraRecipients.isNullOrEmpty()) recipient.setText(profile?.cameraRecipients)
             updateEstimate()
         }
     }
@@ -161,8 +173,8 @@ class BackgroundCameraActivity : AppCompatActivity() {
     private fun requestAndStart() {
         val duration = if (timer.isChecked) DeliveryPolicy.duration(minutes.text.toString()) else 0L
         if (duration == null) { minutes.error = getString(R.string.camera_minutes_invalid); status.setText(R.string.camera_minutes_invalid); return }
-        val to = if (email.isChecked) recipient.text.toString().trim() else ""
-        if (email.isChecked && !DeliveryPolicy.email(to)) { recipient.error = getString(R.string.camera_recipient_invalid); status.setText(R.string.camera_recipient_invalid); return }
+        val to = if (email.isChecked) MailRecipients.canonical(recipient.text.toString()) else ""
+        if (to == null) { recipient.error = getString(R.string.camera_recipients_invalid); status.setText(R.string.camera_recipients_invalid); return }
         if (email.isChecked && SmtpSettings(this).load() == null) { status.setText(R.string.mail_config); return }
         val permissions = mutableListOf(Manifest.permission.CAMERA)
         if (audio.isChecked) permissions.add(Manifest.permission.RECORD_AUDIO)
@@ -170,7 +182,33 @@ class BackgroundCameraActivity : AppCompatActivity() {
         val missing = permissions.filter { ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED }
         if (missing.isNotEmpty()) { notificationAsked = true; pendingStart = true; requestPermissions(missing.toTypedArray(), 600); return }
         pendingStart = false
-        if (email.isChecked) getSharedPreferences("camera_options", MODE_PRIVATE).edit().putString("recipient", to).apply()
+        if (email.isChecked) {
+            GuardianGate.action(this) {
+                if (reviewingMail || isFinishing) return@action
+                reviewingMail = true
+                val dialog = MaterialAlertDialogBuilder(this).setTitle(R.string.camera_mail_review_title)
+                    .setMessage(getString(R.string.camera_mail_review, to.split(", ").joinToString("\n")))
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.camera_mail_confirm) { _, _ ->
+                        lifecycleScope.launch {
+                            val saved = withContext(Dispatchers.IO) {
+                                runCatching {
+                                    val settings = SmtpSettings(this@BackgroundCameraActivity)
+                                    val profile = checkNotNull(settings.load())
+                                    settings.save(profile.copy(cameraRecipients = to))
+                                    getSharedPreferences("camera_options", MODE_PRIVATE).edit().remove("recipient").commit()
+                                }.isSuccess
+                            }
+                            if (!saved) status.setText(R.string.smtp_store_failed)
+                            else if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) beginCapture(duration, to)
+                        }
+                    }.create()
+                dialog.setOnDismissListener { reviewingMail = false }
+                dialog.show()
+            }
+        } else beginCapture(duration, "")
+    }
+    private fun beginCapture(duration: Long, to: String) {
         runCatching {
             ContextCompat.startForegroundService(this, Intent(this, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_START)
                 .putExtra(BackgroundCameraService.EXTRA_FRONT, front.isChecked).putExtra(BackgroundCameraService.EXTRA_AUDIO, audio.isChecked)

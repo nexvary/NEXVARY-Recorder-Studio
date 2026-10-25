@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_recipients_label">Адреса получателей (до 10)</string>
+    <string name="camera_recipients_invalid">Введите 1–10 правильных адресов через запятую или с новой строки.</string>
+    <string name="camera_recipients_hint">По одному адресу в строке либо через запятую или точку с запятой. Повторы удаляются; остальные адреса скрыты от получателей.</string>
+    <string name="camera_multi_policy">Необязательно для этой записи. Настройте свою учётную запись SMTP. Если сервер отклонит адрес, письмо никому не отправится. Исправьте список в очереди. Приём сервером не подтверждает доставку во входящие.</string>
+    <string name="camera_mail_review_title">Проверить автоматическую отправку</string>
+    <string name="camera_mail_review">После сохранения этой записи отправить видео:\n%1$s\n\nОригинал останется на телефоне. Отправка может ожидать сеть или фоновую работу Android.</string>
+    <string name="camera_mail_confirm">Подтвердить и начать запись</string>
+    <string name="mail_server_accepted">Принято почтовым сервером; доставка не подтверждена</string>
+    <string name="mail_approval_needed">Проверьте получателей этого старого письма в очереди</string>
+    <string name="mail_retry_recipient_review">Проверьте или измените получателей перед разрешением отправки. Адреса разделяйте запятыми или строками.</string>
+</resources>

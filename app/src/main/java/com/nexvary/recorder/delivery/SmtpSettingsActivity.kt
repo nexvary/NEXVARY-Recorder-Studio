@@ -71,7 +71,7 @@ class SmtpSettingsActivity : com.nexvary.recorder.family.GuardianProtectedActivi
                 it.username == user.text.toString().trim() } ?: false
             val secret = password.text.toString().ifEmpty { if (sameServer) existing?.password.orEmpty() else "" }
             val value = SmtpProfile(host.text.toString().trim(), DeliveryPolicy.digits(port.text.toString()).toIntOrNull() ?: 0,
-                tls.isChecked, user.text.toString().trim(), secret, from.text.toString().trim(), DeliveryPolicy.digits(limit.text.toString()).toIntOrNull() ?: 0)
+                tls.isChecked, user.text.toString().trim(), secret, from.text.toString().trim(), DeliveryPolicy.digits(limit.text.toString()).toIntOrNull() ?: 0, existing?.cameraRecipients.orEmpty())
             if (!value.valid()) { status.setText(R.string.smtp_invalid); return null }
             return value
         }

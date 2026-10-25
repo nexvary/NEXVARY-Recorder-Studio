@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 
 /** Loopback-only SMTP fixture. Keys and certificates are PUBLIC TEST MATERIAL. */
-class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct: Boolean, val offerTls: Boolean = true, val size: Long = 25_000_000) : AutoCloseable {
+class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct: Boolean, val offerTls: Boolean = true, val size: Long = 25_000_000, val rejectRecipient: String? = null) : AutoCloseable {
         val ssl: SSLContext
         val factory: SSLSocketFactory
         val listener = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))
@@ -19,6 +19,7 @@ class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct
         @Volatile var received = ByteArray(0)
         @Volatile var authenticated = false
         @Volatile var dataCommands = 0
+        val recipients = java.util.concurrent.CopyOnWriteArrayList<String>()
         private val pool = Executors.newSingleThreadExecutor()
         private val task: java.util.concurrent.Future<*>
         init {
@@ -66,7 +67,13 @@ class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct
                     }
                     auth == 1 -> { check(String(Base64.getDecoder().decode(line)) == "fixture-user"); auth = 2; say("334 UGFzc3dvcmQ6") }
                     auth == 2 -> { check(String(Base64.getDecoder().decode(line)) == "fixture-password"); authenticated = true; auth = 0; say("235 Authenticated") }
-                    line.startsWith("MAIL FROM:") || line.startsWith("RCPT TO:") -> { check(authenticated); say("250 OK") }
+                    line.startsWith("MAIL FROM:") -> { check(authenticated); say("250 OK") }
+                    line.startsWith("RCPT TO:") -> {
+                        check(authenticated)
+                        val recipient = line.substringAfter('<').substringBefore('>')
+                        recipients.add(recipient)
+                        say(if (recipient.equals(rejectRecipient, ignoreCase = true)) "550 Recipient rejected by fixture" else "250 OK")
+                    }
                     line == "DATA" -> {
                         check(authenticated); dataCommands++; say("354 End with dot")
                         val message = ByteArrayOutputStream()

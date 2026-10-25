@@ -1,0 +1,14 @@
+{
+  "ownerBundleSource": "918ed35ce8dc36ae3a75c47231fef65e937254b1",
+  "latestTestedHead": "8ded2a73cacde2cf0c91750f02208c8f45a7b9f9",
+  "entriesCompared": 1356,
+  "differences": [
+    "base/root/META-INF/version-control-info.textproto"
+  ],
+  "allEntryPayloadsIdentical": false,
+  "oldBundleSha256": "a544d91946d8c7b87652c29b5100aeeede31438771fda57b21cb51051b8f27f3",
+  "currentBundleSha256": "8a43dd8893fd48c57a923235d3c013ffa76982bfdd693097f179fe8b3f3aaaf1",
+  "applicationPayloadsIdentical": true,
+  "applicationEntriesCompared": 1355,
+  "differenceReason": "Only embedded Git commit marker differs after CI-only script edits; executable code, manifest, resources, assets and native libraries are byte-identical."
+}
