@@ -71,7 +71,7 @@ class BackgroundCameraService : Service() {
         quality = CameraQuality.fromKey(intent.getStringExtra(EXTRA_QUALITY))
         activeEvidenceEvent = intent.getStringExtra(EXTRA_EVIDENCE_EVENT)?.takeIf { runCatching { java.util.UUID.fromString(it) }.isSuccess }
         recipient = intent.getStringExtra(EXTRA_RECIPIENT).orEmpty().trim()
-        if (!DeliveryPolicy.validDuration(duration) || (recipient.isNotBlank() && !DeliveryPolicy.email(recipient)) ||
+        if (!DeliveryPolicy.validDuration(duration) || (recipient.isNotBlank() && MailRecipients.parse(recipient) == null) ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             activeEvidenceEvent = null; state = CaptureState(Stage.ERROR); stopSelf(); return START_NOT_STICKY
         }

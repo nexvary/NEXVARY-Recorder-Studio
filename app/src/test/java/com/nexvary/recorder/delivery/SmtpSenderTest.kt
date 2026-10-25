@@ -11,6 +11,35 @@ import java.util.UUID
 
 /** Only loopback is used. This committed key/certificate is PUBLIC TEST MATERIAL, never a server credential. */
 class SmtpSenderTest {
+    @Test fun multipleRecipientsUsePrivateEnvelopeAndOneUnchangedAttachment() {
+        for (direct in listOf(true, false)) Server(direct).use { server ->
+            val file = File.createTempFile("smtp-multi", ".mp4").apply { writeBytes(ByteArray(8011) { it.toByte() }) }
+            try {
+                val job = job().copy(recipient = "one@example.invalid; two@example.invalid; ONE@example.invalid")
+                SmtpSender("Recording", "Local only", server.factory).send(profile(server), job, file) { }
+                assertEquals(listOf("one@example.invalid", "two@example.invalid"), server.recipients.toList())
+                assertEquals(1, server.dataCommands)
+                val raw = String(server.received, Charsets.US_ASCII).substringBefore("\r\n\r\n")
+                assertFalse(raw.contains("one@example.invalid")); assertFalse(raw.contains("two@example.invalid"))
+                val message = MimeMessage(Session.getInstance(Properties()), ByteArrayInputStream(server.received))
+                assertNull(message.getHeader("Bcc"))
+                assertArrayEquals(file.readBytes(), (message.content as MimeMultipart).getBodyPart(1).inputStream.readBytes())
+            } finally { file.delete() }
+        }
+    }
+    @Test fun rejectedRecipientAbortsBeforeDataForEveryone() {
+        LocalSmtpFixture(javaClass.getResourceAsStream("/smtp-test-key.b64")!!.readBytes(),
+            javaClass.getResourceAsStream("/smtp-test-cert.b64")!!.readBytes(), true,
+            rejectRecipient = "bad@example.invalid").use { server ->
+            val file = File.createTempFile("smtp-reject", ".mp4").apply { writeBytes(ByteArray(512)) }
+            try {
+                val error = runCatching { SmtpSender("", "", server.factory).send(profile(server),
+                    job().copy(recipient = "one@example.invalid,bad@example.invalid"), file) { } }.exceptionOrNull()
+                assertTrue(error is jakarta.mail.SendFailedException)
+                assertEquals(0, server.dataCommands); assertTrue(server.received.isEmpty()); assertTrue(file.exists())
+            } finally { file.delete() }
+        }
+    }
     private fun Server(direct: Boolean, offerTls: Boolean = true, size: Long = 25_000_000) = LocalSmtpFixture(
         javaClass.getResourceAsStream("/smtp-test-key.b64")!!.readBytes(),
         javaClass.getResourceAsStream("/smtp-test-cert.b64")!!.readBytes(), direct, offerTls, size)

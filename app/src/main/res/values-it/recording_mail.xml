@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_recipients_label">Indirizzi email dei destinatari (fino a 10)</string>
+    <string name="camera_recipients_invalid">Inserisci da 1 a 10 indirizzi validi, separati da virgole o righe.</string>
+    <string name="camera_recipients_hint">Un indirizzo per riga oppure separati da virgole o punto e virgola. I duplicati vengono rimossi; gli altri indirizzi restano nascosti.</string>
+    <string name="camera_multi_policy">Facoltativo per questa registrazione. Configura il tuo account SMTP. Se il server rifiuta un indirizzo, non si invia a nessuno. Controlla la coda. L’accettazione non conferma la consegna nella posta in arrivo.</string>
+    <string name="camera_mail_review_title">Controlla email automatica</string>
+    <string name="camera_mail_review">Dopo il salvataggio, inviare questo video a:\n%1$s\n\nL’originale resta sul telefono. L’invio può attendere rete o pianificazione Android.</string>
+    <string name="camera_mail_confirm">Conferma e avvia registrazione</string>
+    <string name="mail_server_accepted">Accettato dal server; consegna non confermata</string>
+    <string name="mail_approval_needed">Controlla i destinatari di questo messaggio precedente in coda</string>
+    <string name="mail_retry_recipient_review">Controlla o modifica i destinatari prima di autorizzare l’invio. Separa gli indirizzi con virgole o righe.</string>
+</resources>

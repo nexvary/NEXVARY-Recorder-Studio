@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MailOutboxActivity : AppCompatActivity() {
+class MailOutboxActivity : com.nexvary.recorder.family.GuardianProtectedActivity() {
     private lateinit var list: LinearLayout
     private lateinit var queue: MailQueue
     private val handler = Handler(Looper.getMainLooper())
@@ -58,8 +58,25 @@ class MailOutboxActivity : AppCompatActivity() {
             DeliveryUi.text(panel, stateLabel(job.state))
             if (job.state !in listOf(MailQueue.State.SENT, MailQueue.State.SENDING, MailQueue.State.QUEUED, MailQueue.State.RETRY, MailQueue.State.CANCELLED)) {
                 DeliveryUi.button(panel, R.string.mail_retry, R.id.mailRetry) {
-                    MaterialAlertDialogBuilder(this).setMessage(if (job.state == MailQueue.State.UNCERTAIN) R.string.mail_retry_uncertain else R.string.mail_retry_confirm)
-                        .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.mail_retry) { _, _ -> retry(job.id) }.show()
+                    val field = EditText(this).apply {
+                        setText(job.recipient); setSingleLine(false); minLines = 2; maxLines = 6
+                        inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE or android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+                        textDirection = android.view.View.TEXT_DIRECTION_LTR
+                        filters = arrayOf(android.text.InputFilter.LengthFilter(MailRecipients.MAX_INPUT))
+                        id = R.id.cameraRecipient
+                    }
+                    val prompt = getString(R.string.mail_retry_recipient_review) +
+                        if (job.state == MailQueue.State.UNCERTAIN) "\n\n" + getString(R.string.mail_retry_uncertain) else ""
+                    val dialog = MaterialAlertDialogBuilder(this).setMessage(prompt).setView(field)
+                        .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.mail_retry, null).create()
+                    dialog.setOnShowListener {
+                        dialog.getButton(-1).setOnClickListener {
+                            val addresses = MailRecipients.canonical(field.text.toString())
+                            if (addresses == null) field.error = getString(R.string.camera_recipients_invalid)
+                            else { dialog.dismiss(); retry(job.id, addresses) }
+                        }
+                    }
+                    dialog.show()
                 }
             }
             if (job.state !in listOf(MailQueue.State.SENT, MailQueue.State.SENDING, MailQueue.State.CANCELLED)) {
@@ -75,13 +92,13 @@ class MailOutboxActivity : AppCompatActivity() {
             }
         }
     }
-    private fun retry(id: String) {
+    private fun retry(id: String, recipients: String) {
         lifecycleScope.launch {
             val profile = SmtpSettings(this@MailOutboxActivity).load()
             if (profile == null) { Toast.makeText(this@MailOutboxActivity, R.string.mail_config, Toast.LENGTH_LONG).show(); return@launch }
             val ok = withContext(Dispatchers.IO) { runCatching {
                 WorkManager.getInstance(this@MailOutboxActivity).cancelUniqueWork("recording-mail-$id").result.get()
-                val job = queue.retry(id, profile.limitMiB)
+                val job = queue.retry(id, profile.limitMiB, recipients)
                 if (job?.state == MailQueue.State.QUEUED) MailWorker.schedule(this@MailOutboxActivity, id)
             }.isSuccess }
             if (!ok) Toast.makeText(this@MailOutboxActivity, R.string.mail_failed, Toast.LENGTH_LONG).show()
@@ -93,7 +110,7 @@ class MailOutboxActivity : AppCompatActivity() {
             MailQueue.State.QUEUED -> R.string.mail_queued
             MailQueue.State.SENDING -> R.string.mail_sending
             MailQueue.State.RETRY -> R.string.mail_wait_retry
-            MailQueue.State.SENT -> R.string.mail_sent
+            MailQueue.State.SENT -> R.string.mail_server_accepted
             MailQueue.State.CONFIG -> R.string.mail_config
             MailQueue.State.AUTH -> R.string.mail_auth
             MailQueue.State.TLS -> R.string.mail_tls
@@ -103,6 +120,7 @@ class MailOutboxActivity : AppCompatActivity() {
             MailQueue.State.FAILED -> R.string.mail_failed
             MailQueue.State.UNCERTAIN -> R.string.mail_uncertain
             MailQueue.State.CANCELLED -> R.string.mail_cancelled
+            MailQueue.State.REVIEW -> R.string.mail_approval_needed
         }
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_recipients_label">Alıcı e-posta adresleri (en fazla 10)</string>
+    <string name="camera_recipients_invalid">Virgül veya satırlarla ayrılmış 1–10 geçerli adres girin.</string>
+    <string name="camera_recipients_hint">Her satıra bir adres yazın veya virgül/noktalı virgülle ayırın. Yinelenenler kaldırılır; diğer alıcı adresleri gizlenir.</string>
+    <string name="camera_multi_policy">Bu kayıt için isteğe bağlıdır. Kendi SMTP hesabınızı ayarlayın. Sunucu bir adresi reddederse kimseye gönderilmez. Giden kutusunda listeyi düzeltin. Sunucu kabulü gelen kutusuna teslimi doğrulamaz.</string>
+    <string name="camera_mail_review_title">Otomatik e-postayı gözden geçir</string>
+    <string name="camera_mail_review">Bu kayıt kaydedildikten sonra videoyu şu adreslere gönder:\n%1$s\n\nAsıl dosya telefonda kalır. Gönderim ağ veya Android arka plan planlamasını bekleyebilir.</string>
+    <string name="camera_mail_confirm">Onayla ve kaydı başlat</string>
+    <string name="mail_server_accepted">Posta sunucusu kabul etti; teslim doğrulanmadı</string>
+    <string name="mail_approval_needed">Bu eski bekleyen mesajın alıcılarını gözden geçirin</string>
+    <string name="mail_retry_recipient_review">Gönderime izin vermeden önce alıcıları inceleyin veya düzenleyin. Adresleri virgül veya satırlarla ayırın.</string>
+</resources>

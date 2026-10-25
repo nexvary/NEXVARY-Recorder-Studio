@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_recipients_label">Recipient email addresses (up to 10)</string>
+    <string name="camera_recipients_invalid">Enter 1–10 valid email addresses, separated by commas or lines.</string>
+    <string name="camera_recipients_hint">One address per line, or separate with commas or semicolons. Duplicates are removed; recipients cannot see the other addresses.</string>
+    <string name="camera_multi_policy">Optional for this recording. Configure your own SMTP account. If the server rejects an address, the message is not sent to anyone. Review or correct the list in Outbox. Server acceptance does not prove inbox delivery.</string>
+    <string name="camera_mail_review_title">Review automatic email</string>
+    <string name="camera_mail_review">After this recording is saved, email the video to:\n%1$s\n\nThe local original is kept. Sending may wait for network or Android background scheduling.</string>
+    <string name="camera_mail_confirm">Confirm and start recording</string>
+    <string name="mail_server_accepted">Accepted by the mail server; inbox delivery unconfirmed</string>
+    <string name="mail_approval_needed">Review recipients before sending this older queued message</string>
+    <string name="mail_retry_recipient_review">Review or edit the recipients before approving this send. Separate addresses with commas or lines.</string>
+</resources>

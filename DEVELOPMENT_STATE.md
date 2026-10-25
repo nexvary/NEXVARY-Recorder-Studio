@@ -1,4 +1,17 @@
-# Guardian 0.12.2 compact dashboard — accepted checkpoint, 2026-10-25
+# Guardian 0.12.3 camera mail — implementation checkpoint, 2026-10-25
+
+Current branch: feat/camera-multi-recipient-mail. Parent source:
+9bccfa1060696142023fd3164e58f84bfd7e05b5; use git log -1 for current commit.
+Restored camera email in Release; 1–10 validated private recipients; explicit
+pre-recording approval and existing optional guardian PIN; encrypted recipient
+defaults; editable outbox retry; old pending jobs require fresh review. Reused
+existing SMTP/queue/Worker, retained local originals. Family/SOS and MR unchanged.
+Local source gates PASS. Gradle, unit/emulator and dedicated Release runtime
+acceptance PENDING. Next: run both CI gates, correct failures, sign the accepted
+owner release with the original key and record actual evidence. See
+docs/CAMERA_MAIL_INTEGRATION.md and docs/TEST_RESULTS_0.12.3.md.
+
+## Previous accepted checkpoint
 
 Branch: fix/guardian-compact-dashboard; PR #15; base fix/guardian-signed-delivery.
 Last tested source: b18b0aac76ba0217d767f0e4fcfea593e2354c64.
