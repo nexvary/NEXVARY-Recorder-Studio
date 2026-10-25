@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="camera_recipients_label">Adresses des destinataires (10 maximum)</string>
-    <string name="camera_recipients_invalid">Saisissez de 1 à 10 adresses valides, séparées par des virgules ou des lignes.</string>
-    <string name="camera_recipients_hint">Une adresse par ligne, ou séparées par virgules ou points-virgules. Doublons supprimés ; les autres adresses restent cachées.</string>
+    <string name="camera_recipients_invalid">Ajoutez entre 1 et 10 adresses valides.</string>
+    <string name="camera_recipients_hint">Ajoutez chaque adresse séparément. Touchez × pour la retirer. Les autres destinataires ne voient pas les adresses.</string>
     <string name="camera_multi_policy">Facultatif pour cet enregistrement. Configurez votre compte SMTP. Si le serveur refuse une adresse, aucun envoi ne part. Corrigez la liste dans la boîte d’envoi. L’acceptation du serveur ne confirme pas la réception.</string>
     <string name="camera_mail_review_title">Vérifier l’envoi automatique</string>
     <string name="camera_mail_review">Après sauvegarde de cet enregistrement, envoyer la vidéo à :\n%1$s\n\nL’original reste sur le téléphone. L’envoi peut attendre le réseau ou la planification Android.</string>
     <string name="camera_mail_confirm">Confirmer et enregistrer</string>
     <string name="mail_server_accepted">Accepté par le serveur ; réception non confirmée</string>
     <string name="mail_approval_needed">Vérifier les destinataires de cet ancien message en attente</string>
-    <string name="mail_retry_recipient_review">Vérifiez ou modifiez les destinataires avant d’autoriser l’envoi. Séparez les adresses par virgules ou lignes.</string>
+    <string name="mail_retry_recipient_review">Ajoutez ou retirez les destinataires avant de confirmer cet envoi.</string>
+    <string name="recipient_entry_label">E-mail du destinataire</string>
+    <string name="recipient_add">Ajouter</string>
+    <string name="recipient_single_invalid">Saisissez une seule adresse e-mail valide.</string>
+    <string name="recipient_duplicate">Cette adresse est déjà ajoutée.</string>
+    <string name="recipient_remove">Supprimer %1$s</string>
+    <string name="recipient_count">Destinataires : %1$d / %2$d</string>
 </resources>

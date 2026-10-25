@@ -1,4 +1,4 @@
-# Camera recording email — 0.12.3
+# Camera recording email — 0.12.4
 
 Scope: Guardian camera recording only. NEXVARY-MR is independent. Existing
 camera recording, SMTP settings, private attachment queue and Worker are reused;
@@ -8,8 +8,12 @@ production restrictions remain unchanged.
 ## Owner flow
 
 Open Camera recording, enable automatic email, configure and test your own SMTP
-account, then enter 1–10 mailbox addresses separated by commas, semicolons or
-newlines. Arabic separators are accepted. Duplicates are removed. Review the
+account, then enter one mailbox address and tap Add (or the keyboard Done action).
+Each recipient appears on a removable card with an accessible close icon.
+The counter shows the maximum10; invalid and duplicate addresses are rejected
+before insertion. A valid unfinished entry is included before review. Saved
+addresses from earlier versions load as cards; the transport still accepts the
+old canonical representation. The same editor is used for outbox retry. Review the
 entire recipient list and explicitly confirm before recording starts. If a
 guardian PIN is configured its existing gate protects approval/settings/outbox.
 Normal recording needs no SMTP account and email defaults to off.
@@ -64,5 +68,5 @@ Primary SMTP semantics reference:
 https://eclipse-ee4j.github.io/angus-mail/docs/api/org.eclipse.angus.mail/org/eclipse/angus/mail/smtp/package-summary.html
 
 Physical OPPO/ColorOS, external owner SMTP and actual inbox delivery are Pending.
-Tests do not send to external recipients. See TEST_RESULTS_0.12.3.md for actual
+Tests do not send to external recipients. See TEST_RESULTS_0.12.4.md for actual
 accepted runs; this design document alone is not a pass claim.

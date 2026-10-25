@@ -14,8 +14,8 @@ android {
         applicationId = "com.nexvary.recorder"
         minSdk = 29
         targetSdk = 35
-        versionCode = 24
-        versionName = "0.12.3"
+        versionCode = 25
+        versionName = "0.12.4"
         val serviceOrigin = providers.gradleProperty("guardianServiceUrl").orElse(providers.environmentVariable("GUARDIAN_PUBLIC_API_URL")).getOrElse("").trim().trimEnd('/')
         require(serviceOrigin.isEmpty() || serviceOrigin.matches(Regex("https://[A-Za-z0-9.-]+(:[0-9]{1,5})?")))
         buildConfigField("String", "GUARDIAN_PUBLIC_API_URL", "\"$serviceOrigin\"")

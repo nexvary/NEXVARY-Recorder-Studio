@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="camera_recipients_label">Correos de destinatarios (hasta 10)</string>
-    <string name="camera_recipients_invalid">Introduce entre 1 y 10 direcciones válidas, separadas por comas o líneas.</string>
-    <string name="camera_recipients_hint">Una dirección por línea, o separadas por comas o punto y coma. Se eliminan duplicados; las otras direcciones quedan ocultas.</string>
+    <string name="camera_recipients_invalid">Añade entre 1 y 10 direcciones válidas.</string>
+    <string name="camera_recipients_hint">Añade cada dirección por separado. Pulsa × para eliminarla. Los demás destinatarios no ven las direcciones.</string>
     <string name="camera_multi_policy">Opcional para esta grabación. Configura tu cuenta SMTP. Si el servidor rechaza una dirección, no se envía a nadie. Revisa la lista en Salida. La aceptación no confirma entrega en la bandeja de entrada.</string>
     <string name="camera_mail_review_title">Revisar correo automático</string>
     <string name="camera_mail_review">Al guardar esta grabación, enviar el vídeo a:\n%1$s\n\nEl original permanece en el teléfono. El envío puede esperar la red o la programación de Android.</string>
     <string name="camera_mail_confirm">Confirmar e iniciar grabación</string>
     <string name="mail_server_accepted">Aceptado por el servidor; entrega sin confirmar</string>
     <string name="mail_approval_needed">Revisa los destinatarios de este mensaje pendiente anterior</string>
-    <string name="mail_retry_recipient_review">Revisa o edita los destinatarios antes de autorizar el envío. Separa las direcciones por comas o líneas.</string>
+    <string name="mail_retry_recipient_review">Añade o elimina destinatarios antes de confirmar el envío.</string>
+    <string name="recipient_entry_label">Correo del destinatario</string>
+    <string name="recipient_add">Añadir</string>
+    <string name="recipient_single_invalid">Introduce una sola dirección válida.</string>
+    <string name="recipient_duplicate">Esta dirección ya está añadida.</string>
+    <string name="recipient_remove">Eliminar %1$s</string>
+    <string name="recipient_count">Destinatarios: %1$d / %2$d</string>
 </resources>

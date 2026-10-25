@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="camera_recipients_label">وصول کنندگان کے ای میل پتے (زیادہ سے زیادہ 10)</string>
-    <string name="camera_recipients_invalid">1 سے 10 درست پتے درج کریں، کوما یا الگ سطروں سے جدا کریں۔</string>
-    <string name="camera_recipients_hint">ہر سطر میں ایک پتہ یا کوما/سیمی کولن سے الگ پتے۔ مکرر پتے ہٹائے جاتے ہیں اور دوسرے وصول کنندگان کے پتے مخفی رہتے ہیں۔</string>
+    <string name="camera_recipients_invalid">1 سے 10 درست ای میل پتے شامل کریں۔</string>
+    <string name="camera_recipients_hint">ہر پتہ الگ شامل کریں۔ ہٹانے کے لیے × دبائیں۔ دوسرے وصول کنندگان پتے نہیں دیکھ سکتے۔</string>
     <string name="camera_multi_policy">اس ریکارڈنگ کے لیے اختیاری۔ اپنا SMTP اکاؤنٹ ترتیب دیں۔ سرور کسی پتے کو رد کرے تو کسی کو پیغام نہیں بھیجا جاتا۔ آؤٹ باکس میں فہرست درست کریں۔ سرور کی قبولیت ان باکس میں وصولی کی تصدیق نہیں۔</string>
     <string name="camera_mail_review_title">خودکار ای میل کا جائزہ</string>
     <string name="camera_mail_review">اس ریکارڈنگ کے محفوظ ہونے کے بعد ویڈیو بھیجیں:\n%1$s\n\nاصل فائل فون میں رہے گی۔ ارسال نیٹ ورک یا Android کی پس منظر اجازت کا انتظار کر سکتا ہے۔</string>
     <string name="camera_mail_confirm">تصدیق اور ریکارڈنگ شروع</string>
     <string name="mail_server_accepted">میل سرور نے قبول کیا؛ وصولی کی تصدیق نہیں</string>
     <string name="mail_approval_needed">اس پرانے منتظر پیغام کے وصول کنندگان کا جائزہ لیں</string>
-    <string name="mail_retry_recipient_review">ارسال کی اجازت سے پہلے وصول کنندگان دیکھیں یا تبدیل کریں۔ پتے کوما یا الگ سطروں سے جدا کریں۔</string>
+    <string name="mail_retry_recipient_review">ارسال کی تصدیق سے پہلے وصول کنندگان شامل کریں یا ہٹائیں۔</string>
+    <string name="recipient_entry_label">وصول کنندہ کا ای میل</string>
+    <string name="recipient_add">شامل کریں</string>
+    <string name="recipient_single_invalid">ایک درست ای میل پتہ درج کریں۔</string>
+    <string name="recipient_duplicate">یہ پتہ پہلے سے شامل ہے۔</string>
+    <string name="recipient_remove">%1$s کو ہٹائیں</string>
+    <string name="recipient_count">وصول کنندگان: %1$d از %2$d</string>
 </resources>

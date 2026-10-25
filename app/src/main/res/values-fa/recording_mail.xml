@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="camera_recipients_label">نشانی‌های ایمیل گیرندگان (حداکثر ۱۰)</string>
-    <string name="camera_recipients_invalid">۱ تا ۱۰ نشانی معتبر وارد کنید؛ با ویرگول یا خط جدا کنید.</string>
-    <string name="camera_recipients_hint">هر نشانی در یک خط، یا با ویرگول و نقطه‌ویرگول جدا شود. تکراری‌ها حذف می‌شوند و نشانی دیگر گیرندگان پنهان می‌ماند.</string>
+    <string name="camera_recipients_invalid">۱ تا ۱۰ نشانی ایمیل معتبر اضافه کنید.</string>
+    <string name="camera_recipients_hint">هر نشانی را جداگانه اضافه کنید. برای حذف × را بزنید. گیرندگان دیگر نشانی‌ها را نمی‌بینند.</string>
     <string name="camera_multi_policy">برای این ضبط اختیاری است. حساب SMTP خود را تنظیم کنید. اگر سرور نشانی‌ای را رد کند، برای هیچ‌کس ارسال نمی‌شود. فهرست را در صندوق خروجی اصلاح کنید. پذیرش سرور تأیید تحویل به صندوق ورودی نیست.</string>
     <string name="camera_mail_review_title">بازبینی ایمیل خودکار</string>
     <string name="camera_mail_review">پس از ذخیره این ضبط، ویدیو ارسال شود به:\n%1$s\n\nنسخه اصلی در گوشی می‌ماند. ارسال ممکن است منتظر شبکه یا زمان‌بندی پس‌زمینه Android بماند.</string>
     <string name="camera_mail_confirm">تأیید و شروع ضبط</string>
     <string name="mail_server_accepted">پذیرفته‌شده توسط سرور؛ تحویل تأیید نشده</string>
     <string name="mail_approval_needed">گیرندگان این پیام قدیمی در انتظار را بازبینی کنید</string>
-    <string name="mail_retry_recipient_review">پیش از اجازه ارسال، گیرندگان را بازبینی یا ویرایش کنید. نشانی‌ها را با ویرگول یا خط جدا کنید.</string>
+    <string name="mail_retry_recipient_review">پیش از تأیید ارسال، گیرندگان را اضافه یا حذف کنید.</string>
+    <string name="recipient_entry_label">ایمیل گیرنده</string>
+    <string name="recipient_add">افزودن</string>
+    <string name="recipient_single_invalid">یک نشانی ایمیل معتبر وارد کنید.</string>
+    <string name="recipient_duplicate">این نشانی قبلاً اضافه شده است.</string>
+    <string name="recipient_remove">حذف %1$s</string>
+    <string name="recipient_count">گیرندگان: %1$d از %2$d</string>
 </resources>
