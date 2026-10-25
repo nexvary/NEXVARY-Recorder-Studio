@@ -54,26 +54,29 @@ class MailOutboxActivity : com.nexvary.recorder.family.GuardianProtectedActivity
         rows.forEach { job ->
             val panel = DeliveryUi.section(list, R.string.mail_recording)
             panel.addView(TextView(this).apply { text = job.name; textSize = 16f })
-            panel.addView(TextView(this).apply { text = job.recipient; textDirection = android.view.View.TEXT_DIRECTION_LTR })
+            panel.addView(TextView(this).apply { text = MailRecipients.parse(job.recipient)?.joinToString("\n") ?: job.recipient; textDirection = android.view.View.TEXT_DIRECTION_LTR })
             DeliveryUi.text(panel, stateLabel(job.state))
             if (job.state !in listOf(MailQueue.State.SENT, MailQueue.State.SENDING, MailQueue.State.QUEUED, MailQueue.State.RETRY, MailQueue.State.CANCELLED)) {
                 DeliveryUi.button(panel, R.string.mail_retry, R.id.mailRetry) {
-                    val field = EditText(this).apply {
-                        setText(job.recipient); setSingleLine(false); minLines = 2; maxLines = 6
-                        inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE or android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-                        textDirection = android.view.View.TEXT_DIRECTION_LTR
-                        filters = arrayOf(android.text.InputFilter.LengthFilter(MailRecipients.MAX_INPUT))
-                        id = R.id.cameraRecipient
+                    val editor = RecipientEditor(this).apply { restore(job.recipient) }
+                    val scroll = object : ScrollView(this) {
+                        override fun onMeasure(w: Int, h: Int) {
+                            val ceiling = (resources.displayMetrics.heightPixels * .45f).toInt()
+                            val height = if (MeasureSpec.getMode(h) == MeasureSpec.UNSPECIFIED) ceiling else minOf(MeasureSpec.getSize(h), ceiling)
+                            super.onMeasure(w, MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST))
+                        }
+                    }.apply {
+                        val pad = (20 * resources.displayMetrics.density).toInt()
+                        setPadding(pad, 0, pad, 0); addView(editor)
                     }
                     val prompt = getString(R.string.mail_retry_recipient_review) +
                         if (job.state == MailQueue.State.UNCERTAIN) "\n\n" + getString(R.string.mail_retry_uncertain) else ""
-                    val dialog = MaterialAlertDialogBuilder(this).setMessage(prompt).setView(field)
+                    val dialog = MaterialAlertDialogBuilder(this).setMessage(prompt).setView(scroll)
                         .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.mail_retry, null).create()
                     dialog.setOnShowListener {
                         dialog.getButton(-1).setOnClickListener {
-                            val addresses = MailRecipients.canonical(field.text.toString())
-                            if (addresses == null) field.error = getString(R.string.camera_recipients_invalid)
-                            else { dialog.dismiss(); retry(job.id, addresses) }
+                            val addresses = editor.confirmedRecipients()
+                            if (addresses != null) { dialog.dismiss(); retry(job.id, addresses) }
                         }
                     }
                     dialog.show()

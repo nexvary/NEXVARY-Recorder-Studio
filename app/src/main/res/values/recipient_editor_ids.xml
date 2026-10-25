@@ -1,0 +1,6 @@
+<resources>
+    <item name="recipientEditor" type="id" />
+    <item name="recipientAdd" type="id" />
+    <item name="recipientChips" type="id" />
+    <item name="recipientCount" type="id" />
+</resources>

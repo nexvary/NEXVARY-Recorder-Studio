@@ -1,3 +1,19 @@
+# Guardian0.12.4 — individual recipient cards, implementation checkpoint
+
+Branch: fix/guardian-recipient-picker; parent98ee78f974cd513f98ffb4c4d10afdfcca46b09c.
+Replaces delimiter-based entry with one email field, Add/IME action, removable
+recipient cards and a count/limit of10. Reuses the same editor in camera and
+outbox retry; migrates saved addresses, preserves rotation drafts, prevents
+invalid/duplicate entries, and includes a valid unfinished draft in consent.
+Existing queue, encrypted profile, consent/PIN, private SMTP envelope and local
+original retention are unchanged. Version0.12.4/code25. Source UI/review/NPSE
+checks PASS; Gradle, runtime and original-key signed update PENDING.
+Next: run both Android gates, inspect actual Release Arabic screenshots,
+correct failures and deliver an original-key update. Physical OPPO/external
+SMTP/inbox and Android16 remain Pending. No MR changes or public release.
+
+Previous accepted checkpoint follows; do not rerun or reimplement its features.
+
 # Guardian 0.12.3 — camera multi-recipient mail checkpoint, 2026-10-25
 
 Branch: `feat/camera-multi-recipient-mail`; PR #16, based on PR #15 branch

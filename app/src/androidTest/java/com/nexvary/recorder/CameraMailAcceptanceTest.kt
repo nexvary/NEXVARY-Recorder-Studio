@@ -114,9 +114,12 @@ class CameraMailAcceptanceTest {
             while (context.resources.configuration.locales[0].language != "ar" && android.os.SystemClock.uptimeMillis() < deadline) android.os.SystemClock.sleep(50)
             assertEquals("ar", context.resources.configuration.locales[0].language)
             scenario.recreate()
-            awaitUi(withText("عناوين بريد المستلمين (حتى 10)"))
+            awaitUi(withText("بريد المستلم"))
             onView(withId(R.id.cameraEmail)).perform(reveal(), click())
-            onView(withId(R.id.cameraRecipient)).perform(reveal(), replaceText("one@example.invalid\ntwo@example.invalid;ONE@example.invalid"), closeSoftKeyboard())
+            for (address in listOf("one@example.invalid", "two@example.invalid")) {
+                onView(withId(R.id.cameraRecipient)).perform(reveal(), replaceText(address), closeSoftKeyboard())
+                onView(withId(R.id.recipientAdd)).perform(reveal(), click())
+            }
             if (!BuildConfig.DEBUG) { onView(withId(R.id.cameraEmail)).perform(reveal()); capture("camera-mail-release-ar") }
             onView(withId(R.id.cameraStart)).perform(reveal(), click())
             awaitUi(withText(R.string.camera_mail_review_title))
@@ -134,7 +137,10 @@ class CameraMailAcceptanceTest {
         SmtpSettings(context).save(profile); GuardianGate.create(context, "713926"); GuardianGate.lock()
         ActivityScenario.launch(BackgroundCameraActivity::class.java).use {
             onView(withId(R.id.cameraEmail)).perform(reveal(), click())
-            onView(withId(R.id.cameraRecipient)).perform(reveal(), replaceText("one@example.invalid,two@example.invalid"), closeSoftKeyboard())
+            for (address in listOf("one@example.invalid", "two@example.invalid")) {
+                onView(withId(R.id.cameraRecipient)).perform(reveal(), replaceText(address), closeSoftKeyboard())
+                onView(withId(R.id.recipientAdd)).perform(reveal(), click())
+            }
             onView(withId(R.id.cameraStart)).perform(reveal(), click()); awaitUi(withId(R.id.fsGuardianPin))
             onView(withId(android.R.id.button2)).perform(click())
         }

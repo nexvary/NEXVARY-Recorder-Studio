@@ -28,7 +28,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
     private lateinit var timer: SwitchCompat
     private lateinit var email: SwitchCompat
     private lateinit var minutes: EditText
-    private lateinit var recipient: EditText
+    private lateinit var recipients: RecipientEditor
     private lateinit var status: TextView
     private lateinit var start: Button
     private lateinit var stop: Button
@@ -80,17 +80,16 @@ class BackgroundCameraActivity : AppCompatActivity() {
         DeliveryUi.text(timing, R.string.camera_timer_note)
         val delivery = DeliveryUi.section(root, R.string.camera_email_title)
         email = switch(delivery, R.string.camera_email_enable, R.id.cameraEmail, "email")
-        recipient = DeliveryUi.field(delivery, R.string.camera_recipients_label, R.id.cameraRecipient,
-            savedInstanceState?.getString("recipient") ?: prefs.getString("recipient", "").orEmpty(), InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS or InputType.TYPE_TEXT_FLAG_MULTI_LINE).apply {
-            setSingleLine(false); minLines = 2; maxLines = 6
-            textDirection = View.TEXT_DIRECTION_LTR
-            filters = arrayOf(android.text.InputFilter.LengthFilter(MailRecipients.MAX_INPUT))
-            importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
+        recipients = RecipientEditor(this).also { delivery.addView(it) }
+        if (savedInstanceState?.containsKey("recipient_list") == true) {
+            recipients.restore(savedInstanceState.getString("recipient_list").orEmpty(),
+                savedInstanceState.getString("recipient").orEmpty(), savedInstanceState.getBoolean("recipient_edited"))
+        } else {
+            val legacy = savedInstanceState?.getString("recipient") ?: prefs.getString("recipient", "").orEmpty()
+            val canonical = MailRecipients.canonical(legacy)
+            recipients.restore(canonical.orEmpty(), if (canonical == null) legacy else "", savedInstanceState != null)
         }
-        recipient.isEnabled = email.isChecked
-        DeliveryUi.text(delivery, R.string.camera_recipients_hint)
-
-        DeliveryUi.text(delivery, R.string.camera_email_note)
+        recipients.isEnabled = email.isChecked
         DeliveryUi.text(delivery, R.string.camera_multi_policy)
         DeliveryUi.button(delivery, R.string.smtp_title, R.id.openSmtp) { startActivity(Intent(this, SmtpSettingsActivity::class.java)) }
         DeliveryUi.button(delivery, R.string.mail_outbox, R.id.mailOutbox) { startActivity(Intent(this, MailOutboxActivity::class.java)) }
@@ -104,7 +103,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
         }
         audio.setOnCheckedChangeListener { _, _ -> updateEstimate() }
         timer.setOnCheckedChangeListener { _, checked -> minutes.isEnabled = checked; updateEstimate() }
-        email.setOnCheckedChangeListener { _, checked -> recipient.isEnabled = checked; updateEstimate() }
+        email.setOnCheckedChangeListener { _, checked -> recipients.isEnabled = checked; updateEstimate() }
         minutes.doAfterTextChanged { updateEstimate() }
         updateEstimate()
     }
@@ -116,7 +115,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
                 SmtpSettings(this@BackgroundCameraActivity).load()
             }
             smtpLimitMiB = profile?.limitMiB
-            if (recipient.text.isBlank() && !profile?.cameraRecipients.isNullOrEmpty()) recipient.setText(profile?.cameraRecipients)
+            recipients.loadDefaults(profile?.cameraRecipients.orEmpty())
             updateEstimate()
         }
     }
@@ -150,7 +149,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
         stop.alpha = if (stop.isEnabled) 1f else 0.45f
         front.isEnabled = !active; audio.isEnabled = !active; timer.isEnabled = !active; email.isEnabled = !active
         for (i in 0 until qualityGroup.childCount) qualityGroup.getChildAt(i).isEnabled = !active
-        minutes.isEnabled = !active && timer.isChecked; recipient.isEnabled = !active && email.isChecked
+        minutes.isEnabled = !active && timer.isChecked; recipients.isEnabled = !active && email.isChecked
         if (active || state != lastState) status.text = when (state.stage) {
             BackgroundCameraService.Companion.Stage.IDLE -> getString(R.string.camera_ready)
             BackgroundCameraService.Companion.Stage.STARTING -> getString(R.string.camera_starting)
@@ -166,15 +165,16 @@ class BackgroundCameraActivity : AppCompatActivity() {
         outState.putBoolean("notification_asked", notificationAsked)
         outState.putBoolean("front", front.isChecked); outState.putBoolean("audio", audio.isChecked)
         outState.putBoolean("timer", timer.isChecked); outState.putBoolean("email", email.isChecked)
-        outState.putString("minutes", minutes.text.toString()); outState.putString("recipient", recipient.text.toString())
+        outState.putString("minutes", minutes.text.toString()); outState.putString("recipient", recipients.draft)
+        outState.putString("recipient_list", recipients.canonical); outState.putBoolean("recipient_edited", recipients.userEdited)
         outState.putString("quality", selectedQuality().key)
         super.onSaveInstanceState(outState)
     }
     private fun requestAndStart() {
         val duration = if (timer.isChecked) DeliveryPolicy.duration(minutes.text.toString()) else 0L
         if (duration == null) { minutes.error = getString(R.string.camera_minutes_invalid); status.setText(R.string.camera_minutes_invalid); return }
-        val to = if (email.isChecked) MailRecipients.canonical(recipient.text.toString()) else ""
-        if (to == null) { recipient.error = getString(R.string.camera_recipients_invalid); status.setText(R.string.camera_recipients_invalid); return }
+        val to = if (email.isChecked) recipients.confirmedRecipients() else ""
+        if (to == null) { status.setText(R.string.camera_recipients_invalid); return }
         if (email.isChecked && SmtpSettings(this).load() == null) { status.setText(R.string.mail_config); return }
         val permissions = mutableListOf(Manifest.permission.CAMERA)
         if (audio.isChecked) permissions.add(Manifest.permission.RECORD_AUDIO)

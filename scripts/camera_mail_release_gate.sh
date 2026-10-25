@@ -8,7 +8,7 @@ adb shell settings put global stay_on_while_plugged_in 3
 adb shell settings put system screen_off_timeout 2147483647
 adb shell settings put global heads_up_notifications_enabled 0
 set +e
-gradle --no-daemon -PguardianMailReleaseTest=true -Pandroid.testInstrumentationRunnerArguments.class=com.nexvary.recorder.CameraMailAcceptanceTest,com.nexvary.recorder.ReleaseMailWorkerTest :app:connectedReleaseAndroidTest > mail-diagnostics/instrumentation.txt 2>&1
+gradle --no-daemon -PguardianMailReleaseTest=true -Pandroid.testInstrumentationRunnerArguments.class=com.nexvary.recorder.CameraMailAcceptanceTest,com.nexvary.recorder.RecipientEditorTest,com.nexvary.recorder.ReleaseMailWorkerTest :app:connectedReleaseAndroidTest > mail-diagnostics/instrumentation.txt 2>&1
 status=$?
 set -e
 cat mail-diagnostics/instrumentation.txt
