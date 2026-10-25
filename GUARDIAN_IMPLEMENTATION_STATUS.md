@@ -22,7 +22,7 @@ Default main at audit: `d51e6339b7e30af6eec954a44dc6745cc5ea47e1` (0.6.0). Exist
 | Media | Existing conversion/remux, audio replacement and trim; new extraction, metadata/share and Media3 video compression |
 | Rescue | Existing local SMS composer/contact cards; new fast emergency surface, dialer, silent mode and recording |
 | Family | Existing encrypted timer/check-in, profile, consent, contacts, integrity, history, guardian PIN and journey foundation; new Home destination and Child Mode |
-| SMTP | Existing encrypted opt-in development/fixture capability; production workers disabled; cloud uses authenticated backend SES |
+| SMTP | Camera recording: encrypted opt-in SMTP, Release Worker and private 1–10-recipient envelope in0.12.3; existing optional parent PIN and explicit recipient approval. Family/SOS legacy SMTP workers remain production-disabled; cloud delivery is separate. Local TLS/emulator evidence is recorded in docs/TEST_RESULTS_0.12.3.md; external inbox delivery Pending. |
 | RTMP | Existing file-to-RTMP/RTMPS foreground service; preserved |
 | Library/vault | Existing local recording library and protected vault; preserved |
 | Billing | Existing ProductDetails/restore client; Guardian product IDs, verified account binding, backend verification and Free gates added |
