@@ -1,0 +1,75 @@
+{
+  "sourceCommit": "29e336004609c396ad32d451e2eaff9fd5230f23",
+  "branch": "fix/guardian-recipient-picker",
+  "pr": 17,
+  "version": "0.12.4",
+  "versionCode": 25,
+  "normalRun": 40172598115,
+  "releaseRun": 40172598116,
+  "unit": {
+    "tests": 49,
+    "failures": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 165
+  },
+  "releaseInstrumentation": {
+    "api": 35,
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "debug": false
+  },
+  "standardInstrumentation": [
+    {
+      "api": 33,
+      "tests": 89,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed"
+    },
+    {
+      "api": 34,
+      "tests": 89,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed"
+    },
+    {
+      "api": 35,
+      "tests": 89,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed"
+    }
+  ],
+  "physicalOPPO": "PENDING",
+  "android16": "PENDING",
+  "externalSMTP": "PENDING",
+  "inboxReceipt": "PENDING",
+  "artifacts": [
+    {
+      "name": "Guardian-0.12.4-recipient-cards-AR.png",
+      "bytes": 272439,
+      "sha256": "e8f39f3382bd96679420306719f88c9a7d0eec57bab3ca6acffedc0f25cf8c5c"
+    },
+    {
+      "name": "Guardian-0.12.4-recipient-review-AR.png",
+      "bytes": 190233,
+      "sha256": "cb600a7bcc475a41c8e9479f73b5b2dc67788528ef837f4a63794c1b47d417df"
+    },
+    {
+      "name": "NEXVARY-Guardian-Studio-0.12.4-release-signed.apk",
+      "bytes": 16800314,
+      "sha256": "33aa49e36be135009049531ef54c8f023592abf1d5a18f305b9ea1c862e9eba1"
+    }
+  ],
+  "normalRunConclusion": "success",
+  "releaseRunConclusion": "success"
+}
