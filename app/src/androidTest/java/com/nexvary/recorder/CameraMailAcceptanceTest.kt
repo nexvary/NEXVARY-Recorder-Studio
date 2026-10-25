@@ -37,7 +37,6 @@ class CameraMailAcceptanceTest {
         instrumentation.runOnMainSync {
             val manager = context.getSystemService(android.app.LocaleManager::class.java)
             previousLocales = manager.applicationLocales.toLanguageTags()
-            manager.applicationLocales = android.os.LocaleList.forLanguageTags("ar")
         }
         GuardianGate.lock(); FamilyStore(context).update { it.remove("guardianPin") }
         SmtpSettings(context).clear()
@@ -107,10 +106,18 @@ class CameraMailAcceptanceTest {
         if (Build.VERSION.SDK_INT >= 33) instrumentation.uiAutomation.grantRuntimePermission(context.packageName, Manifest.permission.POST_NOTIFICATIONS)
         SmtpSettings(context).save(profile)
         val before = MailQueue(context).jobs().size
-        ActivityScenario.launch(BackgroundCameraActivity::class.java).use {
+        ActivityScenario.launch(BackgroundCameraActivity::class.java).use { scenario ->
+            // Set language after an AppCompat delegate exists; first-launch locale sync
+            // can otherwise replace a pre-launch LocaleManager override with English.
+            scenario.onActivity { androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(androidx.core.os.LocaleListCompat.forLanguageTags("ar")) }
+            val deadline = android.os.SystemClock.uptimeMillis() + 10_000
+            while (context.resources.configuration.locales[0].language != "ar" && android.os.SystemClock.uptimeMillis() < deadline) android.os.SystemClock.sleep(50)
+            assertEquals("ar", context.resources.configuration.locales[0].language)
+            scenario.recreate()
+            awaitUi(withText("عناوين بريد المستلمين (حتى 10)"))
             onView(withId(R.id.cameraEmail)).perform(reveal(), click())
             onView(withId(R.id.cameraRecipient)).perform(reveal(), replaceText("one@example.invalid\ntwo@example.invalid;ONE@example.invalid"), closeSoftKeyboard())
-            if (!BuildConfig.DEBUG) capture("camera-mail-release-ar")
+            if (!BuildConfig.DEBUG) { onView(withId(R.id.cameraEmail)).perform(reveal()); capture("camera-mail-release-ar") }
             onView(withId(R.id.cameraStart)).perform(reveal(), click())
             awaitUi(withText(R.string.camera_mail_review_title))
             onView(withText(context.getString(R.string.camera_mail_review, "one@example.invalid\ntwo@example.invalid"))).check(matches(isDisplayed()))
