@@ -1,28 +1,52 @@
-# Guardian compact dashboard candidate — 2026-10-25
+# Guardian 0.12.2 compact dashboard — accepted checkpoint, 2026-10-25
 
-Branch fix/guardian-compact-dashboard; parent 2e954cc4a4738e5e5a5eef164fab385ea31f4eb4.
-Candidate 0.12.2/code23; original package/release key retained. Source HEAD: inspect git log -1.
+Branch: fix/guardian-compact-dashboard; PR #15; base fix/guardian-signed-delivery.
+Last tested source: b18b0aac76ba0217d767f0e4fcfea593e2354c64.
+Final checkpoint adds evidence/docs and restores the existing emulator script's
+executable bit. No app/layout/test bytes changed after accepted source. Inspect
+`git log -1` for the current checkpoint commit.
 
-Owner screenshot showed an oversized setup entry and dashboard icons, with the
-last row only partly visible. Implemented home-only compact setup entry (32dp
-icon, at least48dp touch target, themed readable text), 52dp grid icons, 128dp
-minimum cards, tighter header spacing and 26dp bottom icons/64dp bar. Other
-pages retain their default entry sizes. Text can grow and the page still scrolls.
+Owner supplied a 0.12.1 home screenshot with an oversized setup banner and a
+partly clipped last row. Implemented home-only 48dp setup entry/32dp icon and
+readable theme text,44dp brand logo,52dp grid icons and128dp card minimums,
+tighter header/padding, and26dp bottom icons in a64dp bar. Rows share spare
+space when content fits; large text grows and scrolls. Other feature entries
+retain their normal sizes. Package/permissions/storage/release key unchanged.
 
-Added two real emulator regression cases: all nine cards fully visible above
-navigation at 360x800dp/1.0 font in Arabic and English, and reachable/unclipped
-last row at 1.5 font. Actual screenshots/measurement JSON required by CI.
-Display changes are emulator-only and restored in finally; these are not OPPO
-hardware results. Existing source UI/review/Maven gates passed locally.
+VERIFIED: Android Release Gate40143812943 SUCCESS on the source above.
+- Source UI/review/Maven provenance, Gradle lint/build/test APK/AAB,43 unit
+  tests (0 failures/skips), and all backend jobs passed.
+- Lint:0 errors,162 warnings, including3 NestedWeights warnings for the finite
+  three dashboard rows. No broad suppression; raw reports retained in CI.
+- APIs33/34/35:82 instrumentation cases EACH,0 failures/errors/skips.
+  Downloaded hash-verified XML confirms both DashboardLayoutTest cases passed.
+- 720x1600px/320dpi (360x800dp) geometry in AR/EN on all three APIs: all 9 cards
+  completely visible above bottom navigation at initial scroll; setup height
+  exactly 48dp.1.5-font case keeps last row/labels reachable and unclipped.
+- Actual API35 AR/EN default-profile and AR 1.5-font screenshots inspected.
+  AR default image shows the complete final row and readable setup text.
+- Release APK/AAB signed using original Guardian key, official signatures
+  verified. APK: com.nexvary.recorder,0.12.2/code 23, non-debuggable,16771642 bytes.
+  Current and previous0.12.1 release certificate:
+  ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6.
+  APK SHA256:92c1a7ca104a62f88ddab7afc7c9f765de1e19b1dd4ec558ebb4155fc3182672.
+  Temporary decrypted signing material removed; no signing secrets in git/logs.
 
-PENDING current Gradle/lint/unit/runtime/visual acceptance and original-key
-release signing. Next: accept CI, inspect actual profile screenshots, sign the
-accepted AAB, verify update against the 0.12.1 release, save owner APK/evidence.
-Do not deliver until current results are recorded. No data clear/package rename.
+Deliverables: NEXVARY-Guardian-Studio-0.12.2-release-signed.apk and actual
+Guardian-0.12.2-compact-home-AR.png. Install as an update without uninstall/data
+clear. See docs/TEST_RESULTS_0.12.2.md and docs/release-evidence/0.12.2.
+
+PENDING: owner's physical OPPO installation/visual acceptance of0.12.2 and any
+manufacturer-specific behavior. The supplied0.12.1 screenshot is the issue
+input, not a0.12.2 device pass. Instrumentation used Debug from the same source;
+matching-profile emulator evidence is not a signed-Release phone runtime pass.
+No main merge, server activation, store/release publication or unrelated product
+changes. Next: owner installs the signed update and confirms the home layout.
+Do not repeat accepted gates unless a new change/failure justifies it.
 
 ---
 
-Previous accepted checkpoint (historical, not current-candidate results):
+Historical0.12.1 checkpoint (superseded by the current checkpoint above):
 
 # Guardian 0.12.1 signed delivery — accepted checkpoint, 2026-10-25
 

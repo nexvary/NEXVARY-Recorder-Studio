@@ -1,0 +1,331 @@
+{
+  "source": "b18b0aac76ba0217d767f0e4fcfea593e2354c64",
+  "run": 40143812943,
+  "unit": {
+    "tests": 43,
+    "failures": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "Warning": 162
+  },
+  "aabArtifact": 12580062470,
+  "aabArchiveSha256": "dd9c5e0933d5038f92bbf65c95e08b63b5b16cad1a89d10d6c9326ddc64e70e0",
+  "emulatorMatrix": [
+    {
+      "api": 33,
+      "passed": 82,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "newLayoutTests": "2 passed",
+      "profiles": [
+        {
+          "locale": "ar",
+          "setupHeightDp": 48,
+          "navigationTop": 1376,
+          "cards": [
+            {
+              "id": "cardCamera",
+              "bottom": 670
+            },
+            {
+              "id": "cardScreen",
+              "bottom": 670
+            },
+            {
+              "id": "cardReplace",
+              "bottom": 670
+            },
+            {
+              "id": "cardRescue",
+              "bottom": 1009
+            },
+            {
+              "id": "cardLive",
+              "bottom": 1009
+            },
+            {
+              "id": "cardFamily",
+              "bottom": 1009
+            },
+            {
+              "id": "cardLibrary",
+              "bottom": 1348
+            },
+            {
+              "id": "cardSettings",
+              "bottom": 1348
+            },
+            {
+              "id": "cardAbout",
+              "bottom": 1348
+            }
+          ]
+        },
+        {
+          "locale": "en",
+          "setupHeightDp": 48,
+          "navigationTop": 1376,
+          "cards": [
+            {
+              "id": "cardCamera",
+              "bottom": 662
+            },
+            {
+              "id": "cardScreen",
+              "bottom": 662
+            },
+            {
+              "id": "cardReplace",
+              "bottom": 662
+            },
+            {
+              "id": "cardRescue",
+              "bottom": 1008
+            },
+            {
+              "id": "cardLive",
+              "bottom": 1008
+            },
+            {
+              "id": "cardFamily",
+              "bottom": 1008
+            },
+            {
+              "id": "cardLibrary",
+              "bottom": 1348
+            },
+            {
+              "id": "cardSettings",
+              "bottom": 1348
+            },
+            {
+              "id": "cardAbout",
+              "bottom": 1348
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "api": 34,
+      "passed": 82,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "newLayoutTests": "2 passed",
+      "profiles": [
+        {
+          "locale": "ar",
+          "setupHeightDp": 48,
+          "navigationTop": 1376,
+          "cards": [
+            {
+              "id": "cardCamera",
+              "bottom": 670
+            },
+            {
+              "id": "cardScreen",
+              "bottom": 670
+            },
+            {
+              "id": "cardReplace",
+              "bottom": 670
+            },
+            {
+              "id": "cardRescue",
+              "bottom": 1009
+            },
+            {
+              "id": "cardLive",
+              "bottom": 1009
+            },
+            {
+              "id": "cardFamily",
+              "bottom": 1009
+            },
+            {
+              "id": "cardLibrary",
+              "bottom": 1348
+            },
+            {
+              "id": "cardSettings",
+              "bottom": 1348
+            },
+            {
+              "id": "cardAbout",
+              "bottom": 1348
+            }
+          ]
+        },
+        {
+          "locale": "en",
+          "setupHeightDp": 48,
+          "navigationTop": 1376,
+          "cards": [
+            {
+              "id": "cardCamera",
+              "bottom": 662
+            },
+            {
+              "id": "cardScreen",
+              "bottom": 662
+            },
+            {
+              "id": "cardReplace",
+              "bottom": 662
+            },
+            {
+              "id": "cardRescue",
+              "bottom": 1008
+            },
+            {
+              "id": "cardLive",
+              "bottom": 1008
+            },
+            {
+              "id": "cardFamily",
+              "bottom": 1008
+            },
+            {
+              "id": "cardLibrary",
+              "bottom": 1348
+            },
+            {
+              "id": "cardSettings",
+              "bottom": 1348
+            },
+            {
+              "id": "cardAbout",
+              "bottom": 1348
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "api": 35,
+      "passed": 82,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "newLayoutTests": "2 passed",
+      "profiles": [
+        {
+          "locale": "ar",
+          "setupHeightDp": 48,
+          "navigationTop": 1376,
+          "cards": [
+            {
+              "id": "cardCamera",
+              "bottom": 675
+            },
+            {
+              "id": "cardScreen",
+              "bottom": 675
+            },
+            {
+              "id": "cardReplace",
+              "bottom": 675
+            },
+            {
+              "id": "cardRescue",
+              "bottom": 1018
+            },
+            {
+              "id": "cardLive",
+              "bottom": 1018
+            },
+            {
+              "id": "cardFamily",
+              "bottom": 1018
+            },
+            {
+              "id": "cardLibrary",
+              "bottom": 1348
+            },
+            {
+              "id": "cardSettings",
+              "bottom": 1348
+            },
+            {
+              "id": "cardAbout",
+              "bottom": 1348
+            }
+          ]
+        },
+        {
+          "locale": "en",
+          "setupHeightDp": 48,
+          "navigationTop": 1376,
+          "cards": [
+            {
+              "id": "cardCamera",
+              "bottom": 662
+            },
+            {
+              "id": "cardScreen",
+              "bottom": 662
+            },
+            {
+              "id": "cardReplace",
+              "bottom": 662
+            },
+            {
+              "id": "cardRescue",
+              "bottom": 1008
+            },
+            {
+              "id": "cardLive",
+              "bottom": 1008
+            },
+            {
+              "id": "cardFamily",
+              "bottom": 1008
+            },
+            {
+              "id": "cardLibrary",
+              "bottom": 1348
+            },
+            {
+              "id": "cardSettings",
+              "bottom": 1348
+            },
+            {
+              "id": "cardAbout",
+              "bottom": 1348
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "ciConclusion": "success",
+  "release": {
+    "current": {
+      "package": "com.nexvary.recorder",
+      "versionCode": 23,
+      "versionName": "0.12.2",
+      "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+      "debuggable": false,
+      "sha256": "92c1a7ca104a62f88ddab7afc7c9f765de1e19b1dd4ec558ebb4155fc3182672",
+      "sizeBytes": 16771642
+    },
+    "previous": {
+      "package": "com.nexvary.recorder",
+      "versionCode": 22,
+      "versionName": "0.12.1",
+      "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+      "debuggable": false,
+      "sha256": "93d5e76ce4157dd0377005730795b0a91d835a41c653f9a77b26b415890513ee"
+    },
+    "sameSigningIdentity": true,
+    "physicalInstall": "PENDING"
+  },
+  "visualQa": "PASS: actual API35 AR/EN default-size and AR1.5-font screenshots inspected; all nine cards fully visible at default profile, last-row labels reachable at1.5",
+  "physicalOppo": "PENDING for0.12.2; owner0.12.1 screenshot supplied the reported clipping issue",
+  "instrumentationBuild": "Debug from the same accepted source; signed-Release physical runtime pending",
+  "screenshotSha256": "bab1424e05938055a10396793d1f40a00d424b9c70be72562ab5576807f7bbd7",
+  "postTestChanges": "Final checkpoint adds evidence/docs and restores emulator_gate.sh executable bit; no application/layout/test bytes change after accepted source."
+}
