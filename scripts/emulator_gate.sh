@@ -6,6 +6,11 @@ adb shell input keyevent KEYCODE_WAKEUP
 adb shell wm dismiss-keyguard
 adb shell settings put global stay_on_while_plugged_in 3
 adb shell settings put system screen_off_timeout 2147483647
+# Mail UI acceptance grants POST_NOTIFICATIONS earlier in the suite. Keep OS
+# heads-up banners from intercepting Espresso taps on safety actions. Emulator
+# fixture only: app notification channels, status icons and privacy indicators
+# remain enabled; production code never changes this global setting.
+adb shell settings put global heads_up_notifications_enabled 0
 adb shell getprop > diagnostics/device-properties.txt
 adb shell dumpsys meminfo > diagnostics/memory-before.txt
 # No HOME key or Pixel-specific profile: avoid launching the unstable launcher during evidence collection.
