@@ -1,0 +1,17 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): false
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=NEXVARY Guardian Release, O=NEXVARY
+Signer #1 certificate SHA-256 digest: ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6
+Signer #1 certificate SHA-1 digest: 1f42eec1f9243b1b1d3df11bfb9294fa34d3afda
+Signer #1 certificate MD5 digest: 74738580481a9767e702718a70f5b1a1
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 4096
+Signer #1 public key SHA-256 digest: f4db9f400c1c329ebf2b49dedc3b1642c68e03218a6358407b9eb71e4c11f166
+Signer #1 public key SHA-1 digest: 194affba314df39cddb243a45f75f73de91f18f0
+Signer #1 public key MD5 digest: ed40aa5eced9acad12c429fc542677b4

@@ -1,0 +1,88 @@
+[
+  {
+    "locale": "ar",
+    "setupHeightDp": 48,
+    "navigationTop": 1376,
+    "cards": [
+      {
+        "id": "cardCamera",
+        "bottom": 670
+      },
+      {
+        "id": "cardScreen",
+        "bottom": 670
+      },
+      {
+        "id": "cardReplace",
+        "bottom": 670
+      },
+      {
+        "id": "cardRescue",
+        "bottom": 1009
+      },
+      {
+        "id": "cardLive",
+        "bottom": 1009
+      },
+      {
+        "id": "cardFamily",
+        "bottom": 1009
+      },
+      {
+        "id": "cardLibrary",
+        "bottom": 1348
+      },
+      {
+        "id": "cardSettings",
+        "bottom": 1348
+      },
+      {
+        "id": "cardAbout",
+        "bottom": 1348
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "setupHeightDp": 48,
+    "navigationTop": 1376,
+    "cards": [
+      {
+        "id": "cardCamera",
+        "bottom": 662
+      },
+      {
+        "id": "cardScreen",
+        "bottom": 662
+      },
+      {
+        "id": "cardReplace",
+        "bottom": 662
+      },
+      {
+        "id": "cardRescue",
+        "bottom": 1008
+      },
+      {
+        "id": "cardLive",
+        "bottom": 1008
+      },
+      {
+        "id": "cardFamily",
+        "bottom": 1008
+      },
+      {
+        "id": "cardLibrary",
+        "bottom": 1348
+      },
+      {
+        "id": "cardSettings",
+        "bottom": 1348
+      },
+      {
+        "id": "cardAbout",
+        "bottom": 1348
+      }
+    ]
+  }
+]

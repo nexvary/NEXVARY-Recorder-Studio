@@ -1,0 +1,14 @@
+{
+  "source": "b18b0aac76ba0217d767f0e4fcfea593e2354c64",
+  "run": 40143812943,
+  "unit": {
+    "tests": 43,
+    "failures": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "Warning": 162
+  },
+  "aabArtifact": 12580062470,
+  "aabArchiveSha256": "dd9c5e0933d5038f92bbf65c95e08b63b5b16cad1a89d10d6c9326ddc64e70e0"
+}

@@ -1,0 +1,20 @@
+{
+  "current": {
+    "package": "com.nexvary.recorder",
+    "versionCode": 23,
+    "versionName": "0.12.2",
+    "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+    "debuggable": false,
+    "sha256": "92c1a7ca104a62f88ddab7afc7c9f765de1e19b1dd4ec558ebb4155fc3182672"
+  },
+  "previous": {
+    "package": "com.nexvary.recorder",
+    "versionCode": 22,
+    "versionName": "0.12.1",
+    "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+    "debuggable": false,
+    "sha256": "93d5e76ce4157dd0377005730795b0a91d835a41c653f9a77b26b415890513ee"
+  },
+  "sameSigningIdentity": true,
+  "physicalInstall": "PENDING"
+}
