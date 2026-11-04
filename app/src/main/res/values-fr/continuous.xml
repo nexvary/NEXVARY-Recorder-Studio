@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">Enregistrement continu d’urgence</string>
+    <string name="continuous_enable">Enregistrer jusqu’à l’arrêt de la session</string>
+    <string name="continuous_duration">Durée cible du clip (coupure à la prochaine image clé)</string>
+    <string name="continuous_30">30 secondes</string>
+    <string name="continuous_60">1 minute (par défaut)</string>
+    <string name="continuous_120">2 minutes</string>
+    <string name="continuous_300">5 minutes</string>
+    <string name="continuous_retry">Réessayer les échecs sans risque au retour d’Internet</string>
+    <string name="continuous_policy">Activez ci-dessous l’envoi automatique par e-mail pour envoyer chaque clip terminé pendant l’enregistrement. Le minuteur de session est ignoré. Consomme batterie, données et stockage ; l’enregistrement s’arrête si l’espace manque. Les originaux restent sur cet appareil. L’acceptation SMTP ne confirme pas la réception. Les envois incertains nécessitent une vérification pour éviter les doublons.</string>
+    <string name="continuous_recovering">Vérification des sessions enregistrées…</string>
+    <string name="continuous_recording">Enregistrement continu • clip actuel %1$d</string>
+    <string name="continuous_stopped">Session terminée • %1$d clips enregistrés. Vérifiez l’état d’envoi dans la boîte d’envoi.</string>
+    <string name="continuous_interrupted">Enregistrement interrompu • %1$d clips finalisés. Vérifiez les fichiers et la boîte d’envoi.</string>
+    <string name="continuous_counts">Enregistrés : %1$d • Acceptés par le serveur : %2$d • En attente : %3$d • À vérifier : %4$d</string>
+    <string name="continuous_recovered">Une session précédente a été interrompue. Les clips enregistrés ont été vérifiés ; la caméra n’a pas redémarré.</string>
+    <string name="continuous_status_failed">Impossible de lire l’état des clips. Vérifiez la boîte d’envoi et les enregistrements.</string>
+    <string name="continuous_low_storage">Enregistrement arrêté : stockage insuffisant. %1$d clips finalisés. Libérez de l’espace après vérification ; les clips en attente sont conservés.</string>
+</resources>

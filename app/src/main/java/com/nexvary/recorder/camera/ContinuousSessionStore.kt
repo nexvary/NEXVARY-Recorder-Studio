@@ -110,7 +110,7 @@ class ContinuousSessionStore(context: Context) {
                 state == "SAVED" && read(File(dir, it.getString("session") + ".json")).optString("recipient").isNotBlank() -> problems++
             }
         }
-        return intArrayOf(entries.count { it.optString("state") != "RECORDING" }, accepted, pending, problems)
+        return intArrayOf(entries.count { it.optString("state") in listOf("SAVED", "QUEUED") }, accepted, pending, problems)
     }
     fun hasInterruptedSession() = dir.listFiles().orEmpty().filter { it.extension == "json" }.any {
         runCatching { read(it).optString("state") !in listOf("RECORDING", "STOPPED") }.getOrDefault(false)

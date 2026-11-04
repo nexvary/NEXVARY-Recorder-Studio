@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">ہنگامی حالت میں مسلسل ریکارڈنگ</string>
+    <string name="continuous_enable">جب تک میں سیشن ختم نہ کروں ریکارڈ کریں</string>
+    <string name="continuous_duration">کلپ کا مطلوبہ دورانیہ (اگلے کلیدی فریم پر تقسیم)</string>
+    <string name="continuous_30">۳۰ سیکنڈ</string>
+    <string name="continuous_60">۱ منٹ (پہلے سے طے شدہ)</string>
+    <string name="continuous_120">۲ منٹ</string>
+    <string name="continuous_300">۵ منٹ</string>
+    <string name="continuous_retry">انٹرنیٹ واپس آنے پر محفوظ کوششیں دوبارہ کریں</string>
+    <string name="continuous_policy">ریکارڈنگ جاری رہتے ہوئے ہر مکمل کلپ بھیجنے کے لیے نیچے خودکار ای میل فعال کریں۔ سیشن ختم کرنے والا ٹائمر نظر انداز ہوگا۔ بیٹری، ڈیٹا اور جگہ استعمال ہوتے ہیں؛ جگہ کم ہونے پر ریکارڈنگ رک جاتی ہے۔ اصل فائلیں اسی آلے پر رہتی ہیں۔ SMTP کی منظوری ان باکس میں وصولی کی تصدیق نہیں۔ غیر یقینی ارسال کو نقل سے بچنے کے لیے جانچنا ضروری ہے۔</string>
+    <string name="continuous_recovering">محفوظ سیشنز کی جانچ جاری ہے…</string>
+    <string name="continuous_recording">مسلسل ریکارڈنگ • موجودہ کلپ %1$d</string>
+    <string name="continuous_stopped">سیشن ختم • %1$d کلپس محفوظ۔ ارسال کی حالت آؤٹ باکس میں دیکھیں۔</string>
+    <string name="continuous_interrupted">ریکارڈنگ غیر متوقع طور پر رک گئی • %1$d کلپس مکمل۔ فائلیں اور آؤٹ باکس دیکھیں۔</string>
+    <string name="continuous_counts">محفوظ: %1$d • میل سرور نے قبول کیے: %2$d • زیر التوا: %3$d • جانچ درکار: %4$d</string>
+    <string name="continuous_recovered">پچھلا سیشن رک گیا تھا۔ محفوظ کلپس جانچ لیے گئے؛ کیمرا دوبارہ شروع نہیں کیا گیا۔</string>
+    <string name="continuous_status_failed">کلپس کی حالت نہیں پڑھی جا سکی۔ آؤٹ باکس اور ریکارڈنگ دیکھیں۔</string>
+    <string name="continuous_low_storage">جگہ کم ہونے کی وجہ سے ریکارڈنگ رک گئی۔ %1$d کلپس مکمل۔ فائلیں دیکھ کر جگہ خالی کریں؛ زیر التوا کلپس محفوظ ہیں۔</string>
+</resources>

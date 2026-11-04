@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">ضبط پیوسته اضطراری</string>
+    <string name="continuous_enable">ضبط تا زمانی که جلسه را متوقف کنم</string>
+    <string name="continuous_duration">مدت هدف هر بخش (برش در فریم کلیدی بعدی)</string>
+    <string name="continuous_30">۳۰ ثانیه</string>
+    <string name="continuous_60">۱ دقیقه (پیش‌فرض)</string>
+    <string name="continuous_120">۲ دقیقه</string>
+    <string name="continuous_300">۵ دقیقه</string>
+    <string name="continuous_retry">تلاش مجدد ایمن پس از بازگشت اینترنت</string>
+    <string name="continuous_policy">برای ارسال هر بخش کامل هنگام ادامه ضبط، ارسال خودکار ایمیل را در پایین فعال کنید. زمان‌سنج پایان جلسه نادیده گرفته می‌شود. باتری، اینترنت و فضای ذخیره مصرف می‌شود؛ با کمبود فضا ضبط متوقف می‌شود. فایل‌های اصلی روی دستگاه می‌مانند. پذیرش SMTP به معنی تحویل به صندوق ورودی نیست. ارسال‌های نامشخص برای جلوگیری از تکرار نیاز به بررسی دارند.</string>
+    <string name="continuous_recovering">در حال بررسی جلسه‌های ذخیره‌شده…</string>
+    <string name="continuous_recording">ضبط پیوسته • بخش فعلی %1$d</string>
+    <string name="continuous_stopped">جلسه پایان یافت • %1$d بخش ذخیره شد. وضعیت ارسال را در صندوق خروجی بررسی کنید.</string>
+    <string name="continuous_interrupted">ضبط ناگهان متوقف شد • %1$d بخش نهایی شد. فایل‌ها و صندوق خروجی را بررسی کنید.</string>
+    <string name="continuous_counts">ذخیره‌شده: %1$d • پذیرفته‌شده توسط سرور ایمیل: %2$d • در انتظار: %3$d • نیازمند بررسی: %4$d</string>
+    <string name="continuous_recovered">جلسه قبلی قطع شده بود. بخش‌های ذخیره‌شده بررسی شدند؛ دوربین دوباره روشن نشد.</string>
+    <string name="continuous_status_failed">خواندن وضعیت بخش‌ها ممکن نشد. صندوق خروجی و ضبط‌ها را بررسی کنید.</string>
+    <string name="continuous_low_storage">ضبط به دلیل کمبود فضا متوقف شد. %1$d بخش نهایی شد. پس از بررسی فایل‌ها فضا خالی کنید؛ بخش‌های در انتظار نگه داشته شدند.</string>
+</resources>

@@ -225,4 +225,28 @@ class ContinuousRecordingTest {
         } finally { root.deleteRecursively() }
     }
 
+    @Test fun incompleteCrashTailIsRetainedAndNotCountedAsSaved() {
+        val root = File(context.cacheDir, "continuous-recovery-${System.nanoTime()}").apply { mkdirs() }
+        val privateDir = File(root, "private").apply { mkdirs() }
+        val movies = File(root, "movies").apply { mkdirs() }
+        val app = object : ContextWrapper(context) {
+            override fun getApplicationContext(): android.content.Context = this
+            override fun getNoBackupFilesDir() = privateDir
+            override fun getExternalFilesDir(type: String?) = movies
+        }
+        try {
+            val store = ContinuousSessionStore(app)
+            val id = store.create(60, "", true)
+            val tail = store.open(id, 1, 0).apply { writeBytes(byteArrayOf(1, 2, 3)) }
+            store.stop(id, "INTERRUPTED")
+            store.recover()
+            assertTrue(tail.exists())
+            val counts = store.summary()
+            assertEquals(0, counts[0]); assertEquals(1, counts[3])
+            assertTrue(store.hasInterruptedSession())
+            assertEquals(0, MailQueue(app).jobs().size)
+            store.recover(); assertTrue(tail.exists())
+        } finally { root.deleteRecursively() }
+    }
+
 }
