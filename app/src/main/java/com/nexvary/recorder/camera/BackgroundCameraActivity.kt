@@ -80,6 +80,10 @@ class BackgroundCameraActivity : AppCompatActivity() {
         qualityEstimate = DeliveryUi.text(qualityPanel, R.string.camera_quality_note).apply { id = R.id.cameraQualityEstimate }
         DeliveryUi.text(qualityPanel, R.string.camera_quality_note)
         val continuousPanel = DeliveryUi.section(root, R.string.continuous_title)
+        (continuousPanel.getChildAt(0) as TextView).apply {
+            setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_continuous_recording, 0, 0, 0)
+            compoundDrawablePadding = (10 * resources.displayMetrics.density).toInt()
+        }
         continuous = switch(continuousPanel, R.string.continuous_enable, R.id.continuousEnable, "continuous")
         if (savedInstanceState == null) continuous.isChecked = prefs.getBoolean("continuous", false)
         DeliveryUi.text(continuousPanel, R.string.continuous_duration)
@@ -124,7 +128,15 @@ class BackgroundCameraActivity : AppCompatActivity() {
         audio.setOnCheckedChangeListener { _, _ -> updateEstimate() }
         timer.setOnCheckedChangeListener { _, checked -> minutes.isEnabled = checked && !continuous.isChecked; updateEstimate() }
         email.setOnCheckedChangeListener { _, checked -> recipients.isEnabled = checked; updateEstimate() }
+        fun placeDelivery(inContinuousCard: Boolean) {
+            val target = if (inContinuousCard) continuousPanel else root
+            if (delivery.parent === target) return
+            (delivery.parent as? android.view.ViewGroup)?.removeView(delivery)
+            target.addView(delivery, if (inContinuousCard) target.indexOfChild(continuousStatus) else target.indexOfChild(status))
+        }
+        placeDelivery(continuous.isChecked)
         continuous.setOnCheckedChangeListener { _, checked ->
+            placeDelivery(checked)
             timer.isEnabled = !checked; minutes.isEnabled = !checked && timer.isChecked
             segmentLength.isEnabled = checked; retryNetwork.isEnabled = checked
             prefs.edit().putBoolean("continuous", checked).apply(); updateEstimate()
