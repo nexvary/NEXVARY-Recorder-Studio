@@ -104,6 +104,13 @@ class ContinuousRecordingTest {
                     }
                     assertTrue(file.length() > 0)
                 } finally { extractor.release() }
+                val decoder = android.media.MediaMetadataRetriever()
+                try {
+                    decoder.setDataSource(file.absolutePath)
+                    val frame = decoder.getFrameAtTime(0, android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                    assertNotNull("Each clip must independently decode an H.264 frame", frame)
+                    frame?.recycle()
+                } finally { decoder.release() }
             }
             val journalDir = File(context.noBackupFilesDir, "continuous_sessions")
             val journals = journalDir.listFiles().orEmpty().filter { it.name.startsWith("$id-") && it.extension == "segment" }
@@ -114,6 +121,7 @@ class ContinuousRecordingTest {
                 .put("elapsedMs", runMs).put("clips", files.size).put("boundaryDeltasUs", org.json.JSONArray(gaps))
                 .put("maxBoundaryDeltaUs", gaps.maxOrNull() ?: 0).put("maxIntraClipDeltaUs", maxIntraClipDeltaUs).put("physicalVerification", "PENDING")
             File(journalDir, "$id.metrics").writeText(result.toString(2))
+            android.util.Log.i("NexvaryContinuousTest", result.toString())
             val jobs = queue.jobs().filter { it.id !in idsBefore }
             assertEquals(files.size, jobs.size)
             val before = jobs.map { it.id }.toSet()
@@ -128,8 +136,9 @@ class ContinuousRecordingTest {
             if (previousProfile != null) SmtpSettings(context).save(previousProfile) else SmtpSettings(context).clear()
             if (id.isNotBlank()) {
                 val dir = File(context.noBackupFilesDir, "continuous_sessions")
-                val evidence = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "continuous-$id").apply { mkdirs() }
-                dir.listFiles().orEmpty().filter { it.name.startsWith(id) }.forEach { it.copyTo(File(evidence, it.name), true) }
+                dir.listFiles().orEmpty().filter { it.name.startsWith(id) }.forEach {
+                    ContinuousTestEvidence.write(context, it.name + ".json", "application/json", it.readBytes())
+                }
             }
         }
     }

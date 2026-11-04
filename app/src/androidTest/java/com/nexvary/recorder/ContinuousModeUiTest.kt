@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
-import android.os.Environment
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
@@ -21,7 +20,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assume
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 class ContinuousModeUiTest {
@@ -61,8 +59,9 @@ class ContinuousModeUiTest {
                 onView(withId(R.id.continuousDuration)).check(matches(withSpinnerText(R.string.continuous_30)))
                 onView(withId(R.id.cameraTimer)).check(matches(isNotEnabled()))
                 val screenshot = checkNotNull(instrumentation.uiAutomation.takeScreenshot())
-                val output = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "continuous-mode-ar.png")
-                output.outputStream().use { check(screenshot.compress(Bitmap.CompressFormat.PNG, 100, it)) }
+                val bytes = java.io.ByteArrayOutputStream()
+                check(screenshot.compress(Bitmap.CompressFormat.PNG, 100, bytes))
+                ContinuousTestEvidence.write(context, "continuous-mode-ar.png", "image/png", bytes.toByteArray())
                 screenshot.recycle()
                 onView(withId(R.id.cameraStart)).perform(reveal(), click())
                 awaitCapture { BackgroundCameraService.activeContinuousSession != null && BackgroundCameraService.state.stage == BackgroundCameraService.Companion.Stage.RECORDING }

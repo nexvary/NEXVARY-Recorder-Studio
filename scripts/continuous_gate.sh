@@ -15,5 +15,17 @@ status=$?
 set -e
 cat continuous-evidence/instrumentation.txt
 adb logcat -d -v threadtime > continuous-evidence/logcat.txt
-adb pull /sdcard/Android/data/com.nexvary.recorder/files/Download/ continuous-evidence/clips-metadata/ || true
+adb pull /sdcard/Download/NEXVARYContinuousEvidence/ continuous-evidence/clips-metadata/ || true
+if [ "$status" -eq 0 ]; then
+  python3 - <<'EVIDENCE'
+from pathlib import Path
+import json
+metrics = list(Path("continuous-evidence/clips-metadata").rglob("*.metrics.json"))
+assert metrics, "Passing tests must publish actual timing metrics"
+for file in metrics:
+    value = json.loads(file.read_text())
+    assert value["elapsedMs"] == 900000 and value["targetSeconds"] == 60 and value["clips"] >= 15
+    print(json.dumps(value, indent=2))
+EVIDENCE
+fi
 exit "$status"

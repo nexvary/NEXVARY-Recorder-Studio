@@ -20,7 +20,7 @@ status=$?
 set -e
 cat diagnostics/instrumentation.txt
 adb logcat -d -v threadtime > diagnostics/logcat.txt
-adb pull /sdcard/Android/data/com.nexvary.recorder/files/Download/ diagnostics/continuous-metadata/ || true
+adb pull /sdcard/Download/NEXVARYContinuousEvidence/ diagnostics/continuous-metadata/ || true
 adb shell dumpsys activity lastanr > diagnostics/last-anr.txt
 adb shell dumpsys activity activities > diagnostics/activities.txt
 adb shell dumpsys window windows > diagnostics/windows.txt
