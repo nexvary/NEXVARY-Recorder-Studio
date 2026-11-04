@@ -26,7 +26,8 @@ class SegmentedEncoder(
     private var microphone: AudioRecord? = null
     private var inputSurface: Surface? = null
     private val formats = arrayOfNulls<MediaFormat>(2)
-    private val origins = longArrayOf(-1, -1)
+    private val origins = longArrayOf(0, 0)
+    private val originReady = booleanArrayOf(false, false)
     private val latest = longArrayOf(-1, -1)
     private val lastWritten = longArrayOf(-1, -1)
     private data class Sample(val track: Int, val pts: Long, val flags: Int, val bytes: ByteArray)
@@ -111,7 +112,7 @@ class SegmentedEncoder(
             if (index < 0) break
             try {
                 if (info.size > 0 && info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG == 0) {
-                    if (origins[track] < 0) origins[track] = info.presentationTimeUs
+                    if (!originReady[track]) { origins[track] = info.presentationTimeUs; originReady[track] = true }
                     val pts = info.presentationTimeUs - origins[track]
                     check(pts >= latest[track]) { "non_monotonic_encoder" }
                     latest[track] = pts
