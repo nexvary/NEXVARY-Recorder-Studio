@@ -103,7 +103,14 @@ class RecorderApplication: Application(),Application.ActivityLifecycleCallbacks 
         super.attachBaseContext(base)
         rikka.shizuku.ShizukuProvider.disableAutomaticSuiInitialization()
     }
-    override fun onCreate() { super.onCreate();registerActivityLifecycleCallbacks(this) }
+    override fun onCreate() {
+        super.onCreate();registerActivityLifecycleCallbacks(this)
+        // Recover approved delivery work for every entry point, including child mode and Workers.
+        // This never reopens the camera or microphone.
+        com.nexvary.recorder.camera.ContinuousSessionStore.executor.execute {
+            runCatching { com.nexvary.recorder.camera.ContinuousSessionStore(this).recover() }
+        }
+    }
     override fun onActivityStarted(activity: Activity) { started++;handler.removeCallbacks(lock) }
     override fun onActivityStopped(activity: Activity) { started--;if(started==0 && !activity.isChangingConfigurations) handler.postDelayed(lock,400) }
     override fun onActivityCreated(activity: Activity,state: Bundle?) { }

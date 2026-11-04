@@ -45,11 +45,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, com.nexvary.recorder.family.GuidedSetupActivity::class.java))
         }
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) { runCatching {
-                com.nexvary.recorder.camera.ContinuousSessionStore.executor.submit {
-                    com.nexvary.recorder.camera.ContinuousSessionStore(this@MainActivity).recover(com.nexvary.recorder.camera.BackgroundCameraService.activeContinuousSession)
-                }.get()
-            };runCatching { com.nexvary.recorder.family.SafetyCheckManager(this@MainActivity).evaluate(true) } }
+            withContext(Dispatchers.IO) { runCatching { com.nexvary.recorder.delivery.MailWorker.reconcile(this@MainActivity) };runCatching { com.nexvary.recorder.family.SafetyCheckManager(this@MainActivity).evaluate(true) } }
         }
 
         binding.btnThemePicker.setOnClickListener { view ->
