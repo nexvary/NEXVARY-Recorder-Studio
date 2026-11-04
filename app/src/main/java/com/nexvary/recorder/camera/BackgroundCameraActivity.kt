@@ -31,6 +31,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
     private lateinit var continuousStatus: TextView
     private var refreshingContinuous = false
     private var recoveringContinuous = true
+    private var validationMessage: Int? = null
     private lateinit var timer: SwitchCompat
     private lateinit var email: SwitchCompat
     private lateinit var minutes: EditText
@@ -55,6 +56,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.apply(this); super.onCreate(savedInstanceState)
         notificationAsked = savedInstanceState?.getBoolean("notification_asked") ?: false
+        validationMessage = savedInstanceState?.getInt("validation_message")?.takeIf { it != 0 }
         val root = com.nexvary.recorder.ui.StudioPage.install(this, R.string.camera_title)
         DeliveryUi.text(root, R.string.camera_note)
         fun switch(parent: LinearLayout, label: Int, ident: Int, saved: String): SwitchCompat = SwitchCompat(this).apply {
@@ -191,7 +193,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
     private fun updateState() {
         val state = BackgroundCameraService.state
         val active = state.stage in listOf(BackgroundCameraService.Companion.Stage.STARTING, BackgroundCameraService.Companion.Stage.RECORDING, BackgroundCameraService.Companion.Stage.SAVING)
-        start.isEnabled = !active && !recoveringContinuous; stop.isEnabled = active && state.stage != BackgroundCameraService.Companion.Stage.SAVING
+        start.isEnabled = !active; stop.isEnabled = active && state.stage != BackgroundCameraService.Companion.Stage.SAVING
         start.alpha = if (start.isEnabled) 1f else 0.45f
         stop.alpha = if (stop.isEnabled) 1f else 0.45f
         front.isEnabled = !active; audio.isEnabled = !active; timer.isEnabled = !active && !continuous.isChecked; email.isEnabled = !active
@@ -199,6 +201,8 @@ class BackgroundCameraActivity : AppCompatActivity() {
         continuous.isEnabled = !active; segmentLength.isEnabled = !active && continuous.isChecked
         retryNetwork.isEnabled = !active && continuous.isChecked
         minutes.isEnabled = !active && timer.isChecked && !continuous.isChecked; recipients.isEnabled = !active && email.isChecked
+        if (active) validationMessage = null
+        validationMessage?.let { status.setText(it); lastState = state; return }
         if (state.sessionId.isNotBlank()) {
             status.text = if (active) getString(R.string.continuous_recording, state.segmentNumber)
                 else getString(when (state.stopReason) {
@@ -220,6 +224,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
         lastState = state
     }
     override fun onSaveInstanceState(outState: Bundle) {
+        validationMessage?.let { outState.putInt("validation_message", it) }
         outState.putBoolean("continuous", continuous.isChecked)
         outState.putInt("segment_seconds", segmentSeconds())
         outState.putBoolean("retry_network", retryNetwork.isChecked)
@@ -232,12 +237,12 @@ class BackgroundCameraActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
     }
     private fun requestAndStart() {
-        if (recoveringContinuous) return
+        validationMessage = null
         val duration = if (continuous.isChecked) 0L else if (timer.isChecked) DeliveryPolicy.duration(minutes.text.toString()) else 0L
-        if (duration == null) { minutes.error = getString(R.string.camera_minutes_invalid); status.setText(R.string.camera_minutes_invalid); return }
+        if (duration == null) { minutes.error = getString(R.string.camera_minutes_invalid); showValidation(R.string.camera_minutes_invalid); return }
         val to = if (email.isChecked) recipients.confirmedRecipients() else ""
-        if (to == null) { status.setText(R.string.camera_recipients_invalid); return }
-        if (email.isChecked && SmtpSettings(this).load() == null) { status.setText(R.string.mail_config); return }
+        if (to == null) { showValidation(R.string.camera_recipients_invalid); return }
+        if (email.isChecked && SmtpSettings(this).load() == null) { showValidation(R.string.mail_config); return }
         val permissions = mutableListOf(Manifest.permission.CAMERA)
         if (audio.isChecked) permissions.add(Manifest.permission.RECORD_AUDIO)
         if (Build.VERSION.SDK_INT >= 33 && !notificationAsked) permissions.add(Manifest.permission.POST_NOTIFICATIONS)
@@ -261,7 +266,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
                                     getSharedPreferences("camera_options", MODE_PRIVATE).edit().remove("recipient").commit()
                                 }.isSuccess
                             }
-                            if (!saved) status.setText(R.string.smtp_store_failed)
+                            if (!saved) showValidation(R.string.smtp_store_failed)
                             else if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) beginCapture(duration, to)
                         }
                     }.create()
@@ -281,7 +286,11 @@ class BackgroundCameraActivity : AppCompatActivity() {
                 .putExtra(BackgroundCameraService.EXTRA_RETRY, retryNetwork.isChecked)
                 .putExtra(BackgroundCameraService.EXTRA_DURATION, duration).putExtra(BackgroundCameraService.EXTRA_RECIPIENT, to)
                 .putExtra(BackgroundCameraService.EXTRA_QUALITY, selectedQuality().key))
-        }.onFailure { status.setText(R.string.camera_failed) }
+        }.onFailure { showValidation(R.string.camera_failed) }
+    }
+    private fun showValidation(message: Int) {
+        validationMessage = message
+        status.setText(message)
     }
     private fun segmentSeconds() = SegmentTimeline.DURATIONS[segmentLength.selectedItemPosition.coerceIn(0, 3)]
     private fun refreshContinuous() {
@@ -306,7 +315,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
             pendingStart = false
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                 (!audio.isChecked || ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) requestAndStart()
-            else status.setText(R.string.camera_permission_denied)
+            else showValidation(R.string.camera_permission_denied)
         }
     }
 }
