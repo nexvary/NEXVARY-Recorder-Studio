@@ -189,7 +189,11 @@ class BackgroundCameraActivity : AppCompatActivity() {
         minutes.isEnabled = !active && timer.isChecked && !continuous.isChecked; recipients.isEnabled = !active && email.isChecked
         if (state.sessionId.isNotBlank()) {
             status.text = if (active) getString(R.string.continuous_recording, state.segmentNumber)
-                else getString(if (state.stopReason == "STOPPED") R.string.continuous_stopped else R.string.continuous_interrupted, state.segmentNumber)
+                else getString(when (state.stopReason) {
+                    "STOPPED" -> R.string.continuous_stopped
+                    "LOW_STORAGE" -> R.string.continuous_low_storage
+                    else -> R.string.continuous_interrupted
+                }, state.segmentNumber)
             lastState = state; return
         }
         if (active || state != lastState) status.text = when (state.stage) {

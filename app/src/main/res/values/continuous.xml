@@ -16,4 +16,5 @@
     <string name="continuous_counts">Saved: %1$d • Mail server accepted: %2$d • Pending: %3$d • Review: %4$d</string>
     <string name="continuous_recovered">An earlier session was interrupted. Saved clips were recovered; the camera was not restarted.</string>
     <string name="continuous_status_failed">Could not read saved clip status. Check the outbox and recordings.</string>
+    <string name="continuous_low_storage">Recording stopped: low storage. %1$d clips finalized. Free space after reviewing saved files; pending clips were retained.</string>
 </resources>

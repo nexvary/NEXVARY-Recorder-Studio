@@ -157,10 +157,10 @@ class ContinuousRecordingTest {
     }
     @Test fun durableQueueIsIdempotentAndRetainsUnsentFileAfterRestartAndUncertainData() {
         val root = File(context.cacheDir, "continuous-queue-${System.nanoTime()}").apply { mkdirs() }
-        val private = File(root, "private").apply { mkdirs() }
+        val privateDir = File(root, "private").apply { mkdirs() }
         val movies = File(root, "movies").apply { mkdirs() }
         val app = object : ContextWrapper(context) {
-            override fun getNoBackupFilesDir() = private
+            override fun getNoBackupFilesDir() = privateDir
             override fun getExternalFilesDir(type: String?) = movies
         }
         try {

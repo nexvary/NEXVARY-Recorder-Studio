@@ -23,6 +23,7 @@ class ContinuousSessionStore(context: Context) {
         require(seconds in SegmentTimeline.DURATIONS)
         require(recipient.isBlank() || MailRecipients.parse(recipient) != null)
         val id = UUID.randomUUID().toString()
+        openSessionId = id
         write(File(dir, "$id.json"), JSONObject().put("id", id).put("created", System.currentTimeMillis())
             .put("seconds", seconds).put("recipient", recipient).put("retry", retry).put("state", "RECORDING"))
         return id
@@ -48,6 +49,7 @@ class ContinuousSessionStore(context: Context) {
     fun stop(id: String, reason: String) {
         val file = File(dir, "$id.json")
         write(file, read(file).put("state", reason).put("stopped", System.currentTimeMillis()))
+        if (openSessionId == id) openSessionId = null
     }
     private fun validateAndQueue(entry: File) {
         val json = read(entry)
@@ -82,10 +84,10 @@ class ContinuousSessionStore(context: Context) {
     }
     /** Run off UI thread before starting a new session. Active capture must never be recovered. */
     fun recover(activeSession: String? = null) {
-        dir.listFiles().orEmpty().filter { it.extension == "json" && it.nameWithoutExtension != activeSession }.forEach {
+        dir.listFiles().orEmpty().filter { it.extension == "json" && it.nameWithoutExtension != activeSession && it.nameWithoutExtension != openSessionId }.forEach {
             runCatching { val j = read(it); if (j.optString("state") == "RECORDING") write(it, j.put("state", "INTERRUPTED")) }
         }
-        dir.listFiles().orEmpty().filter { it.extension == "segment" && !it.name.startsWith("$activeSession-") }.forEach {
+        dir.listFiles().orEmpty().filter { it.extension == "segment" && !it.name.startsWith("$activeSession-") && !it.name.startsWith("$openSessionId-") }.forEach {
             runCatching {
                 val json = read(it)
                 val jobId = json.optString("job")
@@ -119,5 +121,8 @@ class ContinuousSessionStore(context: Context) {
         try { stream.write(json.toString().toByteArray(Charsets.UTF_8)); atomic.finishWrite(stream) }
         catch (e: Exception) { atomic.failWrite(stream); throw e }
     }
-    companion object { val executor = Executors.newSingleThreadExecutor() }
+    companion object {
+        @Volatile private var openSessionId: String? = null
+        val executor = Executors.newSingleThreadExecutor()
+    }
 }
