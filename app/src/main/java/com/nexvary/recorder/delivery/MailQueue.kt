@@ -13,7 +13,7 @@ class MailQueue(private val context: Context) {
     private val dir = File(context.noBackupFilesDir, "mail_outbox").apply { check(isDirectory || mkdirs() || isDirectory) }
     enum class State { QUEUED, SENDING, RETRY, SENT, CONFIG, AUTH, TLS, LIMIT, MISSING, COPY_FAILED, FAILED, UNCERTAIN, CANCELLED, REVIEW }
     data class Job(val id: String, val name: String, val recipient: String, val original: String,
-        val created: Long, val state: State, val attempts: Int = 0, val digest: String = "", val approved: Boolean = true)
+        val created: Long, val state: State, val attempts: Int = 0, val digest: String = "", val approved: Boolean = true, val automaticRetry: Boolean = false)
     private fun file(id: String, extension: String): File {
         require(UUID.fromString(id).toString() == id)
         return File(dir, "$id.$extension")
@@ -28,22 +28,29 @@ class MailQueue(private val context: Context) {
         val state = if (!approved && savedState == State.SENDING) State.UNCERTAIN
             else if (!approved && savedState in listOf(State.QUEUED, State.RETRY)) State.REVIEW else savedState
         Job(j.getString("id"), j.getString("name"), j.getString("recipient"), j.getString("original"),
-            j.getLong("created"), state, j.optInt("attempts"), j.optString("digest"), approved)
+            j.getLong("created"), state, j.optInt("attempts"), j.optString("digest"), approved, j.optBoolean("automaticRetry", false))
     }.getOrNull()
     private fun write(job: Job) {
         val json = JSONObject().put("id", job.id).put("name", job.name).put("recipient", job.recipient)
             .put("original", job.original).put("created", job.created).put("state", job.state.name)
-            .put("attempts", job.attempts).put("digest", job.digest).put("approved", job.approved).toString()
+            .put("attempts", job.attempts).put("digest", job.digest).put("approved", job.approved).put("automaticRetry", job.automaticRetry).toString()
         val atom = AtomicFile(file(job.id, "json")); val out = atom.startWrite()
         try { out.write(json.toByteArray(Charsets.UTF_8)); atom.finishWrite(out) }
         catch (e: Exception) { atom.failWrite(out); throw e }
     }
-    fun enqueue(source: File, recipient: String, limitMiB: Int): Job = synchronized(LOCK) {
+    fun enqueue(source: File, recipient: String, limitMiB: Int, idempotencyId: String? = null,
+        automaticRetry: Boolean = false): Job = synchronized(LOCK) {
         val canonical = requireNotNull(MailRecipients.canonical(recipient))
         val allowed = File(context.getExternalFilesDir(android.os.Environment.DIRECTORY_MOVIES)!!, source.name)
         require(source.canonicalFile == allowed.canonicalFile && source.isFile)
-        val job = Job(UUID.randomUUID().toString(), source.name, canonical, source.canonicalPath,
-            System.currentTimeMillis(), State.QUEUED)
+        val id = idempotencyId ?: UUID.randomUUID().toString()
+        val existing = get(id)
+        if (existing != null) {
+            require(existing.original == source.canonicalPath && existing.recipient == canonical)
+            return@synchronized if (existing.state == State.COPY_FAILED) prepare(existing, limitMiB).also(::write) else existing
+        }
+        val job = Job(id, source.name, canonical, source.canonicalPath,
+            System.currentTimeMillis(), State.QUEUED, automaticRetry = automaticRetry)
         prepare(job, limitMiB).also(::write)
     }
     private fun prepare(job: Job, limit: Int): Job {

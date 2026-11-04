@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">Continuous Emergency Recording</string>
+    <string name="continuous_enable">Keep recording until I stop the session</string>
+    <string name="continuous_duration">Target clip duration (cuts at the next keyframe)</string>
+    <string name="continuous_30">30 seconds</string>
+    <string name="continuous_60">1 minute (default)</string>
+    <string name="continuous_120">2 minutes</string>
+    <string name="continuous_300">5 minutes</string>
+    <string name="continuous_retry">Retry safe failures when internet returns</string>
+    <string name="continuous_policy">Enable automatic email below to send each completed clip while recording continues. The session timer is ignored. Uses battery, mobile data and storage; recording stops when space is low. Originals remain on this device. SMTP acceptance does not confirm inbox delivery. Uncertain sends need review to avoid duplicates.</string>
+    <string name="continuous_recovering">Checking saved sessions…</string>
+    <string name="continuous_recording">Continuous recording • current clip %1$d</string>
+    <string name="continuous_stopped">Session ended • %1$d clips saved. Check the outbox for sending status.</string>
+    <string name="continuous_interrupted">Recording stopped unexpectedly • %1$d clips finalized. Check saved files and the outbox.</string>
+    <string name="continuous_counts">Saved: %1$d • Mail server accepted: %2$d • Pending: %3$d • Review: %4$d</string>
+    <string name="continuous_recovered">An earlier session was interrupted. Saved clips were recovered; the camera was not restarted.</string>
+</resources>
