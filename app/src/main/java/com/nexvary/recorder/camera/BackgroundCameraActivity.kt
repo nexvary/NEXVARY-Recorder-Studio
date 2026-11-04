@@ -280,7 +280,8 @@ class BackgroundCameraActivity : AppCompatActivity() {
                 val counts = info.first
                 continuousStatus.text = getString(R.string.continuous_counts, counts[0], counts[1], counts[2], counts[3]) +
                     if (info.second) "\n" + getString(R.string.continuous_recovered) else ""
-            } finally { refreshingContinuous = false }
+            } catch (_: Exception) { continuousStatus.setText(R.string.continuous_status_failed) }
+            finally { refreshingContinuous = false }
         }
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

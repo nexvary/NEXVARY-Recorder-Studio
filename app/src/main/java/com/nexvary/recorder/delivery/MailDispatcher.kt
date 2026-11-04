@@ -35,6 +35,7 @@ class MailDispatcher(private val queue: MailQueue, private val sender: Recording
                 causes(e).any { it is SSLException } -> MailQueue.State.TLS
                 e is SendFailedException -> MailQueue.State.FAILED
                 e is IllegalStateException -> MailQueue.State.MISSING
+                job.continuousJob && !job.automaticRetry -> MailQueue.State.FAILED
                 (job.automaticRetry || job.attempts < 3) -> MailQueue.State.RETRY
                 else -> MailQueue.State.FAILED
             }

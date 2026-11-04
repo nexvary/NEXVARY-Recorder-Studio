@@ -86,7 +86,11 @@ class ContinuousSessionStore(context: Context) {
             runCatching { val j = read(it); if (j.optString("state") == "RECORDING") write(it, j.put("state", "INTERRUPTED")) }
         }
         dir.listFiles().orEmpty().filter { it.extension == "segment" && !it.name.startsWith("$activeSession-") }.forEach {
-            runCatching { validateAndQueue(it) }
+            runCatching {
+                val json = read(it)
+                val jobId = json.optString("job")
+                if (jobId.isBlank() || MailQueue(context).get(jobId) == null) validateAndQueue(it)
+            }
         }
         MailWorker.reconcile(context)
     }

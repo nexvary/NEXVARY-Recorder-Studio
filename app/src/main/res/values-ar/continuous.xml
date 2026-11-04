@@ -15,4 +15,5 @@
     <string name="continuous_interrupted">توقف التسجيل بسبب خطأ أو قيد بالنظام • اكتمل %1$d مقاطع. راجع الملفات وقائمة الإرسال.</string>
     <string name="continuous_counts">محفوظة: %1$d • قبلها خادم البريد: %2$d • معلقة: %3$d • تحتاج مراجعة: %4$d</string>
     <string name="continuous_recovered">توجد جلسة سابقة توقفت. تمت مراجعة المقاطع المحفوظة؛ لم تتم إعادة تشغيل الكاميرا تلقائيًا.</string>
+    <string name="continuous_status_failed">تعذر قراءة حالة المقاطع. راجع قائمة الإرسال والتسجيلات.</string>
 </resources>

@@ -13,7 +13,7 @@ class MailQueue(private val context: Context) {
     private val dir = File(context.noBackupFilesDir, "mail_outbox").apply { check(isDirectory || mkdirs() || isDirectory) }
     enum class State { QUEUED, SENDING, RETRY, SENT, CONFIG, AUTH, TLS, LIMIT, MISSING, COPY_FAILED, FAILED, UNCERTAIN, CANCELLED, REVIEW }
     data class Job(val id: String, val name: String, val recipient: String, val original: String,
-        val created: Long, val state: State, val attempts: Int = 0, val digest: String = "", val approved: Boolean = true, val automaticRetry: Boolean = false)
+        val created: Long, val state: State, val attempts: Int = 0, val digest: String = "", val approved: Boolean = true, val automaticRetry: Boolean = false, val continuousJob: Boolean = false)
     private fun file(id: String, extension: String): File {
         require(UUID.fromString(id).toString() == id)
         return File(dir, "$id.$extension")
@@ -28,12 +28,12 @@ class MailQueue(private val context: Context) {
         val state = if (!approved && savedState == State.SENDING) State.UNCERTAIN
             else if (!approved && savedState in listOf(State.QUEUED, State.RETRY)) State.REVIEW else savedState
         Job(j.getString("id"), j.getString("name"), j.getString("recipient"), j.getString("original"),
-            j.getLong("created"), state, j.optInt("attempts"), j.optString("digest"), approved, j.optBoolean("automaticRetry", false))
+            j.getLong("created"), state, j.optInt("attempts"), j.optString("digest"), approved, j.optBoolean("automaticRetry", false), j.optBoolean("continuousJob", false))
     }.getOrNull()
     private fun write(job: Job) {
         val json = JSONObject().put("id", job.id).put("name", job.name).put("recipient", job.recipient)
             .put("original", job.original).put("created", job.created).put("state", job.state.name)
-            .put("attempts", job.attempts).put("digest", job.digest).put("approved", job.approved).put("automaticRetry", job.automaticRetry).toString()
+            .put("attempts", job.attempts).put("digest", job.digest).put("approved", job.approved).put("automaticRetry", job.automaticRetry).put("continuousJob", job.continuousJob).toString()
         val atom = AtomicFile(file(job.id, "json")); val out = atom.startWrite()
         try { out.write(json.toByteArray(Charsets.UTF_8)); atom.finishWrite(out) }
         catch (e: Exception) { atom.failWrite(out); throw e }
@@ -50,7 +50,7 @@ class MailQueue(private val context: Context) {
             return@synchronized if (existing.state == State.COPY_FAILED) prepare(existing, limitMiB).also(::write) else existing
         }
         val job = Job(id, source.name, canonical, source.canonicalPath,
-            System.currentTimeMillis(), State.QUEUED, automaticRetry = automaticRetry)
+            System.currentTimeMillis(), State.QUEUED, automaticRetry = automaticRetry, continuousJob = idempotencyId != null)
         prepare(job, limitMiB).also(::write)
     }
     private fun prepare(job: Job, limit: Int): Job {

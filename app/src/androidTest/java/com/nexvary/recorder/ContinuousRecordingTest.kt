@@ -33,6 +33,8 @@ class ContinuousRecordingTest {
         val seconds = if (long) 60 else 30
         val runMs = if (long) 900_000L else 65_000L
         instrumentation.uiAutomation.executeShellCommand("pm grant ${context.packageName} ${Manifest.permission.CAMERA}").close()
+        val previousProfile = SmtpSettings(context).load()
+        SmtpSettings(context).clear()
         val idsBefore = MailQueue(context).jobs().map { it.id }.toSet()
         var id = ""
         val scenario = ActivityScenario.launch(BackgroundCameraActivity::class.java)
@@ -94,6 +96,15 @@ class ContinuousRecordingTest {
                     assertTrue(file.length() > 0)
                 } finally { extractor.release() }
             }
+            val journalDir = File(context.noBackupFilesDir, "continuous_sessions")
+            val journals = journalDir.listFiles().orEmpty().filter { it.name.startsWith("$id-") && it.extension == "segment" }
+                .map { org.json.JSONObject(it.readText()) }.sortedBy { it.getInt("index") }
+            val gaps = journals.zipWithNext { a, b -> b.getLong("firstVideoUs") - a.getLong("lastVideoUs") }
+            assertTrue("Every boundary must advance presentation time", gaps.all { it > 0 })
+            val result = org.json.JSONObject().put("emulator", true).put("session", id).put("targetSeconds", seconds)
+                .put("elapsedMs", runMs).put("clips", files.size).put("boundaryDeltasUs", org.json.JSONArray(gaps))
+                .put("maxBoundaryDeltaUs", gaps.maxOrNull() ?: 0).put("physicalVerification", "PENDING")
+            File(journalDir, "$id.metrics").writeText(result.toString(2))
             val jobs = queue.jobs().filter { it.id !in idsBefore }
             assertEquals(files.size, jobs.size)
             val before = jobs.map { it.id }.toSet()
@@ -103,11 +114,45 @@ class ContinuousRecordingTest {
         } finally {
             context.startService(Intent(context, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_STOP))
             scenario.close()
+            if (previousProfile != null) SmtpSettings(context).save(previousProfile) else SmtpSettings(context).clear()
             if (id.isNotBlank()) {
                 val dir = File(context.noBackupFilesDir, "continuous_sessions")
                 val evidence = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "continuous-$id").apply { mkdirs() }
                 dir.listFiles().orEmpty().filter { it.name.startsWith(id) }.forEach { it.copyTo(File(evidence, it.name), true) }
             }
+        }
+    }
+    @Test fun microphoneTrackAndShortFinalClipSurviveExplicitStop() {
+        Assume.assumeTrue(Build.HARDWARE in listOf("ranchu", "goldfish"))
+        for (permission in listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO))
+            instrumentation.uiAutomation.executeShellCommand("pm grant ${context.packageName} $permission").close()
+        val scenario = ActivityScenario.launch(BackgroundCameraActivity::class.java)
+        var id = ""
+        try {
+            scenario.onActivity {
+                ContextCompat.startForegroundService(it, Intent(it, BackgroundCameraService::class.java)
+                    .setAction(BackgroundCameraService.ACTION_START)
+                    .putExtra(BackgroundCameraService.EXTRA_CONTINUOUS, true)
+                    .putExtra(BackgroundCameraService.EXTRA_AUDIO, true))
+            }
+            await { BackgroundCameraService.state.stage == BackgroundCameraService.Companion.Stage.RECORDING }
+            id = requireNotNull(BackgroundCameraService.activeContinuousSession)
+            Thread.sleep(5000)
+            scenario.onActivity { it.startService(Intent(it, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_STOP)) }
+            await { BackgroundCameraService.activeContinuousSession == null }
+            ContinuousSessionStore.executor.submit {}.get()
+            assertEquals("STOPPED", BackgroundCameraService.state.stopReason)
+            val file = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)!!.listFiles().orEmpty()
+                .single { it.name.startsWith("NEXVARY_${id}_") && it.extension == "mp4" }
+            val extractor = MediaExtractor()
+            try {
+                extractor.setDataSource(file.absolutePath)
+                val types = (0 until extractor.trackCount).map { extractor.getTrackFormat(it).getString("mime").orEmpty() }
+                assertTrue(types.any { it.startsWith("audio/") }); assertTrue(types.any { it.startsWith("video/") })
+            } finally { extractor.release() }
+        } finally {
+            context.startService(Intent(context, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_STOP))
+            scenario.close()
         }
     }
     @Test fun durableQueueIsIdempotentAndRetainsUnsentFileAfterRestartAndUncertainData() {
