@@ -218,7 +218,7 @@ class BackgroundCameraService : Service() {
             val size = quality.chooseSize(sizes.map { CameraQuality.FrameSize(it.width, it.height) }) ?: error("codec_surface_unavailable")
             val sessionId = continuousStore.create(segmentSeconds, recipient, retryNetwork)
             continuousId = sessionId; activeContinuousSession = sessionId
-            val encoder = SegmentedEncoder(handler, quality, size, quality.fps, audio, segmentSeconds,
+            val encoder = SegmentedEncoder(this, handler, quality, size, quality.fps, audio, segmentSeconds,
                 characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0,
                 newFile = { index, pts ->
                     continuousStore.open(sessionId, index, pts).also {
@@ -232,6 +232,9 @@ class BackgroundCameraService : Service() {
                 failure = { reason -> continuousStopReason = reason; finishRecording() })
             segmented = encoder
             val surface = encoder.prepare()
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                continuousStopReason = "PERMISSION_REVOKED"; finishRecording(); return
+            }
             openPending = true
             manager.openCamera(id, object : CameraDevice.StateCallback() {
                 override fun onOpened(camera: CameraDevice) {

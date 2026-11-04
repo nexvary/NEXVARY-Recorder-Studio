@@ -71,8 +71,14 @@ class ContinuousRecordingTest {
             assertEquals(MailQueue.State.SENT, MailDispatcher(queue, fake).deliver(first.id, profile))
             assertEquals(BackgroundCameraService.Companion.Stage.RECORDING, BackgroundCameraService.state.stage)
             assertEquals(MailQueue.State.SENT, MailDispatcher(queue, fake).deliver(first.id, profile)); assertEquals(1, accepted)
+            scenario.moveToState(androidx.lifecycle.Lifecycle.State.CREATED)
+            instrumentation.uiAutomation.executeShellCommand("input keyevent KEYCODE_SLEEP").close()
             val remaining = runMs - (android.os.SystemClock.elapsedRealtime() - startedAt)
             if (remaining > 0) Thread.sleep(remaining)
+            assertEquals(BackgroundCameraService.Companion.Stage.RECORDING, BackgroundCameraService.state.stage)
+            instrumentation.uiAutomation.executeShellCommand("input keyevent KEYCODE_WAKEUP").close()
+            instrumentation.uiAutomation.executeShellCommand("wm dismiss-keyguard").close()
+            scenario.moveToState(androidx.lifecycle.Lifecycle.State.RESUMED)
             scenario.onActivity { it.startService(Intent(it, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_STOP)) }
             await { BackgroundCameraService.activeContinuousSession == null }
             ContinuousSessionStore.executor.submit {}.get()
@@ -80,6 +86,7 @@ class ContinuousRecordingTest {
             val files = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)!!.listFiles().orEmpty()
                 .filter { it.name.startsWith("NEXVARY_${id}_") && it.extension == "mp4" }.sortedBy { it.name }
             assertTrue("Expected multiple independent MP4 files", files.size >= if (long) 15 else 3)
+            var maxIntraClipDeltaUs = 0L
             files.forEach { file ->
                 val extractor = MediaExtractor()
                 try {
@@ -90,7 +97,9 @@ class ContinuousRecordingTest {
                     assertTrue(extractor.sampleTime >= 0)
                     var previous = -1L
                     while (extractor.sampleTime >= 0) {
-                        assertTrue(extractor.sampleTime > previous); previous = extractor.sampleTime
+                        assertTrue(extractor.sampleTime > previous)
+                        if (previous >= 0) maxIntraClipDeltaUs = maxOf(maxIntraClipDeltaUs, extractor.sampleTime - previous)
+                        previous = extractor.sampleTime
                         if (!extractor.advance()) break
                     }
                     assertTrue(file.length() > 0)
@@ -103,7 +112,7 @@ class ContinuousRecordingTest {
             assertTrue("Every boundary must advance presentation time", gaps.all { it > 0 })
             val result = org.json.JSONObject().put("emulator", true).put("session", id).put("targetSeconds", seconds)
                 .put("elapsedMs", runMs).put("clips", files.size).put("boundaryDeltasUs", org.json.JSONArray(gaps))
-                .put("maxBoundaryDeltaUs", gaps.maxOrNull() ?: 0).put("physicalVerification", "PENDING")
+                .put("maxBoundaryDeltaUs", gaps.maxOrNull() ?: 0).put("maxIntraClipDeltaUs", maxIntraClipDeltaUs).put("physicalVerification", "PENDING")
             File(journalDir, "$id.metrics").writeText(result.toString(2))
             val jobs = queue.jobs().filter { it.id !in idsBefore }
             assertEquals(files.size, jobs.size)
@@ -112,6 +121,8 @@ class ContinuousRecordingTest {
             assertEquals(before, queue.jobs().filter { it.id !in idsBefore }.map { it.id }.toSet())
             // No actual gap claim: raw segment PTS journals are exported by the CI workflow.
         } finally {
+            instrumentation.uiAutomation.executeShellCommand("input keyevent KEYCODE_WAKEUP").close()
+            instrumentation.uiAutomation.executeShellCommand("wm dismiss-keyguard").close()
             context.startService(Intent(context, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_STOP))
             scenario.close()
             if (previousProfile != null) SmtpSettings(context).save(previousProfile) else SmtpSettings(context).clear()
@@ -181,4 +192,37 @@ class ContinuousRecordingTest {
             assertEquals(MailQueue.State.UNCERTAIN, MailQueue(app).get(key)?.state)
         } finally { root.deleteRecursively() }
     }
+    @Test fun safeFailuresRemainRetryableAfterMultipleAttemptsAndDoNotBlockOtherClips() {
+        val root = File(context.cacheDir, "continuous-retry-${System.nanoTime()}").apply { mkdirs() }
+        val privateDir = File(root, "private").apply { mkdirs() }
+        val movies = File(root, "movies").apply { mkdirs() }
+        val app = object : ContextWrapper(context) {
+            override fun getNoBackupFilesDir() = privateDir
+            override fun getExternalFilesDir(type: String?) = movies
+        }
+        try {
+            val source = File(movies, "clip.mp4").apply { writeBytes(ByteArray(1024)) }
+            val session = java.util.UUID.randomUUID().toString()
+            val queue = MailQueue(app)
+            val first = queue.enqueue(source, "fixture@example.invalid", 25, SegmentTimeline.jobId(session, 1), true)
+            val disabled = queue.enqueue(source, "fixture@example.invalid", 25, SegmentTimeline.jobId(session, 2), false)
+            val third = queue.enqueue(source, "fixture@example.invalid", 25, SegmentTimeline.jobId(session, 3), true)
+            val profile = SmtpProfile("smtp.example.invalid", 587, false, "fixture", "fixture", "sender@example.invalid", 25)
+            val fail = object : RecordingMailTransport {
+                override fun send(profile: SmtpProfile, job: MailQueue.Job, file: File, beforeData: () -> Unit) { throw java.net.ConnectException("synthetic offline") }
+                override fun close() = Unit
+            }
+            repeat(10) { assertEquals(MailQueue.State.RETRY, MailDispatcher(MailQueue(app), fail).deliver(first.id, profile)) }
+            assertEquals(MailQueue.State.FAILED, MailDispatcher(queue, fail).deliver(disabled.id, profile))
+            val success = object : RecordingMailTransport {
+                override fun send(profile: SmtpProfile, job: MailQueue.Job, file: File, beforeData: () -> Unit) { beforeData() }
+                override fun close() = Unit
+            }
+            assertEquals(MailQueue.State.SENT, MailDispatcher(queue, success).deliver(third.id, profile))
+            assertEquals(MailQueue.State.RETRY, queue.get(first.id)?.state)
+            assertTrue(queue.attachment(first.id).exists()); assertTrue(queue.attachment(disabled.id).exists())
+            assertTrue(source.exists())
+        } finally { root.deleteRecursively() }
+    }
+
 }

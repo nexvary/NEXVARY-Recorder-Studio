@@ -13,7 +13,7 @@ import java.util.PriorityQueue
  * Audio/video are ordered by a cross-track watermark before selecting a keyframe boundary.
  */
 class SegmentedEncoder(
-    private val handler: Handler, private val quality: CameraQuality,
+    private val context: android.content.Context, private val handler: Handler, private val quality: CameraQuality,
     private val size: CameraQuality.FrameSize, private val fps: Int, private val audio: Boolean,
     seconds: Int, private val orientation: Int,
     private val newFile: (Int, Long) -> File,
@@ -67,6 +67,7 @@ class SegmentedEncoder(
         codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
         val surface = codec.createInputSurface(); inputSurface = surface
         if (audio) {
+            check(androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED)
             val rate = quality.audioSampleRate
             val min = AudioRecord.getMinBufferSize(rate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
             check(min > 0)
