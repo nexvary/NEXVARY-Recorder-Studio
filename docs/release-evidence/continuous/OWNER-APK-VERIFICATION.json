@@ -1,0 +1,29 @@
+{
+  "current": {
+    "package": "com.nexvary.recorder",
+    "versionCode": 26,
+    "versionName": "0.13.0",
+    "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+    "debuggable": false,
+    "sha256": "a9e671ecec94e98e4844153cc73a0305fa8afa1b880b8a44555c3f57957bb1b6"
+  },
+  "previous": {
+    "package": "com.nexvary.recorder",
+    "versionCode": 25,
+    "versionName": "0.12.4",
+    "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+    "debuggable": false,
+    "sha256": "33aa49e36be135009049531ef54c8f023592abf1d5a18f305b9ea1c862e9eba1"
+  },
+  "sameSigningIdentity": true,
+  "physicalInstall": "PENDING",
+  "sourceCommit": "7397d06da85996dcb5a9e90f5c0742101a2b4d32",
+  "releaseBuildRun": 41969347438,
+  "publicToolsRun": 41999388553,
+  "bundletoolVersion": "1.18.3",
+  "bundletoolSha256": "a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29",
+  "signatureScheme": "v3",
+  "zipIntegrity": "PASS",
+  "privatePasswordsAbsentFromApk": true,
+  "bytes": 16841360
+}
