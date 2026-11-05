@@ -17,7 +17,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.nexvary.recorder.camera.*
 import com.nexvary.recorder.family.*
 import com.nexvary.recorder.privacy.*
-import org.hamcrest.Matchers.not
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.runner.RunWith
@@ -112,9 +111,14 @@ class LauncherAppearanceTest {
     }
     @Test fun configuredParentPinProtectsAppearanceSettings() {
         GuardianGate.create(app, "135790"); GuardianGate.lock()
-        ActivityScenario.launch(LauncherAppearanceActivity::class.java).use {
+        ActivityScenario.launch(LauncherAppearanceActivity::class.java).use { scenario ->
             awaitUi(withId(R.id.fsGuardianPin))
-            onView(withId(R.id.launcherApply)).check(matches(not(isDisplayed())))
+            // The PIN dialog is the focused Espresso root. Inspect the protected
+            // activity root directly rather than searching for it inside the dialog.
+            scenario.onActivity {
+                assertEquals(android.view.View.INVISIBLE, it.findViewById<android.view.View>(android.R.id.content).visibility)
+                assertFalse(GuardianGate.unlocked())
+            }
             onView(withId(android.R.id.button2)).perform(click())
             assertEquals(LauncherAppearance.Style.ORIGINAL, appearance.current())
         }
