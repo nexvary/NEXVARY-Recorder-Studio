@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="5" failures="0" errors="0" skipped="0" time="19.569" timestamp="2026-11-05T09:43:22" hostname="localhost">
+  <testsuite name="com.nexvary.recorder.LauncherAppearanceTest" tests="5" failures="0" errors="0" skipped="0" time="18.213" timestamp="2026-11-05T09:43:22" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 10" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="configuredParentPinProtectsAppearanceSettings" classname="com.nexvary.recorder.LauncherAppearanceTest" time="3.518" />
+    <testcase name="realSelectionCancellationConfirmationAndRotationPreserveTheChoice" classname="com.nexvary.recorder.LauncherAppearanceTest" time="4.96" />
+    <testcase name="aliasesHaveIndependentLabelsPersistAndAlwaysKeepOneLaunchableEntry" classname="com.nexvary.recorder.LauncherAppearanceTest" time="4.394" />
+    <testcase name="concurrentControllersCannotLeaveAllAliasesDisabled" classname="com.nexvary.recorder.LauncherAppearanceTest" time="0.257" />
+    <testcase name="launcherChangesDoNotKillTheLiveCameraOrChangeItsSession" classname="com.nexvary.recorder.LauncherAppearanceTest" time="5.084" />
+  </testsuite>
+</testsuites>

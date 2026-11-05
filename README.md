@@ -75,3 +75,7 @@ RootEncoder by Pedro Sánchez is used for RTMP/RTMPS streaming from a file. Root
 ## Continuous emergency recording candidate (0.13.0)
 
 A draft implementation on `feature/continuous-emergency-recording` adds one user-started camera session with keyframe-aligned MP4 segments, independent approved SMTP delivery, durable recovery and explicit server-acceptance status. Accepted CI verifies 54 JVM tests, 95 instrumentation tests on each of APIs 33/34/35, nine Release mail cases and an actual 15-minute emulator session producing 15 clips. Physical phone and external delivery acceptance remain pending. See [architecture and rollback](docs/CONTINUOUS_RECORDING.md), [hosting decision](docs/CONTINUOUS_HOSTING_ASSESSMENT.md), and [verification record](docs/CONTINUOUS_TEST_RESULTS.md). No paid server or production API activation is required for direct SMTP mode.
+
+## Optional launcher appearance candidate (0.13.1)
+
+Settings → Appearance → App name and icon offers Guardian, Clock and Calendar shortcut styles, with confirmation and the configured parent PIN. Android app identity, recording notifications and privacy indicators remain visible; this is not uninstall protection or guaranteed concealment. See [acceptance and limits](docs/LAUNCHER_PRIVACY_ACCEPTANCE.md).

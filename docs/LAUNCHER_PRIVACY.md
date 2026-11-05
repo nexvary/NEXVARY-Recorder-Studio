@@ -1,5 +1,7 @@
 # Optional launcher appearance — engineering candidate 0.13.1
 
+Current emulator acceptance, owner APK verification and remaining phone/OEM checks: [LAUNCHER_PRIVACY_ACCEPTANCE.md](LAUNCHER_PRIVACY_ACCEPTANCE.md).
+
 The appearance settings offer three fixed, locally bundled launcher entries:
 Guardian, Clock and Calendar. They all open the existing Guardian main/child-mode
 entry point. These are shortcut labels/icons, not independent clock/calendar apps.

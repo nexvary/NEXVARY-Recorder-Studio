@@ -1,0 +1,240 @@
+{
+  "applicationSource": "be3658d1970660d896e4772545fed5e5b78e42df",
+  "finalTestSource": "df37350d23fa2bc9901cb043fd4c83d003747862",
+  "finalPushRun": 42008437177,
+  "finalPrRun": 42008445344,
+  "physicalDeviceVerified": false,
+  "files": {
+    "INITIAL-FOCUSED-API29-TESTS.xml": "1c5c121a754755712457472a28a0d755607d5341e3dbd015aa4065ca6bd108dc",
+    "INITIAL-FOCUSED-API35-TESTS.xml": "cd5bb4306b6427df7223cc0840e84431e6113871f033f7990d5631291815acf4",
+    "FOCUSED-API29-TESTS.xml": "cea304d7632296377854af4606d6307ab9d9382f386bc2b7f04545f03e8b52b9",
+    "FOCUSED-API35-TESTS.xml": "81904bb6a85cfbd6053a8172d3a94cc28a3e59e9989bd7494a4c87791d889c51",
+    "BASELINE-FULL-API33-TESTS.xml": "e08976801983868132df65c453a8c5de9e10c4e4b89f7675ff8126ad940137ea",
+    "BASELINE-FULL-API34-TESTS.xml": "cd987e61508f5f4354506a4dfca0839af08b305dd1225d6315f1269600d2c8a6",
+    "BASELINE-FULL-API35-TESTS.xml": "91cc6d1161393cc5337aa938a5cffbb0e99d5ef33189732b72f2b07e667894a3",
+    "INITIAL-PARALLEL-API34-TESTS.xml": "0dab78a9c10d9cc86fcb830342f2e7ea66dc14e27e9225e0cc01e321f251a2ab",
+    "FULL-API33-TESTS.xml": "e30f0539aed2bee1691c47d604d3a18df0a3d5c28c8478426ea108c11a42263b",
+    "FULL-API34-TESTS.xml": "ee7ca80c7654d575a7a30d0d89226cee1ed7d8451c2ed8eededeb3a22f7cc0cb",
+    "FULL-API35-TESTS.xml": "42c5a2d97354d9c13b238971b6f9ff72cfcdc03634252f17c344c30622dd708d",
+    "RELEASE-MAIL-TESTS.xml": "967f6c86d53112b4d48d3983fd42600c3fdf600a742f75d360913b986a6cd365",
+    "JVM-SUMMARY.html": "54644c17807e76e53dc6236a3edf9e689c747815dfbb1e13c1c9d597863a35da",
+    "LINT-DEBUG.xml": "fa1dd00566f2f97e11fa94e23ceb1bad8856e631b1b68eab219a1862ee50482f",
+    "AAB-CONTENT-COMPARISON.json": "f8c0d6ca02c023e514314b5648fd3c1f6cadfe121a589f77ef2841631f2d5c82",
+    "OWNER-APK-VERIFICATION.json": "2165d6944056e0e82eeec97ad63a4f23f125efc25d97bf863082be52a1492518"
+  },
+  "artifacts": [
+    {
+      "id": 13404170935,
+      "tag": "INITIAL-FOCUSED-API29",
+      "sha256": "f5cedb9e0c203dd31dbe116789e305bd793f571bdbc0720d65051b380eeeb36e",
+      "source": "2655539e363cbae5be831bc7043265dc792d779d",
+      "run": 42002944559,
+      "suite": {
+        "tests": "5",
+        "failures": "1",
+        "errors": "0",
+        "skipped": "0",
+        "time": "15.029",
+        "timestamp": "2026-11-05T09:36:16",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13404101151,
+      "tag": "INITIAL-FOCUSED-API35",
+      "sha256": "6863a1e749595ce2f71c053f7a90ec12d3026670fc64fb4d98a6c00e6876a6b3",
+      "source": "2655539e363cbae5be831bc7043265dc792d779d",
+      "run": 42002944559,
+      "suite": {
+        "tests": "5",
+        "failures": "1",
+        "errors": "0",
+        "skipped": "0",
+        "time": "19.127",
+        "timestamp": "2026-11-05T09:36:39",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13404142099,
+      "tag": "FOCUSED-API29",
+      "sha256": "e57999f295b443254b6b872640442df1eeda38f1935b1a0d4c509dad680a0955",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003973334,
+      "suite": {
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "19.569",
+        "timestamp": "2026-11-05T09:43:22",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13404731875,
+      "tag": "FOCUSED-API35",
+      "sha256": "5a5a5414e68b201747b49ed1587df602465f06d0aee642fce7f180203366211d",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003973334,
+      "suite": {
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "25.439",
+        "timestamp": "2026-11-05T09:43:39",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13405810401,
+      "tag": "BASELINE-FULL-API33",
+      "sha256": "027bd8fb042aecdcbee912744144142fd3e1af62f9a644f02324f83ab2527597",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003973289,
+      "suite": {
+        "tests": "100",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "698.66",
+        "timestamp": "2026-11-05T10:00:44",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13405117214,
+      "tag": "BASELINE-FULL-API34",
+      "sha256": "52321e16ef99ebee68dad1e80d9f7ed2d09009376dfad14501810eabaca78ed7",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003973289,
+      "suite": {
+        "tests": "100",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "824.194",
+        "timestamp": "2026-11-05T10:02:38",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13405241382,
+      "tag": "BASELINE-FULL-API35",
+      "sha256": "65b4cf8d8d52d18eecf0c5ca95ec65872d15f2699aee485a14dbbc7b0da149a8",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003973289,
+      "suite": {
+        "tests": "100",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "818.346",
+        "timestamp": "2026-11-05T10:02:29",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13405810479,
+      "tag": "INITIAL-PARALLEL-API34",
+      "sha256": "a0de9635e2cb92b5de7392b12280989c727c08138e115683e94e64ef04a5e375",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003984096,
+      "suite": {
+        "tests": "100",
+        "failures": "1",
+        "errors": "0",
+        "skipped": "0",
+        "time": "880.143",
+        "timestamp": "2026-11-05T10:01:14",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13406054884,
+      "tag": "FULL-API33",
+      "sha256": "cad257580473b0de97adf31a74df67da1edc84a656c5960f4018dba0e5b43925",
+      "source": "df37350d23fa2bc9901cb043fd4c83d003747862",
+      "run": 42008445344,
+      "suite": {
+        "tests": "100",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "698.547",
+        "timestamp": "2026-11-05T10:29:27",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13405619994,
+      "tag": "FULL-API34",
+      "sha256": "e55c9ecf6649b7627416b9a7a59cc57d2d819b313304238a6b4c0991b07d843b",
+      "source": "df37350d23fa2bc9901cb043fd4c83d003747862",
+      "run": 42008437177,
+      "suite": {
+        "tests": "100",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "668.756",
+        "timestamp": "2026-11-05T10:28:17",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13407026454,
+      "tag": "FULL-API35",
+      "sha256": "707272e23ca123ca0fc828063233f2a72bed148460e75693a7d17c9e3f557de3",
+      "source": "df37350d23fa2bc9901cb043fd4c83d003747862",
+      "run": 42008437177,
+      "suite": {
+        "tests": "100",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "679.461",
+        "timestamp": "2026-11-05T10:27:46",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13403498797,
+      "tag": "RELEASE-MAIL",
+      "sha256": "9a35e363f2a907f5fe0166be5dc3765af0a966d2e3165b62e3164a5b74dc817b",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003984011,
+      "suite": {
+        "tests": "9",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "52.77",
+        "timestamp": "2026-11-05T09:42:29",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "id": 13404636585,
+      "tag": "QUALITY",
+      "sha256": "0e9a6dc238a9634caadc2e94f0a7ed192b40f5e2dd9c26d88489690a998d7aad",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003973289
+    },
+    {
+      "id": 13404727113,
+      "tag": "OWNER-AAB",
+      "sha256": "c68dc87c3494f572f2791321dec1c331fd34dbec7f499c89c465912804ad284b",
+      "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+      "run": 42003973289
+    },
+    {
+      "id": 13405363886,
+      "tag": "READINESS-AAB",
+      "sha256": "faf7cca9f9c57b5348d9cb8c5797e4812665efafdb82f0f33780c4a925e651ec",
+      "source": "df37350d23fa2bc9901cb043fd4c83d003747862",
+      "run": 42008437177
+    }
+  ]
+}
