@@ -36,3 +36,48 @@ OPPO documents native hidden-app access through a dial-pad access number: https:
 ## Evidence recovery
 
 The local workspace became unavailable during the final documentation write after APK signing, upload and test-report verification. A documentation-only GitHub job re-downloads these pinned GitHub artifacts, checks their server metadata/digests and suite counts, and preserves exact raw report bytes here. It contains no signing secrets and changes no application/test code. The signed APK was already retained for owner download before that interruption.
+
+## Owner signing fallback and OPPO checklist
+
+The unsigned universal APK was regenerated with bundletool 1.18.3 from
+[the successful release-bundle artifact](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/42008437177/artifacts/13405363886).
+The archive matched its recorded SHA-256. Android build tools confirmed the
+package `com.nexvary.recorder`, versionName `0.13.1`, versionCode `27`,
+absence of the debuggable flag, and 16 KiB ZIP alignment. The unsigned APK
+SHA-256 is `f3d0ea20e85355ecd8ccd888ba2b35efa3fb1af7c39431b8d586d8d1530b28a9`.
+The previously verified signed APK and original key were unavailable to this
+session. ADB listed no device. The unsigned file is for signing in the
+owner environment only.
+
+1. On the OPPO, record the ColorOS build and installed APK version. Pull the
+   installed base APK privately and use it as `--previous` in
+   `scripts/verify_owner_apk.py`. For a strict upgrade from code 27 or higher,
+   build a release with a versionCode greater than the installed value before
+   signing. Verify the candidate with `apksigner verify --verbose --print-certs`
+   and the repository verifier after signing with the original key.
+2. Record the current settings, recording count and outbox item states. Keep
+   an unsent test item offline while comparing states. With no recording active,
+   install the verified APK with `adb install -r` and compare the same screens
+   before reconnecting. Open an existing video and capture and play a new one.
+3. In Settings → Appearance → App name and icon, try Guardian, Clock, Calendar
+   and restore Guardian. Confirm that wrong PIN and cancellation leave the old
+   choice active, then apply with the correct PIN. Launch each choice and
+   reboot with an alternate choice active. Compare the drawer and a home-screen
+   shortcut. If the drawer and Android's resolved launcher alias agree but a
+   pinned icon is stale, remove only that shortcut and pin the current drawer
+   entry again. If Android resolves an unexpected alias, investigate app state
+   before attributing the behavior to ColorOS.
+4. Repeat the switch during a user-started test recording. Check Android's
+   capture indicators and the recording notification, stop using the
+   notification button, and play the resulting video.
+5. If the phone exposes Hide Apps in its system settings, enable it for the
+   test and open the hidden-apps folder with the configured access code in the
+   phone dial pad. Restore visibility by turning off Hide Apps for Guardian.
+   Check the recording notification and Stop button while hidden. If the option
+   is absent or Stop becomes inaccessible, use the in-app appearance choices.
+   Keep access codes and personal recording/outbox details out of the PR.
+
+The emulator capture test stops through the service action and reads the MP4
+with MediaExtractor. The PIN test covers the locked screen and cancellation.
+Wrong-PIN entry, full phone reboot, pinned icons, notification-button interaction
+and data preservation across an owner-signed install remain physical checks.
