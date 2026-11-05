@@ -85,6 +85,16 @@ The killed preparation's raw instrumentation correctly reports `Process crashed`
 
 The downloaded artifact ZIP was SHA-256 verified against GitHub's digest. Raw [acceptance metrics](release-evidence/continuous/resilience/ACCEPTANCE.json), [network log](release-evidence/continuous/resilience/network.log), [recovery log](release-evidence/continuous/resilience/recovery.log), host signal/seed and [file-hash manifest](release-evidence/continuous/resilience/VALIDATION.json) are preserved. The fixture's test-only trust configuration never enters production source and no external mailbox was contacted.
 
+## Follow-up regression gates at the resilience source
+
+The new harness source also rebuilt the normal APK/AAB and reran the existing gates; its additional source directory is disabled for the ordinary matrix. [Release-mail run 41969347510](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/41969347510) passed all 9 cases. [Android gate 41969347438](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/41969347438) passed 54 JVM cases, zero lint errors (173 warnings), reference backend 20 cases, MySQL 39 cases and SQLite 37 cases (2 MySQL-specific skips).
+
+[Long-camera rerun 41969347436](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/41969347436) passed all 5 cases in 913.689 seconds and again produced 15 independently decoded MP4 clips. The measured global video PTS span was 900224783 µs (900.224783 seconds), maximum boundary delta 33454 µs (33.454 ms), maximum within-clip delta 70066 µs (70.066 ms), and total finalized size 12725893 bytes. The same interpretation/physical limitations stated above apply.
+
+The complete [PR matrix run 41969352103](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/41969352103) succeeded on all three APIs. Independently downloaded reports confirm 95 cases on each API33/34/35, zero failures/errors/skips. API33/34 raw reports in the follow-up manifest come from push run 41969347438; API35 comes from PR run 41969352103. Both runs identify source `7397d06da85996dcb5a9e90f5c0742101a2b4d32`.
+
+Fresh raw reports, long metrics/journals and archive/file digests are preserved alongside [the resilience validation manifest](release-evidence/continuous/resilience/VALIDATION.json). The original baseline evidence is retained rather than overwritten.
+
 ## Failures resolved during verification
 
 An initial lint attempt failed for 17 new strings missing the other supported locales; all 10 locales now contain those strings and matching format arguments. An earlier API33 attempt stopped before tests on Maven HTTP403 downloads; the accepted run executed all 95 cases successfully. An earlier API34 regression exposed the recovery-start gate/stale saved-status race: the Start action is now available during background recovery, and validation messages retain priority until a new capture starts. The original assertions remain in the accepted suite.

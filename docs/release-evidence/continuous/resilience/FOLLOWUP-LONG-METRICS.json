@@ -1,0 +1,26 @@
+{
+  "emulator": true,
+  "session": "960c7f7e-deb1-4443-96b9-d7ed17fcda50",
+  "targetSeconds": 60,
+  "elapsedMs": 900000,
+  "clips": 15,
+  "boundaryDeltasUs": [
+    33440,
+    33445,
+    33441,
+    33431,
+    33452,
+    33442,
+    33454,
+    33434,
+    33439,
+    33445,
+    33439,
+    33436,
+    33429,
+    33436
+  ],
+  "maxBoundaryDeltaUs": 33454,
+  "maxIntraClipDeltaUs": 70066,
+  "physicalVerification": "PENDING"
+}
