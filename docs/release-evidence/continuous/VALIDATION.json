@@ -1,0 +1,124 @@
+{
+  "implementationCommit": "0b4c90c31bddc5ae7c38fadf63aca0cda82f6c91",
+  "versionName": "0.13.0",
+  "versionCode": 26,
+  "verifiedDateCairo": "2026-11-05",
+  "runs": {
+    "android": 41932647838,
+    "long": 41932647699,
+    "release": 41932647723
+  },
+  "reports": {
+    "API33": {
+      "tests": "95",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "631.177"
+    },
+    "API34": {
+      "tests": "95",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "719.164"
+    },
+    "API35": {
+      "tests": "95",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "660.323"
+    },
+    "LONG": {
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "915.818"
+    },
+    "RELEASE": {
+      "tests": "9",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "62.296"
+    }
+  },
+  "jvm": {
+    "tests": 54,
+    "failures": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 173
+  },
+  "backends": {
+    "reference": {
+      "passed": 20
+    },
+    "mysql": {
+      "passed": 39
+    },
+    "sqlite": {
+      "passed": 37,
+      "skipped": 2,
+      "skipReason": "MySQL-specific concurrency cases"
+    }
+  },
+  "longVideoSpanUs": 900217222,
+  "longTotalBytes": 12719122,
+  "artifacts": [
+    {
+      "id": 13374405251,
+      "name": "long",
+      "zipSha256": "7c8a8a2280a62536b66180776ac2d879a0af3e9c463805f20f41a58c8665a192"
+    },
+    {
+      "id": 13372998912,
+      "name": "api33",
+      "zipSha256": "fbbb045a9220e6feceec86234a93872f2c91aaae8502f56f4a9fdcacb0772786"
+    },
+    {
+      "id": 13372803440,
+      "name": "api34",
+      "zipSha256": "ea74a897c3838950d9f734f762aa8711a8fd5b6e86e617ea38dcb974728f4da9"
+    },
+    {
+      "id": 13374205269,
+      "name": "api35",
+      "zipSha256": "d2600ae3550872a1527c0848f8063a12431a0522512dc50880044267be421c8e"
+    },
+    {
+      "id": 13372807045,
+      "name": "quality",
+      "zipSha256": "8ae1bda78bae96b92bebd24101f83c48d34032e1d25807dc4557976fed9bf345"
+    },
+    {
+      "id": 13371814879,
+      "name": "release",
+      "zipSha256": "77e4d55e59f3488881e3860c26b79f4b157567fe480f8ae6c07148d54445d0ba"
+    }
+  ],
+  "files": {
+    "API33-TESTS.xml": "9531bcac2f69542102cab98e2466e5628a9988dcfb55241a2bd32aa38e78568a",
+    "API34-TESTS.xml": "d757da70a844bb7ce7612aa8223828b72078f08858979d0491109e13be8655fc",
+    "API35-TESTS.xml": "d3076202ead1ae30f50ac794c13e624cd7d3d5b38ee071a27c79c6123abed583",
+    "LONG-CAMERA-METRICS.json": "8b7a793e373f754d461038279133c06bbcdc942610e74bee906dc18e09a632be",
+    "LONG-SEGMENTS.json": "2b2cbe8414e00f68c7fcc3f9890a6fc9e2bfe1d6d8fba220ae4cea35f66f96e1",
+    "LONG-TESTS.xml": "f8b01868e5bef6a1d06795f7f6bc363ef3c359efcfb229695495cb098da87bd7",
+    "RELEASE-TESTS.xml": "1111d4fb629c44e446efecbad826fe87a93a1cdf0c242091e9ded0f9c489685c"
+  },
+  "productionAcceptance": "PENDING_PHYSICAL_DEVICE_AND_EXTERNAL_PROVIDER",
+  "ownerSignedUpdate": "NOT_CREATED",
+  "hostingDeployment": "NOT_PERFORMED",
+  "mainMerge": false,
+  "screenshot": {
+    "artifactId": 13374205269,
+    "path": "diagnostics/continuous-metadata/continuous-mode-ar.png",
+    "sha256": "8cdee0362335322c2cc8436e18af0832ca5239aab4d16a5e994c2104422c6f9d",
+    "viewport": "Recording page header and quality section; not continuous card",
+    "visualAcceptanceOfContinuousCard": false
+  }
+}
