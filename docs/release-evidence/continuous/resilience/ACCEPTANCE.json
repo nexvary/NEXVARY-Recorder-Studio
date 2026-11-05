@@ -1,0 +1,28 @@
+{
+  "network": {
+    "emulator": true,
+    "offlineMs": 300478,
+    "disconnectedChecks": 300,
+    "queuedBeforeRecovery": 4,
+    "clips": 6,
+    "smtpDataCommands": 6,
+    "uniqueMessageIds": 6,
+    "productionMailWorker": true,
+    "transport": "authenticated TLS loopback; pinned fixture certificate",
+    "externalInboxVerified": false,
+    "session": "c2f0d69c-2727-41d8-8236-bd0d85d7303b"
+  },
+  "processRecovery": {
+    "emulator": true,
+    "session": "802a41a6-2fbc-4f5f-ba2c-515875d886d4",
+    "oldPid": 11732,
+    "newPid": 13925,
+    "state": "INTERRUPTED",
+    "completedClipSha256": "dffef6ba3455de7cea90f45dc6e4a86fed937dbc57e829f133a3e322c8a7e805",
+    "tailRetainedOrSalvaged": true,
+    "queueIdentityStable": true,
+    "cameraAutomaticallyRestarted": false
+  },
+  "physicalDeviceVerified": false,
+  "externalInboxVerified": false
+}

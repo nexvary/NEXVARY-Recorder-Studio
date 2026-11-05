@@ -1,6 +1,6 @@
 # Continuous recording — verified engineering candidate 0.13.0
 
-Verified implementation: `0b4c90c31bddc5ae7c38fadf63aca0cda82f6c91` (code 26), PR #18, stacked on the recipient-card branch/PR #17. Reviewed on 5 November 2026 (Cairo). Documentation/evidence commits after this implementation do not change application or test source. This is an emulator-verified engineering candidate; the physical/production acceptance items below remain open.
+Verified implementation: `0b4c90c31bddc5ae7c38fadf63aca0cda82f6c91` (code 26), PR #18, stacked on the recipient-card branch/PR #17. Reviewed on 5 November 2026 (Cairo). The follow-up test-only source `7397d06da85996dcb5a9e90f5c0742101a2b4d32` adds dedicated network/process acceptance without changing production Kotlin behavior. Subsequent documentation-only commits do not change either source. This is an emulator-verified engineering candidate; the physical/production acceptance items below remain open.
 
 ## Accepted CI and independently read reports
 
@@ -44,7 +44,7 @@ The short actual-camera cases also passed on APIs33/34/35: each 65-second run pr
 - Completed first clip automatically enters the persistent queue while the second records. A synthetic acknowledging transport submits that clip while capture remains RECORDING, and an accepted job cannot be dispatched twice by the same queue.
 - Ten safe simulated connection failures remain retryable after queue reconstruction; disabling continuous retries produces a reviewable failure; another clip can succeed independently. Uncertain DATA acknowledgment remains UNCERTAIN, with the private send copy and original retained.
 - Background activity/screen-off emulator capture continues. Stopping a short microphone/video capture saves its final tail, with both tracks present.
-- Invalid crash-tail bytes remain available for inspection and are not counted as valid saved clips; reconstruction does not create duplicate queue identities. This is not an actual OS process-kill test.
+- Invalid crash-tail bytes remain available for inspection and are not counted as valid saved clips; reconstruction does not create duplicate queue identities. The separate follow-up below now adds an actual SIGKILL/restart test on API35.
 - The Arabic UI test uses real touches to enable continuous mode, choose 30 seconds, verify the normal timer is disabled, recreate the activity with the selection retained, start the actual continuous camera through the UI, and stop it after three seconds. This passed on all three APIs.
 - The exported Arabic screenshot shows the recording page/header and quality section. It is available in the API35 diagnostics artifact of the accepted run; its viewport does not show the new continuous card, so it is not claimed as visual acceptance of that card.
 
@@ -54,16 +54,36 @@ The short actual-camera cases also passed on APIs33/34/35: each 65-second run pr
 | --- | --- | --- |
 | 15-minute session / one-minute clips | PASS: actual API35 camera, 15 clips and PTS journals | Physical phone |
 | First clip sent while second records | PASS: actual capture/automatic queue plus synthetic SMTP acceptance | Real provider/inbox acknowledgment |
-| Internet absent five minutes, then restored | Safe-retry persistence fixture passed | Actual five-minute network outage/recovery NOT RUN |
+| Internet absent five minutes, then restored | PASS: actual emulator Wi-Fi/data disabled 300478 ms; production MailWorker resumes TLS submission | Physical phone / external provider |
 | One clip fails, others succeed | PASS: independent persistent jobs and synthetic transports | External provider behavior |
 | Full storage | Reserve policy passed; runtime has a graceful low-space stop | Real ENOSPC/low-space device test NOT RUN |
 | Screen lock | PASS: emulator screen-off | Secure PIN lock/OPPO/OEM behavior |
 | App backgrounded | PASS: emulator activity CREATED while FGS records | Physical/OEM behavior |
 | Low battery | Warning and normal platform restrictions retained | Device test NOT RUN |
-| Unexpected process restart | PASS: reconstructed persistence/incomplete-tail fixtures | Actual OS kill/restart NOT RUN |
+| Unexpected process restart | PASS: host SIGKILL during actual capture, fresh PID, unchanged saved clip, stable queue and retained tail | Physical phone / OEM restrictions |
 | User stops unfinished clip | PASS: five-second audio/video and three-second UI-started sessions | Physical device |
 | Duplicate prevention | PASS: stable queue IDs, accepted and uncertain outcomes | SMTP does not provide exactly-once inbox delivery |
 | Integrity and order | PASS: sync starts, monotonic samples, SHA-256, independent frame decode | Physical/A-V drift/thermal behavior |
+
+## Follow-up: actual network outage and process kill
+
+[Resilience run 41969347525](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/41969347525) passed on API35 at source `7397d06da85996dcb5a9e90f5c0742101a2b4d32`. These are two completed instrumentation cases plus one intentionally killed preparation, not three passed JUnit cases. The original 95-case matrix is unchanged because this harness is compiled only with `-PguardianResilienceTest=true`.
+
+| Observed check | Actual result |
+| --- | --- |
+| Wi-Fi and mobile data disabled during actual camera capture | 300478 ms; 300 disconnected-state checks |
+| Clips queued before network recovery | 4, with zero send attempts and both original/private attachment retained |
+| Automatic submission after Wi-Fi returns | Production MailWorker, authenticated TLS loopback; capture still RECORDING |
+| Completed session including final tail | 6 clips; 6 SMTP DATA commands; 6 unique Message-IDs |
+| Attachment integrity | Every MIME attachment byte-identical to its original; originals retained after SMTP acceptance |
+| Host SIGKILL during second clip | PID 11732 killed with signal 9 using the debug application's own UID |
+| Fresh-process recovery | PID 13925; session INTERRUPTED; camera not automatically restarted |
+| Saved first clip | SHA-256 `dffef6ba3455de7cea90f45dc6e4a86fed937dbc57e829f133a3e322c8a7e805` unchanged |
+| In-flight tail and queue | Tail retained or salvaged; identical job identities after three additional recoveries |
+
+The killed preparation's raw instrumentation correctly reports `Process crashed`; this is the intended host-induced interruption. The host script requires both completed cases, the changed PID and exported metrics before passing. This does not prove that every unfinished MP4 is playable or that frames recorded before SIGKILL can always be recovered. It also does not prove inbox receipt or exactly-once delivery across arbitrary SMTP-provider failures.
+
+The downloaded artifact ZIP was SHA-256 verified against GitHub's digest. Raw [acceptance metrics](release-evidence/continuous/resilience/ACCEPTANCE.json), [network log](release-evidence/continuous/resilience/network.log), [recovery log](release-evidence/continuous/resilience/recovery.log), host signal/seed and [file-hash manifest](release-evidence/continuous/resilience/VALIDATION.json) are preserved. The fixture's test-only trust configuration never enters production source and no external mailbox was contacted.
 
 ## Failures resolved during verification
 
@@ -71,8 +91,10 @@ An initial lint attempt failed for 17 new strings missing the other supported lo
 
 The first long run passed but UTP uninstalled the application before private external evidence could be pulled. Test-only export now uses MediaStore public Downloads; the accepted long script requires actual timing metrics before it can pass. Production recordings continue to use app-specific storage; this public export exists only in emulator test code.
 
+Physical execution steps and evidence requirements are in [CONTINUOUS_PHYSICAL_ACCEPTANCE.md](CONTINUOUS_PHYSICAL_ACCEPTANCE.md); every item there remains pending until actually run.
+
 ## Local checks and production blockers
 
 Locally executed and passed: UI release gate (9 layouts/45 actions/10 locales), NPSE dependency verification (4 checksums/POMs/notices/R8), page/help gate (36 activities/12 topics/10 locales), all continuous XML resources and numbered arguments, whitespace checks and shell syntax. Local Android SDK/Gradle/ADB were unavailable; Android execution above used actual GitHub-hosted emulators.
 
-Physical Android10–16 coverage, especially OPPO CPH2577/Android15/ColorOS, external provider delivery, real storage/battery/thermal/process death, original-key signed upgrade, and the actual cPanel account/policy/capacity assessment remain unverified. The connected desktop was checked again and remained offline. No hosting/DNS/database/paid infrastructure was changed, no production backend was activated, no main merge or store/public release occurred. Preserve installed app data and the original signing certificate; fixture-key APKs are not compatible owner updates.
+Physical Android10–16 coverage, especially OPPO CPH2577/Android15/ColorOS, external provider delivery, real storage/battery/thermal/OEM process death, original-key signed upgrade, and the actual cPanel account/policy/capacity assessment remain unverified. The connected desktop was checked again and remained offline. No hosting/DNS/database/paid infrastructure was changed, no production backend was activated, no main merge or store/public release occurred. Preserve installed app data and the original signing certificate; fixture-key APKs are not compatible owner updates.

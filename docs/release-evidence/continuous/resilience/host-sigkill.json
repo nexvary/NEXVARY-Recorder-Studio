@@ -1,0 +1,6 @@
+{
+  "signal": 9,
+  "victimPid": 11732,
+  "target": "dedicated emulator application UID",
+  "intentionalInstrumentationTermination": true
+}

@@ -42,6 +42,33 @@ Battery, data, storage and thermal conditions can end capture or delay WorkManag
 
 See `CONTINUOUS_TEST_RESULTS.md` for actual run status. JVM tests cover duration/keyframe policy, numbering, stable keys and storage floor. Instrumentation creates actual camera MP4s, dispatches one completed clip through a synthetic acknowledging transport while the next clip records, checks file tracks/timestamps, final-tail save and idempotent reconstruction, and retains an uncertain-send private copy. A dedicated API35 workflow runs a real 15-minute emulator camera session with 60-second targets and exports boundary PTS journals. None of these establishes physical OPPO, real provider delivery or zero gaps.
 
+## Dedicated network/process acceptance harness
+
+`Continuous Network and Process Recovery Acceptance` builds an isolated test APK using
+`gradle -PguardianResilienceTest=true :app:assembleDebug :app:assembleDebugAndroidTest`,
+then runs `bash scripts/resilience_gate.sh` on a disposable API35 emulator. Both the
+host script and instrumentation reject a non-emulator target. Do not install this
+harness over an owner installation: it changes network state, temporarily configures
+fixture SMTP, and deliberately kills its own debug application process.
+
+The network case disables Wi-Fi/mobile data for at least five minutes during actual
+capture, checks queued files remain intact with zero offline attempts, then restores
+Wi-Fi and waits for the production MailWorker to submit all clips over authenticated
+TLS to a loopback fixture. Only the test process temporarily trusts the public fixture
+certificate; production certificate/hostname verification code is unchanged. Each MIME
+attachment is compared byte-for-byte with its retained original. This verifies server
+submission, not external inbox delivery.
+
+The host then starts another actual capture, waits for one finalized clip and a live
+second file, records its PID/hash/job identity, sends SIGKILL using that debug app's own
+UID, and starts fresh instrumentation without clearing/uninstalling app data. Recovery
+checks the changed PID, INTERRUPTED session, unchanged completed clip, retained or
+salvaged tail, stable queue identities across repeated recovery, and no automatic camera
+restart. The intentionally killed preparation is not counted as a passed JUnit test.
+The workflow exports raw instrumentation logs, host signal/seed records, logcat and
+JSON checks under `continuous-network-process-evidence`; the script requires both
+completed acceptance cases before writing `ACCEPTANCE.json`.
+
 ## Rollback
 
 Do not merge this draft into main before acceptance. To disable the feature in an installed candidate, stop the active session then turn off Continuous; ordinary recording remains available. Do not clear application data or uninstall to roll back: this removes private queue/journal state. To revert code while preserving queued work, retain the stable-key MailQueue schema/reader and recovery code until all jobs are resolved; the previous APK cannot fully interpret new continuous sessions. Production APK updates must use the original release signing certificate and a higher versionCode. Public debug-key artifacts are CI fixtures, not an owner update.
