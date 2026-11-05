@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">نام و نماد برنامه</string>
+    <string name="launcher_intro">ظاهر برنامه را انتخاب کنید. هر میانبر Guardian را باز می‌کند؛ ساعت یا تقویم مستقلی نیست.</string>
+    <string name="launcher_limits">فقط میانبر تغییر می‌کند. Guardian در تنظیمات و اعلان ضبط دیده می‌شود. حذف برنامه را متوقف نمی‌کند و نشانگر دوربین و میکروفون را پنهان نمی‌کند. تغییر نماد ممکن است کمی زمان ببرد.</string>
+    <string name="launcher_clock">ساعت</string>
+    <string name="launcher_calendar">تقویم</string>
+    <string name="launcher_apply">اعمال میانبر</string>
+    <string name="launcher_current">میانبر فعلی: %1$s</string>
+    <string name="launcher_confirm">نام و نماد %1$s استفاده شود؟ بازگرداندن ظاهر اصلی از همین‌جا ممکن است.</string>
+    <string name="launcher_saved">میانبر تغییر کرد. فهرست برنامه‌ها را بررسی کنید.</string>
+    <string name="launcher_failed">تغییر ممکن نشد. برای بازگرداندن میانبر اصلی تلاش شد.</string>
+</resources>

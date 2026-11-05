@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">Имя и значок приложения</string>
+    <string name="launcher_intro">Выберите вид в меню приложений. Каждый ярлык открывает Guardian, а не отдельные часы или календарь.</string>
+    <string name="launcher_limits">Меняется только ярлык. Guardian виден в настройках и уведомлениях записи. Это не запрещает удаление и не скрывает индикаторы камеры и микрофона. Обновление может занять время.</string>
+    <string name="launcher_clock">Часы</string>
+    <string name="launcher_calendar">Календарь</string>
+    <string name="launcher_apply">Применить ярлык</string>
+    <string name="launcher_current">Текущий ярлык: %1$s</string>
+    <string name="launcher_confirm">Использовать имя и значок %1$s? Исходный вид можно восстановить здесь.</string>
+    <string name="launcher_saved">Ярлык обновлён. Проверьте меню приложений.</string>
+    <string name="launcher_failed">Не удалось изменить ярлык. Выполнена попытка восстановления исходного.</string>
+</resources>

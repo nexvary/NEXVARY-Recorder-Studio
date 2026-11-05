@@ -127,13 +127,20 @@
         <activity android:name=".family.GuidedSetupActivity" android:exported="false" />
         <activity android:name=".MoreActivity" android:exported="false" />
         <activity android:name=".GuideActivity" android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".privacy.LauncherAppearanceActivity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="true" />
+        <!-- These aliases change the shortcut only; the application identity remains Guardian. -->
+        <activity-alias android:name=".launcher.Original" android:targetActivity=".MainActivity"
+            android:enabled="true" android:exported="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".launcher.Clock" android:targetActivity=".MainActivity"
+            android:enabled="false" android:exported="true" android:icon="@drawable/ic_launcher_clock" android:label="@string/launcher_clock">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".launcher.Calendar" android:targetActivity=".MainActivity"
+            android:enabled="false" android:exported="true" android:icon="@drawable/ic_launcher_calendar" android:label="@string/launcher_calendar">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity-alias>
     </application>
 </manifest>

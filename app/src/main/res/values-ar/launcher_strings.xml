@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">اسم وأيقونة التطبيق</string>
+    <string name="launcher_intro">اختر شكل التطبيق في قائمة التطبيقات. يفتح كل اختصار Guardian؛ وليس تطبيق ساعة أو تقويم مستقلًا.</string>
+    <string name="launcher_limits">يتغير الاختصار فقط. يظل Guardian ظاهرًا في إعدادات Android وإشعارات التسجيل. لا يمنع ذلك الحذف ولا يخفي مؤشرات الكاميرا والميكروفون. قد يتأخر تحديث الأيقونة قليلًا.</string>
+    <string name="launcher_clock">الساعة</string>
+    <string name="launcher_calendar">التقويم</string>
+    <string name="launcher_apply">تطبيق الاختصار</string>
+    <string name="launcher_current">الاختصار الحالي: %1$s</string>
+    <string name="launcher_confirm">استخدام اسم وأيقونة %1$s في قائمة التطبيقات؟ يمكنك استعادة الشكل الأصلي من هنا.</string>
+    <string name="launcher_saved">تم تغيير الاختصار. تحقق من قائمة التطبيقات.</string>
+    <string name="launcher_failed">تعذر تغيير الاختصار. تمت محاولة استعادة الاختصار الأصلي.</string>
+</resources>

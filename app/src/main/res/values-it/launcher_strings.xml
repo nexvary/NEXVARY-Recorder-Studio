@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">Nome e icona dell’app</string>
+    <string name="launcher_intro">Scegli l’aspetto nel launcher. Ogni collegamento apre Guardian, non un’app orologio o calendario separata.</string>
+    <string name="launcher_limits">Cambia solo il collegamento. Guardian resta visibile nelle impostazioni e notifiche di registrazione. Non impedisce la disinstallazione né nasconde gli indicatori di fotocamera e microfono. L’aggiornamento può richiedere un momento.</string>
+    <string name="launcher_clock">Orologio</string>
+    <string name="launcher_calendar">Calendario</string>
+    <string name="launcher_apply">Applica collegamento</string>
+    <string name="launcher_current">Collegamento attuale: %1$s</string>
+    <string name="launcher_confirm">Usare nome e icona %1$s? Puoi ripristinare l’originale qui.</string>
+    <string name="launcher_saved">Collegamento aggiornato. Controlla il launcher.</string>
+    <string name="launcher_failed">Modifica non riuscita. Tentato il ripristino del collegamento originale.</string>
+</resources>
