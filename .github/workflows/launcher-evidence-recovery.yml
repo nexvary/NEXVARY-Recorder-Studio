@@ -1,0 +1,124 @@
+name: Launcher Evidence Recovery
+on:
+  push:
+    branches: [build/launcher-evidence-recovery]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  preserve-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/launcher-privacy
+          fetch-depth: 0
+      - name: Recover pinned reports and publish documentation only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import os,json,hashlib,io,zipfile,re,urllib.request,urllib.error,subprocess
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          repo="nexvary/NEXVARY-Recorder-Studio"
+          target="feature/launcher-privacy"
+          expected="df37350d23fa2bc9901cb043fd4c83d003747862"
+          assert subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()==expected
+          specs=json.loads(r'''[{"tag":"INITIAL-FOCUSED-API29","id":13404170935,"sha":"f5cedb9e0c203dd31dbe116789e305bd793f571bdbc0720d65051b380eeeb36e","source":"2655539e363cbae5be831bc7043265dc792d779d","tests":5,"failures":1},{"tag":"INITIAL-FOCUSED-API35","id":13404101151,"sha":"6863a1e749595ce2f71c053f7a90ec12d3026670fc64fb4d98a6c00e6876a6b3","source":"2655539e363cbae5be831bc7043265dc792d779d","tests":5,"failures":1},{"tag":"FOCUSED-API29","id":13404142099,"sha":"e57999f295b443254b6b872640442df1eeda38f1935b1a0d4c509dad680a0955","source":"be3658d1970660d896e4772545fed5e5b78e42df","tests":5,"failures":0},{"tag":"FOCUSED-API35","id":13404731875,"sha":"5a5a5414e68b201747b49ed1587df602465f06d0aee642fce7f180203366211d","source":"be3658d1970660d896e4772545fed5e5b78e42df","tests":5,"failures":0},{"tag":"BASELINE-FULL-API33","id":13405810401,"sha":"027bd8fb042aecdcbee912744144142fd3e1af62f9a644f02324f83ab2527597","source":"be3658d1970660d896e4772545fed5e5b78e42df","tests":100,"failures":0},{"tag":"BASELINE-FULL-API34","id":13405117214,"sha":"52321e16ef99ebee68dad1e80d9f7ed2d09009376dfad14501810eabaca78ed7","source":"be3658d1970660d896e4772545fed5e5b78e42df","tests":100,"failures":0},{"tag":"BASELINE-FULL-API35","id":13405241382,"sha":"65b4cf8d8d52d18eecf0c5ca95ec65872d15f2699aee485a14dbbc7b0da149a8","source":"be3658d1970660d896e4772545fed5e5b78e42df","tests":100,"failures":0},{"tag":"INITIAL-PARALLEL-API34","id":13405810479,"sha":"a0de9635e2cb92b5de7392b12280989c727c08138e115683e94e64ef04a5e375","source":"be3658d1970660d896e4772545fed5e5b78e42df","tests":100,"failures":1},{"tag":"FULL-API33","id":13406054884,"sha":"cad257580473b0de97adf31a74df67da1edc84a656c5960f4018dba0e5b43925","source":"df37350d23fa2bc9901cb043fd4c83d003747862","tests":100,"failures":0},{"tag":"FULL-API34","id":13405619994,"sha":"e55c9ecf6649b7627416b9a7a59cc57d2d819b313304238a6b4c0991b07d843b","source":"df37350d23fa2bc9901cb043fd4c83d003747862","tests":100,"failures":0},{"tag":"FULL-API35","id":13407026454,"sha":"707272e23ca123ca0fc828063233f2a72bed148460e75693a7d17c9e3f557de3","source":"df37350d23fa2bc9901cb043fd4c83d003747862","tests":100,"failures":0},{"tag":"RELEASE-MAIL","id":13403498797,"sha":"9a35e363f2a907f5fe0166be5dc3765af0a966d2e3165b62e3164a5b74dc817b","source":"be3658d1970660d896e4772545fed5e5b78e42df","tests":9,"failures":0}]''')
+          owner=json.loads(r'''{"current":{"package":"com.nexvary.recorder","versionCode":27,"versionName":"0.13.1","certificateSha256":"ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6","debuggable":false,"sha256":"9c1e8d5f404e1659b14fcfb5e7684033b5e7419a89eb50d5427b5ec3f66131f0","bytes":16862003},"previous":{"package":"com.nexvary.recorder","versionCode":26,"versionName":"0.13.0","certificateSha256":"ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6","debuggable":false,"sha256":"a9e671ecec94e98e4844153cc73a0305fa8afa1b880b8a44555c3f57957bb1b6"},"sameSigningIdentity":true,"signatureScheme":"v3","physicalInstall":"PENDING","source":"be3658d1970660d896e4772545fed5e5b78e42df","privatePasswordsAbsentFromApk":true,"temporaryDecryptedSigningMaterialRemoved":true}''')
+          report=json.loads(r'''"# Launcher appearance 0.13.1 — verified engineering candidate\n\nUsers can choose Guardian, Clock or Calendar from Settings → Appearance → App name and icon. All three shortcuts open the existing Guardian/child-mode entry point. Confirmation and the configured parent PIN protect changes; the original shortcut is restorable.\n\nThis changes launcher presentation only. Android application identity, app-settings visibility, recording notifications, stop controls and normal camera/microphone indicators remain. No uninstall blocking, all-shortcuts-hidden mode, dial-pad receiver, keyboard/accessibility interception or OS restriction bypass was added.\n\n## Accepted checks\n\nApplication/signing source: `be3658d1970660d896e4772545fed5e5b78e42df`. Final test-readiness source: `df37350d23fa2bc9901cb043fd4c83d003747862`.\n\n- [Final push matrix 42008437177](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/42008437177) and [parallel PR matrix 42008445344](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/42008445344) both succeeded: 100 cases on EACH API33/34/35, zero failures/errors/skips. Preserved final API33 XML comes from the parallel PR run; API34/35 XML comes from the push run.\n- [Focused API29/API35 run 42003973334](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/42003973334): five cases each; [follow-up 42008437259](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/42008437259) also succeeded. Cases cover real alias labels/resolution/launch, reconstructed selection, concurrent controllers, cancel/apply/rotation, parent-PIN protection, and changing shortcuts during actual camera capture with unchanged PID/session plus a readable finalized MP4.\n- Quality archive: 54 JVM cases, zero failures/skips; lint zero errors, 173 retained warnings. Reference backend 20, MySQL39, SQLite37 passed (two MySQL-only SQLite skips).\n- [DEBUG=false mail acceptance 42003984011](https://github.com/nexvary/NEXVARY-Recorder-Studio/actions/runs/42003984011): nine cases, zero failures/errors/skips; follow-up 42008445157 also succeeded.\n\n## Initial failures and retained assertions\n\nThe first focused run at 2655539 had one failure per API: Espresso searched for an underlying settings control in the focused parent-PIN dialog root. The corrected test inspects the actual activity content is INVISIBLE and the gate remains locked, then cancels and confirms the alias is unchanged. Other functional assertions were retained.\n\nAt be3658d, the complete push matrix passed all 100 cases per API, but parallel PR API34 timed out in the existing FamilySafetyTest confirmation case after activity recreation. The exact original cause was not established by logs. Test-only df37350 waits for the rendered ARMED state and an enabled action before the actual Safe-button tap; original resolution timeout, saved-field/session-ID and stale-cancel assertions remain. Both final full matrices succeeded. No production safety-state logic changed. Initial failure XMLs remain alongside accepted reports.\n\n## Signed owner APK\n\n`NEXVARY-Guardian-Studio-0.13.1-release-signed.apk`: 16862003 bytes; SHA-256 `9c1e8d5f404e1659b14fcfb5e7684033b5e7419a89eb50d5427b5ec3f66131f0`.\n\nOfficial bundletool 1.18.3 generated the universal release APK from the accepted unsigned release AAB. Local official apksigner v3 verification and verify_owner_apk.py against the actual 0.13.0 APK passed: same original certificate/package, non-debuggable, code26 → code27. Certificate SHA-256: `ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6`. Passwords were checked absent from APK contents and temporary decrypted material removed. No private signing key/password was uploaded to GitHub/CI.\n\nThe be3658d and df37350 bundles were compared entry by entry. Only `base/root/META-INF/version-control-info.textproto` differs; all application code, manifest, resources, libraries and other uncompressed entries are identical. The signed APK records the be3658d application build; final tests use df37350. An old hardcoded CI artifact label said v0.13.0 even though its compiled manifest is verified as 0.13.1/code27; artifact labels are corrected separately.\n\n## Remaining physical boundary\n\nOPPO/ColorOS launcher caching/pinned shortcuts, actual owner upgrade/data preservation and hardware behavior remain unverified. The connected desktop was offline. Keep PR #19 draft; no main merge, store/public release or hosting change occurred.\n\nOPPO documents native hidden-app access through a dial-pad access number: https://support.oppo.com/ru/answer/?aid=neu13836 . This is an owner-configured OS feature, not implemented/enabled by this app. Availability and effects on recording/notification stop controls require testing on the actual CPH2577. Uninstalling/clearing data may remove unsent app-private recordings/queues; received off-device copies are separate. SMTP submission acknowledgment is still not inbox receipt.\n\n## Evidence recovery\n\nThe local workspace became unavailable during the final documentation write after APK signing, upload and test-report verification. A documentation-only GitHub job re-downloads these pinned GitHub artifacts, checks their server metadata/digests and suite counts, and preserves exact raw report bytes here. It contains no signing secrets and changes no application/test code. The signed APK was already retained for owner download before that interruption.\n"''')
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self,*args,**kwargs): return None
+          opener=urllib.request.build_opener(NoRedirect)
+          def request(path):
+              return urllib.request.Request("https://api.github.com/repos/"+repo+path,headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"})
+          def api(path):
+              with opener.open(request(path)) as response: return json.load(response)
+          root=Path("docs/release-evidence/launcher");root.mkdir(parents=True,exist_ok=True)
+          manifest={"applicationSource":"be3658d1970660d896e4772545fed5e5b78e42df","finalTestSource":expected,"finalPushRun":42008437177,"finalPrRun":42008445344,"physicalDeviceVerified":False,"files":{},"artifacts":[]}
+          def save(name,data):
+              (root/name).write_bytes(data);manifest["files"][name]=hashlib.sha256(data).hexdigest()
+          def archive(spec):
+              meta=api("/actions/artifacts/"+str(spec["id"]))
+              assert meta["digest"]=="sha256:"+spec["sha"]
+              assert meta["workflow_run"]["head_sha"]==spec["source"]
+              try:
+                  response=opener.open(request("/actions/artifacts/"+str(spec["id"])+"/zip"))
+              except urllib.error.HTTPError as error:
+                  assert error.code in (301,302,303,307,308)
+                  location=error.headers["Location"];assert location.startswith("https://")
+                  # Do not forward the repository token to the signed object-storage URL.
+                  response=urllib.request.urlopen(urllib.request.Request(location))
+              with response: data=response.read()
+              assert hashlib.sha256(data).hexdigest()==spec["sha"]
+              manifest["artifacts"].append({"id":spec["id"],"tag":spec["tag"],"sha256":spec["sha"],"source":spec["source"],"run":meta["workflow_run"]["id"]})
+              return zipfile.ZipFile(io.BytesIO(data))
+          for spec in specs:
+              with archive(spec) as z:
+                  names=[n for n in z.namelist() if n.endswith(".xml") and "/androidTest-results/" in n]
+                  assert len(names)==1
+                  data=z.read(names[0]);r=ET.fromstring(data)
+                  assert int(r.get("tests"))==spec["tests"]
+                  assert int(r.get("failures"))==spec["failures"]
+                  assert int(r.get("errors"))==0 and int(r.get("skipped"))==0
+                  save(spec["tag"]+"-TESTS.xml",data)
+                  manifest["artifacts"][-1]["suite"]=dict(r.attrib)
+          quality={"tag":"QUALITY","id":13404636585,"sha":"0e9a6dc238a9634caadc2e94f0a7ed192b40f5e2dd9c26d88489690a998d7aad","source":"be3658d1970660d896e4772545fed5e5b78e42df"}
+          with archive(quality) as z:
+              summary=z.read("tests/testDebugUnitTest/index.html")
+              counters=re.findall(r'<div class="counter">([^<]+)</div>',summary.decode())
+              assert counters[:3]==["54","0","0"]
+              save("JVM-SUMMARY.html",summary)
+              name=next(n for n in z.namelist() if n.endswith("lint-results-debug.xml"))
+              data=z.read(name);r=ET.fromstring(data)
+              assert sum(x.get("severity")=="Error" for x in r)==0
+              assert sum(x.get("severity")=="Warning" for x in r)==173
+              save("LINT-DEBUG.xml",data)
+          bundles=[]
+          for spec in [
+              {"tag":"OWNER-AAB","id":13404727113,"sha":"c68dc87c3494f572f2791321dec1c331fd34dbec7f499c89c465912804ad284b","source":"be3658d1970660d896e4772545fed5e5b78e42df"},
+              {"tag":"READINESS-AAB","id":13405363886,"sha":"faf7cca9f9c57b5348d9cb8c5797e4812665efafdb82f0f33780c4a925e651ec","source":expected}
+          ]:
+              with archive(spec) as z:
+                  names=[n for n in z.namelist() if n.endswith(".aab")];assert len(names)==1
+                  bundles.append(z.read(names[0]))
+          with zipfile.ZipFile(io.BytesIO(bundles[0])) as a,zipfile.ZipFile(io.BytesIO(bundles[1])) as b:
+              assert set(a.namelist())==set(b.namelist())
+              changes=[n for n in a.namelist() if a.read(n)!=b.read(n)]
+              assert changes==["base/root/META-INF/version-control-info.textproto"]
+          comparison={"ownerBundleSha256":hashlib.sha256(bundles[0]).hexdigest(),"readinessBundleSha256":hashlib.sha256(bundles[1]).hexdigest(),"changedUncompressedEntries":changes,"allOtherEntriesByteIdentical":True}
+          save("AAB-CONTENT-COMPARISON.json",(json.dumps(comparison,indent=2)+"\n").encode())
+          save("OWNER-APK-VERIFICATION.json",(json.dumps(owner,indent=2)+"\n").encode())
+          for run in (42008437177,42008445344):
+              state=api("/actions/runs/"+str(run));assert state["conclusion"]=="success" and state["head_sha"]==expected
+          save("VALIDATION.json.placeholder",b"")
+          manifest["files"].pop("VALIDATION.json.placeholder");(root/"VALIDATION.json.placeholder").unlink()
+          (root/"VALIDATION.json").write_text(json.dumps(manifest,indent=2)+"\n")
+          Path("docs/LAUNCHER_PRIVACY_ACCEPTANCE.md").write_text(report)
+          p=Path("docs/LAUNCHER_PRIVACY.md");text=p.read_text()
+          text=text.replace("# Optional launcher appearance — engineering candidate 0.13.1\n","# Optional launcher appearance — engineering candidate 0.13.1\n\nCurrent emulator acceptance, owner APK verification and remaining phone/OEM checks: [LAUNCHER_PRIVACY_ACCEPTANCE.md](LAUNCHER_PRIVACY_ACCEPTANCE.md).\n")
+          p.write_text(text)
+          p=Path("README.md");p.write_text(p.read_text()+"\n## Optional launcher appearance candidate (0.13.1)\n\nSettings → Appearance → App name and icon offers Guardian, Clock and Calendar shortcut styles, with confirmation and the configured parent PIN. Android app identity, recording notifications and privacy indicators remain visible; this is not uninstall protection or guaranteed concealment. See [acceptance and limits](docs/LAUNCHER_PRIVACY_ACCEPTANCE.md).\n")
+          subprocess.run(["git","diff","--check"],check=True)
+          subprocess.run(["git","fetch","origin",target],check=True)
+          assert subprocess.check_output(["git","rev-parse","FETCH_HEAD"],text=True).strip()==expected
+          subprocess.run(["git","add","--","README.md","docs/LAUNCHER_PRIVACY.md","docs/LAUNCHER_PRIVACY_ACCEPTANCE.md","docs/release-evidence/launcher"],check=True)
+          paths=subprocess.check_output(["git","diff","--cached","--name-only"],text=True).splitlines()
+          assert all(p in ["README.md","docs/LAUNCHER_PRIVACY.md","docs/LAUNCHER_PRIVACY_ACCEPTANCE.md"] or p.startswith("docs/release-evidence/launcher/") for p in paths)
+          subprocess.run(["git","-c","user.name=github-actions[bot]","-c","user.email=41898282+github-actions[bot]@users.noreply.github.com","commit","-m","Preserve verified launcher acceptance reports and owner signing record [skip ci]"],check=True)
+          for name,sha in manifest["files"].items():
+              data=subprocess.check_output(["git","show","HEAD:docs/release-evidence/launcher/"+name])
+              assert hashlib.sha256(data).hexdigest()==sha
+          subprocess.run(["git","push","origin","HEAD:refs/heads/"+target],check=True)
+          print("Evidence published; all committed raw-file hashes verified.")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: launcher-preserved-evidence
+          path: |
+            docs/release-evidence/launcher/
+            docs/LAUNCHER_PRIVACY_ACCEPTANCE.md

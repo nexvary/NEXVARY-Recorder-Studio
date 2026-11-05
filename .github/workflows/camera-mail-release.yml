@@ -1,6 +1,7 @@
 name: Camera Mail Release Acceptance
 on:
   push:
+    branches-ignore: [build/launcher-evidence-recovery]
   pull_request:
   workflow_dispatch:
 permissions:
