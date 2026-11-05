@@ -50,6 +50,8 @@ android {
         getByName("test").kotlin.srcDir("src/testSupport/java")
         getByName("androidTest").kotlin.srcDir("src/testSupport/java")
         if (mailReleaseTest) getByName("androidTest").kotlin.srcDir("src/releaseMailTest/java")
+        if (providers.gradleProperty("guardianResilienceTest").orNull == "true")
+            getByName("androidTest").kotlin.srcDir("src/resilienceTest/java")
     }
 
     testOptions {
