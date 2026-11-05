@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">Непрерывная экстренная запись</string>
+    <string name="continuous_enable">Записывать, пока я не завершу сеанс</string>
+    <string name="continuous_duration">Целевая длительность фрагмента (разделение по следующему ключевому кадру)</string>
+    <string name="continuous_30">30 секунд</string>
+    <string name="continuous_60">1 минута (по умолчанию)</string>
+    <string name="continuous_120">2 минуты</string>
+    <string name="continuous_300">5 минут</string>
+    <string name="continuous_retry">Повторять безопасные попытки после восстановления Интернета</string>
+    <string name="continuous_policy">Включите автоматическую отправку по почте ниже: готовые фрагменты отправляются во время записи. Таймер завершения сеанса не действует. Расходуются заряд, трафик и память; при нехватке места запись останавливается. Оригиналы остаются на устройстве. Принятие сервером SMTP не подтверждает доставку во входящие. Неопределённые результаты требуют проверки во избежание дублей.</string>
+    <string name="continuous_recovering">Проверка сохранённых сеансов…</string>
+    <string name="continuous_recording">Непрерывная запись • текущий фрагмент %1$d</string>
+    <string name="continuous_stopped">Сеанс завершён • сохранено фрагментов: %1$d. Проверьте состояние в исходящих.</string>
+    <string name="continuous_interrupted">Запись неожиданно остановлена • завершено фрагментов: %1$d. Проверьте файлы и исходящие.</string>
+    <string name="continuous_counts">Сохранено: %1$d • Принято почтовым сервером: %2$d • Ожидают: %3$d • Проверить: %4$d</string>
+    <string name="continuous_recovered">Предыдущий сеанс был прерван. Сохранённые фрагменты проверены; камера не запускалась повторно.</string>
+    <string name="continuous_status_failed">Не удалось прочитать состояние фрагментов. Проверьте исходящие и записи.</string>
+    <string name="continuous_low_storage">Запись остановлена: мало места. Завершено фрагментов: %1$d. Освободите место после проверки файлов; неотправленные фрагменты сохранены.</string>
+</resources>

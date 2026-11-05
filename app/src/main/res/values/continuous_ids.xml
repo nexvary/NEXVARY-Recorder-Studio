@@ -1,0 +1,6 @@
+<resources>
+    <item name="continuousEnable" type="id"/>
+    <item name="continuousDuration" type="id"/>
+    <item name="continuousRetry" type="id"/>
+    <item name="continuousStatus" type="id"/>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">Registrazione continua di emergenza</string>
+    <string name="continuous_enable">Registra finché non termino la sessione</string>
+    <string name="continuous_duration">Durata desiderata del clip (taglio al fotogramma chiave successivo)</string>
+    <string name="continuous_30">30 secondi</string>
+    <string name="continuous_60">1 minuto (predefinito)</string>
+    <string name="continuous_120">2 minuti</string>
+    <string name="continuous_300">5 minuti</string>
+    <string name="continuous_retry">Riprova gli errori sicuri al ritorno di Internet</string>
+    <string name="continuous_policy">Attiva sotto l’invio automatico tramite e-mail per inviare ogni clip completo mentre la registrazione continua. Il timer della sessione viene ignorato. Consuma batteria, dati e spazio; si arresta quando lo spazio è insufficiente. Gli originali restano sul dispositivo. L’accettazione SMTP non conferma la consegna nella posta in arrivo. Gli invii incerti richiedono verifica per evitare duplicati.</string>
+    <string name="continuous_recovering">Verifica delle sessioni salvate…</string>
+    <string name="continuous_recording">Registrazione continua • clip attuale %1$d</string>
+    <string name="continuous_stopped">Sessione terminata • %1$d clip salvati. Controlla lo stato nella posta in uscita.</string>
+    <string name="continuous_interrupted">Registrazione interrotta inaspettatamente • %1$d clip finalizzati. Controlla i file e la posta in uscita.</string>
+    <string name="continuous_counts">Salvati: %1$d • Accettati dal server: %2$d • In attesa: %3$d • Da verificare: %4$d</string>
+    <string name="continuous_recovered">Una sessione precedente è stata interrotta. I clip salvati sono stati verificati; la fotocamera non è stata riavviata.</string>
+    <string name="continuous_status_failed">Impossibile leggere lo stato dei clip. Controlla posta in uscita e registrazioni.</string>
+    <string name="continuous_low_storage">Registrazione arrestata per spazio insufficiente. %1$d clip finalizzati. Libera spazio dopo aver controllato i file; i clip in attesa sono conservati.</string>
+</resources>

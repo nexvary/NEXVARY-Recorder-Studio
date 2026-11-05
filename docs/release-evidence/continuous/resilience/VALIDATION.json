@@ -1,0 +1,113 @@
+{
+  "source": "7397d06da85996dcb5a9e90f5c0742101a2b4d32",
+  "run": 41969347525,
+  "artifact": 13388983685,
+  "artifactSha256": "10406a2c3fd91028cd371820c0ea3295c328146f71697f50027dbda23ecd3caa",
+  "completedTests": 2,
+  "intentionalKilledPreparations": 1,
+  "files": {
+    "ACCEPTANCE.json": "df3667d58bce284575e0be9be59ac3a03c38a222d89fc7deaac362f3932fa5f2",
+    "host-sigkill.json": "3d1b78f9c314043597bc3ceddababc2387d22968fbb29d936f3ecb3c90ee7c5a",
+    "kill-seed.json": "bcf421cb3e26ad3c7639dd63c564c9447b8ba5fd96eb1c400c4ee1fa65a0a301",
+    "network.log": "de9adf3d57a5d23468b7d586908aced41f5b915217b4f4bb15a4515470eab82a",
+    "kill-prepare.log": "59403582e4f97d40c3d5e867e799304eed838dd015073ee392d4ed9526e73999",
+    "recovery.log": "d4aac2688f6538299f571714c9b009834bab37e905292ba0ce2d3e3813881dac",
+    "FOLLOWUP-RELEASE-TESTS.xml": "01f7fc4a3f2b3608e7a83826a4373d1e6b4cb839e0b71552633b04cb74b6826f",
+    "FOLLOWUP-JVM-SUMMARY.html": "f18ad9aebb51968f18f1369b75d3135fa8df1ec119cdf1a9eaa02ec3666876ae",
+    "FOLLOWUP-LONG-TESTS.xml": "34be40ffad3a89bd7e61f750ccc7cce7a34d44b7dfbebb3a8df5195a9278c2fc",
+    "FOLLOWUP-LONG-METRICS.json": "06e7f8197584062cf04595356f3d32d424d6d86bb6be3b92ab5e9f1e7e680b69",
+    "FOLLOWUP-LONG-SEGMENTS.json": "cac3b7178a7d1b22b8bab8dad1d37af757d1168a1dba98272d31fb1e691ea88d",
+    "FOLLOWUP-API33-TESTS.xml": "ff355478bb2486d9f3495a130f375d4470b207d04102b1067e9643ebd5050ec7",
+    "FOLLOWUP-API34-TESTS.xml": "22e56ad326971c31bd622159ca337b958ce3a99890da2f5be21d1f730e3bba74",
+    "FOLLOWUP-API35-TESTS.xml": "b478029ce164d0eabb9777127a5a68a77fd9f02664e601fcd18edd5576dd7274"
+  },
+  "physicalDeviceVerified": false,
+  "externalInboxVerified": false,
+  "additionalChecks": [
+    {
+      "check": "release",
+      "artifact": 13388733955,
+      "run": 41969347510,
+      "artifactSha256": "0992379980bf4ef81e49821956916f8370c914d03f5825af107a7998946fb5d9",
+      "result": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "check": "quality",
+      "artifact": 13389511055,
+      "run": 41969347438,
+      "artifactSha256": "a1a0a006096f29924cb7b11a34e0fd274a531683d99e3aae5ac718d752757144",
+      "result": {
+        "tests": 54,
+        "failures": 0,
+        "skipped": 0,
+        "lintErrors": 0,
+        "lintWarnings": 173
+      }
+    },
+    {
+      "check": "long",
+      "artifact": 13389114934,
+      "run": 41969347436,
+      "artifactSha256": "609485c664e807b9df1931757cc45ae422db9127c89903e64aed7fd021be458f",
+      "result": {
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "913.689",
+        "timestamp": "2026-11-05T04:59:48",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "check": "api33",
+      "artifact": 13390110482,
+      "run": 41969347438,
+      "artifactSha256": "a028857e2976cb16aaf6f4c1d00683ffb29710ab938fb915ce1c9787e2c45545",
+      "result": {
+        "tests": "95",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "609.219",
+        "timestamp": "2026-11-05T04:58:50",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "check": "api34",
+      "artifact": 13389419196,
+      "run": 41969347438,
+      "artifactSha256": "691451013babd3953a4e4805edb32f5c96f0bc5676c21f1b1f6207637288092c",
+      "result": {
+        "tests": "95",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "780.59",
+        "timestamp": "2026-11-05T05:01:44",
+        "hostname": "localhost"
+      }
+    },
+    {
+      "check": "api35",
+      "artifact": 13389198863,
+      "run": 41969352103,
+      "artifactSha256": "802c27aee1f9bc05668c7fd49927a0ab57c6161c6cde2adb3809e9a3bed0b88f",
+      "result": {
+        "tests": "95",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "802.156",
+        "timestamp": "2026-11-05T05:01:53",
+        "hostname": "localhost"
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="9" failures="0" errors="0" skipped="0" time="56.881" timestamp="2026-11-05T04:45:43" hostname="localhost">
+  <testsuite name="com.nexvary.recorder.CameraMailAcceptanceTest" tests="4" failures="0" errors="0" skipped="0" time="18.088" timestamp="2026-11-05T04:45:43" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 15" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="multipleRecipientTlsEnvelopeKeepsAddressesOutOfMessageHeaders" classname="com.nexvary.recorder.CameraMailAcceptanceTest" time="0.324" />
+    <testcase name="encryptedRecipientDefaultsAndLegacyQueueRequireFreshApproval" classname="com.nexvary.recorder.CameraMailAcceptanceTest" time="0.004" />
+    <testcase name="reviewCancellationDoesNotStartRecordingOrQueueEmail" classname="com.nexvary.recorder.CameraMailAcceptanceTest" time="8.963" />
+    <testcase name="configuredParentPinGuardsMailReviewAndOutbox" classname="com.nexvary.recorder.CameraMailAcceptanceTest" time="8.797" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.RecipientEditorTest" tests="3" failures="0" errors="0" skipped="0" time="30.476" timestamp="2026-11-05T04:45:43" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 15" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="outboxRetryUsesTheSameCardsAndCancellationKeepsOriginalRecipients" classname="com.nexvary.recorder.RecipientEditorTest" time="4.087" />
+    <testcase name="invalidOrSeparatorBasedInputDoesNotBecomeARecipientAndTenDisablesAdd" classname="com.nexvary.recorder.RecipientEditorTest" time="18.474" />
+    <testcase name="separateAddressActionsValidateDuplicatesRemoveAndPreserveRotationDraft" classname="com.nexvary.recorder.RecipientEditorTest" time="7.915" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.ReleaseMailWorkerTest" tests="2" failures="0" errors="0" skipped="0" time="7.172" timestamp="2026-11-05T04:45:43" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 15" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="releaseTimedCameraQueuesOneCopyForTwoRecipientsAndRetainsOriginal" classname="com.nexvary.recorder.ReleaseMailWorkerTest" time="6.866" />
+    <testcase name="releaseWorkerProcessesApprovedJobWithoutDebugGate" classname="com.nexvary.recorder.ReleaseMailWorkerTest" time="0.306" />
+  </testsuite>
+</testsuites>

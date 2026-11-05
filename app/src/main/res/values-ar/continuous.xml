@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">التسجيل التلقائي المستمر</string>
+    <string name="continuous_enable">استمرار التسجيل حتى أنهي الجلسة</string>
+    <string name="continuous_duration">مدة المقطع المستهدفة (التقسيم عند الإطار الرئيسي التالي)</string>
+    <string name="continuous_30">30 ثانية</string>
+    <string name="continuous_60">دقيقة واحدة (افتراضي)</string>
+    <string name="continuous_120">دقيقتان</string>
+    <string name="continuous_300">5 دقائق</string>
+    <string name="continuous_retry">إعادة المحاولات الآمنة عند عودة الإنترنت</string>
+    <string name="continuous_policy">فعّل الإرسال التلقائي بالبريد أدناه لإرسال كل مقطع مكتمل أثناء استمرار التسجيل. مؤقت إنهاء التسجيل لا يعمل في هذا الوضع. يستهلك البطارية والبيانات والمساحة؛ يتوقف عند انخفاض المساحة. تبقى الملفات الأصلية على الجهاز. قبول خادم البريد لا يؤكد وصول الرسالة للمستلم. الإرسال غير المؤكد يحتاج مراجعة لتجنب التكرار.</string>
+    <string name="continuous_recovering">جارٍ فحص الجلسات المحفوظة…</string>
+    <string name="continuous_recording">التسجيل المستمر يعمل • المقطع الحالي %1$d</string>
+    <string name="continuous_stopped">انتهت الجلسة • تم حفظ %1$d مقاطع. راجع قائمة الإرسال لمعرفة حالة البريد.</string>
+    <string name="continuous_interrupted">توقف التسجيل بسبب خطأ أو قيد بالنظام • اكتمل %1$d مقاطع. راجع الملفات وقائمة الإرسال.</string>
+    <string name="continuous_counts">محفوظة: %1$d • قبلها خادم البريد: %2$d • معلقة: %3$d • تحتاج مراجعة: %4$d</string>
+    <string name="continuous_recovered">توجد جلسة سابقة توقفت. تمت مراجعة المقاطع المحفوظة؛ لم تتم إعادة تشغيل الكاميرا تلقائيًا.</string>
+    <string name="continuous_status_failed">تعذر قراءة حالة المقاطع. راجع قائمة الإرسال والتسجيلات.</string>
+    <string name="continuous_low_storage">توقف التسجيل لانخفاض المساحة. اكتمل %1$d مقاطع. وفّر مساحة بعد مراجعة الملفات؛ تم الاحتفاظ بالمقاطع المعلقة.</string>
+</resources>

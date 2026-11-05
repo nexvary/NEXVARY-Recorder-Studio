@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="5" failures="0" errors="0" skipped="0" time="913.689" timestamp="2026-11-05T04:59:48" hostname="localhost">
+  <testsuite name="com.nexvary.recorder.ContinuousRecordingTest" tests="5" failures="0" errors="0" skipped="0" time="912.768" timestamp="2026-11-05T04:59:48" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 15" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="microphoneTrackAndShortFinalClipSurviveExplicitStop" classname="com.nexvary.recorder.ContinuousRecordingTest" time="8.357" />
+    <testcase name="incompleteCrashTailIsRetainedAndNotCountedAsSaved" classname="com.nexvary.recorder.ContinuousRecordingTest" time="0.157" />
+    <testcase name="durableQueueIsIdempotentAndRetainsUnsentFileAfterRestartAndUncertainData" classname="com.nexvary.recorder.ContinuousRecordingTest" time="0.054" />
+    <testcase name="safeFailuresRemainRetryableAfterMultipleAttemptsAndDoNotBlockOtherClips" classname="com.nexvary.recorder.ContinuousRecordingTest" time="0.052" />
+    <testcase name="continuousCameraFinalizesAndQueuesDuringNextClipAndKeepsFinalTail" classname="com.nexvary.recorder.ContinuousRecordingTest" time="904.148" />
+  </testsuite>
+</testsuites>

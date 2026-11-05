@@ -14,8 +14,8 @@ android {
         applicationId = "com.nexvary.recorder"
         minSdk = 29
         targetSdk = 35
-        versionCode = 25
-        versionName = "0.12.4"
+        versionCode = 26
+        versionName = "0.13.0"
         val serviceOrigin = providers.gradleProperty("guardianServiceUrl").orElse(providers.environmentVariable("GUARDIAN_PUBLIC_API_URL")).getOrElse("").trim().trimEnd('/')
         require(serviceOrigin.isEmpty() || serviceOrigin.matches(Regex("https://[A-Za-z0-9.-]+(:[0-9]{1,5})?")))
         buildConfigField("String", "GUARDIAN_PUBLIC_API_URL", "\"$serviceOrigin\"")
@@ -50,6 +50,8 @@ android {
         getByName("test").kotlin.srcDir("src/testSupport/java")
         getByName("androidTest").kotlin.srcDir("src/testSupport/java")
         if (mailReleaseTest) getByName("androidTest").kotlin.srcDir("src/releaseMailTest/java")
+        if (providers.gradleProperty("guardianResilienceTest").orNull == "true")
+            getByName("androidTest").kotlin.srcDir("src/resilienceTest/java")
     }
 
     testOptions {

@@ -71,3 +71,7 @@ The screen recorder in this first package records the microphone with the screen
 ## Third-party component
 
 RootEncoder by Pedro Sánchez is used for RTMP/RTMPS streaming from a file. RootEncoder is licensed under Apache-2.0. See `THIRD_PARTY_NOTICES.md`.
+
+## Continuous emergency recording candidate (0.13.0)
+
+A draft implementation on `feature/continuous-emergency-recording` adds one user-started camera session with keyframe-aligned MP4 segments, independent approved SMTP delivery, durable recovery and explicit server-acceptance status. Accepted CI verifies 54 JVM tests, 95 instrumentation tests on each of APIs 33/34/35, nine Release mail cases and an actual 15-minute emulator session producing 15 clips. Physical phone and external delivery acceptance remain pending. See [architecture and rollback](docs/CONTINUOUS_RECORDING.md), [hosting decision](docs/CONTINUOUS_HOSTING_ASSESSMENT.md), and [verification record](docs/CONTINUOUS_TEST_RESULTS.md). No paid server or production API activation is required for direct SMTP mode.

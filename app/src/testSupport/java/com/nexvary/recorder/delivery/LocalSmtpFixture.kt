@@ -11,11 +11,12 @@ import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 
 /** Loopback-only SMTP fixture. Keys and certificates are PUBLIC TEST MATERIAL. */
-class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct: Boolean, val offerTls: Boolean = true, val size: Long = 25_000_000, val rejectRecipient: String? = null) : AutoCloseable {
+class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct: Boolean, val offerTls: Boolean = true, val size: Long = 25_000_000, val rejectRecipient: String? = null, acceptTimeoutMs: Int = 15_000, maxConnections: Int = 1) : AutoCloseable {
         val ssl: SSLContext
         val factory: SSLSocketFactory
-        val listener = ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"))
+        val listener = ServerSocket(0, 16, InetAddress.getByName("127.0.0.1"))
         val port get() = listener.localPort
+        val messages = java.util.concurrent.CopyOnWriteArrayList<ByteArray>()
         @Volatile var received = ByteArray(0)
         @Volatile var authenticated = false
         @Volatile var dataCommands = 0
@@ -33,8 +34,9 @@ class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct
             val tm = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply { init(ks) }
             ssl = SSLContext.getInstance("TLS").apply { init(km.keyManagers, tm.trustManagers, null) }
             factory = ssl.socketFactory
-            listener.soTimeout = 15_000
-            task = pool.submit { runCatching { listener.accept().use { run(it) } } }
+            require(acceptTimeoutMs in 1..600_000 && maxConnections in 1..32)
+            listener.soTimeout = acceptTimeoutMs
+            task = pool.submit { repeat(maxConnections) { if (!listener.isClosed) runCatching { listener.accept().use { run(it) } } } }
         }
         private fun secure(raw: Socket): Socket = (ssl.socketFactory.createSocket(raw, "localhost", port, true) as SSLSocket).apply {
             useClientMode = false; soTimeout = 15_000; startHandshake()
@@ -79,7 +81,7 @@ class LocalSmtpFixture(privateKey: ByteArray, certificate: ByteArray, val direct
                         val message = ByteArrayOutputStream()
                         while (true) { val part = input.readLine() ?: error("Dropped DATA"); if (part == ".") break
                             message.write((part.removePrefix(if (part.startsWith("..")) "." else "") + "\r\n").toByteArray(Charsets.US_ASCII)) }
-                        received = message.toByteArray(); say("250 Queued by local fixture")
+                        received = message.toByteArray(); messages.add(received); say("250 Queued by local fixture")
                     }
                     line == "QUIT" -> { say("221 Bye"); break }
                     else -> say("250 OK")

@@ -25,6 +25,13 @@ import kotlinx.coroutines.withContext
 class BackgroundCameraActivity : AppCompatActivity() {
     private lateinit var front: SwitchCompat
     private lateinit var audio: SwitchCompat
+    private lateinit var continuous: SwitchCompat
+    private lateinit var retryNetwork: SwitchCompat
+    private lateinit var segmentLength: Spinner
+    private lateinit var continuousStatus: TextView
+    private var refreshingContinuous = false
+    private var recoveringContinuous = true
+    private var validationMessage: Int? = null
     private lateinit var timer: SwitchCompat
     private lateinit var email: SwitchCompat
     private lateinit var minutes: EditText
@@ -45,10 +52,11 @@ class BackgroundCameraActivity : AppCompatActivity() {
     private var notificationAsked = false
     private var lastState: BackgroundCameraService.Companion.CaptureState? = null
     private val handler = Handler(Looper.getMainLooper())
-    private val tick = object : Runnable { override fun run() { updateState(); handler.postDelayed(this, 1000) } }
+    private val tick = object : Runnable { override fun run() { updateState(); refreshContinuous(); handler.postDelayed(this, 1000) } }
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeManager.apply(this); super.onCreate(savedInstanceState)
         notificationAsked = savedInstanceState?.getBoolean("notification_asked") ?: false
+        validationMessage = savedInstanceState?.getInt("validation_message")?.takeIf { it != 0 }
         val root = com.nexvary.recorder.ui.StudioPage.install(this, R.string.camera_title)
         DeliveryUi.text(root, R.string.camera_note)
         fun switch(parent: LinearLayout, label: Int, ident: Int, saved: String): SwitchCompat = SwitchCompat(this).apply {
@@ -73,6 +81,24 @@ class BackgroundCameraActivity : AppCompatActivity() {
         }
         qualityEstimate = DeliveryUi.text(qualityPanel, R.string.camera_quality_note).apply { id = R.id.cameraQualityEstimate }
         DeliveryUi.text(qualityPanel, R.string.camera_quality_note)
+        val continuousPanel = DeliveryUi.section(root, R.string.continuous_title)
+        (continuousPanel.getChildAt(0) as TextView).apply {
+            setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_continuous_recording, 0, 0, 0)
+            compoundDrawablePadding = (10 * resources.displayMetrics.density).toInt()
+        }
+        continuous = switch(continuousPanel, R.string.continuous_enable, R.id.continuousEnable, "continuous")
+        if (savedInstanceState == null) continuous.isChecked = prefs.getBoolean("continuous", false)
+        DeliveryUi.text(continuousPanel, R.string.continuous_duration)
+        val initialSeconds = savedInstanceState?.getInt("segment_seconds") ?: prefs.getInt("segment_seconds", 60)
+        segmentLength = com.nexvary.recorder.ui.StudioSpinner.add(continuousPanel,
+            listOf(R.string.continuous_30, R.string.continuous_60, R.string.continuous_120, R.string.continuous_300).map(::getString),
+            R.id.continuousDuration, SegmentTimeline.DURATIONS.indexOf(initialSeconds).coerceAtLeast(0))
+        retryNetwork = switch(continuousPanel, R.string.continuous_retry, R.id.continuousRetry, "retry_network")
+        retryNetwork.isChecked = savedInstanceState?.getBoolean("retry_network") ?: prefs.getBoolean("retry_network", true)
+        DeliveryUi.text(continuousPanel, R.string.continuous_policy)
+        continuousStatus = DeliveryUi.text(continuousPanel, R.string.continuous_recovering).apply {
+            id = R.id.continuousStatus; accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+        }
         val timing = DeliveryUi.section(root, R.string.camera_timer_title)
         timer = switch(timing, R.string.camera_timer_enable, R.id.cameraTimer, "timer")
         minutes = DeliveryUi.field(timing, R.string.camera_minutes, R.id.cameraMinutes, savedInstanceState?.getString("minutes") ?: "10", InputType.TYPE_CLASS_NUMBER)
@@ -102,8 +128,25 @@ class BackgroundCameraActivity : AppCompatActivity() {
             prefs.edit().putString("quality", selectedQuality().key).apply(); updateEstimate()
         }
         audio.setOnCheckedChangeListener { _, _ -> updateEstimate() }
-        timer.setOnCheckedChangeListener { _, checked -> minutes.isEnabled = checked; updateEstimate() }
+        timer.setOnCheckedChangeListener { _, checked -> minutes.isEnabled = checked && !continuous.isChecked; updateEstimate() }
         email.setOnCheckedChangeListener { _, checked -> recipients.isEnabled = checked; updateEstimate() }
+        fun placeDelivery(inContinuousCard: Boolean) {
+            val target = if (inContinuousCard) continuousPanel else root
+            if (delivery.parent === target) return
+            (delivery.parent as? android.view.ViewGroup)?.removeView(delivery)
+            target.addView(delivery, if (inContinuousCard) target.indexOfChild(continuousStatus) else target.indexOfChild(status))
+        }
+        placeDelivery(continuous.isChecked)
+        continuous.setOnCheckedChangeListener { _, checked ->
+            placeDelivery(checked)
+            timer.isEnabled = !checked; minutes.isEnabled = !checked && timer.isChecked
+            segmentLength.isEnabled = checked; retryNetwork.isEnabled = checked
+            prefs.edit().putBoolean("continuous", checked).apply(); updateEstimate()
+        }
+        segmentLength.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) { updateEstimate() }
+        }
         minutes.doAfterTextChanged { updateEstimate() }
         updateEstimate()
     }
@@ -111,9 +154,15 @@ class BackgroundCameraActivity : AppCompatActivity() {
         super.onStart(); handler.post(tick)
         lifecycleScope.launch {
             val profile = withContext(Dispatchers.IO) {
-                runCatching { MailWorker.reconcile(this@BackgroundCameraActivity) }
+                runCatching {
+                    ContinuousSessionStore.executor.submit {
+                        ContinuousSessionStore(this@BackgroundCameraActivity).recover(BackgroundCameraService.activeContinuousSession)
+                    }.get()
+                }
                 SmtpSettings(this@BackgroundCameraActivity).load()
             }
+            recoveringContinuous = false
+            refreshContinuous()
             smtpLimitMiB = profile?.limitMiB
             recipients.loadDefaults(profile?.cameraRecipients.orEmpty())
             updateEstimate()
@@ -127,7 +176,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
             mb(five), mb(DeliveryPolicy.messageBytes(five))))
         var warning = false
         if (email.isChecked) {
-            val duration = if (timer.isChecked) DeliveryPolicy.duration(minutes.text.toString()) else null
+            val duration = if (continuous.isChecked) segmentSeconds() * 1000L else if (timer.isChecked) DeliveryPolicy.duration(minutes.text.toString()) else null
             if (duration != null) lines.add(getString(R.string.camera_quality_timed_size, mb(quality.estimatedBytes(duration, audio.isChecked)),
                 mb(DeliveryPolicy.messageBytes(quality.estimatedBytes(duration, audio.isChecked)))))
             else lines.add(getString(R.string.camera_quality_unbounded))
@@ -147,9 +196,22 @@ class BackgroundCameraActivity : AppCompatActivity() {
         start.isEnabled = !active; stop.isEnabled = active && state.stage != BackgroundCameraService.Companion.Stage.SAVING
         start.alpha = if (start.isEnabled) 1f else 0.45f
         stop.alpha = if (stop.isEnabled) 1f else 0.45f
-        front.isEnabled = !active; audio.isEnabled = !active; timer.isEnabled = !active; email.isEnabled = !active
+        front.isEnabled = !active; audio.isEnabled = !active; timer.isEnabled = !active && !continuous.isChecked; email.isEnabled = !active
         for (i in 0 until qualityGroup.childCount) qualityGroup.getChildAt(i).isEnabled = !active
-        minutes.isEnabled = !active && timer.isChecked; recipients.isEnabled = !active && email.isChecked
+        continuous.isEnabled = !active; segmentLength.isEnabled = !active && continuous.isChecked
+        retryNetwork.isEnabled = !active && continuous.isChecked
+        minutes.isEnabled = !active && timer.isChecked && !continuous.isChecked; recipients.isEnabled = !active && email.isChecked
+        if (active) validationMessage = null
+        validationMessage?.let { status.setText(it); lastState = state; return }
+        if (state.sessionId.isNotBlank()) {
+            status.text = if (active) getString(R.string.continuous_recording, state.segmentNumber)
+                else getString(when (state.stopReason) {
+                    "STOPPED" -> R.string.continuous_stopped
+                    "LOW_STORAGE" -> R.string.continuous_low_storage
+                    else -> R.string.continuous_interrupted
+                }, state.segmentNumber)
+            lastState = state; return
+        }
         if (active || state != lastState) status.text = when (state.stage) {
             BackgroundCameraService.Companion.Stage.IDLE -> getString(R.string.camera_ready)
             BackgroundCameraService.Companion.Stage.STARTING -> getString(R.string.camera_starting)
@@ -162,6 +224,10 @@ class BackgroundCameraActivity : AppCompatActivity() {
         lastState = state
     }
     override fun onSaveInstanceState(outState: Bundle) {
+        validationMessage?.let { outState.putInt("validation_message", it) }
+        outState.putBoolean("continuous", continuous.isChecked)
+        outState.putInt("segment_seconds", segmentSeconds())
+        outState.putBoolean("retry_network", retryNetwork.isChecked)
         outState.putBoolean("notification_asked", notificationAsked)
         outState.putBoolean("front", front.isChecked); outState.putBoolean("audio", audio.isChecked)
         outState.putBoolean("timer", timer.isChecked); outState.putBoolean("email", email.isChecked)
@@ -171,11 +237,12 @@ class BackgroundCameraActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
     }
     private fun requestAndStart() {
-        val duration = if (timer.isChecked) DeliveryPolicy.duration(minutes.text.toString()) else 0L
-        if (duration == null) { minutes.error = getString(R.string.camera_minutes_invalid); status.setText(R.string.camera_minutes_invalid); return }
+        validationMessage = null
+        val duration = if (continuous.isChecked) 0L else if (timer.isChecked) DeliveryPolicy.duration(minutes.text.toString()) else 0L
+        if (duration == null) { minutes.error = getString(R.string.camera_minutes_invalid); showValidation(R.string.camera_minutes_invalid); return }
         val to = if (email.isChecked) recipients.confirmedRecipients() else ""
-        if (to == null) { status.setText(R.string.camera_recipients_invalid); return }
-        if (email.isChecked && SmtpSettings(this).load() == null) { status.setText(R.string.mail_config); return }
+        if (to == null) { showValidation(R.string.camera_recipients_invalid); return }
+        if (email.isChecked && SmtpSettings(this).load() == null) { showValidation(R.string.mail_config); return }
         val permissions = mutableListOf(Manifest.permission.CAMERA)
         if (audio.isChecked) permissions.add(Manifest.permission.RECORD_AUDIO)
         if (Build.VERSION.SDK_INT >= 33 && !notificationAsked) permissions.add(Manifest.permission.POST_NOTIFICATIONS)
@@ -199,7 +266,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
                                     getSharedPreferences("camera_options", MODE_PRIVATE).edit().remove("recipient").commit()
                                 }.isSuccess
                             }
-                            if (!saved) status.setText(R.string.smtp_store_failed)
+                            if (!saved) showValidation(R.string.smtp_store_failed)
                             else if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) beginCapture(duration, to)
                         }
                     }.create()
@@ -209,12 +276,38 @@ class BackgroundCameraActivity : AppCompatActivity() {
         } else beginCapture(duration, "")
     }
     private fun beginCapture(duration: Long, to: String) {
+        getSharedPreferences("camera_options", MODE_PRIVATE).edit()
+            .putInt("segment_seconds", segmentSeconds()).putBoolean("retry_network", retryNetwork.isChecked).apply()
         runCatching {
             ContextCompat.startForegroundService(this, Intent(this, BackgroundCameraService::class.java).setAction(BackgroundCameraService.ACTION_START)
                 .putExtra(BackgroundCameraService.EXTRA_FRONT, front.isChecked).putExtra(BackgroundCameraService.EXTRA_AUDIO, audio.isChecked)
+                .putExtra(BackgroundCameraService.EXTRA_CONTINUOUS, continuous.isChecked)
+                .putExtra(BackgroundCameraService.EXTRA_SEGMENT_SECONDS, segmentSeconds())
+                .putExtra(BackgroundCameraService.EXTRA_RETRY, retryNetwork.isChecked)
                 .putExtra(BackgroundCameraService.EXTRA_DURATION, duration).putExtra(BackgroundCameraService.EXTRA_RECIPIENT, to)
                 .putExtra(BackgroundCameraService.EXTRA_QUALITY, selectedQuality().key))
-        }.onFailure { status.setText(R.string.camera_failed) }
+        }.onFailure { showValidation(R.string.camera_failed) }
+    }
+    private fun showValidation(message: Int) {
+        validationMessage = message
+        status.setText(message)
+    }
+    private fun segmentSeconds() = SegmentTimeline.DURATIONS[segmentLength.selectedItemPosition.coerceIn(0, 3)]
+    private fun refreshContinuous() {
+        if (refreshingContinuous || recoveringContinuous) return
+        refreshingContinuous = true
+        lifecycleScope.launch {
+            try {
+                val info = withContext(Dispatchers.IO) {
+                    val store = ContinuousSessionStore(this@BackgroundCameraActivity)
+                    store.summary() to store.hasInterruptedSession()
+                }
+                val counts = info.first
+                continuousStatus.text = getString(R.string.continuous_counts, counts[0], counts[1], counts[2], counts[3]) +
+                    if (info.second) "\n" + getString(R.string.continuous_recovered) else ""
+            } catch (_: Exception) { continuousStatus.setText(R.string.continuous_status_failed) }
+            finally { refreshingContinuous = false }
+        }
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -222,7 +315,7 @@ class BackgroundCameraActivity : AppCompatActivity() {
             pendingStart = false
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                 (!audio.isChecked || ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) requestAndStart()
-            else status.setText(R.string.camera_permission_denied)
+            else showValidation(R.string.camera_permission_denied)
         }
     }
 }

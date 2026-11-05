@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">Kontinuierliche Notfallaufnahme</string>
+    <string name="continuous_enable">Aufnehmen, bis ich die Sitzung beende</string>
+    <string name="continuous_duration">Ziel-Cliplänge (Schnitt am nächsten Schlüsselbild)</string>
+    <string name="continuous_30">30 Sekunden</string>
+    <string name="continuous_60">1 Minute (Standard)</string>
+    <string name="continuous_120">2 Minuten</string>
+    <string name="continuous_300">5 Minuten</string>
+    <string name="continuous_retry">Sichere Wiederholungen bei erneuter Internetverbindung</string>
+    <string name="continuous_policy">Aktivieren Sie unten den automatischen E-Mail-Versand. Fertige Clips werden während der Aufnahme versendet. Der Sitzungstimer ist deaktiviert. Akku, Daten und Speicher werden verbraucht; bei wenig Speicher stoppt die Aufnahme. Originale bleiben auf diesem Gerät. SMTP-Annahme bestätigt keinen Posteingang. Unklare Sendeergebnisse müssen zur Vermeidung von Duplikaten geprüft werden.</string>
+    <string name="continuous_recovering">Gespeicherte Sitzungen werden geprüft…</string>
+    <string name="continuous_recording">Kontinuierliche Aufnahme • aktueller Clip %1$d</string>
+    <string name="continuous_stopped">Sitzung beendet • %1$d Clips gespeichert. Versandstatus im Postausgang prüfen.</string>
+    <string name="continuous_interrupted">Aufnahme unerwartet beendet • %1$d Clips abgeschlossen. Dateien und Postausgang prüfen.</string>
+    <string name="continuous_counts">Gespeichert: %1$d • Vom Mailserver angenommen: %2$d • Ausstehend: %3$d • Prüfen: %4$d</string>
+    <string name="continuous_recovered">Eine frühere Sitzung wurde unterbrochen. Gespeicherte Clips wurden geprüft; die Kamera wurde nicht neu gestartet.</string>
+    <string name="continuous_status_failed">Clipstatus konnte nicht gelesen werden. Postausgang und Aufnahmen prüfen.</string>
+    <string name="continuous_low_storage">Aufnahme wegen wenig Speicher beendet. %1$d Clips abgeschlossen. Nach Prüfung der Dateien Speicher freigeben; ausstehende Clips bleiben erhalten.</string>
+</resources>

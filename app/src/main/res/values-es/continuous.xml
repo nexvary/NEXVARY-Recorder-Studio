@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">Grabación continua de emergencia</string>
+    <string name="continuous_enable">Grabar hasta que finalice la sesión</string>
+    <string name="continuous_duration">Duración objetivo del clip (corte en el siguiente fotograma clave)</string>
+    <string name="continuous_30">30 segundos</string>
+    <string name="continuous_60">1 minuto (predeterminado)</string>
+    <string name="continuous_120">2 minutos</string>
+    <string name="continuous_300">5 minutos</string>
+    <string name="continuous_retry">Reintentar fallos seguros cuando vuelva Internet</string>
+    <string name="continuous_policy">Active abajo el envío automático por correo para enviar cada clip completo mientras continúa la grabación. Se ignora el temporizador de sesión. Consume batería, datos y espacio; se detiene si queda poco espacio. Los originales permanecen en este dispositivo. La aceptación SMTP no confirma la entrega en la bandeja de entrada. Los envíos inciertos requieren revisión para evitar duplicados.</string>
+    <string name="continuous_recovering">Comprobando sesiones guardadas…</string>
+    <string name="continuous_recording">Grabación continua • clip actual %1$d</string>
+    <string name="continuous_stopped">Sesión finalizada • %1$d clips guardados. Consulte el estado de envío en la bandeja de salida.</string>
+    <string name="continuous_interrupted">La grabación se detuvo inesperadamente • %1$d clips finalizados. Revise los archivos y la bandeja de salida.</string>
+    <string name="continuous_counts">Guardados: %1$d • Aceptados por el servidor: %2$d • Pendientes: %3$d • Revisar: %4$d</string>
+    <string name="continuous_recovered">Se interrumpió una sesión anterior. Se revisaron los clips guardados; no se reinició la cámara.</string>
+    <string name="continuous_status_failed">No se pudo leer el estado de los clips. Revise la bandeja de salida y las grabaciones.</string>
+    <string name="continuous_low_storage">Grabación detenida por falta de espacio. %1$d clips finalizados. Libere espacio tras revisar los archivos; se conservaron los clips pendientes.</string>
+</resources>

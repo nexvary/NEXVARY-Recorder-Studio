@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="continuous_title">Kesintisiz Acil Durum Kaydı</string>
+    <string name="continuous_enable">Oturumu durdurana kadar kaydet</string>
+    <string name="continuous_duration">Hedef klip süresi (sonraki anahtar karede bölünür)</string>
+    <string name="continuous_30">30 saniye</string>
+    <string name="continuous_60">1 dakika (varsayılan)</string>
+    <string name="continuous_120">2 dakika</string>
+    <string name="continuous_300">5 dakika</string>
+    <string name="continuous_retry">İnternet geri geldiğinde güvenli hataları yeniden dene</string>
+    <string name="continuous_policy">Kayıt sürerken tamamlanan her klibi göndermek için aşağıdaki otomatik e-postayı açın. Oturum zamanlayıcısı dikkate alınmaz. Pil, veri ve depolama kullanır; alan azalınca kayıt durur. Asıllar bu cihazda kalır. SMTP kabulü gelen kutusuna teslimi doğrulamaz. Yinelenen gönderileri önlemek için belirsiz sonuçları inceleyin.</string>
+    <string name="continuous_recovering">Kaydedilen oturumlar denetleniyor…</string>
+    <string name="continuous_recording">Kesintisiz kayıt • mevcut klip %1$d</string>
+    <string name="continuous_stopped">Oturum bitti • %1$d klip kaydedildi. Gönderim durumunu giden kutusunda kontrol edin.</string>
+    <string name="continuous_interrupted">Kayıt beklenmedik biçimde durdu • %1$d klip tamamlandı. Dosyaları ve giden kutusunu kontrol edin.</string>
+    <string name="continuous_counts">Kaydedilen: %1$d • Sunucunun kabul ettiği: %2$d • Bekleyen: %3$d • İncelenecek: %4$d</string>
+    <string name="continuous_recovered">Önceki bir oturum kesildi. Kaydedilen klipler kontrol edildi; kamera yeniden başlatılmadı.</string>
+    <string name="continuous_status_failed">Klip durumu okunamadı. Giden kutusunu ve kayıtları kontrol edin.</string>
+    <string name="continuous_low_storage">Depolama azaldığı için kayıt durdu. %1$d klip tamamlandı. Dosyaları inceledikten sonra alan açın; bekleyen klipler korundu.</string>
+</resources>

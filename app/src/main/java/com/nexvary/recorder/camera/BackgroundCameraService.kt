@@ -21,6 +21,11 @@ class BackgroundCameraService : Service() {
         const val ACTION_STOP = "com.nexvary.recorder.camera.STOP"
         const val EXTRA_FRONT = "front"
         const val EXTRA_AUDIO = "audio"
+        const val EXTRA_CONTINUOUS = "continuous"
+        const val EXTRA_SEGMENT_SECONDS = "segment_seconds"
+        const val EXTRA_RETRY = "retry_network"
+        @Volatile var activeContinuousSession: String? = null
+            private set
         const val EXTRA_DURATION = "duration_ms"
         const val EXTRA_RECIPIENT = "email_recipient"
         const val EXTRA_QUALITY = "quality"
@@ -30,7 +35,7 @@ class BackgroundCameraService : Service() {
         @Volatile var activeOutputPath: String? = null
             private set
         enum class Stage { IDLE, STARTING, RECORDING, SAVING, SAVED, ERROR }
-        data class CaptureState(val stage: Stage = Stage.IDLE, val deadline: Long = 0, val name: String = "", val mailQueued: Boolean = false, val mailRequested: Boolean = false)
+        data class CaptureState(val stage: Stage = Stage.IDLE, val deadline: Long = 0, val name: String = "", val mailQueued: Boolean = false, val mailRequested: Boolean = false, val sessionId: String = "", val segmentNumber: Int = 0, val stopReason: String = "")
         @Volatile var state = CaptureState()
             private set
         private const val CHANNEL = "nexvary_camera_recording"
@@ -40,6 +45,24 @@ class BackgroundCameraService : Service() {
     private val thread = HandlerThread("NexvaryCameraRecording").apply { start() }
     private val handler = Handler(thread.looper)
     private val main = Handler(Looper.getMainLooper())
+    private var continuous = false
+    private var segmentSeconds = 60
+    private var retryNetwork = true
+    private var segmented: SegmentedEncoder? = null
+    private var continuousId: String? = null
+    private var continuousStopReason = "STOPPED"
+    private var completedSegments = 0
+    private val continuousStore by lazy { ContinuousSessionStore(this) }
+    private val storageMonitor = object : Runnable {
+        override fun run() {
+            if (!continuous || closing) return
+            val reserve = quality.budgetBytes(segmentSeconds * 1000L, captureAudio) * 2
+            val enough = listOfNotNull(getExternalFilesDir(Environment.DIRECTORY_MOVIES), noBackupFilesDir)
+                .all { SegmentTimeline.enoughSpace(it.usableSpace, reserve) }
+            if (!enough) { continuousStopReason = "LOW_STORAGE"; finishRecording() }
+            else handler.postDelayed(this, 1000)
+        }
+    }
     private var recorder: MediaRecorder? = null
     private var device: CameraDevice? = null
     private var session: CameraCaptureSession? = null
@@ -67,11 +90,14 @@ class BackgroundCameraService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) { handler.post { finishRecording() }; return START_NOT_STICKY }
         if (intent?.action != ACTION_START || requested) return START_NOT_STICKY
-        duration = intent.getLongExtra(EXTRA_DURATION, 0)
+        continuous = intent.getBooleanExtra(EXTRA_CONTINUOUS, false)
+        segmentSeconds = intent.getIntExtra(EXTRA_SEGMENT_SECONDS, 60)
+        retryNetwork = intent.getBooleanExtra(EXTRA_RETRY, true)
+        duration = if (continuous) 0 else intent.getLongExtra(EXTRA_DURATION, 0)
         quality = CameraQuality.fromKey(intent.getStringExtra(EXTRA_QUALITY))
         activeEvidenceEvent = intent.getStringExtra(EXTRA_EVIDENCE_EVENT)?.takeIf { runCatching { java.util.UUID.fromString(it) }.isSuccess }
         recipient = intent.getStringExtra(EXTRA_RECIPIENT).orEmpty().trim()
-        if (!DeliveryPolicy.validDuration(duration) || (recipient.isNotBlank() && MailRecipients.parse(recipient) == null) ||
+        if ((continuous && (segmentSeconds !in SegmentTimeline.DURATIONS || activeEvidenceEvent != null)) || !DeliveryPolicy.validDuration(duration) || (recipient.isNotBlank() && MailRecipients.parse(recipient) == null) ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             activeEvidenceEvent = null; state = CaptureState(Stage.ERROR); stopSelf(); return START_NOT_STICKY
         }
@@ -94,11 +120,12 @@ class BackgroundCameraService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val open = PendingIntent.getActivity(this, 0, Intent(this, BackgroundCameraActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         return Notification.Builder(this, CHANNEL).setSmallIcon(R.drawable.ic_feature_screen)
-            .setContentTitle(getString(R.string.app_name)).setContentText(getString(if (duration > 0) R.string.camera_timed_notification else R.string.camera_recording))
+            .setContentTitle(getString(R.string.app_name)).setContentText(getString(if (continuous) R.string.continuous_title else if (duration > 0) R.string.camera_timed_notification else R.string.camera_recording))
             .setContentIntent(open).setOngoing(true).addAction(android.R.drawable.ic_media_pause, getString(R.string.camera_stop), pending).build()
     }
     private fun openCamera(front: Boolean, audio: Boolean) {
         if (closing) return
+        if (continuous) { openContinuous(front, audio); return }
         try {
             val facing = if (front) CameraCharacteristics.LENS_FACING_FRONT else CameraCharacteristics.LENS_FACING_BACK
             val id = manager.cameraIdList.firstOrNull { manager.getCameraCharacteristics(it).get(CameraCharacteristics.LENS_FACING) == facing }
@@ -177,6 +204,81 @@ class BackgroundCameraService : Service() {
             }, handler)
         } catch (_: Exception) { finishRecording() }
     }
+    private fun openContinuous(front: Boolean, audio: Boolean) {
+        try {
+            val reserve = quality.budgetBytes(segmentSeconds * 1000L, audio) * 2
+            check(listOfNotNull(getExternalFilesDir(Environment.DIRECTORY_MOVIES), noBackupFilesDir)
+                .all { SegmentTimeline.enoughSpace(it.usableSpace, reserve) }) { "low_storage" }
+            val facing = if (front) CameraCharacteristics.LENS_FACING_FRONT else CameraCharacteristics.LENS_FACING_BACK
+            val id = manager.cameraIdList.firstOrNull { manager.getCameraCharacteristics(it).get(CameraCharacteristics.LENS_FACING) == facing }
+                ?: error("camera_unavailable")
+            val characteristics = manager.getCameraCharacteristics(id)
+            val sizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                ?.getOutputSizes(android.media.MediaCodec::class.java).orEmpty()
+            val size = quality.chooseSize(sizes.map { CameraQuality.FrameSize(it.width, it.height) }) ?: error("codec_surface_unavailable")
+            val sessionId = continuousStore.create(segmentSeconds, recipient, retryNetwork)
+            continuousId = sessionId; activeContinuousSession = sessionId
+            val encoder = SegmentedEncoder(this, handler, quality, size, quality.fps, audio, segmentSeconds,
+                characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0,
+                newFile = { index, pts ->
+                    continuousStore.open(sessionId, index, pts).also {
+                        activeOutputPath = it.absolutePath
+                        state = state.copy(segmentNumber = index, sessionId = sessionId)
+                    }
+                },
+                finalized = { file, index, first, last ->
+                    continuousStore.finalize(sessionId, file, index, first, last); completedSegments++
+                },
+                failure = { reason -> continuousStopReason = reason; finishRecording() })
+            segmented = encoder
+            val surface = encoder.prepare()
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                continuousStopReason = "PERMISSION_REVOKED"; finishRecording(); return
+            }
+            openPending = true
+            manager.openCamera(id, object : CameraDevice.StateCallback() {
+                override fun onOpened(camera: CameraDevice) {
+                    openPending = false
+                    if (closing) { camera.close(); if (destroyed) thread.quitSafely(); return }
+                    device = camera
+                    try {
+                        camera.createCaptureSession(listOf(surface), object : CameraCaptureSession.StateCallback() {
+                            override fun onConfigured(capture: CameraCaptureSession) {
+                                if (closing) { capture.close(); return }
+                                session = capture
+                                try {
+                                    capture.setRepeatingRequest(camera.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply { addTarget(surface) }.build(), null, handler)
+                                    encoder.start(); started = true
+                                    state = CaptureState(Stage.RECORDING, sessionId = sessionId)
+                                    handler.post(storageMonitor)
+                                } catch (_: Exception) { continuousStopReason = "START_FAILED"; finishRecording() }
+                            }
+                            override fun onConfigureFailed(capture: CameraCaptureSession) { capture.close(); continuousStopReason = "CAMERA_FAILED"; finishRecording() }
+                        }, handler)
+                    } catch (_: Exception) { continuousStopReason = "CAMERA_FAILED"; finishRecording() }
+                }
+                override fun onDisconnected(camera: CameraDevice) { openPending = false; camera.close(); continuousStopReason = "CAMERA_DISCONNECTED"; finishRecording(); if (destroyed) thread.quitSafely() }
+                override fun onError(camera: CameraDevice, error: Int) { openPending = false; camera.close(); continuousStopReason = "CAMERA_FAILED"; finishRecording(); if (destroyed) thread.quitSafely() }
+            }, handler)
+        } catch (_: Exception) { continuousStopReason = "START_OR_STORAGE_FAILED"; finishRecording() }
+    }
+    private fun finishContinuous() {
+        if (closing) return
+        closing = true; handler.removeCallbacks(storageMonitor)
+        state = state.copy(stage = Stage.SAVING)
+        runCatching { session?.stopRepeating() }; runCatching { session?.close() }; runCatching { device?.close() }
+        session = null; device = null
+        runCatching { if (started) segmented?.stop() else segmented?.release() }
+            .onFailure { continuousStopReason = "FINALIZATION_FAILED" }
+        segmented = null; started = false
+        continuousId?.let { runCatching { continuousStore.stop(it, continuousStopReason) } }
+        val finished = CaptureState(if (completedSegments > 0 && continuousStopReason == "STOPPED") Stage.SAVED else Stage.ERROR,
+            name = continuousId.orEmpty(), mailRequested = recipient.isNotBlank(), sessionId = continuousId.orEmpty(),
+            segmentNumber = completedSegments, stopReason = continuousStopReason)
+        finalState = finished; state = finished
+        activeOutputPath = null; activeContinuousSession = null
+        main.post { stopForeground(STOP_FOREGROUND_REMOVE); stopSelf() }
+    }
     /** MediaRecorder time-based rollover; the service stays foreground. Camera restart may introduce a short gap. */
     private fun rotateEvidence() {
         if(closing || rotating) return
@@ -198,6 +300,7 @@ class BackgroundCameraService : Service() {
         if(previous!=null) previous.close() else { rotating=false;openCamera(captureFront,captureAudio) }
     }
     private fun finishRecording() {
+        if (continuous) { finishContinuous(); return }
         if (closing) return
         closing = true
         state = state.copy(stage = Stage.SAVING)
@@ -244,7 +347,7 @@ class BackgroundCameraService : Service() {
     }
     override fun onDestroy() {
         finalState?.let { state = it }
-        handler.post { destroyed = true; finishRecording(); finalizer.shutdown(); if (openPending) handler.postDelayed({ thread.quitSafely() }, 10_000) else thread.quitSafely() }
+        handler.post { destroyed = true; if (continuous && !closing) continuousStopReason = "SYSTEM_STOPPED"; finishRecording(); finalizer.shutdown(); if (openPending) handler.postDelayed({ thread.quitSafely() }, 10_000) else thread.quitSafely() }
         super.onDestroy()
     }
 }
