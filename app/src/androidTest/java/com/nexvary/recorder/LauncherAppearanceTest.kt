@@ -71,6 +71,20 @@ class LauncherAppearanceTest {
             ActivityScenario.launch<MainActivity>(launch).use { scenario -> scenario.onActivity { assertEquals(app.packageName, it.packageName) } }
         }
     }
+    @Test fun concurrentControllersCannotLeaveAllAliasesDisabled() {
+        val pool = java.util.concurrent.Executors.newFixedThreadPool(3)
+        try {
+            repeat(4) {
+                val barrier = java.util.concurrent.CyclicBarrier(3)
+                val work = LauncherAppearance.Style.entries.map { style -> java.util.concurrent.Callable {
+                    barrier.await(10, java.util.concurrent.TimeUnit.SECONDS)
+                    LauncherAppearance(app).select(style).getOrThrow()
+                } }
+                pool.invokeAll(work).forEach { it.get() }
+                assertEquals(1, appearance.enabled().size)
+            }
+        } finally { pool.shutdownNow() }
+    }
     @Test fun realSelectionCancellationConfirmationAndRotationPreserveTheChoice() {
         val localeManager = if (Build.VERSION.SDK_INT >= 33) app.getSystemService(android.app.LocaleManager::class.java) else null
         val previousLocales = if (Build.VERSION.SDK_INT >= 33) localeManager!!.applicationLocales else null

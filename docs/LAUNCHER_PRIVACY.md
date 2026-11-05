@@ -23,6 +23,8 @@ disables the previous entries. An interruption of the old sequence may leave dup
 shortcuts temporarily, but no intentional all-disabled state. An error attempts to
 restore the original entry before cleaning up other aliases. Current selection is
 read from persistent PackageManager state, not a conflicting preferences cache.
+A process-wide lock serializes changes from multiple page/controller instances,
+including rollback, so older-device enable/disable sequences cannot interleave.
 Keep alias names stable in future versions so Android component overrides survive.
 
 The manifest migrates the original MAIN/LAUNCHER filter from MainActivity to the
@@ -37,10 +39,12 @@ service, call-log permissions, device administration or OS restriction bypass is
 Android's official LauncherApps documentation describes synthesized app-settings
 entries when launcher entries are absent on modern versions; disabling all app
 shortcuts is not guaranteed concealment. Dialer special-code handling depends on the
-default dialer/platform. The documented sendDialerSpecialCode API requires default-
-dialer or carrier privileges; an arbitrary app cannot reliably promise a universal
-system dial-pad trigger. We do not request those unrelated privileges or leave a child
-with an unverified way back into emergency functions. Typing a code in arbitrary apps
+default dialer/platform. Android documents ACTION_SECRET_CODE broadcasts; a receiving
+app is not required to become the default dialer merely to receive one. The sender
+must be the default dialer or have carrier privileges, and the phone's actual dialer
+must implement the trigger. Receiving the documented broadcast is therefore possible,
+but a working end-to-end OPPO dial-pad launch has not been verified here. We keep the
+launcher reachable instead of making emergency access depend on that untested route. Typing a code in arbitrary apps
 would require inappropriate keyboard/accessibility interception; none is implemented.
 
 Official references:
@@ -50,9 +54,9 @@ Official references:
 
 ## Verification status at initial implementation
 
-Local UI/page/help/resource/whitespace/shell checks passed. Four instrumentation cases
+Local UI/page/help/resource/whitespace/shell checks passed. Five instrumentation cases
 cover alias resolution/labels/reconstructed selection, real cancel/apply/rotation UI,
-parent-PIN protection, and actual capture continuing through all three selections
+parent-PIN protection, concurrent controllers, and actual capture continuing through all three selections
 with an unchanged PID/session and a readable finalized MP4. A focused API29/API35
 workflow covers the old enable-first and newer atomic branches. The normal API33/34/35
 matrix and DEBUG=false mail regression gate must pass before a signed owner APK is
