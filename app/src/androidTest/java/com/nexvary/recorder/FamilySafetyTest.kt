@@ -99,6 +99,11 @@ class FamilySafetyTest {
             awaitUi(withId(R.id.fsSafe));scenario.onActivity { it.findViewById<android.widget.Spinner>(R.id.fsPresets).setSelection(4) };onView(withId(R.id.fsMinutes)).perform(reveal(),replaceText("80"),closeSoftKeyboard())
             scenario.recreate();awaitUi(withId(R.id.fsSafe));onView(withId(R.id.fsMinutes)).perform(reveal()).check(matches(withText("80")))
             assertEquals(first.id,FamilyStore.state(FamilyStore(context).snapshot())!!.id)
+            // Recreation exposes the controls before the asynchronous persisted-state
+            // refresh completes. Wait for both the rendered active session and an
+            // enabled action; an Espresso click alone does not require isEnabled.
+            awaitUi(org.hamcrest.Matchers.allOf(withId(R.id.fsStatus),withText(org.hamcrest.Matchers.startsWith(context.getString(R.string.fs_check_active)))))
+            awaitUi(org.hamcrest.Matchers.allOf(withId(R.id.fsSafe),isEnabled()))
             onView(withId(R.id.fsSafe)).perform(reveal(),click())
             await { FamilyStore.state(FamilyStore(context).snapshot())?.phase==SafetyPhase.RESOLVED }
         }

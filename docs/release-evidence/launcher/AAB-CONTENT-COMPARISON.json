@@ -1,0 +1,8 @@
+{
+  "ownerBundleSha256": "62ee8fcdceaa965904f08ff5dca041daaf7f6ea8c3f98c47a43b1c2e8e386324",
+  "readinessBundleSha256": "3d22eeda3ce5fcf8588ab29188e651d2e6342f44fa40203fdb9d7f8356a59c23",
+  "changedUncompressedEntries": [
+    "base/root/META-INF/version-control-info.textproto"
+  ],
+  "allOtherEntriesByteIdentical": true
+}

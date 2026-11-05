@@ -1,0 +1,264 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="100" failures="0" errors="0" skipped="0" time="668.756" timestamp="2026-11-05T10:28:17" hostname="localhost">
+  <testsuite name="com.nexvary.recorder.AllPagesReviewTest" tests="4" failures="0" errors="0" skipped="0" time="53.569" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="everyRegisteredInternalActivityRendersWithSafeBackNavigation" classname="com.nexvary.recorder.AllPagesReviewTest" time="44.537" />
+    <testcase name="voiceStudioCreatesARealPlayableWavAndListsIt" classname="com.nexvary.recorder.AllPagesReviewTest" time="6.289" />
+    <testcase name="exportedMediaAndLegacyFolderBothAppearInRecordingLibrary" classname="com.nexvary.recorder.AllPagesReviewTest" time="2.535" />
+    <testcase name="screenOutputPublishesAPlayableVideoAndRejectsAnUnfinalizedFile" classname="com.nexvary.recorder.AllPagesReviewTest" time="0.208" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.CameraMailAcceptanceTest" tests="4" failures="0" errors="0" skipped="0" time="14.731" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="multipleRecipientTlsEnvelopeKeepsAddressesOutOfMessageHeaders" classname="com.nexvary.recorder.CameraMailAcceptanceTest" time="0.503" />
+    <testcase name="encryptedRecipientDefaultsAndLegacyQueueRequireFreshApproval" classname="com.nexvary.recorder.CameraMailAcceptanceTest" time="0.027" />
+    <testcase name="reviewCancellationDoesNotStartRecordingOrQueueEmail" classname="com.nexvary.recorder.CameraMailAcceptanceTest" time="5.931" />
+    <testcase name="configuredParentPinGuardsMailReviewAndOutbox" classname="com.nexvary.recorder.CameraMailAcceptanceTest" time="8.27" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.CameraQualityUiTest" tests="2" failures="0" errors="0" skipped="0" time="9.1" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="fiveMinuteHighQualityWarnsAboutSmtpLimitAndCompactClearsWarning" classname="com.nexvary.recorder.CameraQualityUiTest" time="4.689" />
+    <testcase name="compactIsDefaultAndUserQualityChoiceSurvivesRotationAndReopening" classname="com.nexvary.recorder.CameraQualityUiTest" time="4.411" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.CloudLifecycleReviewTest" tests="4" failures="0" errors="0" skipped="0" time="0.319" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="accountSwitchCancelsOldTransportAndClearsPremiumButKeepsLocalEvidence" classname="com.nexvary.recorder.CloudLifecycleReviewTest" time="0.028" />
+    <testcase name="sameAccountLoginPreservesItsQueueAndRevokesStaleWorkerSession" classname="com.nexvary.recorder.CloudLifecycleReviewTest" time="0.06" />
+    <testcase name="closingEvidenceCannotRevivePendingCancellation" classname="com.nexvary.recorder.CloudLifecycleReviewTest" time="0.23" />
+    <testcase name="logoutRevokesTokensAndKeepsLocalSafetyState" classname="com.nexvary.recorder.CloudLifecycleReviewTest" time="0.001" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.ContinuousModeUiTest" tests="1" failures="0" errors="0" skipped="0" time="10.108" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="arabicContinuousControlsSelectDurationDisableTimerAndSurviveRecreation" classname="com.nexvary.recorder.ContinuousModeUiTest" time="10.108" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.ContinuousRecordingTest" tests="5" failures="0" errors="0" skipped="0" time="74.39" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="microphoneTrackAndShortFinalClipSurviveExplicitStop" classname="com.nexvary.recorder.ContinuousRecordingTest" time="6.75" />
+    <testcase name="incompleteCrashTailIsRetainedAndNotCountedAsSaved" classname="com.nexvary.recorder.ContinuousRecordingTest" time="0.23" />
+    <testcase name="durableQueueIsIdempotentAndRetainsUnsentFileAfterRestartAndUncertainData" classname="com.nexvary.recorder.ContinuousRecordingTest" time="0.027" />
+    <testcase name="safeFailuresRemainRetryableAfterMultipleAttemptsAndDoNotBlockOtherClips" classname="com.nexvary.recorder.ContinuousRecordingTest" time="0.077" />
+    <testcase name="continuousCameraFinalizesAndQueuesDuringNextClipAndKeepsFinalTail" classname="com.nexvary.recorder.ContinuousRecordingTest" time="67.306" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.DashboardLayoutTest" tests="2" failures="0" errors="0" skipped="0" time="6.296" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="phoneSizedDashboardKeepsAllNineCardsAboveNavigation" classname="com.nexvary.recorder.DashboardLayoutTest" time="3.762" />
+    <testcase name="largeTextKeepsTheLastRowReachableWithoutClippingLabels" classname="com.nexvary.recorder.DashboardLayoutTest" time="2.534" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.FamilySafetyTest" tests="14" failures="0" errors="0" skipped="0" time="48.37" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="encryptedContactsAndMedicalProfileSurviveRecreationWithoutPlaintext" classname="com.nexvary.recorder.FamilySafetyTest" time="0.13" />
+    <testcase name="uncertainEmailDoesNotResendAndFailureDoesNotStopOtherGuardian" classname="com.nexvary.recorder.FamilySafetyTest" time="0.16" />
+    <testcase name="testAlertJsonUsesActualTlsRuntimeOnLoopback" classname="com.nexvary.recorder.FamilySafetyTest" time="0.156" />
+    <testcase name="queuedPayloadRespectsRevokedLocationDeviceAndMedicalConsent" classname="com.nexvary.recorder.FamilySafetyTest" time="0.306" />
+    <testcase name="changedRecipientOrRevokedConsentCancelsQueuedAlertBeforeTransport" classname="com.nexvary.recorder.FamilySafetyTest" time="0.152" />
+    <testcase name="actualTenSecondAudioHasClosedFileDurationAndVerifiedHash" classname="com.nexvary.recorder.FamilySafetyTest" time="11.591" />
+    <testcase name="actualTenSecondEmergencyVideoHasManifestAndNoExternalUpload" classname="com.nexvary.recorder.FamilySafetyTest" time="11.959" />
+    <testcase name="newManualSosClearsOldJourneyAndResolutionCancelsOnlyOwnQueuedAlerts" classname="com.nexvary.recorder.FamilySafetyTest" time="0.434" />
+    <testcase name="guardianPinProtectsSettingsButDoesNotBlockSos" classname="com.nexvary.recorder.FamilySafetyTest" time="7.568" />
+    <testcase name="safetyStateSurvivesActivityRecreationAndStaleCancelCannotStopNewSession" classname="com.nexvary.recorder.FamilySafetyTest" time="3.051" />
+    <testcase name="legacySosContactsMigrateOnceAndLeaveNoPlaintextPreference" classname="com.nexvary.recorder.FamilySafetyTest" time="0.076" />
+    <testcase name="settingsContactsAndProfileHaveRealPersistenceAndReturnNavigation" classname="com.nexvary.recorder.FamilySafetyTest" time="12.659" />
+    <testcase name="smtpDiagnosticStoresOnlyFixedCategoryAndInvalidatesChangedCredentials" classname="com.nexvary.recorder.FamilySafetyTest" time="0.026" />
+    <testcase name="automaticExpiryPersistsGraceAndQueuesNothingWithoutConsent" classname="com.nexvary.recorder.FamilySafetyTest" time="0.102" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.GuardianIntegrationTest" tests="4" failures="0" errors="0" skipped="0" time="48.312" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="videoRolloverClosesAndHashesSegmentsBeforeSessionEnds" classname="com.nexvary.recorder.GuardianIntegrationTest" time="41.982" />
+    <testcase name="rapidOfflineSosPreservesOneEventAndEncryptedOutbox" classname="com.nexvary.recorder.GuardianIntegrationTest" time="1.015" />
+    <testcase name="childHomeHidesCloudBillingAndParentExitNeedsPin" classname="com.nexvary.recorder.GuardianIntegrationTest" time="2.422" />
+    <testcase name="audioLivesInsideMediaCenterAndSafetyHasHomeSlot" classname="com.nexvary.recorder.GuardianIntegrationTest" time="2.893" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.LauncherAppearanceTest" tests="5" failures="0" errors="0" skipped="0" time="13.899" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="configuredParentPinProtectsAppearanceSettings" classname="com.nexvary.recorder.LauncherAppearanceTest" time="1.723" />
+    <testcase name="realSelectionCancellationConfirmationAndRotationPreserveTheChoice" classname="com.nexvary.recorder.LauncherAppearanceTest" time="3.906" />
+    <testcase name="aliasesHaveIndependentLabelsPersistAndAlwaysKeepOneLaunchableEntry" classname="com.nexvary.recorder.LauncherAppearanceTest" time="3.541" />
+    <testcase name="concurrentControllersCannotLeaveAllAliasesDisabled" classname="com.nexvary.recorder.LauncherAppearanceTest" time="0.207" />
+    <testcase name="launcherChangesDoNotKillTheLiveCameraOrChangeItsSession" classname="com.nexvary.recorder.LauncherAppearanceTest" time="4.522" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.MoreAndGuideTest" tests="4" failures="0" errors="0" skipped="0" time="29.86" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="largeTextUsesSingleColumnAndKeepsAllCardsReachable" classname="com.nexvary.recorder.MoreAndGuideTest" time="1.593" />
+    <testcase name="everyMoreCardOpensItsRealPageAndBackReturnsToCards" classname="com.nexvary.recorder.MoreAndGuideTest" time="21.591" />
+    <testcase name="offlineGuideSearchRotationAndAccordionDoNotCreateAnEmergency" classname="com.nexvary.recorder.MoreAndGuideTest" time="2.46" />
+    <testcase name="themeAndLanguageCardsCannotBypassTheGuardianPin" classname="com.nexvary.recorder.MoreAndGuideTest" time="4.216" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.NavigationSmokeTest" tests="6" failures="0" errors="0" skipped="0" time="32.137" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="mediaToolsControlsAreConnected" classname="com.nexvary.recorder.NavigationSmokeTest" time="1.048" />
+    <testcase name="everyDashboardPageOpensAndBackReturnsHome" classname="com.nexvary.recorder.NavigationSmokeTest" time="7.043" />
+    <testcase name="screenRecorderProfessionalControlsExist" classname="com.nexvary.recorder.NavigationSmokeTest" time="0.947" />
+    <testcase name="bottomNavigationItemsAreConnected" classname="com.nexvary.recorder.NavigationSmokeTest" time="17.689" />
+    <testcase name="aboutAndLanguageControlsAreConnected" classname="com.nexvary.recorder.NavigationSmokeTest" time="2.623" />
+    <testcase name="themePickerOpensFromFixedHome" classname="com.nexvary.recorder.NavigationSmokeTest" time="2.787" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.NpseIntegrationTest" tests="2" failures="0" errors="0" skipped="0" time="4.848" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="moreEntryRequiresConfiguredGuardianPin" classname="com.nexvary.recorder.NpseIntegrationTest" time="3.722" />
+    <testcase name="libraryIsInternalAndStandardModeWorksWithoutManager" classname="com.nexvary.recorder.NpseIntegrationTest" time="1.126" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.PlayerAndSetupTest" tests="6" failures="0" errors="0" skipped="0" time="66.476" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="personalUseSkipsChildAccountAndRetainsSavedHealthData" classname="com.nexvary.recorder.PlayerAndSetupTest" time="2.458" />
+    <testcase name="missingVideoShowsRecoverableErrorWithoutOpeningAnotherApp" classname="com.nexvary.recorder.PlayerAndSetupTest" time="4.287" />
+    <testcase name="localVideoDecodesAndRetainsPausedPositionAcrossRecreation" classname="com.nexvary.recorder.PlayerAndSetupTest" time="47.666" />
+    <testcase name="guidedProfilesPreserveHealthAndConsentAndResumeAfterRecreation" classname="com.nexvary.recorder.PlayerAndSetupTest" time="6.119" />
+    <testcase name="recordingRemainsAccessibleDuringIncompleteSetup" classname="com.nexvary.recorder.PlayerAndSetupTest" time="2.584" />
+    <testcase name="libraryPlayUsesInternalPlayerWithoutAnExternalViewIntent" classname="com.nexvary.recorder.PlayerAndSetupTest" time="3.362" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.RecipientEditorTest" tests="3" failures="0" errors="0" skipped="0" time="23.877" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="outboxRetryUsesTheSameCardsAndCancellationKeepsOriginalRecipients" classname="com.nexvary.recorder.RecipientEditorTest" time="3.689" />
+    <testcase name="invalidOrSeparatorBasedInputDoesNotBecomeARecipientAndTenDisablesAdd" classname="com.nexvary.recorder.RecipientEditorTest" time="14.612" />
+    <testcase name="separateAddressActionsValidateDuplicatesRemoveAndPreserveRotationDraft" classname="com.nexvary.recorder.RecipientEditorTest" time="5.576" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.RecordingDeliveryTest" tests="10" failures="0" errors="0" skipped="0" time="84.769" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="negativeSmtpCompletionCodeIsUncertainAndCorruptCopyCanBeRebuiltFromOriginal" classname="com.nexvary.recorder.RecordingDeliveryTest" time="0.077" />
+    <testcase name="sizeLimitAndInterruptedWorkerDoNotDeleteOrAutomaticallyResend" classname="com.nexvary.recorder.RecordingDeliveryTest" time="0.026" />
+    <testcase name="oneMinuteCompactCaptureWithAudioIsPlayableSmallAndSavesWithScreenOff" classname="com.nexvary.recorder.RecordingDeliveryTest" time="61.321" />
+    <testcase name="androidRuntimeSendsBinaryAttachmentThroughRealTlsAndStartTlsOnLoopback" classname="com.nexvary.recorder.RecordingDeliveryTest" time="0.685" />
+    <testcase name="manualStopSavesPlayableVideoAndAllowsImmediateNextRecordingWithoutEmail" classname="com.nexvary.recorder.RecordingDeliveryTest" time="6.671" />
+    <testcase name="acceptedMailDeletesOnlyPrivateSendCopyAndCannotBeSentTwice" classname="com.nexvary.recorder.RecordingDeliveryTest" time="0.077" />
+    <testcase name="nativeTimerSavesPlayableVideoWithActivityStoppedAndScreenOff" classname="com.nexvary.recorder.RecordingDeliveryTest" time="6.587" />
+    <testcase name="cameraValidatesTimerAndEmailBeforeRequestingCaptureAndKeepsDraftOnRotation" classname="com.nexvary.recorder.RecordingDeliveryTest" time="9.045" />
+    <testcase name="retryIsBoundedAndAnUncertainDataOutcomeNeedsManualApproval" classname="com.nexvary.recorder.RecordingDeliveryTest" time="0.253" />
+    <testcase name="smtpCredentialsAreEncryptedAndRemovable" classname="com.nexvary.recorder.RecordingDeliveryTest" time="0.027" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.ReportedIssuesTest" tests="5" failures="0" errors="0" skipped="0" time="35.499" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="hiddenVideoPlaysInsideAppAndRecreationLocksVault" classname="com.nexvary.recorder.ReportedIssuesTest" time="6.919" />
+    <testcase name="vaultAuthenticatesPinEncryptsChunksAndRejectsTampering" classname="com.nexvary.recorder.ReportedIssuesTest" time="6.071" />
+    <testcase name="sosEditorUsesNeonForTypedTextHintsAndActions" classname="com.nexvary.recorder.ReportedIssuesTest" time="2.565" />
+    <testcase name="selectedThemeChangesHomeAndSurvivesReturningFromSettings" classname="com.nexvary.recorder.ReportedIssuesTest" time="6.374" />
+    <testcase name="libraryHideLockWrongPinUnlockRestoreAndDelete" classname="com.nexvary.recorder.ReportedIssuesTest" time="13.57" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.RescueAndNavigationTest" tests="4" failures="0" errors="0" skipped="0" time="24.139" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="rescueValidationEditDeleteAndCancelNeverSends" classname="com.nexvary.recorder.RescueAndNavigationTest" time="9.302" />
+    <testcase name="callAndSafetyScreensReturnWithoutStartingServices" classname="com.nexvary.recorder.RescueAndNavigationTest" time="2.176" />
+    <testcase name="additionalDashboardDestinationsAndBack" classname="com.nexvary.recorder.RescueAndNavigationTest" time="8.974" />
+    <testcase name="missingMediaShowsErrorsWithoutStartingWork" classname="com.nexvary.recorder.RescueAndNavigationTest" time="3.687" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.ServiceSetupTest" tests="3" failures="0" errors="0" skipped="0" time="5.536" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="institutionSetupUsesOnlyItsAddressAndRejectsAnInsecureConnection" classname="com.nexvary.recorder.ServiceSetupTest" time="2.134" />
+    <testcase name="serviceSwitchRevokesOldJobsWithoutDeletingLocalEvidence" classname="com.nexvary.recorder.ServiceSetupTest" time="0.082" />
+    <testcase name="legacyAwsFieldsAreExplicitlyAdvancedAndLocalSosStaysAvailable" classname="com.nexvary.recorder.ServiceSetupTest" time="3.32" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.SettingsScreenshotTest" tests="3" failures="0" errors="0" skipped="0" time="11.138" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="pinGateStaysProtectedUntilAuthorizedThenAllowsSettingsCapture" classname="com.nexvary.recorder.SettingsScreenshotTest" time="3.231" />
+    <testcase name="sensitiveFamilyPagesKeepTheirCaptureProtection" classname="com.nexvary.recorder.SettingsScreenshotTest" time="3.274" />
+    <testcase name="settingsAndServicePagesAllowCaptureAfterOpeningAndRecreation" classname="com.nexvary.recorder.SettingsScreenshotTest" time="4.633" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.SettingsSimplificationTest" tests="4" failures="0" errors="0" skipped="0" time="18.426" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="accountLoginShowsOnlyTheFieldsNeededForEachStep" classname="com.nexvary.recorder.SettingsSimplificationTest" time="2.66" />
+    <testcase name="timerPopupRowsAreGreenAndCustomDurationSurvivesRecreation" classname="com.nexvary.recorder.SettingsSimplificationTest" time="4.059" />
+    <testcase name="changingSharingPreservesOtherSettingsAndDoesNotStartAnEmergency" classname="com.nexvary.recorder.SettingsSimplificationTest" time="2.073" />
+    <testcase name="settingsCardsNavigateAndOptionalToolsStayCollapsed" classname="com.nexvary.recorder.SettingsSimplificationTest" time="9.634" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.SmtpSettingsTest" tests="4" failures="0" errors="0" skipped="0" time="10.849" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="enteringConventionalPortsUpdatesTlsInBothDirectionsIncludingArabicDigits" classname="com.nexvary.recorder.SmtpSettingsTest" time="2.311" />
+    <testcase name="manualSaveSurvivesReopeningAndBlankPasswordKeepsSameAccountSecret" classname="com.nexvary.recorder.SmtpSettingsTest" time="4.309" />
+    <testcase name="existing465ProfileRepairsSecurityWithoutDiscardingSameAccountPassword" classname="com.nexvary.recorder.SmtpSettingsTest" time="2.164" />
+    <testcase name="invalidHostShowsSpecificErrorWithoutSavingOrConnecting" classname="com.nexvary.recorder.SmtpSettingsTest" time="2.065" />
+  </testsuite>
+  <testsuite name="com.nexvary.recorder.VisualEvidenceTest" tests="1" failures="0" errors="0" skipped="0" time="40.065" timestamp="2026-11-05T10:28:17" hostname="localhost">
+    <properties>
+      <property name="device" value="test(AVD) - 14" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="captureApprovedArabicScreens" classname="com.nexvary.recorder.VisualEvidenceTest" time="40.065" />
+  </testsuite>
+</testsuites>

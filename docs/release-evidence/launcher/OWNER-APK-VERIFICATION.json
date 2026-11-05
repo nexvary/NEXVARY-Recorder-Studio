@@ -1,0 +1,25 @@
+{
+  "current": {
+    "package": "com.nexvary.recorder",
+    "versionCode": 27,
+    "versionName": "0.13.1",
+    "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+    "debuggable": false,
+    "sha256": "9c1e8d5f404e1659b14fcfb5e7684033b5e7419a89eb50d5427b5ec3f66131f0",
+    "bytes": 16862003
+  },
+  "previous": {
+    "package": "com.nexvary.recorder",
+    "versionCode": 26,
+    "versionName": "0.13.0",
+    "certificateSha256": "ca4640c7afcd5522210b2b60aefe121be2bc4ece87a0b9ca4ee14425891be7f6",
+    "debuggable": false,
+    "sha256": "a9e671ecec94e98e4844153cc73a0305fa8afa1b880b8a44555c3f57957bb1b6"
+  },
+  "sameSigningIdentity": true,
+  "signatureScheme": "v3",
+  "physicalInstall": "PENDING",
+  "source": "be3658d1970660d896e4772545fed5e5b78e42df",
+  "privatePasswordsAbsentFromApk": true,
+  "temporaryDecryptedSigningMaterialRemoved": true
+}

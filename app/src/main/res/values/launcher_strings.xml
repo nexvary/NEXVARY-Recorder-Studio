@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">App name and icon</string>
+    <string name="launcher_intro">Choose how this app appears in the launcher. Each shortcut opens Guardian; it is not a separate clock or calendar app.</string>
+    <string name="launcher_limits">This changes the shortcut only. Guardian remains visible in Android settings and recording notifications. It does not prevent uninstalling or hide camera/microphone indicators. Launcher updates may take a moment.</string>
+    <string name="launcher_clock">Clock</string>
+    <string name="launcher_calendar">Calendar</string>
+    <string name="launcher_apply">Apply shortcut</string>
+    <string name="launcher_current">Current shortcut: %1$s</string>
+    <string name="launcher_confirm">Use %1$s as the launcher name and icon? You can restore the original here.</string>
+    <string name="launcher_saved">Shortcut updated. Check the launcher.</string>
+    <string name="launcher_failed">Could not change the shortcut. The original entry was restored where possible.</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">Uygulama adı ve simgesi</string>
+    <string name="launcher_intro">Başlatıcı görünümünü seçin. Her kısayol Guardian uygulamasını açar; ayrı bir saat veya takvim uygulaması değildir.</string>
+    <string name="launcher_limits">Yalnızca kısayol değişir. Guardian ayarlarda ve kayıt bildirimlerinde görünür. Kaldırmayı engellemez veya kamera/mikrofon göstergelerini gizlemez. Güncelleme biraz sürebilir.</string>
+    <string name="launcher_clock">Saat</string>
+    <string name="launcher_calendar">Takvim</string>
+    <string name="launcher_apply">Kısayolu uygula</string>
+    <string name="launcher_current">Geçerli kısayol: %1$s</string>
+    <string name="launcher_confirm">%1$s adı ve simgesi kullanılsın mı? Asıl görünümü buradan geri yükleyebilirsiniz.</string>
+    <string name="launcher_saved">Kısayol güncellendi. Başlatıcıyı kontrol edin.</string>
+    <string name="launcher_failed">Değişiklik başarısız. Asıl kısayol mümkün olduğunca geri yüklendi.</string>
+</resources>

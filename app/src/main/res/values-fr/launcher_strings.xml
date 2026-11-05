@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">Nom et icône de l’application</string>
+    <string name="launcher_intro">Choisissez l’apparence dans le lanceur. Chaque raccourci ouvre Guardian, pas une application horloge ou calendrier distincte.</string>
+    <string name="launcher_limits">Seul le raccourci change. Guardian reste visible dans les paramètres et notifications d’enregistrement. Cela ne bloque pas la désinstallation ni les indicateurs caméra et microphone. La mise à jour peut prendre un instant.</string>
+    <string name="launcher_clock">Horloge</string>
+    <string name="launcher_calendar">Calendrier</string>
+    <string name="launcher_apply">Appliquer le raccourci</string>
+    <string name="launcher_current">Raccourci actuel : %1$s</string>
+    <string name="launcher_confirm">Utiliser le nom et l’icône %1$s ? L’original peut être restauré ici.</string>
+    <string name="launcher_saved">Raccourci mis à jour. Vérifiez le lanceur.</string>
+    <string name="launcher_failed">Modification impossible. La restauration du raccourci original a été tentée.</string>
+</resources>

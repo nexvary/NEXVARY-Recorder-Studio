@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">Nombre e icono de la app</string>
+    <string name="launcher_intro">Elija la apariencia en el lanzador. Cada acceso abre Guardian, no una app independiente de reloj o calendario.</string>
+    <string name="launcher_limits">Solo cambia el acceso. Guardian sigue visible en ajustes y notificaciones de grabación. No impide desinstalar ni oculta indicadores de cámara o micrófono. El cambio puede tardar un momento.</string>
+    <string name="launcher_clock">Reloj</string>
+    <string name="launcher_calendar">Calendario</string>
+    <string name="launcher_apply">Aplicar acceso</string>
+    <string name="launcher_current">Acceso actual: %1$s</string>
+    <string name="launcher_confirm">¿Usar el nombre e icono de %1$s? Puede restaurar el original aquí.</string>
+    <string name="launcher_saved">Acceso actualizado. Revise el lanzador.</string>
+    <string name="launcher_failed">No se pudo cambiar. Se intentó restaurar el acceso original.</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">ایپ کا نام اور آئیکن</string>
+    <string name="launcher_intro">ایپ کی ظاہری شکل منتخب کریں۔ ہر شارٹ کٹ Guardian کھولتا ہے، یہ الگ گھڑی یا کیلنڈر ایپ نہیں ہے۔</string>
+    <string name="launcher_limits">صرف شارٹ کٹ بدلتا ہے۔ Guardian ترتیبات اور ریکارڈنگ اطلاعات میں نظر آئے گا۔ یہ ایپ حذف ہونے سے نہیں روکتا اور کیمرہ یا مائیک کے اشارے نہیں چھپاتا۔ تبدیلی میں کچھ وقت لگ سکتا ہے۔</string>
+    <string name="launcher_clock">گھڑی</string>
+    <string name="launcher_calendar">کیلنڈر</string>
+    <string name="launcher_apply">شارٹ کٹ لگائیں</string>
+    <string name="launcher_current">موجودہ شارٹ کٹ: %1$s</string>
+    <string name="launcher_confirm">کیا %1$s کا نام اور آئیکن استعمال کریں؟ اصل شکل یہاں سے بحال کی جا سکتی ہے۔</string>
+    <string name="launcher_saved">شارٹ کٹ بدل گیا۔ ایپس کی فہرست دیکھیں۔</string>
+    <string name="launcher_failed">تبدیلی ناکام ہوئی۔ اصل شارٹ کٹ بحال کرنے کی کوشش کی گئی۔</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launcher_title">App-Name und Symbol</string>
+    <string name="launcher_intro">Wählen Sie die Darstellung im Launcher. Jeder Eintrag öffnet Guardian, keine separate Uhr- oder Kalender-App.</string>
+    <string name="launcher_limits">Nur die Verknüpfung ändert sich. Guardian bleibt in Android-Einstellungen und Aufnahmebenachrichtigungen sichtbar. Deinstallation und Kamera-/Mikrofonanzeigen bleiben möglich. Die Aktualisierung kann kurz dauern.</string>
+    <string name="launcher_clock">Uhr</string>
+    <string name="launcher_calendar">Kalender</string>
+    <string name="launcher_apply">Verknüpfung anwenden</string>
+    <string name="launcher_current">Aktuelle Verknüpfung: %1$s</string>
+    <string name="launcher_confirm">%1$s als Name und Symbol verwenden? Das Original kann hier wiederhergestellt werden.</string>
+    <string name="launcher_saved">Verknüpfung aktualisiert. Prüfen Sie den Launcher.</string>
+    <string name="launcher_failed">Änderung fehlgeschlagen. Der ursprüngliche Eintrag wurde nach Möglichkeit wiederhergestellt.</string>
+</resources>

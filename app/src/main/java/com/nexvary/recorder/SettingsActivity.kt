@@ -15,6 +15,7 @@ class SettingsActivity : GuardianProtectedActivity() {
         val root = StudioPage.install(this, if (appearance) R.string.settings_appearance else R.string.settings_title)
         fun page(type: Class<out android.app.Activity>) = startActivity(Intent(this, type))
         if (appearance) {
+            FeatureCards.add(root, R.drawable.ic_launcher_clock, R.string.launcher_title) { page(com.nexvary.recorder.privacy.LauncherAppearanceActivity::class.java) }
             FeatureCards.add(root, R.drawable.asset_launcher, R.string.language_title) { page(LanguageActivity::class.java) }
             FeatureCards.add(root, R.drawable.asset_settings, R.string.choose_theme) {
                 MaterialAlertDialogBuilder(this).setTitle(R.string.choose_theme)
