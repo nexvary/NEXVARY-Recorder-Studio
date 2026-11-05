@@ -1,6 +1,7 @@
 name: Android Release Gate
 on:
   push:
+    branches-ignore: [build/owner-signing-tools]
   pull_request:
   workflow_dispatch:
 env:
